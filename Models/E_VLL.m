@@ -35,9 +35,9 @@ Module[{SMLag},
 	Hold[	
 	Module[{p,i,Lint},	
 
-		DefineField["\[Chi]E", Fermion, Charges->{"U1Y"[-1]},Mass->{Heavy,"ME"}];
+		DefineField["EE", Fermion, Charges->{"U1Y"[-1]},Mass->{Heavy,"ME"}];
 		
-		DefineCoupling["y",EFTOrder->0,Indices->{"Flavor"}];
+		DefineCoupling["yE",EFTOrder->0,Indices->{"Flavor"}];
 		 
 		Lint = -"yE"[p] Bar@"l"[i,p]**PR**"EE"[] "H"[i];
 		
