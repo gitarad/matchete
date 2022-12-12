@@ -51,7 +51,7 @@ Module[{$LogoMatchete,$DirectoryMatchete},
 
 		Print[
 		"by Javier Fuentes-Mart\[IAcute]n, Matthias K\[ODoubleDot]nig, Julie Pag\[EGrave]s, Anders Eller Thomsen, and Felix Wilsch \n",
-		"Reference: ", Hyperlink["arXiv:2212.XXXXX", "https://arxiv.org/abs/2212.XXXXX"],"\n",
+		"Reference: ", Hyperlink["arXiv:2212.04510", "https://arxiv.org/abs/2212.04510"],"\n",
 		"Website: ",Hyperlink["https://gitlab.com/matchete/matchete","https://gitlab.com/matchete/matchete"]
 		];
 	]

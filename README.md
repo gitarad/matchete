@@ -14,7 +14,7 @@ The resulting EFT Lagrangian contains a (very) large number of redundant operato
 
 ## Reference
 
-If you use Matchete please cite: [\[arXiv:2212.xxxx\]](https://arxiv.org/abs/2212.xxxx).
+If you use Matchete please cite: [\[arXiv:2212.04510\]](https://arxiv.org/abs/2212.04510).
 
 ---
 
