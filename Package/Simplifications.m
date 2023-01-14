@@ -519,7 +519,7 @@ OperatorExpansionPattern[id_, op_Operator]:= Module[{indices},
 
 
 OperatorProperties[id_, op_Operator]:= Module[{count= 1, couplings, conjugateIndexExchange, equivClasses, 
-		fieldTypes, flavorInds, flavorPerms, indexGrouping, indexTypes, opIDpattern, permPattern, reexpPattern, 
+		fieldTypes, flavorInds, flavorPerms, gaugeFields, indexGrouping, indexTypes, opIDpattern, permPattern, reexpPattern, 
 		selfConjugate, selfconjugateType, symmetries},
 	
 	fieldTypes= OperatorFieldsAndFlavors@ op;
@@ -552,7 +552,8 @@ OperatorProperties[id_, op_Operator]:= Module[{count= 1, couplings, conjugateInd
 		];
 	
 	(*Gauge couplings on field-strength tensors---to absorb and reexpand couplings in gauge fields*)
-	couplings= Times@@ Cases[op, (FieldStrength[A_, ___]| EoM@ Field[A_, _Vector, ___]):> 
+	gaugeFields= Query[Apply[Alternatives], Key@ Field]@ $GaugeGroups[];
+	couplings= Times@@ Cases[op, (FieldStrength[A:gaugeFields, ___]| EoM@ Field[A:gaugeFields, _Vector, ___]):> 
 		$GaugeGroups[First@ GetGaugeGroupByProperty[Field-> A], Coupling][], 
 		Infinity];
 	

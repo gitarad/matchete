@@ -15,7 +15,7 @@ Package["Matchete`"]
 (*Public:*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Scoping*)
 
 
@@ -39,7 +39,7 @@ PackageScope["DetermineEOMs"]
 PackageScope["ReplaceHeavyEOM"]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Usage messages*)
 
 
@@ -64,7 +64,7 @@ PrintEOM[L, Field -> {l1, l2, ...}] prints only the EOM of a specific set of fie
 (*Expanding the EoMs in the EFT power counting*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Expands fields in the EFT power counting*)
 
 
@@ -119,7 +119,7 @@ ExpandField[Field[label_,type_,indices_,derivs_],OptionsPattern[]]:=Module[
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Expand EOMs in the EFT power counting*)
 
 
@@ -144,7 +144,7 @@ ExpandEOM[eoms_List, fieldsUV_List, OptionsPattern[]]:=Module[
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Expand heavy fields in operators*)
 
 
@@ -196,7 +196,7 @@ ExpandOp[arg_, uvFields_, OptionsPattern[]] := Module[
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Substitute EOM*)
 
 
@@ -217,7 +217,7 @@ ReplaceHeavyEOM[arg_, OptionsPattern[]] := Module[
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Auxiliary functionalities*)
 
 
@@ -269,7 +269,7 @@ LargeSumExpand[expr:Except[_Plus]] := Expand[expr]
 (*Solve EOM at a fixed order in the EFT power counting*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Solve single EOM at a given order*)
 
 
@@ -365,7 +365,7 @@ SolutionToPattern[Rule[lhs_,rhs_]]:=Module[
 ]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Solve all EOMs at a given order*)
 
 
@@ -394,7 +394,7 @@ SolveAllEOMfixedOrder[eoms_List,fields_List,n_?IntegerQ]:=Module[
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Full solution to EOM expanded to all required orders*)
 
 
@@ -440,7 +440,7 @@ FullEomSolution[uvEOMs_List, uvFields_List, OptionsPattern[]] := Module[
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Main EOM function*)
 
 
@@ -469,11 +469,14 @@ DetermineEOMs[lag_, OptionsPattern[]] := Module[
 ]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Printing EOMs*)
 
 
 Options[PrintEOM]={Field -> All, EFTOrder -> 6};
+
+
+PrintEOM::FieldOptionValue = "The option value for Field must be All, or specified as a List."
 
 
 PrintEOM[expr_, OptionsPattern[]] := Module[
@@ -497,7 +500,7 @@ PrintEOM[expr_, OptionsPattern[]] := Module[
 	Switch[OptionValue[Field],
 		All  , Nothing,
 		{___}, uvFields = DeleteCases[uvFields, Field[Except[Alternatives@@OptionValue[Field]],___]],
-		_    , Abort[]
+		_    , Message[PrintEOM::FieldOptionValue]; Abort[]
 	];
 	Module[
 		{

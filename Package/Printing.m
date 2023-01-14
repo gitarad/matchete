@@ -715,7 +715,8 @@ AlphabeticLabelOrder[x_] := Module[
 	(* fill missing 0's such that each number has 'max=4' digits *)
 	numbers = Table[
 		If[(max-StringLength[number])>0,
-			StringJoin@Flatten@Join[{number},ConstantArray["0",max-StringLength[number]]]
+			StringJoin@Flatten@Join[{number},ConstantArray["0",max-StringLength[number]]],
+			number
 		]
 		,
 		{number,numbers}
