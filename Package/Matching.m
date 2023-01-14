@@ -39,7 +39,7 @@ PackageExport["EFTOrder"]
 PackageExport["LoopOrder"]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Internal*)
 
 
@@ -91,7 +91,7 @@ CovariantLoop::usage=
 	"CovariantLoop[Lag, {fields}] returns the value of the supertraces involving exactly the degrees of freedom specified in the field list. It takes the option EFTOrder.";
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Internal*)
 
 
@@ -106,14 +106,14 @@ OperatorDimension::usage = "OperatorDimension[op] returns the mass-dimension of 
 (*EFT power counting *)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Global flag for the mass dimension*)
 
 
 $currentEFTOrder = 6;
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Dimensionality of an operator*)
 
 
@@ -170,7 +170,7 @@ FieldDimension[Field[f:Except[List[___]],type_,_,derivs_List]] :=
 FieldDimension[Field[{_,n_},type_,_,derivs_List]] := (n + Length[derivs] + TypeDim[type])
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*EFT series*)
 
 
@@ -229,7 +229,7 @@ TruncateOperatorExact[op_,dim_]:=If[OperatorDimension[op]==dim,
 (*Matching routines*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Update the current Lagrangian*)
 
 
@@ -279,6 +279,9 @@ SetCurrentLagrangian[lag_, loopOrder_, eftOrder_, OptionsPattern[]] := Module[{e
 (*Finds the UV fields in the given expression*)
 
 
+FindUvFields::error = "The field `1` is not part of the Lagrangian.";
+
+
 FindUvFields[lagrangian_]:=Module[
 	{
 		fieldAssociation = GetFields[],
@@ -290,9 +293,9 @@ FindUvFields[lagrangian_]:=Module[
 		Cases[lagrangian, FieldStrength[label_,___]:>label, All]
 	];
 	(* select labels of all heavy fields *)
-	uvFields = If[fieldAssociation[#][Heavy],#,Nothing[]]&/@uvFields;
+	uvFields = If[fieldAssociation[#][Heavy]===True,#,Nothing[]]&/@uvFields;
 	(* pick the apropriate fields *)
-	uvFields = FirstCase[lagrangian,Field[#,___],Abort[],All]&/@uvFields;
+	uvFields = FirstCase[lagrangian,Field[#,___],Message[FindUvFields::error,#]; Abort[],All]&/@uvFields;
 	(* make the indices unique *)
 	uvFields = uvFields /. Index[_,rep_]:>Index[Unique[],rep];
 	Return[uvFields]
@@ -329,6 +332,7 @@ CovariantLoop[lag, fields, opts]=Module[{lagFields, n, types, dofNumbers, ord, o
 		Abort[];
 	];
 	
+	
 	(*Update Lagrangian*)
 	ord= OptionValue@ EFTOrder;
 	SetCurrentLagrangian[lag, 1, ord];
@@ -345,7 +349,7 @@ CovariantLoop[lag, fields, opts]=Module[{lagFields, n, types, dofNumbers, ord, o
 		,
 			0
 		];
-	
+		
 	out+ PowerTypeSTr[types, ord, Fields-> dofNumbers]//ContractCGs//MatchReduce
 ];
 
@@ -354,7 +358,7 @@ CovariantLoop[lag_, field_Symbol, ord_, opts:OptionsPattern[]]:=
 	CovariantLoop[lag, {field}, ord, opts];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Main Matchete routine for integrating out fields*)
 
 

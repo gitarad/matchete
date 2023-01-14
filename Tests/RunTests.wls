@@ -5,6 +5,7 @@ Print["  Running \"Matchete\" tests..."(*,"\n"*)];
 (* Path of the directory from which the script is started (git root directory by default) . *)
 
 PacletDirectoryLoad@Directory[];
+
 Block[{Print},
   Get["Matchete`"];
 ]

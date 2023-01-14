@@ -310,7 +310,7 @@ LagrangianDofsAux@ field_Symbol:= If[GetFields[field, SelfConjugate], field, {fi
 (*"Conj" is used to describe the conjugated DoF.*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Substitution rules*)
 
 
@@ -481,10 +481,11 @@ FieldDoFs[f_Symbol, conj_]:= Block[{props= GetFields[f], inds, i},
 
 
 CreateGTensor[reps_List, charges_List, conj_]:= Module[{i, j, \[Mu], \[Nu], gaugeInds, 
-		flavorInds, flavorDeltas, rep, rep2, abelFS, nonAbelFS, charge, group},
+		flavorInds, flavorDeltas, rep, rep2, abelFS, nonAbelFS, gaugeCharges, charge, group},
 	(*Global*)
-	gaugeInds= Cases[reps, _? (GroupFromRep@ # =!= None &)];
-	flavorInds= Cases[reps, _? (GroupFromRep@ # === None &)];
+	gaugeInds= Cases[reps, _? (MemberQ[Keys@$GaugeGroups,GroupFromRep@ #] &)];
+	gaugeCharges= Cases[charges, _? (MemberQ[Keys@$GaugeGroups,Head@ #] &)];
+	flavorInds= Complement[Join[reps, charges], gaugeInds, gaugeCharges];
 	flavorDeltas= Product[Delta[Index[i, rep], Index[j, rep]], {rep, flavorInds}];
 	
 	(*Abelian*)
@@ -492,14 +493,14 @@ CreateGTensor[reps_List, charges_List, conj_]:= Module[{i, j, \[Mu], \[Nu], gaug
 		Sum[
 			{group, charge}= {Head@ charge, First@ charge};
 			If[conj, -1, 1] 
-			$GaugeGroups[group, Coupling][] (*added*)
+			$GaugeGroups[group, Coupling][]
 			charge FieldStrength[$GaugeGroups[group, Field], {\[Mu], \[Nu]}, {}, {}]
-		, {charge, charges}];
+		, {charge, gaugeCharges}];
 	
 	(*Non-Abelian*)
 	nonAbelFS= Sum[
 		group= GroupFromRep@ rep;
-		$GaugeGroups[group, Coupling][] (*added*)
+		$GaugeGroups[group, Coupling][] 
 		Product[Delta[Index[i, rep2], Index[j, rep2]], {rep2, DeleteCases[gaugeInds, rep]}]*
 			FieldStrength[$GaugeGroups[group, Field], {\[Mu], \[Nu]}, 
 				If[conj, 
@@ -714,7 +715,7 @@ PowerTypeSTr[propagatorTypes_List, eftOrder:(_Integer|{_Integer}), OptionsPatter
 	len= Length@ propagatorTypes;
 	
 	{preFact, traceXords, traceTemplate}= CDETemplates@ propagatorTypes;
-	
+
 	(*Sum over the number of open derivatives*)
 	Sum[
 		expr= traceTemplate;
@@ -741,7 +742,7 @@ PowerTypeSTr[propagatorTypes_List, eftOrder:(_Integer|{_Integer}), OptionsPatter
 			SplitSymmetrizedCDs@ RelabelIndices@ temp 
 			]
 		, {order, maxOrd}, {extraOrds, IntegerSets[order -openDevs[[-1]], 2 len -1]}];
-
+		
 		expr= CloseFermionLoop[propagatorTypes, expr];
 				
 		(*Loop integrate*)
@@ -901,7 +902,7 @@ LogTypeSTr[propType_, {order_Integer}, OptionsPattern[]]:= Module[
 (*One-loop matching*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*All one-loop contributions*)
 
 

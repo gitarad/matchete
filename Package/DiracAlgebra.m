@@ -755,7 +755,7 @@ DefineEvanescentOperator[inioperator_,finoperator_,order_,origin_]:=Module[{evaO
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Fierzing*)
 
 
@@ -764,6 +764,7 @@ DefineEvanescentOperator[inioperator_,finoperator_,order_,origin_]:=Module[{evaO
 
 
 Fierz::error1= "The Fierz function can only be used on the product of two closed spin chains with standard Dirac structures with head DiracProduct (or nothing for scalar currents). ";
+Fierz::order = "Fierz function only support Fierz order {1,3,4,2} or {1,4,3,2}."
 
 
 (* ::Subsubsection::Closed:: *)
@@ -790,7 +791,7 @@ result, looporder,label,groupStruct,evaOperator,evaOperatorList,FlavorIndices},
 	Gbasis[a_,b_,c_,d_]:={PL,PR,PL**\[Gamma][a],PR**\[Gamma][b],\[Sigma][c,d]/2}/.NonCommutativeMultiply[x_]:>x;
 	Gbasisdual[a_,b_,c_,d_]:={PL,PR,PR**\[Gamma][a],PL**\[Gamma][b],\[Sigma][c,d]/2}/.NonCommutativeMultiply[x_]:>x;
 	
-	If[OptionValue@Order =!= {1,3,4,2}|{1,4,3,2}, Abort[]];
+	If[OptionValue@Order =!= {1,3,4,2}|{1,4,3,2}, Message[Fierz::order];Abort[]];
 	If[OptionValue@Order==={1,3,4,2}, 
 			f3=Transp@field4;
 			f4=Transp@field3;

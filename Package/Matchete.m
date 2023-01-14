@@ -86,7 +86,7 @@ CheckForUpdate::usage = "CheckForUpdate[] compares the local Matchete version to
 PrintMessages::usage  = "PrintMessages[True/False] sets whether information messages are displayed by some of the routines."
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Internal*)
 
 
@@ -102,7 +102,7 @@ MyPrint::usage       = "MyPrint[message,Verbose -> True/False] is a printing fun
 $MatchetePath=DirectoryName[$InputFileName,2];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Version*)
 
 
@@ -130,7 +130,7 @@ UpdateMatchete[]:=Module[{},
 ]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*OptionsChecker*)
 
 
@@ -140,11 +140,12 @@ UpdateMatchete[]:=Module[{},
 
 SetAttributes[OptionsCheck, HoldFirst];
 OptionsCheck @ func_[___, opts : OptionsPattern[]] := And[
-	And@@ (MemberQ[Options[func][[;;,1]], #1]||Message[General::invalidopt, #1, func] &)@@@ List[opts],
-	And@@ (OptionTest[func, #1][#2] || OptionMessage[#1, func, #2] &)@@@ FilterRules[List@opts, Options @ func]
+	And@@ (Message[General::invalidopt, #1, func] &)@@@ FilterRules[List@ opts, Except@ Options@ func],
+	And@@ (OptionTest[func, #1][#2] || OptionMessage[#1, func, #2] &)@@@ FilterRules[List@ opts, Options@ func]
 ];
 
 
+General::invalidopt = "Invalid option `1` given for function `2`.";
 General::invalidarg = "Option `1` for function `2` received invalid value `3`.";
 General::optexpectsval = "Option `1` for function `2` received invalid value `3`. A `4` is expected.";
 OptionMessage[opt_, func_, val_] := Message[General::invalidarg, opt, func, val];
@@ -198,7 +199,7 @@ OptionMessage[Charges, func_, val_]                    := Message[General::optex
 OptionMessage[SelfConjugate, func_, val_]              := Message[General::optexpectsval, SelfConjugate, func, val, "boolean (True or False) or a list of positive integers indicating the index positions"];
 OptionMessage[Mass, func_, val_]                       := Message[General::optexpectsval, Mass, func, val, "value Heavy, Light, 0, {Light,0}, {Heavy,MassLabel}, {Light,MassLabel}, {Heavy,MassLabel,{FlavorIndex}} or {Light,MassLabel,{FlavorIndex}}, with FlavorIndex being one of the flavor indices of the field, "];
 OptionMessage[Chiral, func_, val_]                     := Message[General::optexpectsval, Chiral, func, val, "value False, LeftHanded, or RightHanded"];
-OptionMessage[EFTOrder, Coupling, val_]                := Message[General::optexpectsval, EFTOrder, DefineCoupling, val, "positive integer or List with one positive integer"];
+OptionMessage[EFTOrder, DefineCoupling, val_]          := Message[General::optexpectsval, EFTOrder, DefineCoupling, val, "positive integer or List with one positive integer"];
 OptionMessage[EFTOrder, func_, val_]                   := Message[General::optexpectsval, EFTOrder, func, val, "positive integer or List with one positive integer"];
 OptionMessage[LoopOrder, func_, val_]                  := Message[General::optexpectsval, LoopOrder, func, val, "value 0, 1 or {1}"];
 OptionMessage[Simplifications, func_, val_]            := Message[General::optexpectsval, Simplifications, func, val, "value All or None"];

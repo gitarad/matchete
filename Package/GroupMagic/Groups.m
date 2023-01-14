@@ -783,11 +783,15 @@ RepAction[L_][A_, B_]:= MatInnerProd[B, MatCommutator[L, A]];
 (*Returns a the set of {H_i, E_i, F_i} for the simple  roots, obeying the Chevalley-Serre relations, in the given representation [Fonseca, B1]. The basis of the representation space is always chosen with weight vectors, i.e. the basis states are eigenvectors of the adjoint generators. *)
 
 
+CSMatrices::singlet = "Cannot be applied on singlet representations."
+
+
 CSMatrices[alg_, \[CapitalLambda]_List]:= CSMatrices[alg, \[CapitalLambda]]= Block[{weights, weightDims, level, M, rank, emptyMatrices,
 	raisingMatrices, X, i, j, targetWeights, E1, E2, targetDims, \[CapitalOmega], offSets, repDimension, temp,
 	cartanMat= CartanMatrix@ alg},
 	If[MatchQ[\[CapitalLambda], {0..}],
-		(*In this case the rerpersentation is a singlet *)
+		(*In this case the representation is a singlet *)
+		Message[CSMatrices::singlet];
 		Abort[];
 	];
 	
@@ -1073,6 +1077,7 @@ CheckLinearIndependence[set_List,mat_]:=Module[{rank,newrank},
 	If[CheckLinearIndependence[set],
 		newrank=MatrixRank[Flatten/@Normal/@Append[set,mat]];
 		If[newrank =!= rank, Return[True],Return[False]],
+		Message[CheckLinearIndependence::setnotorthogonal];
 		Abort[];
 	]
 ]

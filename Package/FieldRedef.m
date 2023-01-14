@@ -18,7 +18,7 @@ Package["Matchete`"]
 PackageImport["GroupMagic`"]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Scoping*)
 
 
@@ -180,7 +180,7 @@ DropFreeQ[L_,f_List]:=Total@DeleteCases[List@@(Expand@L+Nothing), x_/;FreeQ[x,Al
 GetMaxOrder[L_]:=Max[OperatorDimension/@(List@@(Expand@(L+Nothing)))]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Aux modules needed for the vector fields*)
 
 
@@ -314,7 +314,7 @@ outFS=FieldStrength[vectorlabel,{Index[pmu,Lorentz],Index[pnu,Lorentz]},pvectori
 ]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*ShiftVectorFields*)
 
 
@@ -332,14 +332,14 @@ ShiftVectorFields[expr_,fields_List,shift_List]:=Module[
 	(* make sure shapes are compatible *)
 	If[Length@fields =!= Length@shift,
 	Message[ShiftVectorFields::shiftmismatch,fields,shift];Return[expr]];
-
+	
 	(* split fields and their shifts into gauge and non-gauge *)
 	pairs=Transpose@{fields,Operator/@(Expand@shift)};
-	pairsA=Transpose@Cases[pairs,{x_,y_}/;GaugeFieldQ@x];
-	pairsV=Transpose@Cases[pairs,{x_,y_}/;!GaugeFieldQ@x];
+	pairsA=Cases[pairs,{x_,y_}/;GaugeFieldQ@x];
+	pairsV=Cases[pairs,{x_,y_}/;!GaugeFieldQ@x];
 
-	If[pairsV=={}, pairsV={{},{}}];
-	If[pairsA=={}, pairsA={{},{}}];
+	If[pairsV==={}, pairsV={{},{}},pairsV=Transpose@pairsV];
+	If[pairsA==={}, pairsA={{},{}},pairsA=Transpose@pairsA];
 
 	V=pairsV[[1]];
 	A=pairsA[[1]];
@@ -394,7 +394,7 @@ ShiftVectorFields[expr_,fields_List,shift_List]:=Module[
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Field redefinitions*)
 
 
@@ -581,7 +581,7 @@ ReduceMajoranaFermion[iL_, f_Symbol, oShift_, oRes_]:=Module[{start=Now,LNoShift
 ]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*ReduceDiracFermion*)
 
 
@@ -894,7 +894,7 @@ FieldsToShift[L0_]:=Module[{freeL,L,fields, list},
 
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Main module*)
 
 
