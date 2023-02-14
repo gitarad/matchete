@@ -22,7 +22,7 @@ Package["Matchete`"]
 PackageImport["GroupMagic`"]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Exported*)
 
 
@@ -141,7 +141,7 @@ LagrangianLikeCheck@ expr_:= Module[{temp= TermsToList@ expr},
 (*Hermiticity*)
 
 
-HermitianQ[expr_]:= (expr - Bar[expr] //GreensSimplify)=== 0;
+HermitianQ[expr_]:= (expr - Bar[expr] //GreensSimplify)=== 0
 
 
 (* ::Subsection::Closed:: *)
@@ -417,9 +417,10 @@ Options[CheckLagrangian]={
 (*Function for checking if the Lagrangian is valid for use in the matching routines *)
 
 
-CheckLagrangian[Lag_,opt:OptionsPattern[]]? OptionsCheck:=CheckLagrangian[Lag,opt]=
-	Module[{DetOutput=<||>,OSpinChains,HeavTadpoles,UncIndices,ExtraHeads, mHermiticity=False,mContractedIndices=False,mClosedSpinChains=False, mCanonicallyNormalized=False,mMassBasis=False,mHeavyTadpoles=False,mChargeNeutral=False,mFreeOfGaugeFields=False,mUndefinedObject=False,mGaugeAnomalies=False},
+CheckLagrangian[Lagrangian_,opt:OptionsPattern[]]? OptionsCheck:=CheckLagrangian[Lag,opt]=
+	Module[{Lag=HcExpand@Lagrangian,DetOutput=<||>,OSpinChains,HeavTadpoles,UncIndices,ExtraHeads, mHermiticity=False,mContractedIndices=False,mClosedSpinChains=False, mCanonicallyNormalized=False,mMassBasis=False,mHeavyTadpoles=False,mChargeNeutral=False,mFreeOfGaugeFields=False,mUndefinedObject=False,mGaugeAnomalies=False},
 	(*Checks that Lag is a series of terms with fields or FS tensors*)
+	
 	LagrangianLikeCheck@ Lag;
 	
 	(*check if L is hermitian *)	
@@ -472,7 +473,6 @@ CheckLagrangian[Lag_,opt:OptionsPattern[]]? OptionsCheck:=CheckLagrangian[Lag,op
 		If[OptionValue@DetailedOutput, AppendTo[DetOutput,"HeavyTadpoles"->(Format[#,NiceForm]&/@HeavTadpoles)]]
 		];
 		
-		
 	(*check if L is neutral under all charges*) 
 	If[OptionValue@ ChargeNeutral,
 		If[ (mChargeNeutral = !ChargeNeutralQ[Lag]) , 
@@ -488,7 +488,6 @@ CheckLagrangian[Lag_,opt:OptionsPattern[]]? OptionsCheck:=CheckLagrangian[Lag,op
 			];
 		If[OptionValue@DetailedOutput, AppendTo[DetOutput,"FreeOfGaugeFields"->!mFreeOfGaugeFields]]
 		];
-		
 		
 	(*check if all objects are defined*)	
 	If[OptionValue@ UndefinedObject,
@@ -509,7 +508,7 @@ CheckLagrangian[Lag_,opt:OptionsPattern[]]? OptionsCheck:=CheckLagrangian[Lag,op
 			AppendTo[DetOutput,"GaugeAnomalies"-> Format[Normal@GaugeAnomalyContribution@OccuringFields@Lag, NiceForm]]
 		];
 	];
-
+	
 	(* output the test results combined, we can output more details if wanted *)
 	If[OptionValue@DetailedOutput,
 		Return[DetOutput],
