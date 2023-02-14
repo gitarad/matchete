@@ -11,11 +11,11 @@ Package["GroupMagic`"]
 (*Implements the CG coefficients and their contractions*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Scoping & usage definitions*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Exported*)
 
 
@@ -41,7 +41,7 @@ PackageExport["ReplaceCGs"]
 PackageExport["CGsToReplace"]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Internal*)
 
 
@@ -122,11 +122,11 @@ ReplaceCGs::usage=
 CGsToReplace::usage= "Option used in ReplaceCGs.";
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Tensor contractions *)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Clebsch-Gordan definitions *)
 
 
@@ -264,7 +264,7 @@ CG::args= "CG should have 2 arguments.";
 CG[_, _, __]:= (Message[CG::args]; Abort[];) 
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Utility functions *)
 
 
@@ -660,11 +660,11 @@ ClearGroups[]:= Block[{},
 ClearGroups[]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*CG matching and contractions*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Construct CG basis *)
 
 
@@ -757,7 +757,7 @@ TensorBasis[indexTypes_List]:= Block[{compTensors, types, eTensInds, len, cur, t
 VecCompare[logOp_, comp_, v1_, v2_]:= logOp@@ MapThread[comp, {v1, v2}];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Projection matrices for CGs*)
 
 
@@ -795,7 +795,7 @@ ResetCGProjectors[];
 
 
 RedundantSubsets[innerProducts_]:= Block[{mat, blocks},
-	mat= DeleteCases[RowReduce@ innerProducts, {0..}];
+	mat= DeleteCases[RowReduce@ innerProducts, {0..}] (*This seems to take a lot of time*);
 	blocks= (Flatten@ Position[#, Except@ 0, {1}, Heads-> False]&)/@ mat;
 	blocks= {#, 1}&/@ blocks;
 	blocks= blocks//. List@ OrderlessPatternSequence[{a:{OrderlessPatternSequence[x_, ___]}, s_}, 
@@ -804,7 +804,7 @@ RedundantSubsets[innerProducts_]:= Block[{mat, blocks},
 ];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Match to CG basis *)
 
 
@@ -861,14 +861,17 @@ FindCGMatch[tensor_, inds_]:= Block[{indTypes, indTypesOut, indPerm, tens, indsO
 	basis= DeleteCases[RowReduce@ cgMetric[[order, order]], {0..}];
 	basis= FirstPosition[#, 1]&/@ basis// Flatten;
 	basis= order[[basis]];
-		
+	
 	(*Project tensor*)
 	overlaps= overlaps[[basis]]; 
 	cgTensors= cgTensors[[basis]];
 	cgBasis= cgBasis[[basis]];
-	cgMetric= Inverse@ cgMetric[[basis, basis]]; 
-	composition= cgMetric . overlaps// Simplify;
-	
+	(*Solve g_ij x_j = y_i*)
+	(*cgMetric= Inverse@ cgMetric[[basis, basis]]; 
+	composition= cgMetric . overlaps// Simplify;*)
+	cgMetric= cgMetric[[basis, basis]];
+	composition= RowReduce[Join[cgMetric, List/@ overlaps, 2]][[;;, -1]];
+		
 	(*Test if projection succesfull: otherwise add new CG*)
 	temp= SparseArray[tens- composition . cgTensors];
 	If[Length@ ArrayRules@ temp> 1,
@@ -896,7 +899,7 @@ DefineNewCG[indexTypes_List, tensor_SparseArray]:= Module[{lab},
 ];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Contracting CGs in an expression*)
 
 
@@ -973,7 +976,7 @@ ContractCGs@ expr_:= Block[{out, cg, cgs, indRules, repeatedInds, contractedCGs,
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*CG replacements*)
 
 
@@ -1061,11 +1064,11 @@ ReplaceCGs[expr_, OptionsPattern[]]? OptionsCheck:= Module[{keys, rules},
 ]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Auxiliary function*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Einstein summation*)
 
 

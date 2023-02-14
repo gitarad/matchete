@@ -367,7 +367,7 @@ Options[Match]={EFTOrder -> 6, LoopOrder-> 1, Simplifications -> All, Verbose ->
 
 Match[lag_, opts:OptionsPattern[]]? OptionsCheck := 
 Match[lag, opts] = Module[{
-		lagrangian = BetterExpand[lag],
+		lagrangian = BetterExpand[ContractCGs@lag],
 		eftOrder=OptionValue@EFTOrder,
 		loopOrder=OptionValue@LoopOrder,
 		LagrangianEFT,

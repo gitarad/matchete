@@ -29,7 +29,7 @@ PackageImport["GroupMagic`"]
 PackageExport["CD"]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Internal*)
 
 
@@ -48,7 +48,7 @@ PackageScope["GAction"]
 PackageScope["SeparateGeneratorsFromFS"]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Usage messages*)
 
 
@@ -82,7 +82,7 @@ SeparateGeneratorsFromFS::usage = "Matchete uses implicit contraction of FS with
 (*Private:*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Covariant derivative definition and rules*)
 
 
@@ -208,19 +208,22 @@ SplitSymmetrizedCDs@ expr_:= expr/. x_SymmetrizedCD:> SplitSymmetrizedCDs@ x;
 (*The action of a field strength tensor on a field/FS object*)
 
 
-GAction[lInds_List, field:(Field|FieldStrength)[lab_, _, inds_, devs_]]:= Module[{charge, charges, gaugeInds, group, 
+GAction[lInds_List, field:(Field|FieldStrength)[lab_, _, inds_, devs_]]:= Module[{charge, charges, gaugeCharges, gaugeInds, group, 
 		indc, out, ind, rep, j, A},
+		
+	
 	(*Abelian FS*)
 	charges= GetFields[lab, Charges];
+	gaugeCharges= Cases[charges, _? (MemberQ[Keys@$GaugeGroups,Head@ #] &)];
 	out= Sum[
 			{group, charge}= {Head@ charge, First@ charge};
 			charge 
 			$GaugeGroups[group, Coupling][] (*added*)
 			FieldStrength[$GaugeGroups[group, Field], lInds, {}, {}]
-		, {charge, charges}]* field;
+		, {charge, gaugeCharges}]* field;
 	
 	(*Non-Abelian FS*)
-	gaugeInds= Cases[inds, _? (GroupFromInd@ # =!= None &)];
+	gaugeInds= Cases[inds, _? (MemberQ[Keys@$GaugeGroups,GroupFromInd@ #] &)];
 	out+= Sum[
 		group= GroupFromInd@ ind;
 		rep= Last@ ind/. Bar-> Identity;

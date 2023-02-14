@@ -5,3 +5,6 @@ Initial release (v0.1.0)
 
 ### 2023-01-14
 Fixed an issue with field redefinitions on Mathematica 12, and other minor bug fixes (v0.1.1)
+
+### 2023-02-10
+Fixed issues when dealing with global gauge groups and improved MatchToCGs efficiency (v0.1.2)

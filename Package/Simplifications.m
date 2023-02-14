@@ -284,6 +284,9 @@ HcTerms[0]:=0;
 HcExpand[Lag_]:= Lag /.{HcTerms[expr_]:> expr + Bar@expr} //RelabelIndices;
 
 
+Bar@HcTerms[arg___]:=HcTerms[arg]
+
+
 (* ::Section:: *)
 (*Operator construction*)
 
@@ -300,11 +303,11 @@ ResetOperatorAssociations[]:= Block[{},
 ResetOperatorAssociations[];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Utility functions*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Find indices*)
 
 
@@ -316,7 +319,7 @@ OpenIndices@ obj_:= Cases[Tally@ Cases[obj, Index[__], All], {ind_, 1}-> ind];
 ContractedIndices@ obj_:= Cases[Tally@ Cases[obj, Index[__], All], {ind_, 2}-> ind];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*FirstElementBy*)
 
 
@@ -328,7 +331,7 @@ FirstElementBy[list_, func_]:= First@ SortBy[list, func];
 FirstElementBy[func_]@ list_:= FirstElementBy[list, func];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Create canonical dummy indices*)
 
 
@@ -340,7 +343,7 @@ ConstructDummyIndices@ types_List:= ConstructDummyIndices@ types=
 	MapIndexed[(Index[ToExpression["d$$"<> ToString[First@ #2]], #1]&), types];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*FindPermutationOrder*)
 
 
@@ -352,7 +355,7 @@ FindPermutationOrder[permutation_List, target_List]:=
 	Permute[Range@ Length@ target, FindPermutation[permutation, target]]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Complex conjugate _Operator *)
 
 
@@ -363,7 +366,7 @@ FindPermutationOrder[permutation_List, target_List]:=
 OperatorBar@ op_Operator:= Bar/@ op;
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Conjugate operator class*)
 
 
@@ -374,7 +377,7 @@ OperatorBar@ op_Operator:= Bar/@ op;
 OpClassConjugate@ {fieldTypes_List, devs_}:= {Sort@ Conj@ fieldTypes, devs};
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Self-conjugate operator class *)
 
 
@@ -867,11 +870,11 @@ OpsToFieldForm[expr_, OptionsPattern[]]:= Block[{out},
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Compound operators *)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Construct relevant compound operators for a class *)
 
 
@@ -915,7 +918,7 @@ KineticOpClassQ@ {{f1_, Conj@ f2_Symbol| f2_Symbol}, n_}:=
 KineticOpClassQ@ _:= False; 
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Construct compounds from atomic operator*)
 
 
@@ -1008,7 +1011,7 @@ ExpandSymmetrization@ expr_:= expr/. {
 	}
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Construct compound basis*)
 
 
@@ -1158,6 +1161,7 @@ ConstructOperatorIdentities@ opType_:= Module[
 	indexToPattern= #-> Index[Pattern[Evaluate@ First@ #, Blank[]], Last@ #]&/@ dummies;
 	
 	(*Loop to make all identities of the operator class*)
+	
 	identities= Flatten@ Reap[While[opID <= Length@ $operators@ opType,
 		op= AtomicOp[{opType, opID}, dummies]/. 
 			$operators[opType, {opType, opID}, AtomicOpExpansionPattern];
@@ -1175,12 +1179,12 @@ ConstructOperatorIdentities@ opType_:= Module[
 				IdentitiesSymmetry,
 				IdentitiesCGs
 			}@ op];
-		
 		(*Identify operators in the identities with the canonical form ones*)
 		opIdentities= MatchOperatorPatterns[opIdentities, ResetIdentities-> False]; 
 		(*Use identiteis with all inequivalent index permutations of the original operator*)
+		
 		Sow@ Flatten@ CanonizeAtomicOp[opIdentities/. indPerms];
-	] ][[2, 1]];
+	]][[2, 1]];
 	
 	(*Remove trivial identities (not involving any operators)*)
 	identities= DeleteDuplicates@ DeleteCases[identities, 0]/. _Coupling-> 1; (*Temporary gauge coupling removal*)
@@ -1221,7 +1225,7 @@ ConstructOperatorIdentities@ opType_:= Module[
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Operator Identities *)
 
 
@@ -1268,7 +1272,7 @@ EoMSplitter[\[Mu]_, x_]:= (
 
 
 (* ::Subsubsection::Closed:: *)
-(*IdentietiesCDCommutation*)
+(*IdentitiesCDCommutation*)
 
 
 (* ::Text:: *)
@@ -1428,7 +1432,7 @@ IdentitiesCGs@ op_Operator:= Block[{},
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Simplify using rules *)
 
 
@@ -1442,10 +1446,11 @@ IdentitiesCGs@ op_Operator:= Block[{},
 
 ConstructHermitianSimplificationIdentities@ opType_:= 
 		ConstructHermitianSimplificationIdentities@ opType= Module[{identities},
+
 	identities= ConstructOperatorIdentities@ opType;
-		
+
 	If[SelfConjugateClassQ@ opType, Return@ identities];
-	
+
 	(*For complex-type classes the conjugate identities are constructed*)
 	ConstructConjugateCompounds@ opType;
 	Join[identities,
@@ -1471,7 +1476,7 @@ ConstructHermitianSimplificationIdentities@ opType_:=
 IBPSimplify17@ expr_:= Module[{out, opTypes, subs, type},	
 	out= AbsorbGaugeCouplings@ MatchOperatorPatterns@ expr;
 	
-	(*Determine identiteis for each group of operator types*)
+	(*Determine identities for each group of operator types*)
 	(*opTypes= DeleteDuplicates@ Cases[out, AtomicOp[{type_, _}, _]:> type, All];*)
 	opTypes= DeleteDuplicatesBy[Cases[out, AtomicOp[{type_, _}, _]:> type, All], 
 		Sort@ {#, OpClassConjugate@#} &];
@@ -1479,6 +1484,7 @@ IBPSimplify17@ expr_:= Module[{out, opTypes, subs, type},
 			(*ConstructOperatorIdentities@ type*)
 			ConstructHermitianSimplificationIdentities@ type
 		, {type, opTypes}];
+	
 	out= out/. subs// ExprFlavorCanonize// ReextractGaugeCouplings
 ]
 
@@ -1507,7 +1513,7 @@ ReextractGaugeCouplings@ expr_:= expr/. {
 };
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Output functions*)
 
 
