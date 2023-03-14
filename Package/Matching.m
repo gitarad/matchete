@@ -382,7 +382,7 @@ Match[lag, opts] = Module[{
 	
 	(* Set global variables for the given Lagrangian *)
 	SetCurrentLagrangian[lagrangian, If[loopOrder === {1}, 1, loopOrder], 
-		eftOrder, Verbose-> VerboseOption];
+		If[Head@ eftOrder === List, First @eftOrder, eftOrder], Verbose-> VerboseOption];
 	
 	MyPrint["Integrating out the fields: ", Sequence@@Riffle[Intersection[Matchete`PackageScope`OccuringFields[lagrangian],GetFieldsByProperty[Heavy->True]],", "], Verbose->OptionValue@Verbose===Print];
 	

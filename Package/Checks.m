@@ -175,6 +175,16 @@ OpenSpinChains[expr_]:= Select[Flatten@Join[Cases[{expr}, _NonCommutativeMultipl
 ComplexSpinChains[expr_]:= Select[Cases[{expr}, _NonCommutativeMultiply,Infinity], Count[#,Fermion, Infinity]>2 &]
 
 
+(* ::Text:: *)
+(*Identifies inconsistent spin chains *)
+
+
+InconsistentSpinChains@ expr_:= Cases[{expr},
+		NonCommutativeMultiply[Transp@ _Field, DiracProduct[Except[GammaCC], ___], ___]|
+		NonCommutativeMultiply[___, DiracProduct[Except[GammaCC], ___], Transp@ Bar@ _Field]
+	, Infinity]
+
+
 (* ::Subsection::Closed:: *)
 (*Canonically normalized kinetic term*)
 
@@ -380,7 +390,7 @@ GaugeAnomaliesQ[lagrangian_]:=Total@Values@GaugeAnomalyContribution@OccuringFiel
 
 CheckLagrangian::Hermiticity          = "The input Lagrangian is not hermitian.";
 CheckLagrangian::ContractedIndices    = "The input Lagrangian contains open indices or a mismatch of bared and not bared indices.";
-CheckLagrangian::ClosedSpinChains     = "The input Lagrangian contains open or complex spin chains."
+CheckLagrangian::ClosedSpinChains     = "The input Lagrangian contains open, complex, or inconsistent (using transposed spinors with no corresponding C-matrix) spin chains."
 CheckLagrangian::CanonicallyNormalized = "The input Lagrangian kinetic part is not canonically normalized."
 CheckLagrangian::HeavyMassBasis       = "The input Lagrangian is not in the mass basis for heavy fields."
 CheckLagrangian::FreeofHeavyTadpoles  = "The input Lagrangian contains heavy tadpoles that should be removed."
@@ -423,8 +433,18 @@ CheckLagrangian[Lagrangian_,opt:OptionsPattern[]]? OptionsCheck:=CheckLagrangian
 	
 	LagrangianLikeCheck@ Lag;
 	
-	(*check if L is hermitian *)	
-	If[OptionValue@Hermiticity,
+	(*check if all spin chains are closed and contain only 2 fermions*)
+	If[OptionValue@ ClosedSpinChains,
+		OSpinChains=Join[OpenSpinChains[Lag],ComplexSpinChains[Lag], InconsistentSpinChains[Lag]];
+		If[ (mClosedSpinChains = OSpinChains =!= {}) , 
+			Message[CheckLagrangian::ClosedSpinChains];
+			];
+		If[OptionValue@DetailedOutput, AppendTo[DetOutput,"Open/Complex/InconsistentSpinChains"->(Format[#,NiceForm]&/@OSpinChains)]]
+		];
+	
+	(*check if L is hermitian *)
+	(*HermitianQ cannot evaluate improperly contracted spinchains*)	
+	If[OptionValue@Hermiticity && !mClosedSpinChains,
 		If[(mHermiticity = !HermitianQ[Lag]), 
 			Message[CheckLagrangian::Hermiticity]; 
 			];
@@ -438,15 +458,6 @@ CheckLagrangian[Lagrangian_,opt:OptionsPattern[]]? OptionsCheck:=CheckLagrangian
 			Message[CheckLagrangian::ContractedIndices]; 
 			];
 		If[OptionValue@DetailedOutput, AppendTo[DetOutput,"UncontractedIndices"->UncIndices]]
-		];
-		
-	(*check if all spin chains are closed and contain only 2 fermions*)
-	If[OptionValue@ ClosedSpinChains,
-		OSpinChains=Join[OpenSpinChains[Lag],ComplexSpinChains[Lag]];
-		If[ (mClosedSpinChains = OSpinChains =!= {}) , 
-			Message[CheckLagrangian::ClosedSpinChains];
-			];
-		If[OptionValue@DetailedOutput, AppendTo[DetOutput,"Open/ComplexSpinChains"->(Format[#,NiceForm]&/@OSpinChains)]]
 		];
 		
 	(*check if kinetaic part is canonically normalized*) 

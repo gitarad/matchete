@@ -527,6 +527,9 @@ CreateGTensor[reps_List, charges_List, conj_]:= Module[{i, j, \[Mu], \[Nu], gaug
 (*To determine all the kinds of power type tracers labelled by their propagators*)
 
 
+PowerTypeTraces[{order_Integer}, opt___]:= PowerTypeTraces[order, opt];
+
+
 PowerTypeTraces[order_Integer, lightOnly_:False]:= Module[{possibilities, seed, temp, Xords},
 	Xords= $currentXdims;
 	

@@ -226,8 +226,8 @@ GAction[lInds_List, field:(Field|FieldStrength)[lab_, _, inds_, devs_]]:= Module
 	gaugeInds= Cases[inds, _? (MemberQ[Keys@$GaugeGroups,GroupFromInd@ #] &)];
 	out+= Sum[
 		group= GroupFromInd@ ind;
-		rep= Last@ ind/. Bar-> Identity;
-		indc= Bar@ Index[j, rep];
+		rep= Last[ind/. Bar-> Identity];
+		indc= If[Head@ ind === Bar, Index[j, rep], Bar@ Index[j, rep]];
 		If[rep === group@ adj, 
 			I CG[fStruct@ group, {ind, Index[A, group@ adj], indc}], 
 			If[Head@ ind === Bar, (*Hermitian generators*)

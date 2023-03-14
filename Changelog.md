@@ -1,10 +1,17 @@
 # Matchete changelog
 
-### 2022-12-08
-Initial release (v0.1.0)
+### v0.1.3 (2023-03-14)
+- Added check for invalid spinor contractions with the C matrix in Check Lagrangian
+- Fixed use of syntax e.g. "EFTOrder-> {6}" in Match
+- Fixed action of gauge groups on fields in conjugate (Bar'ed) representations
 
-### 2023-01-14
-Fixed an issue with field redefinitions on Mathematica 12, and other minor bug fixes (v0.1.1)
+### v0.1.2 (2023-02-10)
+- Fixed issues when dealing with global gauge groups
+- Improved MatchToCGs efficiency
 
-### 2023-02-10
-Fixed issues when dealing with global gauge groups and improved MatchToCGs efficiency (v0.1.2)
+### v0.1.1 (2023-01-14)
+- Fixed an issue with field redefinitions on Mathematica 12
+- Minor bug fixes
+
+## v0.1.0 (2022-12-08)
+- Initial release
