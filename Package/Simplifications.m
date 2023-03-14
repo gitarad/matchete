@@ -521,6 +521,12 @@ OperatorExpansionPattern[id_, op_Operator]:= Module[{indices},
 (*Characterizes all properties of an operator object *)
 
 
+OperatorProperties::nonop= "Passed a non-operator \"`1`\".";
+
+
+OperatorProperties[id_, x:Except[_Operator]]:= (Message[OperatorProperties::nonop, x]; Abort[];);
+
+
 OperatorProperties[id_, op_Operator]:= Module[{count= 1, couplings, conjugateIndexExchange, equivClasses, 
 		fieldTypes, flavorInds, flavorPerms, gaugeFields, indexGrouping, indexTypes, opIDpattern, permPattern, reexpPattern, 
 		selfConjugate, selfconjugateType, symmetries},

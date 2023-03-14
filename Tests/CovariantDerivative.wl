@@ -21,6 +21,7 @@ DefineFlavorIndex[Flavor, 3];
 
 DefineField[S, Scalar, Indices-> {SU3c@ adj}, SelfConjugate-> True, Mass-> Heavy];
 DefineField[H, Scalar, Charges-> {U1Y[1/2]}];
+DefineField[T, Scalar, Indices-> {Bar@ SU3c@ fund}];
 DefineField[F, Fermion, Indices-> {SU3c@ fund, Flavor}, Charges-> {U1Y[-2]}];
 
 
@@ -64,7 +65,7 @@ VerificationTest[
 (*Commute derivatives*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*GAction*)
 
 
@@ -83,6 +84,15 @@ VerificationTest[
 	I g3[] CG[fStruct@ SU3c, {A, B, C}] FS[G, \[Mu],  \[Nu], B] S@ C// RelabelIndices
 ,
 	TestID-> "GAction on colored scalar"
+]
+
+
+VerificationTest[
+	GAction[{Index[\[Mu], Lorentz], Index[\[Nu], Lorentz]}, T@ a]// RelabelIndices
+,
+	-g3[] FS[G, \[Mu], \[Nu], A] Bar@ CG[gen@ SU3c@ fund, {A, a, b}] T@ b// RelabelIndices
+,
+	TestID-> "GAction on anti-fundamental scalar"
 ]
 
 
