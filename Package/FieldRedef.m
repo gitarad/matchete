@@ -889,7 +889,7 @@ FieldsToShift[L0_]:=Module[{freeL,L,fields, list},
 	(* now extract all EoM terms *)
 	list = Cases[List@@Expand[L+Nothing], x_/;MemberQ[x, EoM[___],{0,Infinity}]];
 	list = SortBy[{(First@Cases[#, _EoM,{0,Infinity}]&/@list)/.EoM[Field[f_,___]]|EoM[Bar@Field[f_,___]]|EoM[Transp@Field[f_,___]]:>f,(OperatorDimension@NormalForm@#)&/@list}\[Transpose],{First,Last}];
-	SortBy[First/@Gather[SortBy[list,{First,Last}],First[#1]==First[#2]&],Last]
+	SortBy[First/@Gather[SortBy[list,{First,Last}],First[#1]===First[#2]&],Last]
 ]
 
 

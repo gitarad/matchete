@@ -15,7 +15,7 @@ Package["Matchete`"]
 (*Public:*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Scoping*)
 
 
@@ -428,7 +428,7 @@ Options[CheckLagrangian]={
 
 
 CheckLagrangian[Lagrangian_,opt:OptionsPattern[]]? OptionsCheck:=CheckLagrangian[Lag,opt]=
-	Module[{Lag=HcExpand@Lagrangian,DetOutput=<||>,OSpinChains,HeavTadpoles,UncIndices,ExtraHeads, mHermiticity=False,mContractedIndices=False,mClosedSpinChains=False, mCanonicallyNormalized=False,mMassBasis=False,mHeavyTadpoles=False,mChargeNeutral=False,mFreeOfGaugeFields=False,mUndefinedObject=False,mGaugeAnomalies=False},
+	Module[{Lag=RelabelIndices@HcExpand@Lagrangian,DetOutput=<||>,OSpinChains,HeavTadpoles,UncIndices,ExtraHeads, mHermiticity=False,mContractedIndices=False,mClosedSpinChains=False, mCanonicallyNormalized=False,mMassBasis=False,mHeavyTadpoles=False,mChargeNeutral=False,mFreeOfGaugeFields=False,mUndefinedObject=False,mGaugeAnomalies=False},
 	(*Checks that Lag is a series of terms with fields or FS tensors*)
 	
 	LagrangianLikeCheck@ Lag;

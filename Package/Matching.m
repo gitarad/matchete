@@ -335,7 +335,7 @@ CovariantLoop[lag, fields, opts]=Module[{lagFields, n, types, dofNumbers, ord, o
 	
 	(*Update Lagrangian*)
 	ord= OptionValue@ EFTOrder;
-	SetCurrentLagrangian[lag, 1, ord];
+	SetCurrentLagrangian[lag, 1, If[Head@ ord === List, First @ord, ord]];
 	
 	(*Number the fields *)
 	types= FieldType/@ fields;

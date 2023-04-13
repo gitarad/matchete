@@ -252,16 +252,24 @@ HcSimplify::nothermitian= "The Lagrangian is not hermitian."
 HcSimplify::Hcfailed= "HcSimplify failed."
 
 
-HcSimplify[Lagrangian_]:=Module[{nonhcterms, nonhctermsext, selfhcterms, pairs, singles, n1, n2, indexlist, output, Lag=Contract@GreensSimplify@Lagrangian},
-	If[!HermitianQ[Lag],Message[HcSimplify::nothermitian];Abort[]];
-	If[Head@Lag=!=Plus && HermitianQ@Lag, Return[Lagrangian]];
+HcSimplify[Lagrangian_]:=Module[{nonhcterms, nonhctermsext, selfhcterms, pairs, singles, n1, n2, indexlist, output, Lag=Contract@CollectOperators@Lagrangian,i},
+	(*If[!HermitianQ[Lag],Message[HcSimplify::nothermitian];Abort[]];*)
+	If[Head@Lag=!=Plus (*&& HermitianQ@Lag*), Return[Lagrangian]];
+	(*Identify self-hermitian terms and others*)
 	selfhcterms = Select[Lag, HermitianQ[#]&];
 	If[selfhcterms===Lag, Return[Lagrangian]];
 	nonhcterms = List@@(Lag-selfhcterms);
+	(*Build pairs with positions of term and self-hermitian related term*)
 	nonhctermsext = RelabelIndices@CollectOperators[{#,Bar@#}]& /@ nonhcterms ;
 	pairs = DeleteDuplicates[Sort[Position[nonhctermsext,#[[1]]][[;;,1]]&/@nonhctermsext]];
-	singles=Select[pairs, Length@#<2&];
+	singles=Flatten@Select[pairs, Length@#<2&];
 	pairs=Complement[pairs,List/@Flatten@Complement[pairs,singles]];
+	singles=Complement[singles,Flatten@pairs];
+	For[i=1,i<=Length@singles,i++,
+			AppendTo[pairs,Flatten@{singles[[i]],If[CollectOperators[Bar[nonhcterms[[singles[[i]]]]]-nonhcterms[[#]]]===0,#,Nothing]&/@singles}]
+			];
+	pairs=DeleteDuplicates[Sort/@pairs];
+	(*Choose which term to keep and which term to put in +H.c.*)
 	indexlist= If[Length[#]=!=2,
 		Message[HcSimplify::Hcnotfound,Format[nonhcterms[[#[[1]]]],NiceForm]];
 		selfhcterms = selfhcterms + nonhcterms[[#[[1]]]];
@@ -275,13 +283,14 @@ HcSimplify[Lagrangian_]:=Module[{nonhcterms, nonhctermsext, selfhcterms, pairs, 
 			]
 		]&/@pairs;
 	nonhcterms = Delete[nonhcterms,List/@indexlist];
+	(*Write Lagrangian with +H.c.*)
 	output = CollectOperators@selfhcterms + HcTerms[CollectOperators[Plus@@nonhcterms]];
-	If[GreensSimplify@RelabelIndices@(HcExpand@output -Lag)  =!= 0, Message[HcSimplify::Hcfailed];Abort[]];
+	If[GreensSimplify@(HcExpand@output -Lagrangian)  =!= 0, Message[HcSimplify::Hcfailed];Return[Lagrangian]];
 	output
 	]
 	
 HcTerms[0]:=0;
-HcExpand[Lag_]:= Lag /.{HcTerms[expr_]:> expr + Bar@expr} //RelabelIndices;
+HcExpand[Lag_]:= Lag /.{HcTerms[expr_]:> expr + Bar@expr} ;
 
 
 Bar@HcTerms[arg___]:=HcTerms[arg]
@@ -594,16 +603,21 @@ OperatorProperties[id_, op_Operator]:= Module[{count= 1, couplings, conjugateInd
 KineticOpQ= MatchQ[Alternatives[
 		(*HoldPattern@ Operator[Bar@Field[_, Scalar, _, {\[Mu]_}], Field[_, Scalar, _, {\[Mu]_}]],
 		HoldPattern@ Operator[Field[_, Scalar, _, {\[Mu]_}], Field[_, Scalar, _, {\[Mu]_}]],*)
+		(*Scalars*)
 		HoldPattern@ Operator[Bar@Field[_, Scalar, _, {}], EoM@ Field[_, Scalar, _, {}]],
 		HoldPattern@ Operator[Field[_, Scalar, _, {}], EoM@ Field[_, Scalar, _, {}]],
+		(*Fermions*)
 		HoldPattern@ Operator[Bar@ Field[_, Fermion, _, {}]** EoM@ Field[_, Fermion, _, {}] ],
 		HoldPattern@ Operator[Bar@ Field[_, Fermion, _, {}]** DiracProduct@ _Proj**
 			EoM@ Field[_, Fermion, _, {}] ],
 		HoldPattern@ Operator[Transp@ Field[_, Fermion, _, {}]** DiracProduct[GammaCC]** EoM@ Field[_, Fermion, _, {}] ],
 		HoldPattern@ Operator[Transp@ Field[_, Fermion, _, {}]** DiracProduct[GammaCC, _Proj]**
 			EoM@ Field[_, Fermion, _, {}] ],
+		(*Vectors*)
 		HoldPattern@ Operator[FieldStrength[_, {\[Mu]_, \[Nu]_}, {a_}, {}],
-			 FieldStrength[_, {\[Mu]_, \[Nu]_}, {a_}, {}]]
+			FieldStrength[_, {\[Mu]_, \[Nu]_}, {a_}, {}]],
+		HoldPattern@ Operator[Bar@ FieldStrength[_, {\[Mu]_, \[Nu]_}, {a_}, {}],
+			FieldStrength[_, {\[Mu]_, \[Nu]_}, {a_}, {}]]
 		] ]; 
 
 
@@ -623,19 +637,24 @@ Conj@ l_List:= Conj/@ l;
 (*Operator class discriminator *)
 
 
-OperatorClass@ op_Operator:= Module[{devs= 0, fields, temp},
+OperatorClass@ op_Operator:= Module[{fields, temp, 
+		devs= 0, gaugeFields= List@@ Query[All, Key@ Field]@ $GaugeGroups},
 	devs+= Plus@@ Cases[op, EoM@ (Bar|Transp)@ Field[_, type_, __]:> EOMDevs@ type, All];
 	devs+= Plus@@ Cases[op, EoM@ Field[_, type_, __]:> EOMDevs@ type, All];
-	devs+= Plus@@ Cases[op, FieldStrength[___, linds_]:> 2+ Length@ linds, All];
+	devs+= Plus@@ Cases[op, FieldStrength[___, linds_]:> 
+		1+ Length@ linds, All];
 	devs+= Plus@@ Cases[op, Field[___, linds_]:> Length@ linds, All];
 
-	temp= op/. EoM-> Identity;
-	fields= Cases[temp, Bar@ Field[lab_, (Scalar|Fermion),__]:> Conj@ lab, All];
-	temp= DeleteCases[temp, Bar@ Field[_, (Scalar|Fermion),__], All];
-	fields= Join[fields, Cases[temp, Field[lab_, (Scalar|Fermion),__]:> lab, All]];
+	temp= op/. EoM-> Identity/. FieldStrength[lab_, inds_, rest__]:> Field[lab, Vector@ First@ inds, rest];
+	devs+= Plus@@ Cases[temp, Field[lab_, _Vector, __]/; MemberQ[gaugeFields, lab]-> 1, All];
+	temp= DeleteCases[temp, Field[lab_, _Vector, __]/; MemberQ[gaugeFields, lab], All];
+	
+	fields= Cases[temp, Bar@ Field[lab_, (Scalar|Fermion|_Vector),__]:> Conj@ lab, All];
+	temp= DeleteCases[temp, Bar@ Field[_, (Scalar|Fermion|_Vector),__], All];
+	fields= Join[fields, Cases[temp, Field[lab_, (Scalar|Fermion|_Vector),__]:> lab, All]];
 	{Sort@ fields, devs}
 ];
-EOMDevs@ type_:= Switch[type, Scalar, 2, Fermion, 1, _Vector, 3] ;
+EOMDevs[type_]:= Switch[type, Scalar, 2, Fermion, 1, _Vector, 2] ;
 
 
 (* ::Text:: *)
@@ -853,7 +872,7 @@ ExprFlavorCanonize@ HoldPattern@ Times[couplings__?(FreeQ[Operator]), op:((Atomi
 		{indReplace= Thread@ Rule[inds, ConstructDummyIndices@ inds[[;;, 2]]]},
 	RelabelIndices[RelabelIndices[Times@ couplings, Unique-> True]/. indReplace] (op/. indReplace)
 ];
-ExprFlavorCanonize@ expr_:= Block[{out= Expand@ expr},
+ExprFlavorCanonize@ expr_:= Block[{out=BetterExpand@ expr},
 	If[Head@ out === Plus, ExprFlavorCanonize/@ out, out]
 ];
 
@@ -1438,7 +1457,7 @@ IdentitiesCGs@ op_Operator:= Block[{},
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Simplify using rules *)
 
 
@@ -1519,7 +1538,7 @@ ReextractGaugeCouplings@ expr_:= expr/. {
 };
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Output functions*)
 
 
@@ -1540,7 +1559,7 @@ IBPSimplify19@ expr_:= OpsToFieldForm[
 	CollectCoefficients@ IBPSimplify17@ ContractDelta@ ContractCGs@ expr, NormalForm-> False]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Main Exported simplification function*)
 
 
@@ -1599,7 +1618,7 @@ IBPIdentities@ ___:= (Message[IBPIdentities::args]; Abort[];);
 nonTrivCouplingPattern= Coupling[_, {__}, _]| Bar@ Coupling[_, {__}, _]| Power[Coupling[_, {_}, _], _];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Construct Coupling Pattern *)
 
 
@@ -1649,7 +1668,7 @@ CouplingPattern@ Bar@ Coupling[lab_, indsPat_, ord_]:= Module[{symsPat, inds, sy
 CouplingPattern@ pow:Power[_Coupling, _]:= pow:> 1;
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Collect couplings in expression*)
 
 
@@ -1676,22 +1695,6 @@ IdentifyCouplings@ coef_:= Module[{out= PseudoTimes@ Expand@ coef, couplingContr
 		b PseudoTimes@ a;
 	out/. pats// ReleasePseudoTimes
 ]
-
-
-(* ::Text:: *)
-(*A Times-like head to expand out powers *)
-
-
-SetAttributes[PseudoTimes, {Orderless}];
-PseudoTimes@ expr_Plus:= PseudoTimes/@ expr;
-PseudoTimes@ expr_Times:= PseudoTimes@@ expr;
-PseudoTimes[a___, PseudoTimes@ b___]:= PseudoTimes[a, b]
-PseudoTimes[a___, n_Integer]:= n PseudoTimes@ a;
-PseudoTimes[a___, b_Plus]:= PseudoTimes[a, #]&/@ b;
-PseudoTimes[a___, Power[b_, n_Integer/; n > 1]]:= PseudoTimes[a, Sequence@@ ConstantArray[b, n]];
-
-
-ReleasePseudoTimes@ expr_:= expr/. PseudoTimes-> Times;
 
 
 (* ::Subsection::Closed:: *)

@@ -319,6 +319,47 @@ Gamma52LC[exp_]:=exp/.DiracProduct[dp___,Gamma5]:> -I/4! LCTensor[\[Alpha],\[Bet
 
 
 (* ::Subsubsection::Closed:: *)
+(*Trace of an expression*)
+
+
+(* ::Text:: *)
+(*Move the DiracTrace from acting on any expression to act on the DiracProduct inside the expression*)
+
+
+Options@ DiracTrace= {Dimensions->\[ScriptD]};
+
+
+DiracTrace[expr_, opt:OptionsPattern[]]:= Module[
+	{
+		allterms = Expand@ expr,
+		term
+	},
+	
+	allterms = If[Head@ allterms === Plus,
+		List@@ allterms,
+		{allterms}
+	];
+	
+	(*sum over all terms in the list allterms*)
+	Sum[
+		Switch[Count[term, _DiracProduct, Infinity],
+			0, 4 term,
+			1, term/. x_DiracProduct:> DiracTrace[x],
+			_, Message[DiracTrace::canteval]; term
+		],
+		{term, allterms}
+	] /.\[ScriptD]->OptionValue@ Dimensions 
+];
+
+
+(* ::Text:: *)
+(*Error Messages*)
+
+
+DiracTrace::canteval= "Dirac trace encountered term with multiple Dirac products. No trace applied.";
+
+
+(* ::Subsubsection::Closed:: *)
 (*Split of anti-symmetrized \[Gamma] matrices *)
 
 
@@ -334,14 +375,14 @@ ASymGammaExpand@ x_= x;
 
 
 (* ::Text:: *)
-(*Anti-symmetrize all the DiracProducts inside DiracTraces*)
+(*Expand all compact objects inside DiracTraces*)
 
 
-DiracTrace[DiracProduct[a___, GammaM[\[Mu]_, \[Nu]__], b___],opt___]:= 
-	DiracTrace[ASymGammaExpand@ DiracProduct[a, GammaM[\[Mu], \[Nu]], b],opt]// Expand;
+DiracTrace[DiracProduct[a___, GammaM[\[Mu]_, \[Nu]__], b___], opt:OptionsPattern[]]:= 
+	DiracTrace[ASymGammaExpand@ DiracProduct[a, GammaM[\[Mu], \[Nu]], b], opt]// Expand;
 
 
-DiracTrace[DiracProduct[a___, Proj@ s_],opt___]:= DiracTrace[DiracProduct@ a/2+ s DiracProduct[a, Gamma5]/2,opt] ;
+DiracTrace[DiracProduct[a___, Proj@ s_], opt:OptionsPattern[]]:= DiracTrace[DiracProduct@ a/2+ s DiracProduct[a, Gamma5]/2, opt] ;
 
 
 (* ::Subsubsection::Closed:: *)
@@ -349,50 +390,12 @@ DiracTrace[DiracProduct[a___, Proj@ s_],opt___]:= DiracTrace[DiracProduct@ a/2+ 
 
 
 (* ::Text:: *)
-(*Error Messages*)
-
-
-DiracTrace::unknown=  "Dirac trace unknown: left unevaluated.";
-DiracTrace::canteval= "Dirac trace encountered term with multiple Dirac products. No trace applied.";
-
-
-(* ::Text:: *)
 (*Basic traces*)
 
 
-DiracTrace[DiracProduct[GammaM@ \[Mu]_Index, GammaM@ \[Nu]_Index],___]:= 4 Metric[\[Mu],\[Nu]];
-DiracTrace[DiracProduct[GammaM@ \[Mu]_Index, GammaM@ \[Nu]_Index, GammaM@ \[Rho]_Index, GammaM@ \[Sigma]_Index],___]:=
+DiracTrace[DiracProduct[GammaM@ \[Mu]_Index, GammaM@ \[Nu]_Index], OptionsPattern[]]:= 4 Metric[\[Mu],\[Nu]];
+DiracTrace[DiracProduct[GammaM@ \[Mu]_Index, GammaM@ \[Nu]_Index, GammaM@ \[Rho]_Index, GammaM@ \[Sigma]_Index], OptionsPattern[]]:=
 	4 Metric[\[Mu],\[Nu]] Metric[\[Rho],\[Sigma]] - 4 Metric[\[Mu],\[Rho]] Metric[\[Nu],\[Sigma]] + 4 Metric[\[Mu],\[Sigma]] Metric[\[Nu],\[Rho]];
-
-
-(* ::Text:: *)
-(*Move the DiracTrace from acting on any expression to act on the DiracProduct inside the expression*)
-
-
-ProjExpand[exp_]:=exp/. DiracProduct[b___,Proj[s_]]:> (DiracProduct[b] + s  DiracProduct[b,Gamma5])/2 //Expand;
-
-
-DiracTrace[expr_,opt:OptionsPattern[{Dimensions->\[ScriptD]}]]:= Module[
-	{
-		allterms = Expand@ expr,
-		term
-	},
-	
-	allterms = If[Head@ allterms === Plus,
-		List@@ allterms,
-		{allterms}
-	];
-	
-	(*sum over all terms in the list allterms*)
-	Sum[
-		Switch[Count[term, _DiracProduct, Infinity],
-			0, 4 term,
-			1, term/. x_DiracProduct:> DiracTrace[x ,opt],
-			_, Message[DiracTrace::canteval]; term
-		],
-		{term, allterms}
-	] /.\[ScriptD]->OptionValue@Dimensions 
-];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -403,28 +406,25 @@ DiracTrace[expr_,opt:OptionsPattern[{Dimensions->\[ScriptD]}]]:= Module[
 (*Reduction of the DiracTraces*)
 
 
-DiracTrace[x_DiracProduct,opt:OptionsPattern[{Dimensions->\[ScriptD]}]]:= Module[
-	{indices, n},
-	(*Reduce the traces depending on whether they include \[Gamma]^5 or not.*)
+DiracTrace[x_DiracProduct, opt:OptionsPattern[]]:= Module[
+	{indices, n, \[Mu]},
+	(*Reduce the traces depending on whether they include \[Gamma]5 or not.*)
 	Switch[MemberQ[List@@x, Gamma5],
 		False,
 			indices= List@@ x[[;;, 1]];
 			If[OddQ@ Length@ x, Return@ 0;];
 			Expand@ Sum[
-				(-1)^n * Metric@@ indices[[{1, n}]] DiracTrace[x[[Complement[Range@ Length@ x, {1, n}] ]],opt],
+				(-1)^n * Metric@@ indices[[{1, n}]] DiracTrace[x[[Complement[Range@ Length@ x, {1, n}] ]], opt],
 			{n, 2, Length@ x}],
-		True,
+		True, (* The results here yield evanescent contributions we will need to deal with at two-loop order *)
 			indices= List@@ x[[;;-2, 1]];
-			If[EvenQ@ Length@ x || Length@ x === 3 || Length@ x === 1, Return@ 0;];
-			If[Length@ x === 5 , Return[-4I * LCTensor@@ indices]];
-			If[Length@ x >= 7,
-				If[OptionValue@Dimensions =!= 4, 
-					(*Reduction has not yet been attempted. These will have evanescent contributions*)
-					Message[DiracTrace::unknown];
-					Return@ x;
-					,
-					DiracTrace[x//Gamma52LC,Dimensions->4]
-				]
+			Which[
+				EvenQ@ Length@ x || Length@ x === 3 || Length@ x === 1, 
+					0,
+				Length@ x === 5, 
+					-4I * LCTensor@@ indices,
+				Length@ x >= 7, 
+					Sum[(-1)^(n1+n2+1) Metric@@ indices[[{n1, n2}]] DiracTrace[x[[Complement[Range@ Length@ x, {n1, n2}]]]],{n1, 1, 2},{n2,n1+1,3}] + I LCTensor@@ Join[indices[[{1,2,3}]],{Index[\[Mu],Lorentz]}] DiracTrace[\[Gamma][\[Mu]]**\[Gamma][5]**x[[Complement[Range@ Length@ x, {1, 2, 3}] ]]] 
 			]
 	]
 ];
@@ -737,6 +737,9 @@ ExpandEvanescentOperators[expr_]:= expr /.EvaOp[x_,___]:>$EvanescentTerms[x][Ope
 GetEvanescentTerm[EvName___]:= $EvanescentTerms[EvName];
 
 
+ProjExpand[exp_]:=exp/. DiracProduct[b___,Proj[s_]]:> (DiracProduct[b] + s  DiracProduct[b,Gamma5])/2 //Expand;
+
+
 DefineEvanescentOperator[inioperator_,finoperator_,order_,origin_]:=Module[{evaOperator,evaOperatorList,label,looporder},
 	evaOperator= inioperator-finoperator//Expand//ContractCGs//RefineDiracProducts//Contract//Simplify;
 	evaOperatorList=If[Keys@$EvanescentTerms=!={},List@@(Transpose@$EvanescentTerms)[Operator],{}];
@@ -755,7 +758,7 @@ DefineEvanescentOperator[inioperator_,finoperator_,order_,origin_]:=Module[{evaO
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Fierzing*)
 
 

@@ -881,6 +881,7 @@ LogTypeSTr[propType_, {order_Integer}, OptionsPattern[]]:= Module[
 	expr= expr/. Tr@ 0-> 0/. x:Alternatives[_InvProp, Power[_InvProp, _]]:> Commutative@ x/. Commutative@ x_-> x;
 	
 	(*expr= RelabelIndices@ Contract@ CollectGammaMatrices@ expr //Timing;*)
+	
 	expr = Contract@ expr;
 	(*expr= Contract@ CollectGammaMatrices@ expr;*)
 (*	If[MatchQ[propType, hFermion],
