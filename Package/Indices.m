@@ -8,7 +8,7 @@ Package["Matchete`"]
 
 
 (* ::Subtitle:: *)
-(*Short description of functions implemented in this file.*)
+(*Methods for all things indices *)
 
 
 (* ::Chapter:: *)
@@ -89,7 +89,7 @@ Delta::usage    = "Delta[Index[a,rep],Index[b,rep]] denotes the delta function f
 Metric::usage   = "Metric[\[Mu],\[Nu]] denotes the Lorentz metric tensor \!\(\*SubscriptBox[\(g\), \(\[Mu]\[Nu]\)]\).";
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Internal*)
 
 
@@ -226,43 +226,32 @@ FindDummyIndices::sum="Head of argument is Plus. FindDummyIndices cannot be call
 FindDummyIndices::trippleindex="`1` is appearing more than twice.";
 
 
+FindDummyIndices= First@* FindIndices;
+
+
 (* Function to find all dummy indices in a single term *)
-FindDummyIndices[expression_]:=Module[
+FindIndices[expression_]:=Block[
 	{
-		list={},
-		pow,
-		index,
-		expr=Expand[expression]
+		list,
+		(*Temporarly remove all powers*)
+		expr=PseudoTimes@ expression
 	},
 
-	(* Throw error when expr is not a single term*)
-	If[Head[expr]===Plus,
-		Message[FindDummyIndices::sum];
-		Abort[]
-	];
-
-	(* Temporarly remove all powers, here we do not need a release hold afterwards *)
-	expr=RemovePower[expr];
-	
 	(* ignore indices from diagonal couplings since these are not considered for the dummy index summation *)
-	expr = expr /. Coupling[a:Alternatives@@($FieldAssociation[#][Mass] & /@ GetFieldsByProperty[Heavy -> True]),{Index[b_,rep_]},n_]:> Coupling[a,{index[b,rep]},n];
+	(*expr = expr/. Coupling[a:Alternatives@@ ($FieldAssociation[#][Mass]&/@ Keys@ Select[$FieldAssociation, #[Heavy] &]), {Index[b_,rep_]}, n_]:> 
+		Coupling[a, {}, n];*)
+	expr= DeleteCases[expr, Coupling[Alternatives@@ ($FieldAssociation[#][Mass]&/@ Keys@ Select[$FieldAssociation, #[Heavy] &]), {_Index}, _], All];
 
 	(* list all indices and their multiplicity found in expr *)
-	list = Tally[Cases[expr,Index[_,_],Infinity(*All*)]];
+	list = Tally[Cases[expr, _Index, (*{-3,-2}*)All]];
 
 	(* throw error if there is a tripple index *)
-	(*If[Or@@Map[(#>2)&,(list/.List[a_,b_Integer]:>b)],
-		Message[FindDummyIndices::trippleindex];
-		Abort[]
-	];*)
-	If[(#/.List[a_,b_Integer]:>b)>2,
-		Message[FindDummyIndices::trippleindex, #/.List[a_,b_Integer]:>a];
-		(*Print@NiceForm[expr];*)
-		Abort[]
-	]& /@list ;
-
-	(* return all indices appearing twice *)
-	Return[Cases[list,{x_,2}:>x]]
+	FirstCase[list, {a_, b_/; b> 2}:> 
+		(Message[FindDummyIndices::trippleindex, a]; Abort[];)];
+	
+	(*{dummy indices, open indices}*)
+	(*{Select[list, MatchQ[2]@*Last][[;;,1]], Select[list, MatchQ[1]@*Last][[;;,1]]}*)
+	{Cases[list, {x_, 2}:> x], Cases[list, {x_, 1}:> x]}
 ]
 
 
@@ -276,39 +265,34 @@ FindOpenIndices[expression_]:=Module[
 		Abort[]
 	];
 	
-	Complement[DeleteDuplicates@Cases[expr,_Index,Infinity], FindDummyIndices[expr]] 	 
+	Last@ FindIndices[expr]
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Relabel repeated indices (in single term)*)
 
 
-RelabelIndicesInTerm::sum="Head of argument is Plus. RelabelIndicesInTerm cannot be called on a sum, but only on a single term.";
+(*RelabelIndicesInTerm::sum="Head of argument is Plus. RelabelIndicesInTerm cannot be called on a sum, but only on a single term.";*)
 
 
-RelabelIndicesInTerm[expr_,unique_:False]:=Module[
+$canonicalLabels= Block[{n}, Table[Symbol["Global`d$$" <> ToString[n]], {n,50}]]
+
+
+RelabelIndicesInTerm[expr_,unique_:False]:=Block[
 	{
 		ind,
 		indexlist={},
 		openInds,
-		rule={},
-		result
-	},
-	
-	(* Check that expr is no sum *)
-	If[Head[Expand@expr]===Plus,
-		Message[RelabelIndicesInTerm::sum];
-		Abort[]
-	];
-	
+		rule={}
+	},	
+
 	(* Unique | canonical dummy index labels*)
 	If[unique,
 		(*True: unique dummy indices are required:*)
 		Module[{},
-			result = expr;
 			(*Find dummy indices*)
-			indexlist = FindDummyIndices[result];
+			indexlist = FindDummyIndices[expr];
 
 			(*Find replacement rules*)
 			rule = Cases[
@@ -316,15 +300,12 @@ RelabelIndicesInTerm[expr_,unique_:False]:=Module[
 				Index[label_,type_]:>(Index[label,type]->Index[Unique["u"],type]),
 				All
 			];
-		],
-
+		]
+	,
 		(*False: canonically labled dummy indices are required:*)
 		Module[{n},
-			(*make dummy indices unique*)
-			result = RelabelIndicesInTerm[expr,True];
 			(*Find the new dummy indices*)
-			indexlist = FindDummyIndices[result];
-			openInds= Complement[DeleteDuplicates@ Cases[result, _Index, Infinity], indexlist];
+			{indexlist, openInds}= FindIndices@ expr;
 									
 			(*create a separate counter for every type of index*)
 			Map[
@@ -338,17 +319,16 @@ RelabelIndicesInTerm[expr_,unique_:False]:=Module[
 				indexlist,
 				Index[label_,type_]:> Index[label,type]->
 					(While[True, 
-						If[!MemberQ[openInds, ind= Index[ToExpression["d$$"<>ToString[n[type]++]],type]], 
+						If[!MemberQ[openInds, ind= Index[$canonicalLabels[[n[type]++]],type]], 
 							Break[];
-						]; ]; ind),
-				All
+						]; 
+					]; ind)
 			];
-			
 		]
 	];
 
 	(*apply rules*)
-	Return[result/.rule]
+	expr/.rule
 ]
 
 
@@ -377,16 +357,15 @@ RelabelIndices[expr_Plus, opt:OptionsPattern[]] := RelabelIndices[#, opt]&/@expr
 RelabelIndices[HcTerms[expr_], opt:OptionsPattern[]]:=HcTerms[RelabelIndices[expr, opt]];
 
 (* Relabel dummy indices *)
-RelabelIndices[expression:Except[_Plus], OptionsPattern[]]:=Module[
+RelabelIndices[expression:Except[_Plus], OptionsPattern[]]:=Block[
 	{
 		expr = expression,
-		solution,
 		(* determine whether to use unique or canonical index labels *)
 		unique = OptionValue[Unique]
 	},
 	(* by default expand expression first *)
 	If[OptionValue[Expand],
-		expr = Expand[expr]
+		expr = BetterExpand[expr]
 	];
 
 	(*treat every term in a sum separately*)
@@ -396,11 +375,7 @@ RelabelIndices[expression:Except[_Plus], OptionsPattern[]]:=Module[
 	];
 
 	(*relabel dummy indices in each term separately and sum them up*)
-	solution = Sum[
-		RelabelIndicesInTerm[term,unique],
-		{term,expr}
-	];
-	Return[solution]
+	Plus@@ (RelabelIndicesInTerm[#, unique]&/@ expr)
 ]
 
 

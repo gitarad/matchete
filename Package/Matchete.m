@@ -15,7 +15,7 @@ Package["Matchete`"]
 (*Public:*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Scoping*)
 
 
@@ -30,7 +30,7 @@ PackageExport["$MatchetePath"]
 PackageExport["CheckForUpdate"]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Internal*)
 
 
@@ -47,6 +47,10 @@ PackageScope["SubscriptStyle"]
 
 PackageScope["Defined"]
 PackageScope["OptionalMonitor"]
+
+
+PackageScope["PseudoTimes"]
+PackageScope["ReleasePseudoTimes"]
 
 
 PackageScope["ReplaceListSubExprs"]
@@ -213,7 +217,7 @@ OptionMessage[ModelParameters, func_, val_]            := Message[General::optex
 OptionMessage[IndexAlphabet, LoadModel, val_]          := Message[General::optexpectsval, IndexAlphabet, LoadModel, val, "list of replacement rules with a list of strings as the target value"];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Utility functions*)
 
 
@@ -291,6 +295,26 @@ Distributable@ expr_:= FreeQ[expr, Plus];
 SetAttributes[OptionalMonitor, HoldRest];
 OptionalMonitor[True, expr_, mon_]:= Monitor[expr, mon];
 OptionalMonitor[False, expr_, mon_]:= expr;
+
+
+(* ::Subsection::Closed:: *)
+(*PseudoTimes*)
+
+
+(* ::Text:: *)
+(*A Times-like head to expand out powers *)
+
+
+SetAttributes[PseudoTimes, {Orderless}];
+PseudoTimes@ expr_Plus:= PseudoTimes/@ expr;
+PseudoTimes@ expr_Times:= PseudoTimes@@ expr;
+PseudoTimes[a___, PseudoTimes@ b___]:= PseudoTimes[a, b]
+PseudoTimes[a___, n_Integer]:= n PseudoTimes@ a;
+PseudoTimes[a___, b_Plus]:= PseudoTimes[a, #]&/@ b;
+PseudoTimes[a___, Power[b_, n_Integer/; n > 1]]:= PseudoTimes[a, Sequence@@ ConstantArray[b, n]];
+
+
+ReleasePseudoTimes@ expr_:= expr/. PseudoTimes-> Times;
 
 
 (* ::Subsection::Closed:: *)

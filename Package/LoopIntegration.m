@@ -196,8 +196,11 @@ TermsToList@ expr_:= Module[{temp= BetterExpand@ expr},
 ];
 
 
-EpsExpand[expr_,OptionsPattern[{Order->0}]]:= Module[{sub},
-	Normal@ Series[expr/. \[ScriptD]-> 4-2\[Epsilon], {\[Epsilon], 0, OptionValue@Order}] ];
+EpsExpand[expr_,opt:OptionsPattern[{Order->0}]]:= EpsilonExpand[#, opt]&/@ BetterExpand@ expr
+
+
+EpsilonExpand[expr_,OptionsPattern[{Order->0}]]:= Module[{sub},
+	Normal@ Series[expr/.gf:>GammaFactor/. \[ScriptD]-> 4-2\[Epsilon], {\[Epsilon], 0, OptionValue@Order}] ];
 
 
 (* ::Text:: *)
@@ -342,13 +345,17 @@ LoopMom/:Power[_LoopMom,2] := InvProp@ 0;
 (*Extract LoopMom-slashes from DiracProduct: replaces product of momentum vectors with symmetrized product of metrics, e.g. LoopMom[Index[mu, Lorentz]] LoopMom[Index[nu, Lorentz]] -> InvProp[0] Metric[Index[mu, Lorentz], Index[nu, Lorentz]] /\[ScriptD], etc. *)
 
 
-SymmetricLoopMomReplacement@ momInds___:= Module[{inds, n},
+SymmetricLoopMomReplacement@ momInds___:= Module[{inds, n, symTensor},
 	inds= Flatten@ List@ momInds;
 	n= Length@ inds/ 2; 
-	SymTensor= If[OddQ@ Length@ inds, 0,
+	symTensor= If[OddQ@ Length@ inds, 0,
 	Plus@@ Times@@@ Map[Metric, DeleteDuplicatesBy[Partition[#, 2]&/@ Permutations@ inds, (Sort[Sort/@ #] &)], {2}]];
-	SymTensor InvProp[0]^n Gamma[\[ScriptD]/2]/ (Gamma[\[ScriptD]/2 + n] 2^n)/.Metric[{\[Alpha]_,\[Beta]_}]:>Metric[\[Alpha],\[Beta]]
+	(*gf[n] = Gamma[d/2]/ (Gamma[d/2 +n] 2^n)*)
+	symTensor InvProp[0]^n gf@n/.Metric[{\[Alpha]_,\[Beta]_}]:>Metric[\[Alpha],\[Beta]] 
 ];
+
+
+GammaFactor@ n_Integer:= GammaFactor@ n= Normal@ Series[Gamma[2- \[Epsilon]]/(2^n Gamma[2- \[Epsilon]+ n]), {\[Epsilon], 0, 1}];
 
 
 ExtractMomenta@ expr_ := Module[{out, pInds},

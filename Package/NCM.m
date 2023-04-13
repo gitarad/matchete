@@ -253,9 +253,8 @@ FermionTrace::multopens = "Multiple open fermion lines encountered in one term."
 OpenSpinChainQ= Not@* ClosedSpinChainQ;
 
 
-FermionTrace@ expr_:= Module[{pos, out= expr},	
+FermionTrace@ expr_:= Module[{out= BetterExpand@ expr},	
 	(*Trace terms in the sums separately*)
-	out= BetterExpand@ expr;
 	If[Head@ out === Plus, Return[FermionTrace/@ out];]; 
 	
 	Switch[Count[{out}, _NonCommutativeMultiply? OpenSpinChainQ, All]

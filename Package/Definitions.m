@@ -305,10 +305,8 @@ GetFieldsByProperty[propsSeq__]:=GetFieldsByProperty[List[propsSeq]]
 
 GetFieldsByProperty[props_Association]:= GetFieldsByProperty@ Normal@ props;
 
-GetFieldsByProperty[props:_List|_Rule]:=Module[{gf},
-	gf=GetFields[];
-	Table[If[MatchQ[gf[k],KeyValuePattern[props]],k,Nothing],{k,Keys[gf]}]
-]
+GetFieldsByProperty[props:_List|_Rule]:= 
+	Keys@ Select[$FieldAssociation, MatchQ[#, KeyValuePattern[props]]&];
 
 
 (* ::Subsection::Closed:: *)
@@ -1084,9 +1082,11 @@ GetGaugeGroupByProperty[propsSeq__]:= GetGaugeGroupByProperty@ List@ propsSeq;
 
 GetGaugeGroupByProperty[props_Association]:= GetGaugeGroupByProperty@ Normal@ props;
 
-GetGaugeGroupByProperty[props: (_List| _Rule)]:= Module[{gg= $GaugeGroups},
+GetGaugeGroupByProperty[props: _List| _Rule]:= 
+	Keys@ Select[$GaugeGroups, MatchQ[#, KeyValuePattern[props]]&];
+(* GetGaugeGroupByProperty[props: (_List| _Rule)]:= Module[{gg= $GaugeGroups},
 	Table[If[MatchQ[gg[k], KeyValuePattern[props]], k, Nothing], {k, Keys[gg]}]
-]
+] *)
 
 
 (* ::Subsection::Closed:: *)

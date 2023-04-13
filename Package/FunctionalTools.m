@@ -195,6 +195,9 @@ FD[_,y_,OptionsPattern[]] := Message[FD::invalidargument,y] /; !MatchQ[y, Field[
 (*Expand fluctuations of vector fields*)
 
 
+ExpandVectorFluctuations[lag_, f1_, f2__]:= ExpandVectorFluctuations[ExpandVectorFluctuations[lag, f2], f1]
+
+
 (* This functions expands out the vector field fluctuations of the vector field y in Field Strengh tensors and Covariant Derivatives *)
 ExpandVectorFluctuations[x_, y_]:=Module[
 	{
@@ -949,32 +952,63 @@ VarDraw[L_, x : SecondArgVarD, OptionsPattern[]] := Module[
 
 
 (* ::Subsubsection:: *)
-(*Variational derivative w.r.t. 1 field*)
+(*Variational derivatives*)
 
 
 Options[VarD] = {EFTOrder -> 6};
+Options[VarD1] = {EFTOrder -> 6};
 
 
-VarD[L_, f1 : SecondArgVarD, opt:OptionsPattern[]] := 
-		RelabelIndices@VarDraw[ExpandVectorFluctuations[L,f1],f1,opt]/.$\[Epsilon]FD->0 /. BackgroundField[l_]:>l 
+(* ::Text:: *)
+(*Master function removing all terms which trivially vanish under differentiation*)
 
 
-(* ::Subsubsection:: *)
+VarD[lag_, fs__, opt:OptionsPattern[]]:= Module[{gr, terms, labels},
+	labels= Cases[{fs}, Field[l_, __]-> l, All];
+	terms= BetterExpand@ lag;
+	terms= If[Head@ terms === Plus, List@@ terms, {terms}];
+
+	(* Remove terms which trivially vanish under differentiation *)
+	Do[
+		terms= If[MemberQ[$GaugeGroups, KeyValuePattern[Field-> lab]],
+			(* gauge field *)
+			gr= First@ GetGaugeGroupByProperty[Field -> lab];
+			Select[terms, NotTrivialWRTGaugeFieldQ[gr]]
+		,
+			(* matter field *)
+			Cases[terms, a_/;! FreeQ[a, Field[lab, __]] ]
+		];
+	, {lab, labels}];
+
+	terms= ExpandVectorFluctuations[Total@ terms, Sequence@@ DeleteDuplicatesBy[{fs}, 
+		FirstCase[{#}, Field[l_, __] :> l, Nothing, All]& ] ];
+	VarD1[terms, fs, opt]
+];
+
+
+(* ::Text:: *)
+(*Checks if the term is trivially zero under differentiation w.r.t. the field gauge group gr*)
+
+
+NotTrivialWRTGaugeFieldQ[gr_][term_] := !FreeQ[term, f : (Field[__, {__}] | _FieldStrength) /; FieldTransformsUnderGaugeGroupQ[f, gr]] || 
+	!FreeQ[term, (Field|FieldStrength)[$GaugeGroups[gr, Field], __]];
+
+
+(* ::Text:: *)
+(*Variational derivative w.r.t. 1 field*)
+
+
+VarD1[lag_, f1 : SecondArgVarD, opt:OptionsPattern[]] := 
+	RelabelIndices@VarDraw[lag, f1,opt]/.$\[Epsilon]FD->0 /. BackgroundField[l_]:>l 
+
+
+(* ::Text:: *)
 (*Variational derivative w.r.t. 2 fields*)
 
 
-VarD[L_, f1 : SecondArgVarD, f2 : SecondArgVarD, opt:OptionsPattern[]] :=  Module[
-		{
-			f1label=First@First@Cases[f1,Field[___],All],
-			f2label=First@First@Cases[f2,Field[___],All],
-			expLag
-		},
-
-		expLag=ExpandVectorFluctuations[If[f1label===f2label,L,ExpandVectorFluctuations[L,f2]],f1];
-
-		RelabelIndices@VarDraw[Expand[VarDraw[expLag, f2,opt] * OpenCD[{}]],f1,opt]
-		/. OpenCD[{}]-> 1/.$\[Epsilon]FD->0 /. BackgroundField[l_]:>l 
-]
+VarD1[lag_, f1 : SecondArgVarD, f2 : SecondArgVarD, opt:OptionsPattern[]] :=  
+	RelabelIndices@VarDraw[Expand[VarDraw[lag, f2,opt] * OpenCD[{}]], f1, opt]/. 
+		OpenCD[{}]-> 1/. $\[Epsilon]FD-> 0/. BackgroundField[l_]:>l 
 
 
 (* ::Section:: *)
