@@ -5,6 +5,7 @@
 - Improved performance of Match
 - Fixed bug with option "EFTOrder" in "CovariantLoop"
 - Fixed bug with DiracTrace of 8 or more gammas
+- Extended DiracTrace with NDR value for traces of gamma5 and 6 or more gammas
 
 ### v0.1.3 (2023-03-14)
 - Added check for invalid spinor contractions with the C matrix in Check Lagrangian
