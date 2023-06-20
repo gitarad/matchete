@@ -22,7 +22,7 @@ Package["Matchete`"]
 PackageImport["GroupMagic`"]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Exported*)
 
 
@@ -68,7 +68,7 @@ PackageScope["GetCharge"]
 PackageScope["GaugeAnomalyContribution"]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Usage messages*)
 
 
@@ -129,7 +129,7 @@ LagrangianLikeCheck::nofield= "A term in the expression does not contain fields 
 
 LagrangianLikeCheck@ 0:= Null;
 LagrangianLikeCheck@ expr_:= Module[{temp= TermsToList@ expr},
-	If[Or@@ FreeQ[Field|FieldStrength]/@ temp,
+	If[(Or@@ FreeQ[Field|FieldStrength]/@ temp) && temp=!={0} ,
 		Message[LagrangianLikeCheck::nofield];
 		Abort[]; 
 	];
@@ -141,7 +141,7 @@ LagrangianLikeCheck@ expr_:= Module[{temp= TermsToList@ expr},
 (*Hermiticity*)
 
 
-HermitianQ[expr_]:= (expr - Bar[expr] //GreensSimplify)=== 0
+HermitianQ[expr_]:= (expr - Bar[expr] //GreensSimplify)=== 0;
 
 
 (* ::Subsection::Closed:: *)
@@ -427,7 +427,7 @@ Options[CheckLagrangian]={
 (*Function for checking if the Lagrangian is valid for use in the matching routines *)
 
 
-CheckLagrangian[Lagrangian_,opt:OptionsPattern[]]? OptionsCheck:=CheckLagrangian[Lag,opt]=
+CheckLagrangian[Lagrangian_,opt:OptionsPattern[]]? OptionsCheck:=CheckLagrangian[Lagrangian,opt]=
 	Module[{Lag=RelabelIndices@HcExpand@Lagrangian,DetOutput=<||>,OSpinChains,HeavTadpoles,UncIndices,ExtraHeads, mHermiticity=False,mContractedIndices=False,mClosedSpinChains=False, mCanonicallyNormalized=False,mMassBasis=False,mHeavyTadpoles=False,mChargeNeutral=False,mFreeOfGaugeFields=False,mUndefinedObject=False,mGaugeAnomalies=False},
 	(*Checks that Lag is a series of terms with fields or FS tensors*)
 	

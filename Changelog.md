@@ -1,5 +1,8 @@
 # Matchete changelog
 
+### v0.1.5 (2023-06-20)
+- Various bugfixes applied to the simplification routines.
+
 ### v0.1.4 (2023-04-13)
 - Improved performance of EOMSimplify
 - Improved performance of Match

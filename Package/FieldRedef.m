@@ -18,7 +18,7 @@ Package["Matchete`"]
 PackageImport["GroupMagic`"]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Scoping*)
 
 
@@ -71,7 +71,7 @@ Rules::usage= "Rules is an option to specify whether output should be a list of 
 (*Private:*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Operator classification*)
 
 
@@ -110,7 +110,7 @@ OperatorType[(c_:1)o_Operator, OptionsPattern[]]/;FreeQ[c, Operator]:=Module[
 ]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Find kinetic terms*)
 
 
@@ -262,7 +262,7 @@ CDExp[{mu_Symbol},FieldStrength[l_,li_,ind_,d_]]:=Module[{groups},
 
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*VectorFieldReplacement*)
 
 
@@ -279,8 +279,10 @@ pinds=Pattern[#, _]&/@inds;
 rsp=Inactive[CD][drvs,NormalForm@rs/.Thread[oinds->inds]];
 lsp=(ls/.Field[l_,t_,i_,_List]:>Field[l,t,i,Pattern[drvs,_]])/.Thread[oinds -> pinds];
 
-(* the replacement rule for the vector field in its pure form *)
-outV=lsp:>Evaluate[rsp]/.Inactive[CD]->CD;
+(* the replacement rule for the vector field itself *)
+With[{trhs = rsp},
+	outV=lsp :> RelabelIndices[trhs,Unique->True]/.Inactive[CD]->CD
+];
 
 (* two indices for the FS object *)
 mu = Unique["a"];
@@ -299,7 +301,11 @@ pvectorindices=Pattern[#,_]&/@vectorindices;
 rslist=List@@(rs+Nothing);
 
 (* turn the vectors in this list into FS objects *)
-rslistV=(Total[Cases[rslist, (c_:1)(x:Operator@Field[_, _Vector,___])/;FreeQ[c, Field|FieldStrength]]]/.Index[vectormu,Lorentz]:> mu)/.Field[lab_,Vector[mu],in_,_]:>(FieldStrength[lab,{Index[mu,Lorentz],Index[nu,Lorentz]},in,{}]);
+rslistV = (
+	Total[
+		Cases[rslist, (c_:1)(x:Operator@Field[_, _Vector,___])/;FreeQ[c, Field|FieldStrength]]
+		] /. 
+	Index[vectormu,Lorentz]:> mu) /. Field[lab_,Vector[mu],in_,_] :> FieldStrength[lab,{Index[mu,Lorentz],Index[nu,Lorentz]},in,{}];
 (* currents that we will act on with the CD *)
 rslistJ=NormalForm@RelabelIndices[Total[DeleteCases[rslist, (c_:1)(x:Operator[Field[_, _Vector,___]])/;FreeQ[c, Field|FieldStrength]]],Unique->True];
 
@@ -308,7 +314,9 @@ jmu= rslistJ/.Index[vectormu,Lorentz]:> Index[mu,Lorentz];
 jnu= rslistJ/.Index[vectormu,Lorentz]:> Index[nu,Lorentz];
 outFS=NormalForm[rslistV+CD[mu,jnu]-CD[nu,jmu]];
 
-outFS=FieldStrength[vectorlabel,{Index[pmu,Lorentz],Index[pnu,Lorentz]},pvectorindices,Pattern[drvs,_]]:> Evaluate[Inactive[CD][drvs,outFS]]/.Inactive[CD]-> CD;
+With[{trhs = outFS},
+	outFS=FieldStrength[vectorlabel,{Index[pmu,Lorentz],Index[pnu,Lorentz]},pvectorindices,Pattern[drvs,_]]:> RelabelIndices[CD[drvs,trhs],Unique->True]/.Inactive[CD]-> CD
+];
 
 {outFS,outV}
 ]
@@ -376,7 +384,7 @@ ShiftVectorFields[expr_,fields_List,shift_List]:=Module[
 
 	(* now we need to remove EoM operators, so the shifts trigger on them, but still need to deactivate Mathematica's x*x -> x\.b2 rule *)
 	temp=(RelabelIndices[NormalForm@expr,Unique->True])/.(a1_:1) Power[b1_/;(!FreeQ[b1, Field|FieldStrength]), k1_Integer?Positive]:>a1 Inactive[Times]@@ConstantArray[b1,k1];
-
+	
 	(* set up replacement rules for the non-gauge vectors, meaning V -> dVV *)
 	temp=temp/.Flatten[VectorFieldReplacement/@({V,dVV}\[Transpose])];
 
@@ -387,38 +395,42 @@ ShiftVectorFields[expr_,fields_List,shift_List]:=Module[
 		};
 	(* now we replace the gauge fields *)
 	temp=temp/.Flatten[VectorFieldReplacement/@({A,dAV+dAA}\[Transpose])];
+	(*temp=temp/.(Map[Inactive@RelabelIndices[#,Unique->True]&,Association@Flatten[VectorFieldReplacement/@({A,dAV+dAA}\[Transpose])],1] /.Association->List );*)
+	
+	temp=temp//Activate;
 	(* now we remove the gauge fields explicitly showing since they are a relic of our method *)
 	temp=temp/.Field[Alternatives@@(GetGaugeGroups[#][Field]&/@Keys@GetGaugeGroups[]), ___]:>0;
-
 	temp
+	
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Field redefinitions*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*CoefficientOperator*)
 
 
 CoefficientOperator[0,_] = 0;
-CoefficientOperator[a1_+a2_,b_]:=CoefficientOperator[a1,b]+CoefficientOperator[a2,b]
-CoefficientOperator[a_/n_,b_]:=CoefficientOperator[a,b]/n
-CoefficientOperator[a_,b_]/;(Head[a]=!= Plus&&(!FreeQ[a, Plus])):=CoefficientOperator[Expand[a],b]
+CoefficientOperator[a_Plus,b_]:=(CoefficientOperator[#,b]& /@ a)
+CoefficientOperator[a_ n_^(m_/;m<0),b_]:=(CoefficientOperator[a,b]n^m)
+CoefficientOperator[a_,b_]/;(Head[a]=!= Plus&&(!FreeQ[a, Plus])):=(CoefficientOperator[Expand[a],b])
 
 CoefficientOperator[(c_:1)o_Operator, b_]:=Module[{internalize,bPattern, rule={}, repcounter=0},
+
 	internalize[m_]:=Symbol[SymbolName[m]<>"int"];
 	internalize[Index[m_, t_]]:=Index[internalize[m],t];
-
-	bPattern=b/. Index[mu_, t_]:> Index[Pattern[Evaluate@internalize[mu], _],t];
-	AppendTo[rule,RuleDelayed[Condition[bPattern,repcounter++==0],Evaluate[(Times@@Table[Delta[k,internalize[k]],{k,FindOpenIndices[b]}])]]];
 	
+	bPattern=b/. Index[mu_, t_]:> Index[Pattern[Evaluate@internalize[mu], _],t];
+
+	AppendTo[rule,RuleDelayed[Condition[bPattern,repcounter++==0],Evaluate[(Times@@Table[Delta[k,internalize[k]],{k,FindOpenIndices[b]}])]]];
 	Operator[ContractDelta[NormalForm[If[FreeQ[o,bPattern],0,ReplaceAll[c* Operator[o],rule]]]]]
 ]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*ReduceField*)
 
 
@@ -435,22 +447,22 @@ ReduceField[L_,{f_Symbol},opt:OptionsPattern[]]:=ReduceField[L,f,opt]
 ReduceField[iL_, f_Symbol, OptionsPattern[]]:=Module[{real, type,oShift,oRes},
 	type = GetFields[][f][Type];
 	real = GetFields[][f][SelfConjugate];
-	
+
 	(* handle arguments *)
 	oShift=If[MatchQ[OptionValue[ShiftOrder],_Integer],OptionValue[ShiftOrder],GetMaxOrder[iL]];
 	oRes=If[MatchQ[OptionValue[ResultOrder],_Integer],OptionValue[ResultOrder],GetMaxOrder[iL]];
-	
+		
 	$MonitorString2="-> Reducing "<> ToString@f<> " in terms of dimension "<>ToString@OptionValue@ShiftOrder <>".";
-	
+
 	Switch[{type,real},
 		{Scalar,True}, ReduceRealScalar[iL,f,oShift,oRes],
 		{Scalar,False}, ReduceComplexScalar[iL,f, oShift, oRes],
-		{Fermion,False},ReduceDiracFermion[iL,f, oShift, oRes],
-		{Fermion,True},ReduceMajoranaFermion[iL,f, oShift,oRes],
-		{Vector,True},ReduceRealVector[iL, f, oShift, oRes],
+		{Fermion,False}, ReduceDiracFermion[iL,f, oShift, oRes],
+		{Fermion,True}, ReduceMajoranaFermion[iL,f, oShift,oRes],
+		{Vector,True}, ReduceRealVector[iL, f, oShift, oRes],
 		_, Message[ReduceField::unimplemented, f];iL
 	]
-
+	
 ]
 
 
@@ -501,17 +513,20 @@ Module[
 ReduceComplexScalar[iL_, f_Symbol, oShift_,oRes_]:=Module[
 	{start=Now,L,LNoShift,Ltemp,LR,inds,pinds, rule, chi1, chi2, shift, 
 	field, fieldPattern, drvs,Lread,a,b,c,ri},
-
+	
 	inds=Symbol["i"<>ToString[#]]&/@Range@Length@GetFields[][f][Indices];
 	pinds=Pattern[#, _]&/@inds;
 
+	
 	(* expand Lagrangian to ShiftOrder, keep only terms depending on the field f and IBPSimplify them *)
 	L=SeriesEFT[DropFreeQ[iL,f]-IBPSimplify@FreeLag[f],EFTOrder->oShift];
 	
 	(* factor out the EoM[f] term *)
 	chi1=RelabelIndices[NormalForm@CoefficientOperator[L, EoM[f[Sequence@@inds]]],Unique->True];
+	
 	(* ...and subtract the terms we found, to now get the EoM[Bar@f] coefficients *)
 	chi2=RelabelIndices[CoefficientOperator[RelabelIndices@(L - Operator[chi1 EoM[f[Sequence@@inds]]]),EoM[Bar@f[Sequence@@inds]]],Unique->True];
+
 
 	shift=1/2 Bar@NormalForm[(chi1+Bar@chi2)];
 	
@@ -539,7 +554,7 @@ ReduceComplexScalar[iL_, f_Symbol, oShift_,oRes_]:=Module[
 ]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*ReduceMajoranaFermion*)
 
 
@@ -553,9 +568,10 @@ ReduceMajoranaFermion[iL_, f_Symbol, oShift_, oRes_]:=Module[{start=Now,LNoShift
 
 	(* factor out the EoM[f] term *)
 	chi1=RelabelIndices[NormalForm@CoefficientOperator[L, EoM[First@Cases[{f[Sequence@@inds]},_Field,Infinity]]],Unique->True];
+	
 	(* ...and subtract the terms we found, to now get the EoM[Bar@f] coefficients *)
-	chi2=RelabelIndices[NormalForm@CoefficientOperator[RelabelIndices[L-Operator[chi1**EoM[First@Cases[{f[Sequence@@inds]},_Field,Infinity]]],EoM[First@Cases[{Transp@f[Sequence@@inds]},Transp[_Field],Infinity]]]],Unique->True];
-
+	chi2=RelabelIndices[NormalForm@CoefficientOperator[RelabelIndices[L-Operator[chi1**EoM[First@Cases[{f[Sequence@@inds]},_Field,Infinity]]]],EoM[First@Cases[{Transp@f[Sequence@@inds]},Transp[_Field],Infinity]]],Unique->True];
+	
 	shift=RelabelIndices[I*CC**(Transp@chi1-chi2)];
 
 	field=First@Cases[{f[Sequence@@inds]},_Field,Infinity]/. Field[a_,b_,c_,{}]-> Field[a,b,c,drvs];
@@ -681,16 +697,16 @@ ReduceRealVector[iL_, f_Symbol, oShift_, oRes_]:=Module[
 	If[mixingFields==={f},
 		(* f does not mix with any other field -> straightforward redefinition *)
 		shift= -RelabelIndices[NormalForm@CoefficientOperator[(SeriesEFT[DropFreeQ[L,f],EFTOrder->oShift]), EoM[f[Sequence@@inds]]],Unique->True];
-
+	
 		field=First@Cases[{f[Sequence@@inds]},_Field,Infinity];
+		
 		If[OptionValue[ShiftOrder]===All,
 				{LR,LNoShift}={L,0}
 			,
 				TPrint["[",QuantityMagnitude@DateDifference[start, Now,"Seconds"],"s] Splitting Lagrangian."];
 				{LR,LNoShift}=SplitLagrangianByPower[L,4+oRes-oShift];
 		];
-		
-		LR=IBPSimplify@Activate@ShiftVectorFields[NormalForm@LR, {field},{field+shift}]
+		LR=(*IBPSimplify@*)RelabelIndices@Activate@ShiftVectorFields[NormalForm@LR, {field},{field+shift}]
 	,
 
 		(* there is mixing, so we need to work a bit harder, first extract the rotation matrix *)
@@ -706,14 +722,14 @@ ReduceRealVector[iL_, f_Symbol, oShift_, oRes_]:=Module[
 		TPrint["[",QuantityMagnitude@DateDifference[start, Now,"Seconds"],"s] Performing redefinition."];
 		LR=RelabelIndices@NormalForm@Activate@ShiftVectorFields[NormalForm@LR, field,field+shift]
 	];
-
+	
 	TPrint["[",QuantityMagnitude@DateDifference[start, Now,"Seconds"],"s] Series expansion."];
 	LR=IBPSimplify19@SeriesEFT[LR, EFTOrder->oRes];
 	LR+LNoShift
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Handling redefined effective couplings*)
 
 
@@ -821,7 +837,7 @@ TreeReplacement[c_] := Module[{finalRep,inds,pinds,fullRHS,treeRHS,deltaRHS, \[D
 ]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*User output for the coupling*)
 
 
@@ -894,7 +910,7 @@ FieldsToShift[L0_]:=Module[{freeL,L,fields, list},
 
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Main module*)
 
 
@@ -914,12 +930,13 @@ EOMSimplify[L_,OptionsPattern[]]:=Module[{out,maxOrder,operatorList,L3,L4,La},
 	maxOrder=Max[operatorList];
 	If[Min[operatorList]<4,
 		(* there are superleading terms in the Lagrangian, redefine them *)
-		Message[EOMSimplify::EffectiveCoupling];
+		Echo[EOMSimplify::EffectiveCoupling];
 		La = SeriesEFT[SubstituteCoefficients @ IBPSimplify @ L, EFTOrder->maxOrder]
 		,
 		La = L;
 	];
-	out = OptionalMonitor[OptionValue@Verbose,FixedPoint[EoMSimplificationStep[#,EFTOrder->maxOrder]&, IBPSimplify19 @ La],$MonitorString1<>"\n"<>$MonitorString2];
+	La=IBPSimplify19 @ La;
+	out = OptionalMonitor[OptionValue@Verbose,FixedPoint[EoMSimplificationStep[#,EFTOrder->maxOrder]&, La],$MonitorString1<>"\n"<>$MonitorString2];
 	$MonitorString1="";
 	$MonitorString2="";
 	out = GreensSimplify @ out
@@ -947,11 +964,11 @@ EoMSimplificationStep[L_,OptionsPattern[]]:=Module[{task, fields,order,temp,maxo
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Handling off-diagonal kinetic terms*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Modules used in all cases*)
 
 

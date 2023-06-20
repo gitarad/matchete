@@ -239,7 +239,7 @@ CartanMatrix[alg: Alg[Name_String, n_Integer]]:= CartanMatrix[alg]= Block[{temp}
 CartanMatrix[x_]:= (Message[CartanMatrix::unkwn, x]; Abort[];)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Rank*)
 
 
@@ -250,10 +250,11 @@ CartanMatrix[x_]:= (Message[CartanMatrix::unkwn, x]; Abort[];)
 AlgebraRank@ alg_:= Length@ CartanMatrix@ alg;
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Algebra dimension *)
 
 
+GroupDimension[Matchete`U1]:=1;
 GroupDimension[alg_]:= RepresentationDimension[alg, AdjointRepresentation[alg]];
 
 
