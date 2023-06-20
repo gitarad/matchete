@@ -73,6 +73,8 @@ PackageScope["GammaReduction"]
 PackageScope["Fierz"]
 PackageScope["EvaOp"]
 PackageScope["Origin"]
+PackageScope["RedundantOperator"]
+PackageScope["BasisOperator"]
 PackageScope["Evanescent"]
 PackageScope["GetEvanescentTerm"]
 PackageScope["ResetEvanescentOperators"]
@@ -733,23 +735,23 @@ ResetEvanescentOperators[]:= Block[{},
 ResetEvanescentOperators[];
 
 
-ExpandEvanescentOperators[expr_]:= expr /.EvaOp[x_,___]:>$EvanescentTerms[x][Operator];
+ExpandEvanescentOperators[expr_]:= expr /.EvaOp[x_,___]:>($EvanescentTerms[x][RedundantOperator]-$EvanescentTerms[x][BasisOperator]);
 GetEvanescentTerm[EvName___]:= $EvanescentTerms[EvName];
 
 
 ProjExpand[exp_]:=exp/. DiracProduct[b___,Proj[s_]]:> (DiracProduct[b] + s  DiracProduct[b,Gamma5])/2 //Expand;
 
 
-DefineEvanescentOperator[inioperator_,finoperator_,order_,origin_]:=Module[{evaOperator,evaOperatorList,label,looporder},
+DefineEvanescentOperator[inioperator_,finoperator_,order_,origin_]:=Module[{evaOperator,redOpList,label,looporder},
 	evaOperator= inioperator-finoperator//Expand//ContractCGs//RefineDiracProducts//Contract//Simplify;
-	evaOperatorList=If[Keys@$EvanescentTerms=!={},List@@(Transpose@$EvanescentTerms)[Operator],{}];
+	redOpList=If[Keys@$EvanescentTerms=!={},List@@(Transpose@$EvanescentTerms)[RedundantOperator],{}];
 	If[(evaOperator//ProjExpand)=!=0 , 
-		label=Flatten@Position[evaOperatorList,evaOperator];
+		label=Flatten@Position[redOpList,inioperator];
 		If[label==={},
 			looporder= order; 
 			label={EvaCounter};
 			EvaCounter+=1;
-			AppendTo[$EvanescentTerms, First@label-> <|Operator-> evaOperator, Origin-> GammaReduction, LoopOrder-> looporder |>];	
+			AppendTo[$EvanescentTerms, First@label-> <|RedundantOperator-> inioperator, BasisOperator-> finoperator, Origin-> origin (*, LoopOrder-> looporder*) |>];	
 		];
 		EvaOp[First@label,FindOpenIndices[inioperator]]
 		,
@@ -775,18 +777,31 @@ Fierz::order = "Fierz function only support Fierz order {1,3,4,2} or {1,4,3,2}."
 
 
 Fierz[exp_Plus,ops___]:=Fierz[#,ops]&/@exp;
-Fierz[0,ops___]:=0;
+Fierz[0,___]:=0;
+Fierz[term_/;(Length@Cases[term,_NonCommutativeMultiply,Infinity] < 2),___]:=term;
+
+
+Options[FierzScore]={Order-> {1,4,3,2}};
+Options[Fierz]={Evanescent-> False};
+Options[Fierz4D]={Order->{1,4,3,2}};
 
 
 (* ::Subsubsection::Closed:: *)
-(*Fierz function*)
+(*Helper functions*)
 
 
-Fierz[(SP1:NonCommutativeMultiply[field1_,G12___,field2_])*(SP2:NonCommutativeMultiply[field3_,G34___,field4_])*rest___, OptionsPattern[{Evanescent-> False, Order->{1,4,3,2}}]]/;(FreeQ[rest+1,NonCommutativeMultiply]):=
+FieldLabel[f:_Field|Bar@_Field|Transp@_Field|Transp@Bar@_Field]:=First@Cases[{f}, Field[l_,_, _,_]:>l,Infinity];
+FieldIndices[f:_Field|Bar@_Field|Transp@_Field|Transp@Bar@_Field]:=First@Cases[{f}, Field[_,_,ind_,_]:>ind,Infinity];
+
+
+(* ::Subsubsection::Closed:: *)
+(*4D Fierz function*)
+
+
+Fierz4D[(SP1:NonCommutativeMultiply[field1_,G12___,field2_])*(SP2:NonCommutativeMultiply[field3_,G34___,field4_]), OptionsPattern[]]:=
 Module[
 {Gbasis, Gbasisdual, ind1, ind2, Gcoeff, i,j, C1=1, C2=1, 
-G1=G12*1, G2=G34*1, P1=1, P2=1, P3=1, P4=1, f1=field1, f2=field2, f3=field3, f4=field4, sgnO=1,
-result, looporder,label,groupStruct,evaOperator,evaOperatorList,FlavorIndices},
+G1=G12*1, G2=G34*1, P1=1, P2=1, P3=1, P4=1, f1=field1, f2=field2, f3=field3, f4=field4, sgnO=1},
 
 	ind1={Unique[],Unique[],Unique[],Unique[]};
 	ind2={Unique[],Unique[],Unique[],Unique[]};
@@ -794,7 +809,8 @@ result, looporder,label,groupStruct,evaOperator,evaOperatorList,FlavorIndices},
 	Gbasis[a_,b_,c_,d_]:={PL,PR,PL**\[Gamma][a],PR**\[Gamma][b],\[Sigma][c,d]/2}/.NonCommutativeMultiply[x_]:>x;
 	Gbasisdual[a_,b_,c_,d_]:={PL,PR,PR**\[Gamma][a],PL**\[Gamma][b],\[Sigma][c,d]/2}/.NonCommutativeMultiply[x_]:>x;
 	
-	If[OptionValue@Order =!= {1,3,4,2}|{1,4,3,2}, Message[Fierz::order];Abort[]];
+	If[OptionValue@Order === {1,2,3,4}, Return[SP1*SP2]];
+	If[!MemberQ[{{1,3,4,2},{1,4,3,2},{1,2,3,4}},OptionValue@Order], Message[Fierz::order];Abort[]];
 	If[OptionValue@Order==={1,3,4,2}, 
 			f3=Transp@field4;
 			f4=Transp@field3;
@@ -805,12 +821,6 @@ result, looporder,label,groupStruct,evaOperator,evaOperatorList,FlavorIndices},
 
 	If[!ClosedSpinChainQ@SP1 || !ClosedSpinChainQ@SP2, Message[Fierz::error1]; Abort[]];
 	If[(Head[G1]=!= DiracProduct ||  Head[G2]=!= DiracProduct ) && (G1=!=1 ||G2=!=1  ), Message[Fierz::error1]; Abort[]];
-
-	(*If[Head[f1]===Transp, G1=(-CC)**G1];
-	If[Head[f2]===Transp, G1=G1**(-CC)];
-
-	If[Head[f4]===Transp, G2=G2**(-CC)];
-	If[Head[f3]===Transp, G2=(-CC)**G2];*)
 	
 	If[Head[f1]===Transp, G1=(-CC)**G1; f1=f1**CC];
 	If[Head[f2]===Transp, G1=G1**(-CC); f2=CC**f2];
@@ -838,15 +848,61 @@ result, looporder,label,groupStruct,evaOperator,evaOperatorList,FlavorIndices},
 		]
 	];
 
-	result=sgnO*(Sum[
+	sgnO*(Sum[
 			Gcoeff[[i,j]]
-				(** (If[Head[f1]===Transp,f1**CC,f1]**P1**(Gbasisdual@@ind1)[[i]]**P4** If[Head[f4]===Transp,CC**f4,f4]) 
-				* (If[Head[f3]===Transp,f3**CC,f3]**P3**(Gbasis@@ind2)[[j]]**P2**If[Head[f2]===Transp,CC**f2,f2])*)
 				* (f1**P1**(Gbasisdual@@ind1)[[i]]**P4**f4) * (f3**P3**(Gbasis@@ind2)[[j]]**P2**f2)
-		,{i,1,5},{j,1,5}] //Contract //RelabelIndices //LC2Gamma5) /.GammaM[a_,b_]/;(!OrderedQ[{a,b}]):> -GammaM[b,a];
+		,{i,1,5},{j,1,5}] //Contract //RelabelIndices //LC2Gamma5) /.GammaM[a_,b_]/;(!OrderedQ[{a,b}]):> -GammaM[b,a]
+]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Fierz score*)
+
+
+FierzScore[(SP1:NonCommutativeMultiply[field1_,G12___,field2_])*(SP2:NonCommutativeMultiply[field3_,G34___,field4_]),OptionsPattern[]]:=
+Module[
+{result=0,fields={field1,field2,field3,field4},order=OptionValue@Order,
+GaugeGroups,gind,pos},
+	(*Default rules: same fields, higher groups together*)
+	result=Plus[0,
+	    (*same labels*)
+		If[FieldLabel[fields[[1]]]===FieldLabel[fields[[2]]], -1 , 0],
+		If[FieldLabel[fields[[3]]]===FieldLabel[fields[[4]]], -1 , 0],
+		If[FieldLabel[fields[[order[[1]]]]]===FieldLabel[fields[[order[[2]]]]], +1, 0],
+		If[FieldLabel[fields[[order[[4]]]]]===FieldLabel[fields[[order[[3]]]]], +1 , 0],
+		(*many transposed fields*)
+		If[Head[fields[[1]]]===Transp && Head[fields[[2]]]===Transp, -2 , 0],
+		If[Head[fields[[3]]]===Transp && Head[fields[[4]]]===Transp, -2 , 0],
+		If[Head[fields[[order[[1]]]]]===Transp && Head[fields[[order[[2]]]]]===Transp, +2 , 0],
+		If[Head[fields[[order[[4]]]]]===Transp && Head[fields[[order[[3]]]]]===Transp, +2 , 0]
+		];
+	(*same group in only two fields, starting from biggest group*)
+	GaugeGroups=Reverse@SortBy[Keys@GetGaugeGroups[],GroupDimension@* GetGaugeGroups[#][Group]&];
+	gind=Select[FieldIndices@#, (MemberQ[GaugeGroups,GroupFromRep@ #[[2]]] &)]&/@fields;
+	gind=gind/.Index[_,g_[_]]:>g;
+	pos=Position[gind,#]&/@GaugeGroups /.{}->Nothing;
+	If[pos=!={},
+			pos=First@Transpose@First@pos;
+			result+=If[MemberQ[{{1,2},{3,4}},pos], -1 , 0];
+			result+=If[MemberQ[{Sort[order[[1;;2]]],Sort[order[[3;;4]]]},pos], +1 , 0];
+		];
+	result
+]	
+
+
+(* ::Subsubsection::Closed:: *)
+(*Fierz function*)
+
+
+Fierz[(SP1:NonCommutativeMultiply[field1_,G12___,field2_])*(SP2:NonCommutativeMultiply[field3_,G34___,field4_])*rest___, OptionsPattern[]]/;(FreeQ[rest+1,NonCommutativeMultiply]):=
+Module[
+{result,groupStruct,evaOperator ,order={1,2,3,4}},
+	order=First@TakeLargestBy[{{1,2,3,4},{1,4,3,2},{1,3,4,2}},FierzScore[SP1*SP2,Order->#]&,1];
+	result=Fierz4D[SP1*SP2,Order->order];
+
 	groupStruct=Times@@Cases[Times@rest,_Delta|_CG,Infinity];
 	
-	evaOperator=If[OptionValue@Evanescent, DefineEvanescentOperator[groupStruct(SP1*SP2),result,Exponent[rest*1,hbar]+1,Fierz]*rest/groupStruct,0];
+	evaOperator=If[OptionValue@Evanescent, DefineEvanescentOperator[groupStruct(SP1*SP2),groupStruct*result,Exponent[rest*1,hbar]+1,Fierz]*rest/groupStruct,0];
 	evaOperator+result*rest//Expand//ContractCGs//Contract
 ]
 
@@ -874,7 +930,7 @@ InverseBasisTrace[]:=InverseBasisTrace[]=Simplify@Inverse@Table[
 
 
 GammaReduction[(SP1:NonCommutativeMultiply[field1_,G12___,field2_])*(SP2:NonCommutativeMultiply[field3_,G34___,field4_])* rest___,OptionsPattern[{Evanescent-> False}]]/;(FreeQ[rest+1,NonCommutativeMultiply]):=
-Module[{Bcoeff,basis,f1=field1,f2=field2,f3=field3,f4=field4, G1= G12*1,G2= G34*1,invbastr, result, groupStruct, evaOperator, evaOperatorList, looporder,label,FlavorIndices},
+Module[{Bcoeff,basis,f1=field1,f2=field2,f3=field3,f4=field4, G1= G12*1,G2= G34*1,invbastr, result, groupStruct, evaOperator},
 (*Check if in the basis*)
 (*If[MemberQ[basis,{G1,G2}],Return[SP1 * SP2* rest]];*)
 (*If[Count[G1*G2,_GammaM,Infinity]<3 && Count[G1,_Index,Infinity]<3 && Count[G2,_Index,Infinity]<3 , Return[SP1 * SP2* rest]];

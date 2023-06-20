@@ -252,13 +252,13 @@ HcSimplify::nothermitian= "The Lagrangian is not hermitian."
 HcSimplify::Hcfailed= "HcSimplify failed."
 
 
-HcSimplify[Lagrangian_]:=Module[{nonhcterms, nonhctermsext, selfhcterms, pairs, singles, n1, n2, indexlist, output, Lag=Contract@CollectOperators@Lagrangian,i},
+HcSimplify[Lagrangian_]:=Module[{nonhcterms, nonhctermsext, selfhcterms, pairs, singles, n1, n2, indexlist, output, Lag=Contract@GreensSimplify@Lagrangian,i},
 	(*If[!HermitianQ[Lag],Message[HcSimplify::nothermitian];Abort[]];*)
 	If[Head@Lag=!=Plus (*&& HermitianQ@Lag*), Return[Lagrangian]];
 	(*Identify self-hermitian terms and others*)
 	selfhcterms = Select[Lag, HermitianQ[#]&];
 	If[selfhcterms===Lag, Return[Lagrangian]];
-	nonhcterms = List@@(Lag-selfhcterms);
+	nonhcterms = List@@(Expand[Lag-selfhcterms]);
 	(*Build pairs with positions of term and self-hermitian related term*)
 	nonhctermsext = RelabelIndices@CollectOperators[{#,Bar@#}]& /@ nonhcterms ;
 	pairs = DeleteDuplicates[Sort[Position[nonhctermsext,#[[1]]][[;;,1]]&/@nonhctermsext]];
@@ -266,7 +266,7 @@ HcSimplify[Lagrangian_]:=Module[{nonhcterms, nonhctermsext, selfhcterms, pairs, 
 	pairs=Complement[pairs,List/@Flatten@Complement[pairs,singles]];
 	singles=Complement[singles,Flatten@pairs];
 	For[i=1,i<=Length@singles,i++,
-			AppendTo[pairs,Flatten@{singles[[i]],If[CollectOperators[Bar[nonhcterms[[singles[[i]]]]]-nonhcterms[[#]]]===0,#,Nothing]&/@singles}]
+			AppendTo[pairs,Flatten@{singles[[i]],If[GreensSimplify[Bar[nonhcterms[[singles[[i]]]]]-nonhcterms[[#]]]===0,#,Nothing]&/@singles}]
 			];
 	pairs=DeleteDuplicates[Sort/@pairs];
 	(*Choose which term to keep and which term to put in +H.c.*)
@@ -1559,7 +1559,7 @@ IBPSimplify19@ expr_:= OpsToFieldForm[
 	CollectCoefficients@ IBPSimplify17@ ContractDelta@ ContractCGs@ expr, NormalForm-> False]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Main Exported simplification function*)
 
 
