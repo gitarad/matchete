@@ -1,5 +1,10 @@
 # Matchete changelog
 
+### v0.1.6 (nnnn-nn-nn)
+- Fixed a bug in field redefinitions involving non-hermitian superleading terms.
+- Field redefinitions now count powers of hbar prior to inserting redefinitions, improving performance.
+- Introduced the option "DummyCoefficients" for EOMSimplify, improving performance when simplifying large Lagrangians.
+
 ### v0.1.5 (2023-06-20)
 - Various bugfixes applied to the simplification routines.
 

@@ -72,7 +72,7 @@ PackageScope["Simplifications"]
 (*Usage messages*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Exported*)
 
 
@@ -113,7 +113,7 @@ OperatorDimension::usage = "OperatorDimension[op] returns the mass-dimension of 
 $currentEFTOrder = 6;
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Dimensionality of an operator*)
 
 
@@ -163,11 +163,12 @@ FieldDimension[Field[f:Except[List[___]],type_,_,derivs_List]] :=
 	Length[derivs] + TypeDim[type] + If[GetFields[f, Heavy], 1, 0]; (* heavy fields have at least one suppression factor*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Counting rule for expanded UV fields*)
 
 
-FieldDimension[Field[{_,n_},type_,_,derivs_List]] := (n + Length[derivs] + TypeDim[type])
+(*FieldDimension[Field[{_,n_},type_,_,derivs_List]] := (n + Length[derivs] + TypeDim[type])*)
+FieldDimension[Field[{_,n_,___},type_,_,derivs_List]] := (n + Length[derivs] + TypeDim[type])
 
 
 (* ::Subsection::Closed:: *)
