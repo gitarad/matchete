@@ -564,7 +564,6 @@ OperatorProperties[id_, op_Operator]:= Module[{count= 1, couplings, conjugateInd
 	selfConjugate= !FreeQ[OperatorBar@ op, First@ opIDpattern];
 	conjugateIndexExchange= If[selfconjugateType, 
 			FindPermutationOrder[fieldTypes, Conj@ fieldTypes]
-			(*Permute[Range@ Length@ fieldTypes, FindPermutation[fieldTypes, Conj@ fieldTypes]]*)
 		,
 			{}
 		];
@@ -707,11 +706,11 @@ OpScore[op_Operator, selfConj_]:= Module[{score= 0},
 OpScore@ x_:= (Message[OpScore::unexp, x]; Abort[];);
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Match all operators in an expression to patterns  *)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Search expression*)
 
 
@@ -755,7 +754,7 @@ OperatorFlavorSeparate@ op_Operator:= Module[{flavInds, deltas, out= op},
 ];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Creates new operator classes*)
 
 
@@ -789,11 +788,19 @@ MakeNewOperatorPatterns[opType_, opList_List, resetIdentities_]:= Module[{conjOp
 			If[MatchQ[pat]@ op, Continue[]; ];
 			temp= OperatorProperties[{opType, nextID}, op];
 			AppendTo[pat, First@ temp@ OperatorMatchingPattern];
-			If[notselfConjugate,
-				operatorClassConj@ {conjOpType, nextID}= 
-					OperatorProperties[{conjOpType, nextID}, OperatorBar@ op];
-			];
 			Sow[{opType, nextID++}-> temp];
+			(*If valid, appends the conjugate operator to the conjugate class*)
+			If[notselfConjugate,
+				operatorClassConj@ {conjOpType, nextID-1}= 
+					OperatorProperties[{conjOpType, nextID-1}, OperatorBar@ op];
+			,
+				(*Otherwise ensure the conjugate operator is added to present class*)
+				If[!temp@ SelfConjugate,
+					temp= OperatorProperties[{opType, nextID}, OperatorBar@ op];
+					AppendTo[pat, First@ temp@ OperatorMatchingPattern];
+					Sow[{opType, nextID++}-> temp];
+				]
+			];
 		, {op, remainingOps}]][[2, 1]];
 	
 	(*Add the conjugate operators*)
@@ -1007,8 +1014,9 @@ ConstructCompoundsForOp@ opProperties_:= Block[{dummyInds, conjIndices, conjugat
 	Join@@ Transpose/@ {
 		{symmetryCombinations, (*penalizing flavor symmetrization for now *)
 			sharedProps ~Join~ <|FlavorSymmetry-> #, SelfConjugate-> False, Score-> opProperties@ Score- .005|>&/@ symmetryReps[[2]]}, 
-		{hcCombinations+ conjugated, 
-			sharedProps ~Join~ <|FlavorSymmetry-> #, SelfConjugate-> +1|>&/@ symmetryReps[[1]]}, 
+		{hcCombinations+ conjugated, (*Prefer self-conjugate combination *)
+			Merge[{sharedProps, <|FlavorSymmetry-> #, SelfConjugate-> +1, Score-> .01|>}, Total]&/@ symmetryReps[[1]]},
+			(*sharedProps ~Join~ <|FlavorSymmetry-> #, SelfConjugate-> +1|>&/@ symmetryReps[[1]]},*) 
 		{hcCombinations- conjugated, 
 			sharedProps ~Join~ <|FlavorSymmetry-> #, SelfConjugate-> -1|>&/@ symmetryReps[[1]]}
 	}
@@ -1087,7 +1095,7 @@ ConjugateCompound[compID_, compProps_]:= Module[{atomicID, compReplacement,
 (*Manipulate expression *)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Collect atomic operators in expr*)
 
 
@@ -1396,27 +1404,10 @@ IdentitiesDiracCommutation@ op_Operator:=
 		ContractMetric/@ ReplaceListSubExprs[op, 
 			DiracProduct[a___, Transp@GammaM[\[Mu]_, \[Nu]_], b___]:> 
 			Metric[\[Mu], \[Nu]] DiracProduct[a, b] - DiracProduct[a, Transp@GammaM@ \[Mu], Transp@GammaM@ \[Nu], b]] -op
-			
 	]
 
 
-(*opIdentities= Join[opIdentities,
-			ContractMetric/@ ReplaceListSubExprs[op, 
-				DiracProduct[a___, GammaM[\[Mu]_, \[Nu]_], b___]:> 
-				DiracProduct[a, GammaM@ \[Mu], GammaM@ \[Nu], b] - Metric[\[Mu], \[Nu]] DiracProduct[a, b]] -op,
-			ContractMetric/@ ReplaceListSubExprs[op, 
-				DiracProduct[a___, GammaM[\[Mu]_, \[Nu]_], b___]:> 
-				Metric[\[Mu], \[Nu]] DiracProduct[a, b] - DiracProduct[a, GammaM@ \[Nu], GammaM@ \[Mu], b]] -op,
-			ContractMetric/@ ReplaceListSubExprs[op, 
-				DiracProduct[a___, Transp@GammaM[\[Mu]_, \[Nu]_], b___]:> 
-				DiracProduct[a, Transp@GammaM@ \[Nu], Transp@GammaM@ \[Mu], b] - Metric[\[Mu], \[Nu]] DiracProduct[a, b]] -op,
-			ContractMetric/@ ReplaceListSubExprs[op, 
-				DiracProduct[a___, Transp@GammaM[\[Mu]_, \[Nu]_], b___]:> 
-				Metric[\[Mu], \[Nu]] DiracProduct[a, b] - DiracProduct[a, Transp@GammaM@ \[Mu], Transp@GammaM@ \[Nu], b]] -op
-			];*)
-
-
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*IdentitiesSymmetry*)
 
 
@@ -1435,6 +1426,9 @@ IdentitiesSymmetry@ op_Operator:= Block[{},
 		{op}
 	,
 		{}
+		(*Symmetrizing FS indices*)
+		(*ReplaceList[op, HoldPattern@ Operator[a___, fs:FieldStrength[_, {i1_, i2_}, __]]:>
+		-Operator[Operator[a]/. {i1-> i2, i2-> i1}, fs]] -op*)
 	]
 ];
 
