@@ -559,7 +559,7 @@ ShiftFS[FieldStrength[label_, {\[Mu]_Index,\[Nu]_Index}, gaugeIndices:{Index[a_,
 	]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*FuncD \[LongDash] internal functionality*)
 
 
@@ -825,7 +825,7 @@ FuncD[
 ] := 0
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*FuncD  w.r.t. Bar@CC@Field[...]*)
 
 
@@ -1026,11 +1026,22 @@ Options[DeriveEOM] = {EFTOrder->6};
 (*EoM for one field*)
 
 
-DeriveEOM[lagrangian_, field:(Field[___,{}] | Bar@Field[___,{}]), OptionsPattern[]] := Module[
+DeriveEOM[lagrangian_, field:(Field[label_,___,{}] | Bar@Field[label_,___,{}]), OptionsPattern[]] := Module[
 	{
-		eom = VarD[lagrangian, Bar[field], EFTOrder->OptionValue[EFTOrder]]
+		eom,
+		deriveField = Bar[field],
+		fieldProps = GetFields@label
 	}
 	,
+	
+	(* check for massive chiral fermions *)
+	If[(fieldProps[Type] === Fermion) && (fieldProps[Chiral] =!= False) && (fieldProps[Mass] =!= 0) && !fieldProps[SelfConjugate],
+		deriveField = CConj@deriveField
+	];
+	
+	(* derive EOM *)
+	eom = VarD[lagrangian, deriveField, EFTOrder->OptionValue[EFTOrder]];
+	
 	Return[eom]
 ]
 

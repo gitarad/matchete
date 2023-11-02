@@ -113,7 +113,7 @@ OperatorDimension::usage = "OperatorDimension[op] returns the mass-dimension of 
 $currentEFTOrder = 6;
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Dimensionality of an operator*)
 
 
@@ -359,7 +359,7 @@ CovariantLoop[lag_, field_Symbol, ord_, opts:OptionsPattern[]]:=
 	CovariantLoop[lag, {field}, ord, opts];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Main Matchete routine for integrating out fields*)
 
 
@@ -380,6 +380,9 @@ Match[lag, opts] = Module[{
 	If[!CheckLagrangian@ lagrangian, 
 		Abort[]; 
 	]; 
+	
+	(* canonize fermion masses *)
+	lagrangian = CanonizeFermionMassTerms[lagrangian];
 	
 	(* Set global variables for the given Lagrangian *)
 	SetCurrentLagrangian[lagrangian, If[loopOrder === {1}, 1, loopOrder], 
@@ -431,3 +434,35 @@ MatchReduce[expr_]:= Module[{},
 		HoldPattern[CG[eps[x_],a:{_Index..}]CG[Bar@eps[x_],b:{_Bar..}]]:> Det[Outer[Delta,a,b]]
 	}]
 ]
+
+
+(* ::Subsection:: *)
+(*Canonize fermion mass terms*)
+
+
+PackageScope["CanonizeFermionMassTerms"]
+
+
+CanonizeFermionMassTerms[lagrangian_] := Module[
+	{
+		lag = List@@lagrangian (*needs to be already expanded*)
+	}
+	,
+	lag = Plus@@Table[
+		(* canonize Dirac masses of vectorlike fermions *)
+		If[MatchQ[term, aux_ * Bar@Field[l_,Fermion,___]**DiracProduct[Proj[-1]]**Field[l_,Fermion,___] /; (FreeQ[aux, _Field, All] && !(GetFields[l][SelfConjugate]) && GetFields[l][Chiral]===False)],
+			(term /. {Proj[-1]->1}) - (term /. {Proj[-1]->Proj[+1]})
+			,
+			(* canonize Majorana masses *)
+			If[MatchQ[term, aux_ * Transp[Field[l_,Fermion,___]]**DiracProduct[GammaCC,Proj[-1]]**Field[l_,Fermion,___] /; (FreeQ[aux, _Field, All] && GetFields[l][SelfConjugate] && GetFields[l][Chiral]===False)],
+				(term /. {Proj[-1]->1}) - (term /. {Proj[-1]->Proj[+1]})
+				,
+				term
+			]
+		]
+		,
+		{term,lag}
+	];
+
+	Return@RelabelIndices[lag]
+];
