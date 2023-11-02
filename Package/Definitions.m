@@ -134,6 +134,9 @@ PackageExport["ModelParameters"]
 PackageExport["FieldGenerators"]
 
 
+PackageScope["SymmetryOverride"]
+
+
 PackageScope["GroupFromRep"]
 PackageScope["GroupFromInd"]
 PackageScope["FieldsFromGroup"]
@@ -543,7 +546,7 @@ $CouplingAssociation=<||>;
 GetCouplings[CouplingName___]:=$CouplingAssociation[CouplingName]//Map[ReplaceAll[<|x___,Symmetries-> val_,y___|>:><|x,Symmetries->If[Length[List@@val]===1,{}, val],y|>]]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Defining new couplings*)
 
 
@@ -632,7 +635,7 @@ DefineCoupling[label,opts]= Module[
 ]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Determine all symmetric permutation of coupling indices *)
 
 
@@ -673,6 +676,21 @@ CouplingSymmetries[noInds_, symmetries_]:=Module[{couplingPermutations, evenGens
 		couplingPermutations= Join[couplingPermutations, newPerm];
 	];
 	couplingPermutations
+]
+
+
+(* ::Text:: *)
+(*Override to directly give the the symmetries in the internal form*)
+
+
+CouplingSymmetries[ _ , SymmetryOverride[x_]]:=Module[{out},
+	Switch[Head@x,
+		List, out = Association @@ x,
+		Association, out = x,
+		Rule, out = Association @ x,
+		_, Association[ {1,2,3,4}->1 ]
+	];
+	Return[out]
 ]
 
 

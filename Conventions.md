@@ -12,9 +12,11 @@ We employ the conventions as used in Peskin and Schroeder:
 
 * Trace normalization: for the fundamental representations $\mathrm{Tr}[T^a T^b] = \frac{1}{2} \delta^{ab}$
 
-* Dimensional regularization: 
+* Dimensional regularization:
 	* Spacetime dimension: $d = 4 - 2 \epsilon$
 
 	* Renormalization scheme: MSbar
 
 	* Anti-commuting $\gamma_5$ subject to $\mathrm{tr}[ \gamma^\mu \gamma^\nu \gamma^\rho \gamma^\sigma \gamma_5 ] = - 4 i \varepsilon^{\mu \nu \rho \sigma}$ (Naive Dimensional Regularization). This results in a loss of trace cyclicity in some situations.
+
+* Products of gamma matrices: $ \Gamma_{\mu_1,... \mu_n} = \gamma_{[\mu_1} ... \gamma_{\mu_n]}$ , where the antisymmetrized indices include a normalization factor $ 1/n! $. Thus, $\Gamma_{\mu\nu} = (\gamma_\mu \gamma_\nu - \gamma_\nu \gamma_\mu)/2 = -i \sigma_{\mu\nu} $.

@@ -502,8 +502,8 @@ CheckLagrangian[Lagrangian_,opt:OptionsPattern[]]? OptionsCheck:=CheckLagrangian
 		
 	(*check if all objects are defined*)	
 	If[OptionValue@ UndefinedObject,
-		ExtraHeads= DeleteDuplicates@DeleteCases[Flatten[{Lag}//.{Times->List,Plus->List, NonCommutativeMultiply->List, Power[a_,___]:> a, Bar[a_]:> a , Transp[a_]:> a, Log[a_]:>a, hbar->1, \[Mu]bar2->1, ev-> 1}], 
-			_Field | _CG | _Coupling | _?NumberQ | _DiracProduct  | _FieldStrength | _LCTensor];
+		ExtraHeads= DeleteDuplicates@DeleteCases[Flatten[{Lag}//.{Times->List,Plus->List, NonCommutativeMultiply->List, Power[a_,___]:> a, Bar[a_]:> a , Transp[a_]:> a, Log[a_]:>a, hbar->1, \[Mu]bar2->1, ev-> 1, \[Epsilon]->1, \[Pi]->1}], 
+			_Field | _CG | _Coupling | _?NumberQ | _DiracProduct  | _FieldStrength | _LCTensor |  _Delta];
 		If[(mUndefinedObject)= (ExtraHeads=!={}),
 			Message[CheckLagrangian::UndefinedObject,#]& /@ ExtraHeads;
 		];

@@ -185,7 +185,7 @@ OptionTest[_, ModelParameters]         = (ListQ[#] && And@@(Head[#1]===Rule &/@#
 OptionTest[_, Rules]                   = BooleanQ;
 OptionTest[_, SelfConjugate]           = Or[BooleanQ[#],VectorQ[#,Positive]]&;
 OptionTest[_, Simplifications]         = MatchQ[All| None];  
-OptionTest[DefineCoupling, Symmetries] = (ListQ[#] && And@@((MatchQ[Head[#1],SymmetricIndices|AntisymmetricIndices|SymmetricPermutation|AntisymmetricPermutation] && VectorQ[List@@#1,Positive])&)/@#)&;
+OptionTest[DefineCoupling, Symmetries] = (ListQ[#] && And@@((MatchQ[Head[#1],SymmetricIndices|AntisymmetricIndices|SymmetricPermutation|AntisymmetricPermutation] && VectorQ[List@@#1,Positive])&)/@#) || (MatchQ[#,_SymmetryOverride]) &;
 OptionTest[_, Symmetries]              = ListQ;
 OptionTest[_, UndefinedObject]         = BooleanQ;
 OptionTest[Match, Verbose]             = MatchQ[Print|Monitor|None];

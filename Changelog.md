@@ -1,6 +1,12 @@
 # Matchete changelog
 
-### v0.1.6 (nnnn-nn-nn)
+### v0.1.7 (2023-11-02)
+- Fixed a bug in GreensSimplify in models with Majorana fermions.
+- Tweaks to HcSimplify.
+- Fixed an issue with EOMSimplify when field redefinitions took the form of the kinetic term.
+- Fixed an issue where CheckLagrangian would not recognize some pre-defined objects.
+
+### v0.1.6 (2023-10-09)
 - Fixed a bug in field redefinitions involving non-hermitian superleading terms.
 - Field redefinitions now count powers of hbar prior to inserting redefinitions, improving performance.
 - Introduced the option "DummyCoefficients" for EOMSimplify, improving performance when simplifying large Lagrangians.

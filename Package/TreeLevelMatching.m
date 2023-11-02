@@ -265,11 +265,11 @@ LargeSumExpand[expr:Except[_Plus]] := Expand[expr]
 (*Solving the EoM *)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Solve EOM at a fixed order in the EFT power counting*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Solve single EOM at a given order*)
 
 
@@ -308,7 +308,7 @@ SolveOneEOMfixedOrder[eom_, f:(Field[l_,_,_,{}] | Bar@Field[l_,_,_,{}]), n_?Inte
 	(* solve the eom for the given field *)
 	solution = Flatten@Solve[
 		(* remove the NCM head for fermions *)
-		(eom/.NonCommutativeMultiply[x_] :> x /; !FreeQ[x, First@field, All]) == 0,
+		((eom/.NonCommutativeMultiply[x_] :> x /; !FreeQ[x, First@field, All]) /. NonCommutativeMultiply[DiracProduct[_Proj],First@field] /; (GetFields[First@First@field][Chiral]=!=False) -> First@field ) == 0,
 		First@field
 	];
 	
@@ -469,7 +469,7 @@ DetermineEOMs[lag_, OptionsPattern[]] := Module[
 ]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Printing EOMs*)
 
 
