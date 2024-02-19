@@ -11,15 +11,6 @@
 AppendTo[$ContextPath,"Matchete`PackageScope`"];
 
 
-(*RefineDiracProducts= Matchete`PackageScope`RefineDiracProducts;
-CollectGammaMatrices= Matchete`PackageScope`CollectGammaMatrices;
-CanonizeSpinorLines=Matchete`PackageScope`CanonizeSpinorLines;
-LOpenSpinChainQ= Matchete`PackageScope`LOpenSpinChainQ;
-ROpenSpinChainQ= Matchete`PackageScope`ROpenSpinChainQ;
-ClosedSpinChainQ= Matchete`PackageScope`ClosedSpinChainQ;
-MajoranaQ= Matchete`PackageScope`MajoranaQ;*)
-
-
 (* ::Subsection::Closed:: *)
 (*Input shortcuts*)
 
@@ -467,49 +458,49 @@ LoadModel["SM"];
 
 
 VerificationTest[
-	Fierz[(Bar@ l[i,p]**e[t])( Bar@q[a,i,r]**d[a,s]),Evanescent->False]//Expand, 
+	Fierz4D[(Bar@ l[i,p]**e[t])( Bar@q[a,i,r]**d[a,s])]//Expand, 
 	-(1/2)(Bar@ l[i,p]** d[a,s])(Bar@ q[a,i,r] ** e[t])-1/8 (Bar@ l[i,p]**\[Sigma][\[Mu],\[Nu]]** d[a,s])(Bar@ q[a,i,r] **\[Sigma][\[Mu],\[Nu]]** e[t]) //RelabelIndices,
 	TestID->"Fierz: PR x PR"
 ]
 
 
 VerificationTest[
-	Fierz[(Bar@ l[i,p]** e[r] )( Bar@ e[s]** l[i,t]),Evanescent->False], 
+	Fierz4D[(Bar@ l[i,p]** e[r] )( Bar@ e[s]** l[i,t])], 
 	-(1/2)(Bar@ l[i,p] ** \[Gamma][\[Mu]] ** l[i,t])(Bar@ e[s] ** \[Gamma][\[Mu]] ** e[r] ) //RelabelIndices,
 	TestID->"Fierz: PR x PL"
 ]
 
 
 VerificationTest[
-	Fierz[(Bar@ l[i,p]**  \[Gamma][\[Mu]]**l[j,r] )(Bar@ l[k,s]**  \[Gamma][\[Mu]]**l[m,s] ),Evanescent->False], 
+	Fierz4D[(Bar@ l[i,p]**  \[Gamma][\[Mu]]**l[j,r] )(Bar@ l[k,s]**  \[Gamma][\[Mu]]**l[m,s] )], 
 	(Bar@ l[i,p]**\[Gamma][\[Mu]]**l[m,s] )(Bar@ l[k,s]**  \[Gamma][\[Mu]]**l[j,r] ) //RelabelIndices,
 	TestID->"Fierz: \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)PL x \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)PL"
 ]
 
 
 VerificationTest[
-	Fierz[(Bar@ l[i,p]**\[Gamma][\[Nu]]**q[\[Alpha],i,r])( Bar@d[\[Alpha],s]**\[Gamma][\[Nu]]**e[t]),Evanescent->False], 
+	Fierz4D[(Bar@ l[i,p]**\[Gamma][\[Nu]]**q[\[Alpha],i,r])( Bar@d[\[Alpha],s]**\[Gamma][\[Nu]]**e[t])], 
 	- 2(Bar@ l[i,p]** e[t])(Bar@ d[\[Alpha],s] **q[\[Alpha],i,r]) //RelabelIndices,
 	TestID->"Fierz: \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)PL x \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)PR"
 ]
 
 
 VerificationTest[
-	Fierz[(Bar@ l[i,p]**\[Sigma][\[Mu],\[Nu]]**e[t])( Bar@q[\[Alpha],i,r]**\[Sigma][\[Mu],\[Nu]]**d[\[Alpha],s]),Evanescent->False], 
-	- 6(Bar@ l[i,p]** d[\[Alpha],s])(Bar@ q[\[Alpha],i,r] **e[t]) + 1/2 (Bar@ l[i,p]**\[Sigma][\[Mu],\[Nu]]** d[\[Alpha],s])(Bar@ q[\[Alpha],i,r]**\[Sigma][\[Mu],\[Nu]] **e[t]) //RelabelIndices,
+	Fierz4D[-(Bar@ l[i,p]**\[Sigma][\[Mu],\[Nu]]**e[t])( Bar@q[\[Alpha],i,r]**\[Sigma][\[Mu],\[Nu]]**d[\[Alpha],s])], 
+	 6(Bar@ l[i,p]** d[\[Alpha],s])(Bar@ q[\[Alpha],i,r] **e[t]) - 1/2 (Bar@ l[i,p]**\[Sigma][\[Mu],\[Nu]]** d[\[Alpha],s])(Bar@ q[\[Alpha],i,r]**\[Sigma][\[Mu],\[Nu]] **e[t]) //RelabelIndices,
 	TestID->"Fierz: \!\(\*SubscriptBox[\(\[Sigma]\), \(\[Mu]\[Nu]\)]\)PR x \!\(\*SubscriptBox[\(\[Sigma]\), \(\[Mu]\[VeryThinSpace]\[Nu]\)]\)PR"
 ]
 
 
 VerificationTest[
-	Fierz[(Bar@CConj@ e[p]**  e[r] )(Bar@ e[s]**  CConj@e[t] ),Evanescent->False], 
+	Fierz4D[(Bar@CConj@ e[p]**  e[r] )(Bar@ e[s]**  CConj@e[t] )], 
 	1/2 (Bar@ e[s]**\[Gamma][\[Mu]]** e[r] )(Bar@ e[t]**\[Gamma][\[Mu]]** e[p] )//RelabelIndices,
 	TestID-> "Fierz: C PL x C PR"
 ]
 
 
 VerificationTest[
-	Fierz[(Bar@ l[i,p]**CConj@q[\[Alpha],i,r])( Bar@CConj@d[\[Alpha],s]**e[t]),Evanescent->False]//Expand, 
+	Fierz4D[(Bar@ l[i,p]**CConj@q[\[Alpha],i,r])( Bar@CConj@d[\[Alpha],s]**e[t])]//Expand, 
 	-(1/2)(Bar@ l[i,p]** e[t])(Bar@ q[a,i,r] ** d[a,s])+1/8 (Bar@ l[i,p]**\[Sigma][\[Mu],\[Nu]]** e[t])(Bar@ q[a,i,r] **\[Sigma][\[Mu],\[Nu]]** d[a,s]) //RelabelIndices,
 	TestID-> "Fierz: C PR x C PR"
 ]
@@ -522,42 +513,42 @@ VerificationTest[
 VerificationTest[
 	EpsExpand[GammaReduction[(Bar@ e[p]**\[Gamma][\[Mu]]**\[Gamma][\[Nu]]**l[i,r])( Bar@ e[s]**\[Gamma][\[Nu]]**\[Gamma][\[Mu]]**l[i,t]),Evanescent->False],Order->1], 
 	(4-2\[Epsilon]) (Bar@ e[p]**l[i,r])( Bar@ e[s]**l[i,t])  + (Bar@ e[p]**\[Sigma][\[Mu],\[Nu]]**l[i,r])( Bar@ e[s]**\[Sigma][\[Mu],\[Nu]]**l[i,t])   //RelabelIndices,
-	TestID->"Fierz: \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Nu]\)]\)PL x \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Nu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)PL"
+	TestID->"GammaReduction: \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Nu]\)]\)PL x \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Nu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)PL"
 ]
 
 
 VerificationTest[
 	EpsExpand[GammaReduction[(Bar@ e[p]**\[Gamma][\[Mu]]**\[Gamma][\[Nu]]**l[i,r])(Bar@q[\[Alpha],i,s]**\[Gamma][\[Nu]]**\[Gamma][\[Mu]]**d[\[Alpha],t]) ,Evanescent->False],Order->1], 
 	4(1-2\[Epsilon]) (Bar@ e[p]**l[i,r])(Bar@q[\[Alpha],i,s]**d[\[Alpha],t])   //RelabelIndices,
-	TestID->"Fierz: \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Nu]\)]\)PL x \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Nu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)PR"
+	TestID->"GammaReduction: \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Nu]\)]\)PL x \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Nu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)PR"
 ]
 
 
 VerificationTest[
 	EpsExpand[GammaReduction[(Bar@ l[i,p]**\[Gamma][\[Mu]]**\[Gamma][\[Nu]]**\[Gamma][\[Lambda]]**l[i,r])(Bar@q[\[Alpha],j,s]**\[Gamma][\[Lambda]]**\[Gamma][\[Nu]]**\[Gamma][\[Mu]]**q[\[Alpha],j,t]) ,Evanescent->False],Order->1], 
 	4(1-2\[Epsilon]) (Bar@ l[i,p]**\[Gamma][\[Mu]]**l[i,r])(Bar@q[\[Alpha],j,s]**\[Gamma][\[Mu]]**q[\[Alpha],j,t])  //RelabelIndices,
-	TestID->"Fierz: \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Nu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Lambda]\)]\)PL x \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Lambda]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Nu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)PL"
+	TestID->"GammaReduction: \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Nu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Lambda]\)]\)PL x \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Lambda]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Nu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)PL"
 ]
 
 
 VerificationTest[
-	EpsExpand[GammaReduction[(Bar@ l[i,p]**\[Gamma][\[Mu]]**\[Gamma][\[Nu]]**\[Gamma][\[Lambda]]**l[i,r])( Bar@ e[s]**\[Gamma][\[Lambda]]**\[Gamma][\[Nu]]**\[Gamma][\[Mu]]** e[t]),Evanescent->False],Order->1], 
+	EpsExpand[GammaReduction[(Bar@ l[i,p]**\[Gamma][\[Mu]]**\[Gamma][\[Nu]]**\[Gamma][\[Lambda]]**l[i,r])( Bar@ e[s]**\[Gamma][\[Lambda]]**\[Gamma][\[Nu]]**\[Gamma][\[Mu]]** e[t]),Evanescent->False],Order->1]//Expand, 
 	16(1-\[Epsilon]) (Bar@ l[i,p]**\[Gamma][\[Mu]]**l[i,r])( Bar@ e[s]**\[Gamma][\[Mu]]** e[t]) //RelabelIndices,
-	TestID->"Fierz: \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Nu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Lambda]\)]\)PL x \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Lambda]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Nu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)PR"
+	TestID->"GammaReduction: \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Nu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Lambda]\)]\)PL x \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Lambda]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Nu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)PR"
 ]
 
 
 VerificationTest[
 	Expand@EpsExpand[GammaReduction[(Bar@ e[p]**\[Gamma][\[Mu]]**\[Gamma][\[Nu]]**\[Sigma][\[Lambda],\[Rho]]**l[i,r])(Bar@d[\[Alpha],s]**\[Sigma][\[Lambda],\[Rho]]**\[Gamma][\[Nu]]**\[Gamma][\[Mu]]**q[\[Alpha],i,t]),Evanescent->False ],Order->1], 
 	16(3-5\[Epsilon]) (Bar@ e[p]**l[i,r])(Bar@d[\[Alpha],s]**q[\[Alpha],i,t]) + 2(6-7\[Epsilon])  (Bar@ e[p]**\[Sigma][\[Mu],\[Nu]]**l[i,r])(Bar@d[\[Alpha],s]**\[Sigma][\[Mu],\[Nu]]**q[\[Alpha],i,t]) //RelabelIndices,
-	TestID->"Fierz: \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Nu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\[Sigma]\), \(\[Lambda]\[Rho]\)]\)PL x \!\(\*SubscriptBox[\(\[Sigma]\), \(\[Lambda]\[Rho]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Nu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)PL"
+	TestID->"GammaReduction: \!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Nu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\[Sigma]\), \(\[Lambda]\[Rho]\)]\)PL x \!\(\*SubscriptBox[\(\[Sigma]\), \(\[Lambda]\[Rho]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Nu]\)]\)\!\(\*SubscriptBox[\(\[Gamma]\), \(\[Mu]\)]\)PL"
 ]
 
 
 ResetAll[];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Loading the package*)
 
 
@@ -566,5 +557,5 @@ ResetAll[];
 (*Comment when finished and add file name to the list testfiles in  the script "RunTests.wls" .*)
 
 
-(*	PrependTo[$Path, ParentDirectory[NotebookDirectory[]]];
+(*	PrependTo[$Path, ParentDirectory@ParentDirectory[NotebookDirectory[]]];
 	<< Matchete`*)

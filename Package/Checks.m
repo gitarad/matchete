@@ -15,7 +15,7 @@ Package["Matchete`"]
 (*Public:*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Scoping*)
 
 
@@ -53,7 +53,6 @@ PackageScope["HermitianQ"]
 PackageScope["UncontractedIndices"]
 PackageScope["OpenSpinChains"]
 PackageScope["ComplexSpinChains"]
-PackageScope["HeavyMassTermQ"]
 PackageScope["HeavyMassBasisQ"]
 PackageScope["HeavyTadpoleQ"]
 PackageScope["HeavyTadpoles"]
@@ -68,7 +67,7 @@ PackageScope["GetCharge"]
 PackageScope["GaugeAnomalyContribution"]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Usage messages*)
 
 
@@ -93,7 +92,6 @@ HermitianQ::usage               = "HermitianQ[expr] returns True if the expressi
 UncontractedIndices::usage      = "UncontractedIndices[expr] returns the list of open indices and mismatch between bared and not bared indices.";
 OpenSpinChains::usage           = "OpenSpinChains[expr] returns the list of open spin chains in expr."
 ComplexSpinChains::usage        = "ComplexSpinChains[expr] returns the list of spin chains in expr with more than 2 fermions."
-HeavyMassTermQ::usage           = "HeavyMassTermQ[operator] returns True if the operator contains two heavy fields and nothing else."
 HeavyMassBasisQ::usage          = "HeavyMassBasisQ[Lag] returns True if the Lagrangian is in the heavy fields mass basis, False otherwise.";
 HeavyTadpoleQ::usage            = "HeavyTadpoleQ[operator] identifies terms with only one heavy field."
 HeavyTadpoles::usage            = "HeavyTadpoles[Lag] returns the list of heavy tadpole terms with mass dimension less than 1. "
@@ -205,25 +203,54 @@ KineticCanonicalQ[L_]:=Module[{fields, LShouldBe,LIs},
 (*Error messages*)
 
 
-HeavyMassBasisQ::masscoupling    = "There should only be one coupling in the heavy mass terms."
+HeavyMassBasisQ::nomasscoupling  = "There is no Coupling in the coefficient of the heavy mass terms `1`."
 HeavyMassBasisQ::mixedfields     = "There should not be any mixed field mass terms with coupling with EFT order 0."
-HeavyMassBasisQ::masslabel       = "The coupling label `1` and the mass label of the heavy field `2` should be the same. To find the defined mass label, use GetFields[`2`]."
 
 
 (* ::Subsubsection::Closed:: *)
-(*HeavyMassTermQ*)
-
-
-(*terms with exactly two fields, no derivatives and at least one heavy field count as heavy mass terms*)
-HeavyMassTermQ[(c_:1)q_Operator]:=
-		MatchQ[OperatorType[q,CountEoMDerivatives->True], {{Field[f1_,_,__],Field[f2_,_,__]},0}/; (GetFields[f1][Heavy]||GetFields[f2][Heavy])]
-
-
-(* ::Subsubsection::Closed:: *)
-(*HeavyMassBasisQ*)
+(*HeavyMassBasisQ [NEW]*)
 
 
 (*check if heavy mass is diagonal in the input*)
+HeavyMassBasisQ[Lag_]:=Module[{terms,coupling,fields,indicestypes},
+	terms = Collect[Contract@ Operator@ IsolateMassTerms[Lag, Heavy->True], _Operator] //TermsToList;
+	Catch[
+	If[terms=={0},Throw[True]];
+	(*for each term...*)
+	(fields = Cases[#,_Field,Infinity];
+	(*...check if it is twice the same field*) 
+	If[!MatchQ[fields, {Field[f_,__],Field[f_,__]}], Message[HeavyMassBasisQ::mixedfields]; Throw[False]];
+	(*...check there is at least one Coupling[...] in the coefficient*) 
+	If[FreeQ[#, _Coupling, All], Message[HeavyMassBasisQ::nomasscoupling,#]; Throw[False]]
+	) & /@ terms;
+	Throw[True]]
+];
+
+
+(* ::Subsubsection::Closed:: *)
+(*HeavyMassTermQ [OLD]*)
+
+
+(*PackageScope["HeavyMassTermQ"]*)
+
+
+(*HeavyMassTermQ::usage           = "HeavyMassTermQ[operator] returns True if the operator contains two heavy fields and nothing else."*)
+
+
+(*(*terms with exactly two fields, no derivatives and at least one heavy field count as heavy mass terms*)
+HeavyMassTermQ[(c_:1)q_Operator]:=
+		MatchQ[OperatorType[q,CountEoMDerivatives->True], {{Field[f1_,_,__],Field[f2_,_,__]},0}/; (GetFields[f1][Heavy]||GetFields[f2][Heavy])]*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*HeavyMassBasisQ [OLD]*)
+
+
+(*HeavyMassBasisQ::masscoupling    = "There should only be one coupling in the heavy mass terms."
+HeavyMassBasisQ::masslabel       = "The coupling label `1` and the mass label of the heavy field `2` should be the same. To find the defined mass label, use GetFields[`2`]."*)
+
+
+(*(*check if heavy mass is diagonal in the input*)
 HeavyMassBasisQ[Lag_]:=Module[{terms,coupling,fields,indicestypes},
 	terms = (Operator[Lag]//.o_Operator /;(!HeavyMassTermQ[o]):>0) //TermsToList;
 	terms = Select[terms, OperatorDimension[#/._Operator:>1]<1 &];
@@ -235,24 +262,25 @@ HeavyMassBasisQ[Lag_]:=Module[{terms,coupling,fields,indicestypes},
 	If[!MatchQ[fields, {Field[f_,__],Field[f_,__]}],Message[HeavyMassBasisQ::mixedfields];Throw[False]];
 	coupling=Abs[#/.{_Operator:>If[GetFields[fields[[1,1]]][SelfConjugate]===True || GetFields[fields[[1,1]]][Chiral]=!=False,2,1]}]//.{Abs[x_]:>x,Power[m_,_]:>m};
 	(*...check if there is only one coupling*)
-	If[Head[coupling]=!=Coupling, Message[HeavyMassBasisQ::masscoupling];Throw[False]];
+	If[Head[Echo@coupling]=!=Coupling, Message[HeavyMassBasisQ::masscoupling];Throw[False]];
 	(*...check if the coupling has the same label as the field mass*)
 	If[GetFields[First@First@fields][Mass]=!=First@coupling,Message[HeavyMassBasisQ::masslabel,First@coupling, First@First@fields];Throw[False]];
 	) & /@ terms;
 	Throw[True]]
-];
+];*)
 
 
 (* ::Subsection::Closed:: *)
 (*Heavy tadpoles*)
 
 
-HeavyTadpoleQ[(c_:1)op_Operator]:=
-		MatchQ[OperatorType[op,CountEoMDerivatives->True], {{Field[f_,_,__]},0}/; (GetFields[f][Heavy])]
+HeavyTadpoleQ[(c_:1)op_Operator, cond_]:=
+		MatchQ[OperatorType[op,CountEoMDerivatives->True], {{Field[f_,_,__]},0}/; (cond[f])]
 
 
-HeavyTadpoles[Lag_]:=Module[{tadterms},
-	tadterms = (Operator[Lag]//.o_Operator /;(!HeavyTadpoleQ[o]):>0) //TermsToList;
+HeavyTadpoles[Lag_]:=Module[{tadterms, massterms=IsolateMassTerms[Lag,Heavy->True], heavyQ},
+	heavyQ = !FreeQ[massterms,#,All]&; (*heavy masss mixing was checked before*)
+	tadterms = (Operator[Lag]//.o_Operator /;(!HeavyTadpoleQ[o, heavyQ]):>0) //TermsToList;
 	tadterms = Select[tadterms, OperatorDimension[#/._Operator:>1]<1 &];
 	tadterms
 ];

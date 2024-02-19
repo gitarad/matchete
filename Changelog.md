@@ -1,5 +1,13 @@
 # Matchete changelog
 
+### v0.1.8 (2024-02-19)
+- Fixed a bug in the CDE of CovariantLoop/Match that caused non-cyclicity of the traces.
+- Improved HcSimplify.
+- Improved EvaluateLoopFunctions.
+- Implemented simplification routines to LF (Loop functions).
+- Introduced ShiftRankCouplings, which absorbs EFT corrections into the renormalized couplings.
+- EFT power counting is now directly determined from the Lagrangian rather than from the field definitions.
+
 ### v0.1.7 (2023-11-02)
 - Fixed a bug in GreensSimplify in models with Majorana fermions.
 - Tweaks to HcSimplify.

@@ -1081,7 +1081,7 @@ Format[HcTerms[expr_], NiceForm]:= DisplayForm@RowBox[{"(",expr,"+", Style["H.c.
 Format[EvaOp[label_,indices_], NiceForm]:= Subsuperscript["E",Format[label,NiceForm], SubscriptStyle@ Row@ Map[Format[#,NiceForm]&, indices]];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Logarithms*)
 
 
@@ -1091,6 +1091,17 @@ RowBox[{
 		FractionBox[
 			MakeBoxes[\[Mu]bar2,NiceForm],
 			MakeBoxes[Power[a,2],NiceForm]
+		],
+	"]"
+}],StandardForm]
+
+
+NiceForm/:MakeBoxes[Log[Times[Power[a_,2],Power[b_,-2]]],NiceForm]:=FormBox[
+RowBox[{
+	Log,"[",
+		FractionBox[
+			MakeBoxes[Power[a,2],NiceForm],
+			MakeBoxes[Power[b,2],NiceForm]
 		],
 	"]"
 }],StandardForm]

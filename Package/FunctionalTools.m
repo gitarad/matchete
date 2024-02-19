@@ -26,7 +26,7 @@ PackageImport["GroupMagic`"]
 (*Exported*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Internal*)
 
 
@@ -81,12 +81,12 @@ PackageScope["BackgroundFS"]
 (*Internal*)
 
 
-FD::usage = 
+FD::usage =
 "FD[expr,field] calculates the (partial) functional derivative of expr with respect to field, where expr is a Lagrangian or any other expression depending on fields. The argument field must be of type Field[label, type, {indices}, {CDerivs}] and the diferent covariant derivatives of the field are treated as independent.
 Example: FD[\[ScriptCapitalL], Field[\[Phi], Scalar, {}, {\[Mu],\[Nu]}]] = \!\(\*FractionBox[\(\[Delta]\[ScriptCapitalL]\), \(\[Delta] \((\*SubscriptBox[\(D\), \(\[Mu]\)] \*SubscriptBox[\(D\), \(\[Nu]\)] \[Phi])\)\)]\).";
 
 
-FuncD::usage = 
+FuncD::usage =
 "FuncD[expr,field] calculates the (partial) functional derivative of expr with respect to field, where expr is a Lagrangian or any other expression depending on fields. Results are returned in a non simplified form. The argument field must be of type Field[label, type, {indices}, {CDerivs}] and the diferent covariant derivatives of the field are treated as independent.
 Example: FuncD[\[ScriptCapitalL], Field[\[Phi], Scalar, {}, {\[Mu],\[Nu]}]] = \!\(\*FractionBox[\(\[Delta]\[ScriptCapitalL]\), \(\[Delta] \((\*SubscriptBox[\(D\), \(\[Mu]\)] \*SubscriptBox[\(D\), \(\[Nu]\)] \[Phi])\)\)]\).";
 
@@ -99,23 +99,23 @@ VarD::usage=
 "VarD[expr,field1,field2(optional)] calculates the variational derivative of expr with respect to field2 and then field1, where expr is a Lagrangian or any other expression depending on fields. The arguments field1 and field2 must be of the form Field[label, type, {indices}, {}].";
 
 
-Grassmann::usage = 
+Grassmann::usage =
 "Grassmann is an option for FuncD and VarDraw that specifies whether minus signs from anti-commuting functional derivatives of fermionic fields should be considered. The default value is Grassmann->True.";
 
 
-DeriveEOM::usage = 
+DeriveEOM::usage =
 "DeriveEOM[\[ScriptCapitalL],\[Phi]] derives the equation of motion for the field \[Phi] from the Lagrangian density \[ScriptCapitalL], i.e. VarD[\[ScriptCapitalL],Bar[\[Phi]]] is computed.";
 
 
-FluctuationOperator::usage = 
+FluctuationOperator::usage =
 "FluctuationOperator[\[ScriptCapitalL],\[Phi],\[Psi]] derives the fluctuation operator, i.e. the X-term, for the fields \[Phi] and \[Psi] from the Lagrangian density \[ScriptCapitalL], i.e. \!\(\*FractionBox[\(\*SuperscriptBox[\(\[Delta]\), \(2\)] \[ScriptCapitalL]\), \(\[Delta]\[Phi]\\\ \[Delta]\[Psi]\)]\) ~ VarD[\[ScriptCapitalL],\[Psi],\[Phi]] is computed.";
 
 
-RecursiveExpandCD::usage = 
+RecursiveExpandCD::usage =
 "RecursiveExpandCD[indices,group,field] shifts all covariant derivatives by the gauge field fluctuation and expands the result up to leading order in the gauge field fluctuation.";
 
 
-SubstituteFieldStrength::usage = 
+SubstituteFieldStrength::usage =
 "SubstituteFieldStrength[expr] substitues all instances of FieldStrength[...] in expr with the corresponding Fields using \!\(\*SubscriptBox[SuperscriptBox[\(F\), \(a\)], \(\[Mu]\[Nu]\)]\)=(\!\(\*SubscriptBox[\(D\), \(\[Mu]\)]\)\!\(\*SubscriptBox[\(A\), \(\[Nu]\)]\)\!\(\*SuperscriptBox[\()\), \(a\)]\)-(\!\(\*SubscriptBox[\(D\), \(\[Nu]\)]\)\!\(\*SubscriptBox[\(A\), \(\[Mu]\)]\)\!\(\*SuperscriptBox[\()\), \(a\)]\)."
 
 
@@ -168,10 +168,10 @@ FD[x_, y_, OptionsPattern[]] := Module[
 		arg = Expand[x]
 	}
 	,
-	
+
 	(* computation of the partial functional derivative and simplifications *)
 	result = FuncDSimplify@FuncD[arg, y, Grassmann->OptionValue[Grassmann]];
-	
+
 	Return[result]
 ]
 
@@ -180,7 +180,7 @@ FD[x_, y_, OptionsPattern[]] := Module[
 (*Check arguments*)
 
 
-FD::invalidargument = 
+FD::invalidargument =
 "The second argument `1` of FuncD is invalid. It must be either of the following forms: Field[...], Bar[Field[...]].";
 
 
@@ -209,52 +209,52 @@ ExpandVectorFluctuations[x_, y_]:=Module[
 	}
 	,
 	yFieldLabel = First[yField];
-	
+
 	(* Shift covariant derivatives and field-strength tensors in the case of gauge fields *)
 	If[GaugeFieldQ@yField,
-		
+
 		(* shift explicit gauge fields *)
 		arg = Expand[arg /. Field[yFieldLabel,type_Vector,rest___]:>(Field[BackgroundField[yFieldLabel],type,rest]+$\[Epsilon]FD*Field[yFieldLabel,type,rest])];
-		
+
 		(* remove powers for pattern matching *)
 		arg = RemovePower[arg];
-		
+
 		(* determine gauge group and coupling *)
 		gaugeGroup = First@First@FirstPosition[$GaugeGroups, KeyValuePattern[Field->First[yField]]];
 		gaugeCoupling = $GaugeGroups[gaugeGroup][Coupling][];
-		
+
 		(* shift covariant derivatives iff field is charged under gauge group *)
 		arg = arg/.Field[l_,t_,ind_List,deriv_List] :> ShiftCD[deriv,gaugeGroup,Field[l,t,ind,{}],$\[Epsilon]FD] /; (Length[deriv]>0 && FieldTransformsUnderGaugeGroupQ[Field[l,t,ind,{}], gaugeGroup]);
 		arg = RemovePower@ReleaseHold[arg];
-		
+
 		(* shift covariant derivatives acting on field-strength tensors *)  (*crosscheck*)
 		arg = arg/.FieldStrength[l_,lorentz_,ind_List,deriv_List] :> ShiftCD[deriv,gaugeGroup,FieldStrength[l,lorentz,ind,{}],$\[Epsilon]FD] /; (Length[deriv]>0 && FieldTransformsUnderGaugeGroupQ[FieldStrength[l,lorentz,ind,{}], gaugeGroup]);
-	
+
 		(* shift the field-strength tensors *)
 		arg = arg /. FieldStrength[arguments___] :> ShiftFS[FieldStrength[arguments],$\[Epsilon]FD] /; MatchQ[First[{arguments}],$GaugeGroups[gaugeGroup][Field]];
 		arg = RemovePower@ReleaseHold[arg];
-		
+
 	];
-	
+
 	(* Shift only the field-strength tensors in the case of vectors that are not gauge *)
 	If[VectorFieldQ@yField && !GaugeFieldQ@yField,
-		
+
 		(* shift explicit vector fields *)
 		arg = Expand[arg /. Field[yFieldLabel,type_Vector,rest___]:>(Field[BackgroundField[yFieldLabel],type,rest]+$\[Epsilon]FD*Field[yFieldLabel,type,rest])];
-		
+
 		(* remove powers for pattern matching *)
 		arg = RemovePower[arg];
-		
+
 		(* shift the field-strength tensors *)
 		arg = arg /. FieldStrength[First@yField,args___] :> ShiftFS[FieldStrength[First@yField,args],$\[Epsilon]FD];
 	];
-	
+
 	(*Release BackgroundCD*)
 	arg = arg/. BackgroundCD[ind__,exp_]:>CD[ind,exp] /.BackgroundFS[all___]:>FieldStrength[all];
-	
+
 	(* expand to quadratic order in the fluctuation *)
 	arg = Normal@Series[Expand[ReleaseHold@arg],{$\[Epsilon]FD,0,2}];
-	
+
 	RelabelIndices[arg]
 ]
 
@@ -301,7 +301,7 @@ FieldTransformsUnderGaugeGroupQ[FieldStrength[l_,lorentz_,ind_List,derive_List],
 	If[AbelianQ[gaugeGroup],
 		Return[False] (* FS can never be charged under abelian groups *)
 	];
-	
+
 	groups= GetGaugeGroups[];
 	If[MemberQ[groups, KeyValuePattern[Field->l]],
 		If[MatchQ[gaugeGroup, First@ First@ First@ Position[groups, KeyValuePattern[Field->l]]],
@@ -352,23 +352,23 @@ VectorFieldQ[f:Field[label_,type_,___]]:=Module[{},
 
 (* Expand the quantum in fluctuations of the gauge field associated to the given group in covariant derivatives *)
 ShiftCD[indices_List, group_, field_, globalCounter_:1] := Module[{result,counter},
-	
+
 	(* if there is no CD just return the field*)
 	If[Length[indices]==0, Return[field]];
-	
+
 	(* else: shift all the CDs *)
 	If[AbelianQ[group],
 		result = Expand@RecursiveExpandAbelianCD[indices, group, field, counter];
 		,
 		result = Expand@RecursiveExpandCD[indices, group, field, counter];
 	];
-	
+
 	(* truncate at leading order in the fluctuation *)
 	result = Normal@Series[result,{counter,0,1}];
-	
+
 	(* remove counting parameter *)
 	result = Expand[result/.counter->globalCounter];
-	
+
 	Return[result]
 ]
 
@@ -384,12 +384,12 @@ RecursiveExpandCD[indices_List, group_, initField_, \[Lambda]_:1] := Module[
 		indexAdj=Unique[],
 		newRepIndex=Unique[],
 		generatorIndices,
-		field		
+		field
 	}
 	,
 	(* replace the group index in field *)
 	{field,generatorIndices}=ChangeFieldIndex[initField, group, newRepIndex];
-	
+
 	(* split the Lorentz indices *)
 	{\[Mu]1,more\[Mu]} = TakeDrop[indices,1];
 	(* recursive formula for building up the fluctuation expansion in covariant derivatives *)
@@ -498,7 +498,7 @@ ChangeFieldIndex[field_, group_, label_]:=Module[
 		indices = Cases[field,_Index,All],
 		groupIndex={}
 	}
-	,	
+	,
 	(* Find all indices belongin to the given group *)
 	Do[
 		If[MatchQ[GroupFromRep@Last[ind],group],
@@ -507,7 +507,7 @@ ChangeFieldIndex[field_, group_, label_]:=Module[
 		,
 		{ind,indices}
 	];
-	
+
 	(* check that there is only one index *)
 	If[Length[groupIndex]>1,
 		Message[FD::multiplegroupindices,field,group];
@@ -515,7 +515,7 @@ ChangeFieldIndex[field_, group_, label_]:=Module[
 		,
 		groupIndex = First[groupIndex]
 	];
-	
+
 	(* return the field with replaced index and the original and new index labels *)
 	Return[{
 		field/.groupIndex->Index[label,Last[groupIndex]],
@@ -574,7 +574,7 @@ Options[FuncD] = {Grassmann->True};
 (*Sum rule*)
 
 
-FuncD[Plus[x1_,x2__],y_,OptionsPattern[]] := 
+FuncD[Plus[x1_,x2__],y_,OptionsPattern[]] :=
 	Plus[
 		FuncD[x1,y,Grassmann->OptionValue[Grassmann]],
 		FuncD[Plus[x2],y,Grassmann->OptionValue[Grassmann]]
@@ -589,7 +589,7 @@ FuncD[Plus[x1_,x2__],y_,OptionsPattern[]] :=
 (*Times[]*)
 
 
-FuncD[Times[x1_,x2__],y_,OptionsPattern[]] := 
+FuncD[Times[x1_,x2__],y_,OptionsPattern[]] :=
 	Plus[
 		Times[FuncD[x1,y,Grassmann->OptionValue[Grassmann]],x2],
 		Times[x1,FuncD[Times[x2],y,Grassmann->OptionValue[Grassmann]]]
@@ -601,7 +601,7 @@ FuncD[Times[x1_,x2__],y_,OptionsPattern[]] :=
 
 
 FuncD[NonCommutativeMultiply[x1_,x2__],y_,OptionsPattern[]] := Module[
-	{ 
+	{
 		fieldType,
 		sign = 1
 	}
@@ -615,7 +615,7 @@ FuncD[NonCommutativeMultiply[x1_,x2__],y_,OptionsPattern[]] := Module[
 			sign = (-1)^(Plus@@Cases[x1,Field[_,Fermion|Ghost,___]->1,All]);
 		];
 	];
-	
+
 	(*apply the product rule*)
 	Plus[
 		NonCommutativeMultiply[FuncD[x1,y,Grassmann->OptionValue[Grassmann]],x2],
@@ -633,7 +633,7 @@ FuncD[NonCommutativeMultiply[x:(Field[___] | Bar@Field[___] | Transp@Field[___] 
 
 
 FuncD[NCProduct[x1_,x2__],y_,OptionsPattern[]] := Module[
-	{ 
+	{
 		fieldType,
 		sign = 1
 	}
@@ -647,7 +647,7 @@ FuncD[NCProduct[x1_,x2__],y_,OptionsPattern[]] := Module[
 			sign = (-1)^(Plus@@Cases[x1,Field[_,Fermion|Ghost,___]->1,All]);
 		];
 	];
-	
+
 	(*apply the product rule*)
 	Plus[
 		NCProduct[FuncD[x1,y,Grassmann->OptionValue[Grassmann]],x2],
@@ -709,7 +709,7 @@ FuncD::unmatchedindex = "Unmatched types of group indices found.";
 FuncD[Bar@Field[label_,rest1__], Bar@Field[label_,rest2__], OptionsPattern[]] := FuncD[Field[label,rest1], Field[label,rest2], Grassmann->OptionValue[Grassmann]]
 
 
-FuncD[Field[label_,type1_,index1_,derivs1_], Field[label_,type2_,index2_,derivs2_], OptionsPattern[]] := 
+FuncD[Field[label_,type1_,index1_,derivs1_], Field[label_,type2_,index2_,derivs2_], OptionsPattern[]] :=
 	Module[
 		{ result = 1 }
 		,
@@ -723,7 +723,7 @@ FuncD[Field[label_,type1_,index1_,derivs1_], Field[label_,type2_,index2_,derivs2
 				Abort[]
 			]
 		];
-		
+
 		(*check that there are no duplicate index labels *)
 		If[Or@@(!FreeQ[index1,#]&/@index2),
 			Message[FuncD::repeatedindices, index1, index2];
@@ -733,7 +733,7 @@ FuncD[Field[label_,type1_,index1_,derivs1_], Field[label_,type2_,index2_,derivs2
 			Message[FuncD::repeatedindices, derivs1, derivs2];
 			Abort[]
 		];
-		
+
 		(*functionality depending on field type*)
 		Switch[{type1,type2},
 			(*fermions*)
@@ -756,21 +756,21 @@ FuncD[Field[label_,type1_,index1_,derivs1_], Field[label_,type2_,index2_,derivs2
 				Message[FuncD::invalidtype, type1, type2];
 				Abort[]
 		];
-		
+
 		(*include Delta[_,_] for all group indices*)
 		Do[
 			result *= Delta@@pair
 			,
 			{pair,Transpose[{index1,index2}]}
 		];
-		
+
 		(*include Metric[_,_] for all Lorentz indices of the covariant derivatives*)
 		Do[
 			result *= Metric@@pair
 			,
 			{pair,Transpose[{derivs1,derivs2}]}
 		];
-		
+
 		Return[result]
 	] /; (Length[derivs1]==Length[derivs2])
 
@@ -885,24 +885,24 @@ FuncDSimplify[expr_] := Module[{solution=expr},
 Options[VarDraw] = {Grassmann->True, EFTOrder -> 6};
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Check Arguments*)
 
 
 OptionMessage[Grassmann, func:VarDraw, val_] := Message[General::optexpectsval, Grassmann, func, val, "boolean (True or False)"];
 
 
-VarDraw::invalidargument = 
-"The second argument `1` of VarDraw is invalid. It must be either of the following forms: 
+VarDraw::invalidargument =
+"The second argument `1` of VarDraw is invalid. It must be either of the following forms:
 Field[_,_,_,{}], Bar[Field[_,_,_,{}]], Transp[Field[_,_,_,{}]], Transp[Bar[Field[_,_,_,{}]]], CConj[Field[_,_,_,{}]], Bar[CConj[Field[_,_,_,{}]]].";
 
 
 SecondArgVarD = Alternatives[
-		Field[_,_,_,{}], 
-		Bar@Field[_,_,_,{}], 
-		Transp@Field[_,_,_,{}], 
-		Transp@Bar@Field[_,_,_,{}], 
-		NonCommutativeMultiply[DiracProduct[GammaCC], Transp@Bar@Field[_,_,_,{}]], 
+		Field[_,_,_,{}],
+		Bar@Field[_,_,_,{}],
+		Transp@Field[_,_,_,{}],
+		Transp@Bar@Field[_,_,_,{}],
+		NonCommutativeMultiply[DiracProduct[GammaCC], Transp@Bar@Field[_,_,_,{}]],
 		NonCommutativeMultiply[Transp@Field[___], DiracProduct[GammaCC]]
 	];
 
@@ -918,7 +918,7 @@ VarDraw[
 (*The total functional derivative*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Single application of variational derivative*)
 
 
@@ -929,12 +929,12 @@ VarDraw[L_, x : SecondArgVarD, OptionsPattern[]] := Module[
    		result,
    		indices = {}
    	},
-  
+
   	If[Head@(Cases[x, Field[___], All][[1,2]])===Vector,arg=Expand[L/$\[Epsilon]FD];, arg=L;];
-	
+
   	(*Add FD w.r.t. Field[...] to result*)
   	result = FD[arg, x, Grassmann -> OptionValue[Grassmann]];
-  	
+
   	(*Add FD w.r.t. CD[Field[...]] to result, included number of CD[] depends on mass dimension*)
   	Do[
    		(*create unique lorentz indices for covariant derivatives*)
@@ -946,12 +946,12 @@ VarDraw[L_, x : SecondArgVarD, OptionsPattern[]] := Module[
    		,
    		{n, OptionValue[EFTOrder] - 2}
    	];
-  	
+
   	result
   ]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Variational derivatives*)
 
 
@@ -980,7 +980,7 @@ VarD[lag_, fs__, opt:OptionsPattern[]]:= Module[{gr, terms, labels},
 		];
 	, {lab, labels}];
 
-	terms= ExpandVectorFluctuations[Total@ terms, Sequence@@ DeleteDuplicatesBy[{fs}, 
+	terms= ExpandVectorFluctuations[Total@ terms, Sequence@@ DeleteDuplicatesBy[{fs},
 		FirstCase[{#}, Field[l_, __] :> l, Nothing, All]& ] ];
 	VarD1[terms, fs, opt]
 ];
@@ -990,7 +990,7 @@ VarD[lag_, fs__, opt:OptionsPattern[]]:= Module[{gr, terms, labels},
 (*Checks if the term is trivially zero under differentiation w.r.t. the field gauge group gr*)
 
 
-NotTrivialWRTGaugeFieldQ[gr_][term_] := !FreeQ[term, f : (Field[__, {__}] | _FieldStrength) /; FieldTransformsUnderGaugeGroupQ[f, gr]] || 
+NotTrivialWRTGaugeFieldQ[gr_][term_] := !FreeQ[term, f : (Field[__, {__}] | _FieldStrength) /; FieldTransformsUnderGaugeGroupQ[f, gr]] ||
 	!FreeQ[term, (Field|FieldStrength)[$GaugeGroups[gr, Field], __]];
 
 
@@ -998,17 +998,17 @@ NotTrivialWRTGaugeFieldQ[gr_][term_] := !FreeQ[term, f : (Field[__, {__}] | _Fie
 (*Variational derivative w.r.t. 1 field*)
 
 
-VarD1[lag_, f1 : SecondArgVarD, opt:OptionsPattern[]] := 
-	RelabelIndices@VarDraw[lag, f1,opt]/.$\[Epsilon]FD->0 /. BackgroundField[l_]:>l 
+VarD1[lag_, f1 : SecondArgVarD, opt:OptionsPattern[]] :=
+	RelabelIndices@VarDraw[lag, f1,opt]/.$\[Epsilon]FD->0 /. BackgroundField[l_]:>l
 
 
 (* ::Text:: *)
 (*Variational derivative w.r.t. 2 fields*)
 
 
-VarD1[lag_, f1 : SecondArgVarD, f2 : SecondArgVarD, opt:OptionsPattern[]] :=  
-	RelabelIndices@VarDraw[Expand[VarDraw[lag, f2,opt] * OpenCD[{}]], f1, opt]/. 
-		OpenCD[{}]-> 1/. $\[Epsilon]FD-> 0/. BackgroundField[l_]:>l 
+VarD1[lag_, f1 : SecondArgVarD, f2 : SecondArgVarD, opt:OptionsPattern[]] :=
+	RelabelIndices@VarDraw[Expand[VarDraw[lag, f2,opt] * OpenCD[{}]], f1, opt]/.
+		OpenCD[{}]-> 1/. $\[Epsilon]FD-> 0/. BackgroundField[l_]:>l
 
 
 (* ::Section:: *)
@@ -1022,7 +1022,7 @@ VarD1[lag_, f1 : SecondArgVarD, f2 : SecondArgVarD, opt:OptionsPattern[]] :=
 Options[DeriveEOM] = {EFTOrder->6};
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*EoM for one field*)
 
 
@@ -1030,30 +1030,30 @@ DeriveEOM[lagrangian_, field:(Field[label_,___,{}] | Bar@Field[label_,___,{}]), 
 	{
 		eom,
 		deriveField = Bar[field],
-		fieldProps = GetFields@label
+		fieldProps = GetFieldsUpdated@ label
 	}
 	,
-	
+
 	(* check for massive chiral fermions *)
 	If[(fieldProps[Type] === Fermion) && (fieldProps[Chiral] =!= False) && (fieldProps[Mass] =!= 0) && !fieldProps[SelfConjugate],
 		deriveField = CConj@deriveField
 	];
-	
+
 	(* derive EOM *)
 	eom = VarD[lagrangian, deriveField, EFTOrder->OptionValue[EFTOrder]];
-	
+
 	Return[eom]
 ]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*EoM for list of fields*)
 
 
 DeriveEOM[lagrangian_, fields_List, OptionsPattern[]] := (DeriveEOM[lagrangian,#,EFTOrder->OptionValue[EFTOrder]]&/@fields)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Errors*)
 
 
@@ -1063,7 +1063,7 @@ DeriveEOM::invalarg = "The argument `1` is invalid; only Field[...] or Bar[Field
 DeriveEOM[_,arg:Except[List[___]|Field[___]|Bar@Field[___]], OptionsPattern[]] := Message[DeriveEOM::invalarg,arg]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Fluctuation operator*)
 
 
@@ -1075,11 +1075,11 @@ Options[FluctuationOperator] = {EFTOrder -> 6};
 
 
 fdPattern= Alternatives[
-		Field[_,_,_,{}], 
-		Bar@Field[_,_,_,{}], 
-		Transp@Field[_,_,_,{}], 
-		Transp@Bar@Field[_,_,_,{}], 
-		NonCommutativeMultiply[DiracProduct[GammaCC], Transp@Bar@Field[_,_,_,{}]], 
+		Field[_,_,_,{}],
+		Bar@Field[_,_,_,{}],
+		Transp@Field[_,_,_,{}],
+		Transp@Bar@Field[_,_,_,{}],
+		NonCommutativeMultiply[DiracProduct[GammaCC], Transp@Bar@Field[_,_,_,{}]],
 		NonCommutativeMultiply[Transp@Field[___], DiracProduct[GammaCC]]
 	];
 
@@ -1089,10 +1089,10 @@ FluctuationOperator::invldField= "`1` is not a valid field variable.";
 
 FluctuationOperator[lag_, field1_, field2_, OptionsPattern[]] := Module[
 		{f1, f2, eom, xTerm, f, sign, lagrangian= NCProduct[lag]},
-	(*Remove projection operators from functional derivative field (chiral fields always have explicit projectors in the Lagrangian).*)	
+	(*Remove projection operators from functional derivative field (chiral fields always have explicit projectors in the Lagrangian).*)
 	{f1, f2}= {field1, field2}/. {DiracProduct[a___, (Transp@ _Proj| _Proj)]:> DiracProduct@ a}/.
 		NonCommutativeMultiply@ x_-> x;
-	
+
 	Do[
 		If[! MatchQ[f, fdPattern],
 			Message[FluctuationOperator::invldField, f];
@@ -1101,8 +1101,8 @@ FluctuationOperator[lag_, field1_, field2_, OptionsPattern[]] := Module[
 		,
 		{f, {f1, f2}}
 	];
-	
-	(* 
+
+	(*
 	if field2 is fermionic or ghost add a minus sign:
 	since VarD[\[ScriptCapitalL],field2] has an odd number of fermions and the fluctuation of field2 has to be anticommuted through the entire expression.
 	 *)
@@ -1110,12 +1110,12 @@ FluctuationOperator[lag_, field1_, field2_, OptionsPattern[]] := Module[
 		sign= 1,
 		sign= -1
 	];
-	
+
 	(* apply functional derivatives *)
 	xTerm= sign * VarD[lagrangian,f1,f2, EFTOrder->OptionValue[EFTOrder]];
-	
+
 	xTerm= SortNCProduct[xTerm]/.NCProduct->NonCommutativeMultiply;
-	
+
 	Return[xTerm]
 ]
 

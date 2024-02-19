@@ -58,6 +58,7 @@ PackageScope["CompOp"]
 PackageScope["ConstructOperatorIdentities"]
 PackageScope["ResetOperatorAssociations"]
 PackageScope["MatchOperatorPatterns"]
+PackageScope["LookupOperatorFlavorProperties"]
 PackageScope["FindPermutationOrder"]
 PackageScope["$operators"]
 PackageScope["$compoundOperators"]
@@ -90,12 +91,15 @@ HcExpand::usage="HcExpand[Lagrangian] expands the head HcTerms to return both th
 HcTerms::usage="HcTerms[expr] is a placeholder that contain terms whose hermitian conjugate have been removed form the Lagrangian with HcSimplify.";
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Scoped*)
 
 
 EoM::usage="EoM[A_] is a field operator in the form of the equations of motion of a field.";
 Operator::usage="Operator[x] separates prefactors from field operators and puts the expressions into forms that can more easily be processed by the reduction algorithms.";
+
+
+LookupOperatorFlavorProperties::usage= "LookupOperatorFlavorProperties[op] returns the flavor properties of the operator in question."
 
 
 (* ::Chapter:: *)
@@ -110,7 +114,7 @@ Operator::usage="Operator[x] separates prefactors from field operators and puts 
 (*Operator object*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Properties*)
 
 
@@ -128,7 +132,7 @@ Operator@ l_List:= Operator/@ l;
 op:Operator[_Plus, ___]:= Distribute@ Unevaluated@ op;
 
 (*Operator@ prod_Times:= Operator@@ prod;*)
-Operator[HoldPattern@ Times@ a__, b___]:= Operator[a, b]; 
+Operator[HoldPattern@ Times@ a__, b___]:= Operator[a, b];
 
 Operator/: HoldPattern[Operator[a__]* Operator[b__]]:= Operator[a, b]; (*NormalForm?*)
 
@@ -140,7 +144,7 @@ Operator[Power[a_, n_Integer? Positive], b___]:= Operator[Sequence@@ ConstantArr
 Operator[]:= 1;
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Recognize EoM*)
 
 
@@ -164,7 +168,7 @@ EoM[-CC** (f:Field[_, Fermion, _, {}])]:= CC** EoM@ f ;
 
 
 (* Scalars *)
-Operator[eom:(Field[_, Scalar, _, {mu_, mu_}]| Bar@ Field[_, Scalar, _, {mu_, mu_}]), rest___]:= 
+Operator[eom:(Field[_, Scalar, _, {mu_, mu_}]| Bar@ Field[_, Scalar, _, {mu_, mu_}]), rest___]:=
 	Operator[eom/. Field[l_, Scalar, i_, {b_, b_}]:> EoM@ Field[l, Scalar, i, {}], rest];
 
 (* Fermions *)
@@ -189,7 +193,7 @@ Operator[FieldStrength[V_, linds:{OrderlessPatternSequence[a_, b_]}, ind_, {a_}]
 	Signature@ linds Signature@ {a, b} Operator[EoM[Field[V, Vector[b], ind, {}]], rest];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*NormalForm, rewriting Operator and EoM objects*)
 
 
@@ -200,7 +204,7 @@ Operator[FieldStrength[V_, linds:{OrderlessPatternSequence[a_, b_]}, ind_, {a_}]
 Options@ NormalForm= {Unique-> True, CanonizeKinetic -> True};
 
 
-NormalForm[expr_, OptionsPattern[]]:= 
+NormalForm[expr_, OptionsPattern[]]:=
 	CanonizeKineticalOps[expr, OptionValue@CanonizeKinetic] /. op:_Operator:> Activate@ RelabelIndices[Inactive[Times]@@ op//. {
 			EoM[f:Field[_, Scalar, __]]:> Module[{a}, CD[{a, a}, f] ],
 			EoM[Bar@ f:Field[_, Scalar, __]]:> Bar@ Module[{a}, CD[{a, a}, f] ],
@@ -208,7 +212,7 @@ NormalForm[expr_, OptionsPattern[]]:=
 			EoM[Bar@ f:Field[_, Fermion, __]]:> Bar@ Module[{a}, \[Gamma][a]**CD[a, f]],
 			EoM[Transp@ f:Field[_, Fermion, __]]:> Transp@ Module[{a}, \[Gamma][a]**CD[a, f]],
 			EoM[Transp@ Bar@ f:Field[_, Fermion, __]]:> Module[{a}, Transp@ \[Gamma][a]**Transp@ Bar@ CD[a, f]],
-			EoM[Field[f_, Vector[mu_], ind_, {}]]:> 
+			EoM[Field[f_, Vector[mu_], ind_, {}]]:>
 				Module[{nu}, FieldStrength[f, {Index[nu, Lorentz], mu}, ind, {Index[nu, Lorentz]}] ]
 		}
 	, Unique-> OptionValue@ Unique];
@@ -221,12 +225,12 @@ NormalForm[expr_, OptionsPattern[]]:=
 CanonizeKineticalOps[expr_, False] := expr
 
 
-CanonizeKineticalOps[expr_, True] := 
+CanonizeKineticalOps[expr_, True] :=
 	expr/. {
 		Operator[Bar@ Field[f1_, Scalar, inds1_, {}], EoM@ Field[f2_, Scalar, inds2_, {}]]:>
 			-Operator[Bar@ Field[f1, Scalar, inds1, {Index[Global`d$$1, Lorentz]}], Field[f2, Scalar, inds2, {Index[Global`d$$1, Lorentz]}]],
 		Operator[Field[f1_, Scalar, inds1_, {}], EoM@ Field[f2_, Scalar, inds2_, {}]]:>
-			-Operator[Field[f1, Scalar, inds1, {Index[Global`d$$1, Lorentz]}], Field[f2, Scalar, inds2, {Index[Global`d$$1, Lorentz]}]]		
+			-Operator[Field[f1, Scalar, inds1, {Index[Global`d$$1, Lorentz]}], Field[f2, Scalar, inds2, {Index[Global`d$$1, Lorentz]}]]
 	};
 
 
@@ -254,7 +258,7 @@ Bar@HcTerms[arg___]:=HcTerms[arg]
 
 
 (* ::Subsection::Closed:: *)
-(*Hermitian conjugate simplification - old core module only for backup purposes*)
+(*Hermitian conjugate simplification - old core module only for backup purposes, will be deleted eventually*)
 
 
 OldHcSimplify[Lagrangian_]:=Module[
@@ -286,7 +290,7 @@ OldHcSimplify[Lagrangian_]:=Module[
 			{c2,o2}=SeparateInteractionTerm[nonhcterms[[#[[2]]]]];
 			n1=Count[o1,_Bar,Infinity];
 			n2=Count[o2,_Bar,Infinity];
-			If[n1 == n2, 
+			If[n1 == n2,
 				(* both operators have the same numbers of bars, count derivatives acting on bars *)
 				n1 = Length@Flatten@Cases[o1,HoldPattern[ Bar[Field[__, l_ ]]/;Length[l]>0]:>l,Infinity];
 				n2 = Length@Flatten@Cases[o2,HoldPattern[ Bar[Field[__, l_ ]]/;Length[l]>0]:>l,Infinity];
@@ -305,7 +309,7 @@ OldHcSimplify[Lagrangian_]:=Module[
 				(* pick the operator with less conjugations on fields *)
 				If[n1>n2,#[[1]],#[[2]]]
 			]
-			
+
 		,
 			If[(n1=Count[nonhcterms[[#[[1]]]],_Bar, Infinity]) == (n2=Count[nonhcterms[[#[[2]]]],_Bar, Infinity]),
 				#[[1]],
@@ -329,12 +333,13 @@ OldHcSimplify[Lagrangian_]:=Module[
 
 
 NewHcSimplify[Lagrangian_]:=Module[
-	{terms, Lag, scterms={}, nscterms={}, L0 = 0, Lhc = 0, t1, t2, c1, c2, o1, o2, i, n1, n2, hermitelist, fullterms, output, lhc}
+	{terms, Lag, scterms={}, nscterms={}, L0 = 0, Lhc = 0, t1, t2, c1, c2, o1, o2, i, n1, n2, hermitelist, fullterms, output, lhc,
+	$MODE = 1}
 	,
 	(* STEP 0 - make a big list of terms - each of them should be (a single operator)\[Cross](its coefficient) by virtue of GreenSsimplify *)
-	Lag = CollectOperators @ GreensSimplify @ Lagrangian;
+	Lag = GreensSimplify @ Lagrangian;
 	terms = If[ Head @ Lag === Plus, List @@ Lag, {Lag}];
-	
+
 	(* STEP 1 - go through every term from the above list, check if it is hermitian and sort it in appropriate buckets *)
 	Do[
 		If[GreensSimplify[Bar@dL-dL]===0,
@@ -344,10 +349,10 @@ NewHcSimplify[Lagrangian_]:=Module[
 			(* not hermitian at all, needs to be paired up - treat this like the previous algorithm did *)
 			AppendTo[nscterms, dL]
 		]
-	, 
+	,
 		{dL, terms}
 	];
-	
+
 	(* STEP 2 - treat the completely non-hermitian terms *)
 	If[OddQ @ Length @ nscterms, Message[HcSimplify::OddTerms]; Return[Lagrangian]];
 	While[Length @ nscterms > 0,
@@ -358,10 +363,10 @@ NewHcSimplify[Lagrangian_]:=Module[
 		(* find its buddy *)
 		While[!(GreensSimplify[ (t2 = nscterms[[i]]) - Bar @ t1] === 0),
 			i++;
-			If[ i > Length @ nscterms, 
+			If[ i > Length @ nscterms,
 				(* we have gone through the whole list without finding a match - abort *)
-				Message[HcSimplify::Hcnotfound, Format[t1, NiceForm]]; 
-				Return[Lagrangian] 
+				Message[HcSimplify::Hcnotfound, Format[t1, NiceForm]];
+				Return[Lagrangian]
 			]
 		];
 		nscterms = Drop[nscterms, {i}];
@@ -390,50 +395,55 @@ NewHcSimplify[Lagrangian_]:=Module[
 			Lhc += SortBy[{{t1,n1},{t2,n2}},Last][[1,1]];
 		]
 	];
-	
+
 	(* STEP 3 - treat the hermitian terms *)
-	Do[
-		terms = Expand @ current;
-		If[!(Head@terms === Plus), 
-			(* seems to be a single term, just add to the list and move on *)
-			L0 += current
-		,
-			(* if multiple terms, check if they are all hermitian or only some *)
-			terms = List @@ terms;
-			hermitelist = (0 === GreensSimplify[# - Bar @ #])&/@(terms);
-			
-			If[ And @@ hermitelist,
-				(* every term in this expression is hermitian -> this goes into the hermitian Lagrangian *)
+	If[$MODE === 1,
+		(* in this mode, hermitian operators might end up in h.c. terms if their coefficients can be easily written as c\[ConjugateTranspose]+c, so they show up as c*o + h.c. instead of (c+c\[ConjugateTranspose])*o *)
+		Do[
+			terms = Expand @ current;
+			If[!(Head@terms === Plus),
+				(* seems to be a single term, just add to the list and move on *)
 				L0 += current
 			,
-				(* pick those that are hermitian and save them for later *)
-				lhc = 1/2 * (Total @ Cases[Transpose[{terms,hermitelist}],{x_, True} :> x]);
-				(* the other terms need to be treated much like in step 2 *)
-				fullterms = Cases[Transpose[{terms,hermitelist}],{x_, False} :> x];
-				If[OddQ[Length @ fullterms], Message[HcSimplify::OddTerms]; Return[Lagrangian]];
-				While[Length @ fullterms > 0,
-					t1 = First @ fullterms ;
-					fullterms = Drop[fullterms, {1}];
-					i = 1;
-					(* find its buddy *)
-					While[!(GreensSimplify[ (t2 = fullterms[[i]]) - Bar @ t1] === 0),
-						i++;
-						If[ i > Length @ fullterms, 
-							(* we have gone through the whole list without finding a match - abort *)
-							Message[HcSimplify::Hcnotfound, Format[t1, NiceForm]]; 
-							Return[Lagrangian] 
-						]
+				(* if multiple terms, check if they are all hermitian or only some *)
+				terms = List @@ terms;
+				hermitelist = (0 === GreensSimplify[# - Bar @ #])&/@(terms);
+
+				If[ And @@ hermitelist,
+					(* every term in this expression is hermitian -> this goes into the hermitian Lagrangian *)
+					L0 += current
+				,
+					(* pick those that are hermitian and save them for later *)
+					lhc = 1/2 * (Total @ Cases[Transpose[{terms,hermitelist}],{x_, True} :> x]);
+					(* the other terms need to be treated much like in step 2 *)
+					fullterms = Cases[Transpose[{terms,hermitelist}],{x_, False} :> x];
+					If[OddQ[Length @ fullterms], Message[HcSimplify::OddTerms]; Return[Lagrangian]];
+					While[Length @ fullterms > 0,
+						t1 = First @ fullterms ;
+						fullterms = Drop[fullterms, {1}];
+						i = 1;
+						(* find its buddy *)
+						While[!(GreensSimplify[ (t2 = fullterms[[i]]) - Bar @ t1] === 0),
+							i++;
+							If[ i > Length @ fullterms,
+								(* we have gone through the whole list without finding a match - abort *)
+								Message[HcSimplify::Hcnotfound, Format[t1, NiceForm]];
+								Return[Lagrangian]
+							]
+						];
+						fullterms = Drop[fullterms, {i}];
+						(* add the expression with least bars to the temporary expression *)
+						lhc += SortBy[{#, Count[#, _Bar, Infinity]}&/@{t1,t2}, Last][[1,1]]
 					];
-					fullterms = Drop[fullterms, {i}];
-					(* add the expression with least bars to the temporary expression *)
-					lhc += SortBy[{#, Count[#, _Bar, Infinity]}&/@{t1,t2}, Last][[1,1]]
-				];
-				Lhc += CollectOperators[lhc]
+					Lhc += CollectOperators[lhc]
+				]
 			]
-		]
-	,
-		{current, scterms}];
-	
+		,
+			{current, scterms}],
+		L0 += Total @ scterms
+	];
+
+
 	(* STEP 4 - output and consistency check *)
 	output = L0 + HcTerms[ Lhc ];
 	If[GreensSimplify @ (HcExpand @ output - Lagrangian)  =!= 0, Print["The output is: ", Iconize @ output]; Message[HcSimplify::Hcfailed]; Return[Lagrangian]];
@@ -475,7 +485,7 @@ SeparateInteractionTerm[dL_]:=Module[{L = Collect[Operator@Expand@dL,_Operator],
 		op = L/cpl;
 		Return[{cpl,RelabelIndices@NormalForm@op}];
 	,
-		Message[ SeparateInteractionTerm::IncompatibleForm ,Format[L,NiceForm]]; 
+		Message[ SeparateInteractionTerm::IncompatibleForm ,Format[L,NiceForm]];
 		Return[{1,dL}]
 	];
 ]
@@ -513,7 +523,7 @@ FirstElementBy[func_]@ list_:= FirstElementBy[list, func];
 (*Constructs canonical dummy indices of the given types *)
 
 
-ConstructDummyIndices@ types_List:= ConstructDummyIndices@ types= 
+ConstructDummyIndices@ types_List:= ConstructDummyIndices@ types=
 	MapIndexed[(Index[ToExpression["d$$"<> ToString[First@ #2]], #1]&), types];
 
 
@@ -586,40 +596,40 @@ ConstructOperatorPatterns[id_, op_Operator]:= Module[{antisyms, cgsyms, indices,
 	pattern= op/. indices;
 	lorentzSign= LorentzSign@ op;
 	pattern= pattern/. lorentzSubs;
-		
+
 	(*Name the antisymmetrized pattern indices*)
 	pattern= pattern/. {obj: (_LCTensor|_FieldStrength|_GammaM):>
 		(obj/. x_OrderlessPatternSequence:> Pattern[Evaluate@ patternLabels[[counter++]], x])};
-	
+
 	(*Provide sign signatures for all the anti-symmetric indices*)
 	antisyms= Times@@ Cases[pattern,
 			Verbatim[Pattern][name_, pats_OrderlessPatternSequence]:>
 				Inactive[Signature]@ {name} Inactive[Signature][List@@ pats/. Verbatim[Pattern][x_, Blank[]]:>x]
 		, All];
-	 
+
 	(*Account for the symmetries of the CGs*)
 	cgsyms= Times@@ Reap[Sow@ Nothing;
 			pattern= pattern/. cg_CG:> CGPattern@ cg;
 		][[2, 1]];
-	
-	(*Flavor indices *)	
+
+	(*Flavor indices *)
 	indices= Flatten@ OperatorFieldsAndFlavors[op][[;;, ;;, 2]];
-	indReplace= IndexPatternReplace/@ indices; 
-		
+	indReplace= IndexPatternReplace/@ indices;
+
 	(*Produce substitution rules from operator pattern*)
 	{
 		(*Replace operator with AtomicOp object*)
-		With[{temp= lorentzSign* antisyms* cgsyms, 
+		With[{temp= lorentzSign* antisyms* cgsyms,
 				inds= indReplace[[;;, 2]]/. Verbatim[Pattern][i_, Blank[]]-> i,
 				pat= pattern/. indReplace},
 			RuleDelayed[pat, ReleaseHold@ Activate@ temp AtomicOp[id, inds]]
 		]
 	,
 		(*Function for matching operator with specific flavor indices*)
-		With[{temp= lorentzSign* antisyms* cgsyms, 
+		With[{temp= lorentzSign* antisyms* cgsyms,
 				pat= pattern/. Thread@ Rule[indices, Slot/@ Range@ Length@ indices]},
 			Function[Evaluate@ RuleDelayed[pat, ReleaseHold@ Activate@ temp]]
-		]		
+		]
 	}
 ];
 
@@ -644,7 +654,7 @@ lorentzSubs= {
 (*Compensate for the canonical ordering of patterns when creating OrderlessPatternSequence*)
 
 
-LorentzSign@ op_:= 
+LorentzSign@ op_:=
 	Times@@ Cases[op, LCTensor[\[Mu]___]:> Signature@ List@ \[Mu], Infinity] *
 	Times@@ Cases[op, FieldStrength[_, {\[Mu]__}, __]:> Signature@ List@ \[Mu], Infinity] *
 	Times@@ Cases[op, GammaM[\[Mu]_, \[Nu]__]:> Signature@ {\[Mu], \[Nu]}, Infinity]
@@ -701,44 +711,44 @@ OperatorProperties::nonop= "Passed a non-operator \"`1`\".";
 OperatorProperties[id_, x:Except[_Operator]]:= (Message[OperatorProperties::nonop, x]; Abort[];);
 
 
-OperatorProperties[id_, op_Operator]:= Module[{count= 1, couplings, conjugateIndexExchange, equivClasses, 
-		fieldTypes, flavorInds, flavorPerms, gaugeFields, indexGrouping, indexTypes, opIDpattern, permPattern, reexpPattern, 
+OperatorProperties[id_, op_Operator]:= Module[{count= 1, couplings, conjugateIndexExchange, equivClasses,
+		fieldTypes, flavorInds, flavorPerms, gaugeFields, indexGrouping, indexTypes, opIDpattern, permPattern, reexpPattern,
 		selfConjugate, selfconjugateType, symmetries},
-	
+
 	fieldTypes= OperatorFieldsAndFlavors@ op;
 	flavorInds= fieldTypes[[;;, ;;, 2]]; fieldTypes= fieldTypes[[;;, ;;, 1]];
 	indexTypes= Flatten@ flavorInds/. Index[_, type_]-> type;
 	indexGrouping= flavorInds/. _Index:> count++;
-	
+
 	(*Get patterns for matching the operator*)
 	{opIDpattern, permPattern}= ConstructOperatorPatterns[id, op];
 	reexpPattern= OperatorExpansionPattern[id, op];
-	
+
 	(*Symmetries*)
 	flavorPerms= Flatten/@ Tuples[Permutations/@ indexGrouping];
 	flavorInds= Flatten@ flavorInds;
 	symmetries= DeleteCases[Rule[#1, op/. {permPattern@@ #2, _-> 0} ]& @@@ ({#, flavorInds[[#]]}&/@ flavorPerms),
 		Rule[_, 0]];
-	
+
 	(*Equivalence classes for the flavor indices*)
 	equivClasses= Sort/@ Outer[Part, flavorPerms, symmetries[[;;, 1]], 1];
 	equivClasses= DeleteDuplicates@ equivClasses[[;;, 1]];
-	
+
 	(*Selfconjugate*)
 	selfconjugateType= SelfConjugateClassQ@ Flatten@ fieldTypes;
 	selfConjugate= !FreeQ[OperatorBar@ op, First@ opIDpattern];
-	conjugateIndexExchange= If[selfconjugateType, 
+	conjugateIndexExchange= If[selfconjugateType,
 			FindPermutationOrder[fieldTypes, Conj@ fieldTypes]
 		,
 			{}
 		];
-	
+
 	(*Gauge couplings on field-strength tensors---to absorb and reexpand couplings in gauge fields*)
 	gaugeFields= Query[Apply[Alternatives], Key@ Field]@ $GaugeGroups[];
-	couplings= Times@@ Cases[op, (FieldStrength[A:gaugeFields, ___]| EoM@ Field[A:gaugeFields, _Vector, ___]):> 
-		$GaugeGroups[First@ GetGaugeGroupByProperty[Field-> A], Coupling][], 
+	couplings= Times@@ Cases[op, (FieldStrength[A:gaugeFields, ___]| EoM@ Field[A:gaugeFields, _Vector, ___]):>
+		$GaugeGroups[First@ GetGaugeGroupByProperty[Field-> A], Coupling][],
 		Infinity];
-	
+
 	<|
 		AtomicOpExpansionPattern-> reexpPattern,
 		ConjugateIndexExchange-> conjugateIndexExchange,
@@ -782,7 +792,7 @@ KineticOpQ= MatchQ[Alternatives[
 			FieldStrength[_, {\[Mu]_, \[Nu]_}, {a_}, {}]],
 		HoldPattern@ Operator[Bar@ FieldStrength[_, {\[Mu]_, \[Nu]_}, {a_}, {}],
 			FieldStrength[_, {\[Mu]_, \[Nu]_}, {a_}, {}]]
-		] ]; 
+		] ];
 
 
 (* ::Subsubsection:: *)
@@ -801,19 +811,19 @@ Conj@ l_List:= Conj/@ l;
 (*Operator class discriminator *)
 
 
-OperatorClass@ op_Operator:= Module[{fields, temp, 
+OperatorClass@ op_Operator:= Module[{fields, temp,
 		devs= 0, gaugeFields= List@@ Query[All, Key@ Field]@ $GaugeGroups},
 	devs+= Plus@@ Cases[op, EoM@ (Bar|Transp)@ Field[_, type_, __]:> EOMDevs@ type, All];
 	devs+= Plus@@ Cases[op, EoM@ Transp@ Bar@ Field[_, Fermion, __]:> EOMDevs@ Fermion, All];
 	devs+= Plus@@ Cases[op, EoM@ Field[_, type_, __]:> EOMDevs@ type, All];
-	devs+= Plus@@ Cases[op, FieldStrength[___, linds_]:> 
+	devs+= Plus@@ Cases[op, FieldStrength[___, linds_]:>
 		1+ Length@ linds, All];
 	devs+= Plus@@ Cases[op, Field[___, linds_]:> Length@ linds, All];
 
 	temp= op/. EoM-> Identity/. FieldStrength[lab_, inds_, rest__]:> Field[lab, Vector@ First@ inds, rest];
 	devs+= Plus@@ Cases[temp, Field[lab_, _Vector, __]/; MemberQ[gaugeFields, lab]-> 1, All];
 	temp= DeleteCases[temp, Field[lab_, _Vector, __]/; MemberQ[gaugeFields, lab], All];
-	
+
 	fields= Cases[temp, Bar@ Field[lab_, (Scalar|Fermion|_Vector),__]:> Conj@ lab, All];
 	temp= DeleteCases[temp, Bar@ Field[_, (Scalar|Fermion|_Vector),__], All];
 	fields= Join[fields, Cases[temp, Field[lab_, (Scalar|Fermion|_Vector),__]:> lab, All]];
@@ -830,7 +840,7 @@ OperatorFieldsAndFlavors@ op_Operator:= Module[{fields, flavorInds, temp= op},
 	flavorInds= OpenIndices@ op;
 	fields= Cases[temp, Bar@ Field[lab_, _, inds_, _]:> {Conj@ lab, Intersection[inds, flavorInds]}, All];
 	temp= DeleteCases[temp, Bar@ Field[_, _,__], All];
-	fields= Join[fields, 
+	fields= Join[fields,
 		Cases[temp, Field[lab_, _, inds_, _]:> {lab, Intersection[inds, flavorInds]}, All] ];
 	GatherBy[SortBy[fields, First], First]
 ]
@@ -850,7 +860,7 @@ OpScore::unexp= "OpScore received unexpected argument `1`"
 OpScore[op_Operator, selfConj_]:= Module[{score= 0},
 	(*Check for canonical kinetic term*)
 	If[KineticOpQ@ op, Return@ 200];
-	
+
 	(*EoMs can be removed by field redefinitions and any EoM should always be included in the basis*)
 	score+= 100 Count[op, _EoM, Infinity];
 	(*Field strength tensors are preferable to more derivatives*)
@@ -864,7 +874,7 @@ OpScore[op_Operator, selfConj_]:= Module[{score= 0},
 	score+= -.1 Count[op, CG[_eps|Bar@_eps, _], Infinity];
 	(*Preferance of self-conjugate operators*)
 	If[selfConj, score+= .05];
-	
+
 	score
 ]
 
@@ -890,11 +900,11 @@ Options@ MatchOperatorPatterns= {ResetIdentities-> True};
 MatchOperatorPatterns[expr_, OptionsPattern[]]:= Module[{ops, out= Operator@ expr},
 	(*Separate out flavor index contractions within each operator*)
 	out= out/. op_Operator:> OperatorFlavorSeparate@ op;
-	
+
 	(*Groups all operators in expression*)
 	ops= DeleteDuplicates@ Cases[out, _Operator, All];
 	ops= GroupBy[ops, OperatorClass];
-	
+
 	(*Construct new patterns out of any new operators encounterd in the sets*)
 	KeyValueMap[MakeNewOperatorPatterns[##, OptionValue@ ResetIdentities]&, ops];
 
@@ -908,9 +918,9 @@ MatchOperatorPatterns[expr_, OptionsPattern[]]:= Module[{ops, out= Operator@ exp
 
 OperatorFlavorSeparate@ op_Operator:= Module[{flavInds, deltas, out= op},
 	(*Find all internally contracted flavor indices*)
-	flavInds= DeleteCases[ContractedIndices@ op, 
+	flavInds= DeleteCases[ContractedIndices@ op,
 		Index[_, type_/; !MemberQ[Keys@ $FlavorIndices, type]] ];
-	
+
 	(*Extract a delta for every contraction*)
 	deltas= Delta[#, MapAt[Unique, #, 1]]& /@ flavInds;
 	Do[
@@ -931,12 +941,12 @@ OperatorFlavorSeparate@ op_Operator:= Module[{flavInds, deltas, out= op},
 MakeNewOperatorPatterns::outofsync= "Operator Class `1` and its conjugate is out of sync."
 
 
-MakeNewOperatorPatterns[opType_, opList_List, resetIdentities_]:= Module[{conjOpType, identifiers, newOps, nextID, op, 
+MakeNewOperatorPatterns[opType_, opList_List, resetIdentities_]:= Module[{conjOpType, identifiers, newOps, nextID, op,
 		opBar, operatorClass, operatorClassConj, pat, rules, notselfConjugate, sign, remainingOps= opList, temp},
 	(*Find patterns for the previously encountered operators*)
 	operatorClass= Lookup[$operators, Key@ opType, <||>];
 	rules= Query[All, Key@ OperatorMatchingPattern, First]@ operatorClass;
-	
+
 	(*Check class is syncronized with its conjugate*)
 	If[(notselfConjugate= !SelfConjugateClassQ@ opType),
 		operatorClassConj= Lookup[$operators, Key[conjOpType= OpClassConjugate@ opType], <||>];
@@ -944,7 +954,7 @@ MakeNewOperatorPatterns[opType_, opList_List, resetIdentities_]:= Module[{conjOp
 			Message[MakeNewOperatorPatterns::outofsync, opType];
 		];
 	];
-	
+
 	remainingOps= DeleteCases[remainingOps, Alternatives@@ rules];
 	If[Length@ remainingOps === 0, Return[];];
 
@@ -955,12 +965,12 @@ MakeNewOperatorPatterns[opType_, opList_List, resetIdentities_]:= Module[{conjOp
 			temp= OperatorProperties[{opType, nextID}, op];
 			AppendTo[pat, First@ temp@ OperatorMatchingPattern];
 			opBar= OperatorBar@ op; (*May be +/- the Bar operator*)
-			{sign, opBar}= Switch[opBar, _Operator, {+1, opBar}, Times[-1, _Operator], {-1, -opBar}]; 
-			temp@ ConjSign= sign; 
+			{sign, opBar}= Switch[opBar, _Operator, {+1, opBar}, Times[-1, _Operator], {-1, -opBar}];
+			temp@ ConjSign= sign;
 			(*If valid, appends the conjugate operator to the conjugate class*)
 			Sow[{opType, nextID++}-> temp];
 			If[notselfConjugate,
-				operatorClassConj@ {conjOpType, nextID-1}= 
+				operatorClassConj@ {conjOpType, nextID-1}=
 					OperatorProperties[{conjOpType, nextID-1}, opBar];
 				operatorClassConj[{conjOpType, nextID-1}, ConjSign]= sign;
 			,
@@ -973,13 +983,13 @@ MakeNewOperatorPatterns[opType_, opList_List, resetIdentities_]:= Module[{conjOp
 				]
 			];
 		, {op, remainingOps}]][[2, 1]];
-	
+
 	(*Add the conjugate operators*)
 	If[notselfConjugate,
 		$operators@ conjOpType= operatorClassConj;
 	];
 	$operators@ opType= operatorClass~ Join~ newOps;
-	
+
 	(*Reset simplification identities*)
 	Quiet@ If[resetIdentities,
 		ConstructHermitianSimplificationIdentities@ opType=.;
@@ -990,7 +1000,7 @@ MakeNewOperatorPatterns[opType_, opList_List, resetIdentities_]:= Module[{conjOp
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Replacement rules*)
 
 
@@ -1084,7 +1094,7 @@ OpsToFieldForm[expr_, OptionsPattern[]]:= Block[{out},
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Compound operators *)
 
 
@@ -1097,23 +1107,23 @@ OpsToFieldForm[expr_, OptionsPattern[]]:= Block[{out},
 
 
 ConstructCompoundBasis@ opType_:= Module[{atomicOperators, compoundOperators, indexPattern, symmetryReps},
-	If[KineticOpClassQ@ opType, 
+	If[KineticOpClassQ@ opType,
 		$compoundOperators@ opType= <||>;
 		Return[];
 	];
 	atomicOperators= List@@ $operators@ opType;
-	
+
 	compoundOperators= Join@@ ConstructCompoundsForOp/@ atomicOperators;
 	(*Remove duplicates (from H.c.) *)
 	compoundOperators= DeleteDuplicatesBy[compoundOperators, First@ Sort@ {#, -#}& @*First];
-	
+
 	indexPattern= ConstructDummyIndices@ First[atomicOperators]@ IndexType;
 	indexPattern= Index[Pattern[Evaluate@ First@ #, Blank[]], Last@ #]&/@ indexPattern;
-	
+
 	(*Save compounds in association*)
 	$compoundOperators@ opType= Association@@
-		MapIndexed[({opType, First@ #2}-> 
-			Append[Last@ #1, CompOpReplacement-> (CompOp[{opType, First@ #2}, indexPattern]-> First@ #1)]&), 
+		MapIndexed[({opType, First@ #2}->
+			Append[Last@ #1, CompOpReplacement-> (CompOp[{opType, First@ #2}, indexPattern]-> First@ #1)]&),
 		compoundOperators];
 ]
 
@@ -1122,14 +1132,14 @@ ConstructCompoundBasis@ opType_:= Module[{atomicOperators, compoundOperators, in
 (*Determine if operator is of the Kinetic term class *)
 
 
-KineticOpClassQ@ {{f1_, Conj@ f2_Symbol| f2_Symbol}, n_}:= 
+KineticOpClassQ@ {{f1_, Conj@ f2_Symbol| f2_Symbol}, n_}:=
 	Switch[List@@ Query[{Key@ f1, Key@ f2}, Key@ Type]@ $FieldAssociation
 	,{Fermion..},
 		MatchQ[n, 1]
 	,{Scalar..},
 		MatchQ[n, 2]
 	]
-KineticOpClassQ@ _:= False; 
+KineticOpClassQ@ _:= False;
 
 
 (* ::Subsubsection:: *)
@@ -1142,31 +1152,31 @@ KineticOpClassQ@ _:= False;
 
 ConstructCompoundsForOp@ opProperties_:= Block[{dummyInds, conjIndices, conjugated, indexSyms, pos,
 		symmetryReps, symmetryCombinations, sharedProps, hcCombinations},
-	
+
 	(*Determine common operator properties*)
 	sharedProps= <|
 			GaugeCouplings-> opProperties@ GaugeCouplings,
 			InherentSymmetry-> opProperties@ Symmetries,
 			(*Score is heuristic and can be adjusted*)
-			Score-> opProperties@ Score +.01 
+			Score-> opProperties@ Score +.01
 		|>;
-	
+
 	(*Find all relevant symmetrization of the flavor indices in the operator*)
 	symmetryReps= Tuples[FlavorSymmetryReps/@ opProperties[IndexGrouping]];
 	symmetryReps= If[(!opProperties@ SelfconjugateType || opProperties@ SelfConjugate),
-			If[Length@ symmetryReps === 1, Return@ {}; ]; 
+			If[Length@ symmetryReps === 1, Return@ {}; ];
 			{{}, symmetryReps}
 		,
-			(*Only operators with similar symmetries for fields and Bared fields can reasonably be combined 
+			(*Only operators with similar symmetries for fields and Bared fields can reasonably be combined
 				in Hermitan/anti-Hermitian parts*)
 			Lookup[GroupBy[symmetryReps, (#[[;;, 2]] === #[[;;, 2]]&)], {True, False}, {}]
 		];
-	
+
 	(*Expand out the symmetrized indices*)
-	indexSyms= Map[Map[Join@@ #[[;;, 1]]-> Times@@ #[[;;, 2]]& ]@* Tuples, 
+	indexSyms= Map[Map[Join@@ #[[;;, 1]]-> Times@@ #[[;;, 2]]& ]@* Tuples,
 		ExpandSymmetrization@ symmetryReps, {2}];
 	(*Canonically sort indices in each term by the symmetries of the Op*)
-	indexSyms= Outer[(Part[First@ #1, First@ #2]-> Last@#1 Last@#2&), 
+	indexSyms= Outer[(Part[First@ #1, First@ #2]-> Last@#1 Last@#2&),
 		indexSyms, opProperties@ Symmetries];
 	indexSyms= Map[FirstElementBy[First], indexSyms, {3}];
 	(*Add identical elements*)
@@ -1175,31 +1185,31 @@ ConstructCompoundsForOp@ opProperties_:= Block[{dummyInds, conjIndices, conjugat
 	pos= Position[indexSyms, <||>, {2}];
 	indexSyms= Delete[indexSyms, pos];
 	symmetryReps= DeleteCases[Delete[symmetryReps, pos], Symmetrization[_, {1}], Infinity];
-	
+
 	(*Construct operator form*)
 	dummyInds= ConstructDummyIndices@ opProperties@ IndexType;
 	conjIndices= dummyInds[[Flatten@ opProperties[IndexGrouping][[opProperties[ConjugateIndexExchange]]]]];
 	{hcCombinations, symmetryCombinations}= Map[
-		Total@* KeyValueMap[#2 AtomicOp[opProperties@ ID, dummyInds[[#1]]]&], 
+		Total@* KeyValueMap[#2 AtomicOp[opProperties@ ID, dummyInds[[#1]]]&],
 		indexSyms, {2}];
 	(*Eliminate trivial constructions from the inherently complex combinations*)
 	pos= Position[symmetryCombinations, _? (Count[#, _AtomicOp, Infinity] <= 1 &), {1}, Heads-> False];
 	symmetryCombinations= Delete[symmetryCombinations, pos];
 	symmetryReps[[2]]= Delete[symmetryReps[[2]], pos];
-	
+
 	(*Construct complex-conjugated version of the operators in hcCombinations*)
 	conjugated= Total@* KeyValueMap[#2 AtomicOp[opProperties@ ID, conjIndices[[#1]]]&]/@ indexSyms[[1]];
-	conjugated= Bar[conjugated/. AtomicToOpReplacementPattern@ First@ opProperties@ ID]/. 
+	conjugated= Bar[conjugated/. AtomicToOpReplacementPattern@ First@ opProperties@ ID]/.
 		Bar@ op_Operator:> OperatorBar@ op/. OpToAtomicReplacementPattern@ First@ opProperties@ ID;
-	
+
 	(*Return list of {flavor combination, <|properties|>}*)
 	Join@@ Transpose/@ {
 		{symmetryCombinations, (*penalizing flavor symmetrization for now *)
-			sharedProps ~Join~ <|FlavorSymmetry-> #, SelfConjugate-> False, Score-> opProperties@ Score- .005|>&/@ symmetryReps[[2]]}, 
+			sharedProps ~Join~ <|FlavorSymmetry-> #, SelfConjugate-> False, Score-> opProperties@ Score- .005|>&/@ symmetryReps[[2]]},
 		{hcCombinations+ conjugated, (*Prefer self-conjugate combination *)
 			Merge[{sharedProps, <|FlavorSymmetry-> #, SelfConjugate-> +1, Score-> .01|>}, Total]&/@ symmetryReps[[1]]},
-			(*sharedProps ~Join~ <|FlavorSymmetry-> #, SelfConjugate-> +1|>&/@ symmetryReps[[1]]},*) 
-		{hcCombinations- conjugated, 
+			(*sharedProps ~Join~ <|FlavorSymmetry-> #, SelfConjugate-> +1|>&/@ symmetryReps[[1]]},*)
+		{hcCombinations- conjugated,
 			sharedProps ~Join~ <|FlavorSymmetry-> #, SelfConjugate-> -1|>&/@ symmetryReps[[1]]}
 	}
 ]
@@ -1231,7 +1241,7 @@ ExpandSymmetrization@ expr_:= expr/. {
 
 
 ConstructConjugateCompounds@ opType_:= Block[{},
-	$compoundOperators@ OpClassConjugate@ opType= 
+	$compoundOperators@ OpClassConjugate@ opType=
 		Association@@ KeyValueMap[MapAt[OpClassConjugate, #1, 1]->
 			 ConjugateCompound[#1, #2]&, $compoundOperators@ opType];
 ]
@@ -1243,30 +1253,30 @@ ConstructConjugateCompounds@ opType_:= Block[{},
 
 ConjugateCompound[compID_, compProps_]:= Module[{atomicID, compReplacement,
 		dummies, indPermutation, opType},
-	opType= First@ compID; 
+	opType= First@ compID;
 	(*Determines the atomic operator ID used in the definition (NB. only one ID for complex class)*)
-	{atomicID, dummies}= FirstCase[compProps@ CompOpReplacement, 
-		AtomicOp[id_, inds_]:> {id, ConstructDummyIndices@ inds[[;;, 2]]}, 
+	{atomicID, dummies}= FirstCase[compProps@ CompOpReplacement,
+		AtomicOp[id_, inds_]:> {id, ConstructDummyIndices@ inds[[;;, 2]]},
 		0, Infinity];
 	(*Determines the index permutation associated with the conjugation of the operator*)
-	indPermutation= FindPermutationOrder[dummies, 
-			FirstCase[{OperatorBar[AtomicOp[atomicID, dummies]/. AtomicToOpReplacementPattern@ opType]/. 
+	indPermutation= FindPermutationOrder[dummies,
+			FirstCase[{OperatorBar[AtomicOp[atomicID, dummies]/. AtomicToOpReplacementPattern@ opType]/.
 				OpToAtomicReplacementPattern@ OpClassConjugate@ opType}, AtomicOp[_, inds_]-> inds, {}, All]
 		];
-		
+
 	(*Adjust the indices and operatorIDs used in the conjugate compound operator*)
 	$compoundOperators[opType, compID, ConjugateIndexPermutation]= indPermutation;
 	<|
 		GaugeCouplings-> compProps@ GaugeCouplings,
-		InherentSymmetry-> 
+		InherentSymmetry->
 			MapAt[Ordering[indPermutation][[#[[indPermutation]]]]&, compProps@ InherentSymmetry, {All, 1}],
 		Score-> compProps@ Score,
-		FlavorSymmetry-> Replace[compProps@ FlavorSymmetry, 
+		FlavorSymmetry-> Replace[compProps@ FlavorSymmetry,
 			Thread@ Rule[Range@ Length@ indPermutation, Ordering@ indPermutation], {4}],
 		SelfConjugate-> False,
 		CompOpReplacement-> compProps@ CompOpReplacement/.{
 			CompOp[_, indPats_]:> CompOp[MapAt[OpClassConjugate, compID, 1], indPats[[indPermutation]]],
-			AtomicOp[_, inds_]:> $operators[First@ atomicID, atomicID, ConjSign]* 
+			AtomicOp[_, inds_]:> $operators[First@ atomicID, atomicID, ConjSign]*
 				AtomicOp[MapAt[OpClassConjugate, atomicID, 1], inds[[indPermutation]]]
 		},
 		ConjugateIndexPermutation-> Ordering@ indPermutation
@@ -1286,12 +1296,18 @@ ConjugateCompound[compID_, compProps_]:= Module[{atomicID, compReplacement,
 (*Collects all identical operators in an expression to the same form *)
 
 
-CollectOperators@ expr_:= Block[{out},
+Options@ CollectOperators= {NormalForm-> True};
+
+
+CollectOperators[expr_, OptionsPattern[]]:= Block[{out},
 	LagrangianLikeCheck@ expr;
-	
+
 	out= MatchOperatorPatterns@ expr;
 	out= CollectCoefficients@ ExprFlavorCanonize@ out;
-	NormalForm[out/. AtomicToOpReplacementPattern[], Unique-> False]
+	If[OptionValue@ NormalForm,
+		NormalForm[out/. AtomicToOpReplacementPattern[], Unique-> False],
+		out/. AtomicToOpReplacementPattern[]
+	]
 ];
 
 
@@ -1312,17 +1328,17 @@ SelectOperatorClass[expr_ /; MemberQ[expr, _HcTerms],fields_,devs_] := SelectOpe
 
 SelectOperatorClass[expr_, fields_, devs_]:= Block[{gaugeFields, matterFields, out, opType, conjType, FSCount, FSPower, pw, derivatives},
 	LagrangianLikeCheck@ expr;
-	
+
 	opType= Hold@ fields/. Bar-> Conj// ReleaseHold;
 	MatterFieldListCheck@ opType;
 	DevNoCheck@ devs;
-	
+
 	gaugeFields= List@@ Query[All, Key@ Field]@ $GaugeGroups;
 	FSPower=Product[pw[gLabel]^Count[opType, gLabel], {gLabel, gaugeFields}];
 	FSCount=2 Sum[Count[opType, gLabel], {gLabel, gaugeFields}];
 	opType=DeleteCases[opType, Alternatives@@ gaugeFields];
 	derivatives=devs+Total@FSCount;
-		
+
 	opType= {Sort@ opType, derivatives};
 	conjType= OpClassConjugate@ opType;
 	out= MatchOperatorPatterns@ expr;
@@ -1345,15 +1361,59 @@ MatterFieldListCheck@ fields_:= Block[{matterFields},
 	If[!MatchQ[fields, f_List /; SubsetQ[matterFields, f/. Conj-> Identity]],
 		Message[General::fields, fields];
 		Abort[];
-	];	
+	];
 ]
 
 
 DevNoCheck@ devs_:=
 	If[!MatchQ[devs, _Integer? NonNegative],
 		Message[General::devNo, devs];
-		Abort[];	
+		Abort[];
 	];
+
+
+(* ::Subsubsection:: *)
+(*Lookup operator properties*)
+
+
+(* ::Text:: *)
+(*Extracts the operator information *)
+
+
+LookupOperatorProperties[operator_]:= Module[{op},
+	op= MatchOperatorPatterns@ operator;
+	FirstCase[op, AtomicOp[id:{type_, _}, _]:> $operators[type, id], <||>, All]
+]
+
+
+(* ::Text:: *)
+(*Looks op flavor properties of an operator*)
+
+
+LookupOperatorFlavorProperties[operator_]:= Module[{props, selfConj, selfConjExchange},
+	props= LookupOperatorProperties@ operator;
+	selfConj= props@ SelfConjugate;
+	selfConjExchange= If[selfConj,
+			If[Length@ First@ props@ InequivalentPermutations > 0,
+				OpConjFlavorPermutation@ FirstCase[Operator@ operator, _Operator, Operator[], All]
+			,
+				True
+			]
+		,
+			False
+		];
+	<|
+		SelfConjugate-> selfConj,
+		ConjugateIndexExchange-> selfConjExchange,
+		InequivalentPermutations-> props@ InequivalentPermutations,
+		Symmetries-> props@ Symmetries
+	|>
+]
+
+
+OpConjFlavorPermutation@ op_Operator:= Module[{},
+	FindPermutationOrder@@ Cases[MatchOperatorPatterns@ {op, OperatorBar@ op}, AtomicOp[_, inds_]-> inds, All]
+]
 
 
 (* ::Section::Closed:: *)
@@ -1370,24 +1430,24 @@ DevNoCheck@ devs_:=
 
 
 ConstructOperatorIdentities@ opType_:= Module[
-	{opID= 1, dummies, identities, indexToPattern, lhs, op, opIdentities, ordering, 
+	{opID= 1, dummies, identities, indexToPattern, lhs, op, opIdentities, ordering,
 		operators, indPerms, revOrdering, rhs},
-			
+
 	If[!KeyExistsQ[$operators, opType], Return@ {}; ];
-	
+
 	(*Initial set of operators to generate identities from*)
 	dummies= ConstructDummyIndices@ First[$operators@ opType]@ IndexType;
 	indexToPattern= #-> Index[Pattern[Evaluate@ First@ #, Blank[]], Last@ #]&/@ dummies;
-	
+
 	(*Loop to make all identities of the operator class*)
-	
+
 	identities= Flatten@ Reap[While[opID <= Length@ $operators@ opType,
-		op= AtomicOp[{opType, opID}, dummies]/. 
+		op= AtomicOp[{opType, opID}, dummies]/.
 			$operators[opType, {opType, opID}, AtomicOpExpansionPattern];
 		indPerms= $operators[opType, {opType, opID}, InequivalentPermutations];
-		indPerms= Thread[dummies-> dummies[[#]]]&/@ indPerms; 
+		indPerms= Thread[dummies-> dummies[[#]]]&/@ indPerms;
 		opID++;
-		
+
 		(*Construct all identities generated from the operator*)
 		opIdentities= RelabelIndices/@ Join@@ Through[{
 				IdentitiesIBP,
@@ -1399,34 +1459,34 @@ ConstructOperatorIdentities@ opType_:= Module[
 				IdentitiesCGs
 			}@ op];
 		(*Identify operators in the identities with the canonical form ones*)
-		opIdentities= MatchOperatorPatterns[opIdentities, ResetIdentities-> False]; 
+		opIdentities= MatchOperatorPatterns[opIdentities, ResetIdentities-> False];
 		(*Use identiteis with all inequivalent index permutations of the original operator*)
-		
+
 		Sow@ Flatten@ CanonizeAtomicOp[opIdentities/. indPerms];
 	]][[2, 1]];
-	
+
 	(*Remove trivial identities (not involving any operators)*)
 	identities= DeleteDuplicates@ DeleteCases[identities, 0]/. _Coupling-> 1; (*Temporary gauge coupling removal*)
-	
+
 	(*Add compound operators*)
 	ConstructCompoundBasis@ opType;
 	identities= identities~ Join~ KeyValueMap[
-		CompOp[#1, dummies]- (CompOp[#1, dummies]/.#2@ CompOpReplacement)&, 
+		CompOp[#1, dummies]- (CompOp[#1, dummies]/.#2@ CompOpReplacement)&,
 		$compoundOperators@ opType];
-	
+
 	If[Length@ identities === 0,
 		Return@ {};
 	];
-	
+
 	(*Determine non-redundant set of operators and indexpermutations*)
 	operators= Join@@ KeyValueMap[
-		Function[{id, prop}, Thread@ {AtomicOp[id, dummies[[#]]]&/@ prop@ InequivalentPermutations, prop@ Score}], 
+		Function[{id, prop}, Thread@ {AtomicOp[id, dummies[[#]]]&/@ prop@ InequivalentPermutations, prop@ Score}],
 		$operators@ opType];
 	(*Nb. With larger flavor symmetries, multiple inequivalent indices will be needed*)
 	operators= operators~ Join~ KeyValueMap[
-		{CompOp[#1, dummies], #2@ Score}&, 
-		$compoundOperators@ opType];	
-	
+		{CompOp[#1, dummies], #2@ Score}&,
+		$compoundOperators@ opType];
+
 	(*Order the operators according to IBPScore*)
 	{operators, ordering}= Transpose@ operators;
 	ordering= Ordering@ ordering;
@@ -1466,7 +1526,7 @@ IdentitiesIBP@ op_Operator:= Module[{positions, \[Mu]ind},
 		CD[op[[Sequence@@ pos]], Delete[op, pos]]
 	, {pos, positions}]
 	(*Account for EoMs...*)
-	~ Join~ 
+	~ Join~
 	(CD[\[Mu]ind, #]&/@ ReplaceListSubExprs[op, EoM[f_]:> EoMSplitter[\[Mu]ind, f]])
 ]
 
@@ -1485,7 +1545,7 @@ EoMSplitter[\[Mu]_, f:Transp@ Bar@ Field[_, Fermion, __] ]:= Transp@ \[Gamma]@ \
 EoMSplitter[\[Mu]_, Field[f_, Vector@ \[Nu]_, inds_, {}] ]:= FieldStrength[f, {Index[\[Mu], Lorentz], \[Nu]}, inds, {}];
 EoMSplitter[\[Mu]_, Bar@ Field[f_, Vector@\[Nu]_, inds_, {}] ]:=Bar@ FieldStrength[f, {Index[\[Mu], Lorentz], \[Nu]}, inds, {}];
 EoMSplitter[\[Mu]_, x_]:= (
-	Message[EoMSplitter::unexp, x]; 
+	Message[EoMSplitter::unexp, x];
 	Abort[];
 );
 
@@ -1542,7 +1602,7 @@ IdentitiesJacobi@ op_Operator:= Block[{positions, indices},
 (*IdentitiesSpinorLineDerivatives*)
 
 
-IdentitiesSpinorLineDerivatives@ op_Operator:= 
+IdentitiesSpinorLineDerivatives@ op_Operator:=
 	ReplaceListSubExprs[op, f: Field[_, Fermion, _, {a_, a_}]:> D2Fermion@ f]
 
 
@@ -1567,28 +1627,28 @@ D2Fermion[f:Field[lab_, Fermion, inds_, {\[Mu]_, \[Mu]_}] ]:= Module[{\[Nu]= Ind
 
 IdentitiesDiracCommutation@ op_Operator:=
 	Join[
-		ReplaceListSubExprs[op, d: DiracProduct[___, GammaM[_, __], ___]:> 
+		ReplaceListSubExprs[op, d: DiracProduct[___, GammaM[_, __], ___]:>
 			ASymGammaExpand@ d] -op,
-		ReplaceListSubExprs[op, d: DiracProduct[___, Transp@ GammaM[_, __], ___]:> 
+		ReplaceListSubExprs[op, d: DiracProduct[___, Transp@ GammaM[_, __], ___]:>
 			Transp@ ASymGammaExpand@ Transp@ d] -op,
-		ContractMetric/@ ReplaceListSubExprs[op, 
-			DiracProduct[a___, GammaM@ \[Mu]_, GammaM@ \[Nu]_, b___]:> 
+		ContractMetric/@ ReplaceListSubExprs[op,
+			DiracProduct[a___, GammaM@ \[Mu]_, GammaM@ \[Nu]_, b___]:>
 			-DiracProduct[a, GammaM@ \[Nu], GammaM@ \[Mu], b] + 2 Metric[\[Mu], \[Nu]] DiracProduct[a, b]] -op,
-		ContractMetric/@ ReplaceListSubExprs[op, 
-			DiracProduct[a___, Transp@ GammaM@ \[Mu]_, Transp@ GammaM@ \[Nu]_, b___]:> 
+		ContractMetric/@ ReplaceListSubExprs[op,
+			DiracProduct[a___, Transp@ GammaM@ \[Mu]_, Transp@ GammaM@ \[Nu]_, b___]:>
 			-DiracProduct[a, Transp@ GammaM@ \[Nu], Transp@ GammaM@ \[Mu], b] + 2 Metric[\[Mu], \[Nu]] DiracProduct[a, b]] -op,
 		(*Additional*)
-		ContractMetric/@ ReplaceListSubExprs[op, 
-			DiracProduct[a___, GammaM[\[Mu]_, \[Nu]_], b___]:> 
+		ContractMetric/@ ReplaceListSubExprs[op,
+			DiracProduct[a___, GammaM[\[Mu]_, \[Nu]_], b___]:>
 			DiracProduct[a, GammaM@ \[Mu], GammaM@ \[Nu], b] - Metric[\[Mu], \[Nu]] DiracProduct[a, b]] -op,
-		ContractMetric/@ ReplaceListSubExprs[op, 
-			DiracProduct[a___, GammaM[\[Mu]_, \[Nu]_], b___]:> 
+		ContractMetric/@ ReplaceListSubExprs[op,
+			DiracProduct[a___, GammaM[\[Mu]_, \[Nu]_], b___]:>
 			Metric[\[Mu], \[Nu]] DiracProduct[a, b] - DiracProduct[a, GammaM@ \[Nu], GammaM@ \[Mu], b]] -op,
-		ContractMetric/@ ReplaceListSubExprs[op, 
-			DiracProduct[a___, Transp@GammaM[\[Mu]_, \[Nu]_], b___]:> 
+		ContractMetric/@ ReplaceListSubExprs[op,
+			DiracProduct[a___, Transp@GammaM[\[Mu]_, \[Nu]_], b___]:>
 			DiracProduct[a, Transp@GammaM@ \[Nu], Transp@GammaM@ \[Mu], b] - Metric[\[Mu], \[Nu]] DiracProduct[a, b]] -op,
-		ContractMetric/@ ReplaceListSubExprs[op, 
-			DiracProduct[a___, Transp@GammaM[\[Mu]_, \[Nu]_], b___]:> 
+		ContractMetric/@ ReplaceListSubExprs[op,
+			DiracProduct[a___, Transp@GammaM[\[Mu]_, \[Nu]_], b___]:>
 			Metric[\[Mu], \[Nu]] DiracProduct[a, b] - DiracProduct[a, Transp@GammaM@ \[Mu], Transp@GammaM@ \[Nu], b]] -op
 	]
 
@@ -1604,9 +1664,9 @@ IdentitiesDiracCommutation@ op_Operator:=
 
 IdentitiesSymmetry@ op_Operator:= Block[{},
 	If[MatchQ[op, Alternatives[
-			HoldPattern@Operator[Field[f_, Scalar, {i_}, {mu___}], Field[f_, Scalar, {j_}, {mu___}], 
+			HoldPattern@Operator[Field[f_, Scalar, {i_}, {mu___}], Field[f_, Scalar, {j_}, {mu___}],
 				CG[_eps| Bar@ _eps, {k_, l_}], ___],
-			HoldPattern@Operator[Bar@ Field[f_, Scalar, {i_}, {mu___}], Bar@ Field[f_, Scalar, {j_}, {mu___}], 
+			HoldPattern@Operator[Bar@ Field[f_, Scalar, {i_}, {mu___}], Bar@ Field[f_, Scalar, {j_}, {mu___}],
 				CG[_eps| Bar@ _eps, {k_, l_}], ___]
 		]/; SubsetQ[{i, j}/. Bar-> Identity, {k, l}/. Bar-> Identity] ],
 		{op}
@@ -1629,7 +1689,7 @@ IdentitiesSymmetry@ op_Operator:= Block[{},
 
 
 IdentitiesCGs@ op_Operator:= Block[{},
-	ReplaceList[op, 
+	ReplaceList[op,
 		o: HoldPattern@ Operator[CG[ep_eps, inds1_], CG[Bar@ ep_eps, inds2_], rest__]:>
 		o- Contract[(Signature@ inds2 Plus@@ (Signature@ # Times@@ Thread@ Delta[inds1, #]&/@ Permutations@ inds2) *
 			Operator@ rest)]
@@ -1649,7 +1709,7 @@ IdentitiesCGs@ op_Operator:= Block[{},
 (*To ensure the same ordering between Hermitian operator types, the corresponding identities are simultaneously constructed*)
 
 
-ConstructHermitianSimplificationIdentities@ opType_:= 
+ConstructHermitianSimplificationIdentities@ opType_:=
 		ConstructHermitianSimplificationIdentities@ opType= Module[{identities},
 
 	identities= ConstructOperatorIdentities@ opType;
@@ -1659,12 +1719,12 @@ ConstructHermitianSimplificationIdentities@ opType_:=
 	(*For complex-type classes the conjugate identities are constructed*)
 	ConstructConjugateCompounds@ opType;
 	Join[identities,
-		identities/. 
+		identities/.
 			AtomicToOpReplacementPattern@ opType/.
-			op_Operator:> OperatorBar@ op/. 
+			op_Operator:> OperatorBar@ op/.
 			OpToAtomicReplacementPattern@ OpClassConjugate@ opType/.
 			c_Complex:> Conjugate@ c/.
-			CompOp[id_, inds_]:> CompOp[MapAt[OpClassConjugate, id, 1], 
+			CompOp[id_, inds_]:> CompOp[MapAt[OpClassConjugate, id, 1],
 				inds[[$compoundOperators[First@ id, id, ConjugateIndexPermutation]]]]/.
 			HoldPattern[Times[-1, x_]-> y_] :> Rule[x, -y] (*account for posibility of -1 from conjugation*)
 	]
@@ -1679,18 +1739,18 @@ ConstructHermitianSimplificationIdentities@ opType_:=
 (*Applies the operator identities to a given pattern *)
 
 
-IBPSimplify17@ expr_:= Module[{out, opTypes, subs, type},	
+IBPSimplify17@ expr_:= Module[{out, opTypes, subs, type},
 	out= AbsorbGaugeCouplings@ MatchOperatorPatterns@ expr;
-	
+
 	(*Determine identities for each group of operator types*)
 	(*opTypes= DeleteDuplicates@ Cases[out, AtomicOp[{type_, _}, _]:> type, All];*)
-	opTypes= DeleteDuplicatesBy[Cases[out, AtomicOp[{type_, _}, _]:> type, All], 
+	opTypes= DeleteDuplicatesBy[Cases[out, AtomicOp[{type_, _}, _]:> type, All],
 		Sort@ {#, OpClassConjugate@#} &];
 	subs= Flatten@ Table[
 			(*ConstructOperatorIdentities@ type*)
 			ConstructHermitianSimplificationIdentities@ type
 		, {type, opTypes}];
-	
+
 	out= out/. subs// ExprFlavorCanonize// ReextractGaugeCouplings
 ]
 
@@ -1750,7 +1810,7 @@ IBPSimplify19@ expr_:= OpsToFieldForm[
 
 GreensSimplify@ expr_:= Block[{},
 	LagrangianLikeCheck@ expr;
-	OpsToFieldForm@ CollectCoefficients@ IBPSimplify17@ ContractDelta@ ContractCGs@ HcExpand@ expr	
+	OpsToFieldForm@ CollectCoefficients@ IBPSimplify17@ ContractDelta@ ContractCGs@ HcExpand@ expr
 ]
 
 
@@ -1772,7 +1832,7 @@ IBPIdentities[fields_List, devs_Integer]:= Module[{opType, identities},
 	DevNoCheck@ devs;
 
 	opType= {opType// Sort, devs};
-	If[!MemberQ[Keys@ $operators, opType], 
+	If[!MemberQ[Keys@ $operators, opType],
 		Return@ {};
 	];
 	(*Remove compound definitions:*)
@@ -1813,7 +1873,7 @@ CoefficientPattern[coups:PseudoTimes[nonTrivCouplingPattern..]]:= Module[
 	indices= DeleteCases[Tally@ Cases[coups, Index[__], All], {i_, 1}][[;;, 1]];
 	indices= With[{temp= Unique@ First@ #}, Rule[#, Pattern[temp, Blank[]]] ]&/@ indices;
 	out= coups/. indices;
-	
+
 	(*Build a signed replacement rule*)
 	(*couplingRules= Cases[out, c_Coupling-> CouplingPattern@ c];*)
 	couplingRules= CouplingPattern/@ List@@ out;
@@ -1862,9 +1922,9 @@ IdentifyCouplings@ coef_:= Module[{out= PseudoTimes@ Expand@ coef, couplingContr
 	If[Head@ out =!= Plus, Return@ ReleasePseudoTimes@ out];
 	(*All non-trivial coupling contractions*)
 	couplingContractions= Cases[out, _PseudoTimes, All];
-	couplingContractions= PseudoTimes@@@ DeleteCases[Cases[#, 
+	couplingContractions= PseudoTimes@@@ DeleteCases[Cases[#,
 		nonTrivCouplingPattern]&/@ couplingContractions, {}];
-	
+
 	(*Construct patterns*)
 	(*Optimization may be required*)
 	While[Length@ couplingContractions> 0,
@@ -1886,5 +1946,5 @@ IdentifyCouplings@ coef_:= Module[{out= PseudoTimes@ Expand@ coef, couplingContr
 (*Collect all operators and organizes their coefficients on canonical form *)
 
 
-CollectCoefficients@ expr_:= Collect[expr, {_AtomicOp|_CompOp, hbar, \[Epsilon]}, 
+CollectCoefficients@ expr_:= Collect[expr, {_AtomicOp|_CompOp, hbar, \[Epsilon]},
 	Simplify@* RelabelIndices@* IdentifyCouplings];
