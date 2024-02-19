@@ -44,6 +44,7 @@ PackageExport["LoopOrder"]
 
 
 PackageScope["OperatorDimension"]
+PackageScope["TruncateOperator"]
 
 
 PackageScope["SetCurrentLagrangian"]
@@ -61,6 +62,14 @@ PackageScope["$currentXsubs"]
 PackageScope["$currentXdims"]
 
 
+PackageScope["$currentFieldAssociation"]
+PackageScope["GetFieldsUpdated"]
+PackageScope["GetFieldsUpdatedByProperty"]
+
+
+PackageScope["IsolateMassTerms"]
+
+
 (* ::Text:: *)
 (*Options *)
 
@@ -72,7 +81,7 @@ PackageScope["Simplifications"]
 (*Usage messages*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Exported*)
 
 
@@ -96,6 +105,7 @@ CovariantLoop::usage=
 
 
 OperatorDimension::usage = "OperatorDimension[op] returns the mass-dimension of the operator op.";
+IsolateMassTerms::usage="IsolateMassTerms[\[ScriptCapitalL], Heavy -> All] returns all massterms of the Lagrangian \[ScriptCapitalL]. Replacing All by True or False only returns the heavy or light mass terms respectively.";
 
 
 (* ::Chapter:: *)
@@ -155,15 +165,15 @@ TypeDim[Fermion]:=3/2;
 TypeDim[Field[_,type_,___]] := TypeDim[type];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Counting rule for IR fields*)
 
 
-FieldDimension[Field[f:Except[List[___]],type_,_,derivs_List]] := 
-	Length[derivs] + TypeDim[type] + If[GetFields[f, Heavy], 1, 0]; (* heavy fields have at least one suppression factor*)
+FieldDimension[Field[f:Except[List[___]],type_,_,derivs_List]] :=
+	Length[derivs] + TypeDim[type] + If[GetFieldsUpdated[f, Heavy], 1, 0]; (* heavy fields have at least one suppression factor*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Counting rule for expanded UV fields*)
 
 
@@ -251,12 +261,23 @@ $currentHeavyDims = <||>;
 Options@ SetCurrentLagrangian= {Verbose-> True};
 
 
-SetCurrentLagrangian[lag_, loopOrder_, eftOrder_, OptionsPattern[]] := Module[{eftOrd, newLag},
-	If[(newLag = lag =!= $currentLagrangian),  
+SetCurrentLagrangian[lagrangian_, loopOrder_, eftOrder_, OptionsPattern[]] := Module[
+	{eftOrd, newLag, lag = lagrangian}
+	,
+
+	(* expand Lagrangian and write mass terms in canonical format *)
+	lag = RelabelIndices@ Contract@ IntroduceEffectiveMasses@ CanonizeFermionMassTerms@ EvenBetterExpand@ ContractCGs@ lag;
+
+	If[(newLag = lag =!= $currentLagrangian),
 		If[!CheckLagrangian@ lag, Abort[]; ];
-		$currentLagrangian= lag; 
+
+		(* set the new Lagrangian *)
+		$currentLagrangian= lag;
+		(* determine its fields with their Masses *)
+
+		Determine$currentFieldAssociation[lag];
 	];
-	
+
 	eftOrd= If[Head@ eftOrder === List, First@ eftOrder, eftOrder];
 	If[newLag || eftOrder > $currentEFTOrder,
 		(* Reset $currentHeavyDims *)
@@ -268,12 +289,235 @@ SetCurrentLagrangian[lag_, loopOrder_, eftOrder_, OptionsPattern[]] := Module[{e
 
 	If[newLag || loopOrder > $currentLoopOrder,
 		If[($currentLoopOrder= loopOrder) > 0,
-			OptionalMonitor[OptionValue@ Verbose, 
+			OptionalMonitor[OptionValue@ Verbose,
 				{$currentXdims, $currentXsubs}= DeriveSubstitutions[lag,EFTOrder->eftOrder];
 			, "Evaluating X-terms"];
 		];
 	];
+
+	Return[lag]
 ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Determine  Fields  and  Masses*)
+
+
+(* ::Text:: *)
+(*Define  the  function  $currentFieldAssociation[]  which  works  similar  to  GetFields[], but  containing  the  definitions  specific  to  the  current  Lagrangian . Furthermore, light  masses  are  treated  as  interactions  and  thus  for  a  light  but  massive  field  \[Phi]  we  have  Mass -> 0  in  $currentFieldAssociation[\[Phi]], contrary  to  GetFields[\[Phi]]*)
+
+
+Determine$currentFieldAssociation[lagrangian_]:=Module[
+	{
+		lag = lagrangian,
+		fieldLabels,
+		\[ScriptCapitalL]Mass,
+		massTerms,
+		fieldAssoc
+	}
+	,
+	(* determine fields in new Lagrangian *)
+	fieldLabels = DeleteDuplicates@ Cases[lag, (Field[l_,___] | FieldStrength[l_,___]):>l, All];
+
+	(* extract all heavy mass terms *)
+	\[ScriptCapitalL]Mass = IsolateMassTerms[lag, Heavy -> True];
+
+	\[ScriptCapitalL]Mass = CollectOperators[\[ScriptCapitalL]Mass, NormalForm->False];
+
+	(* loop over fields *)
+	$currentFieldAssociation = <||>;
+	Do[
+		AssociateTo[
+			$currentFieldAssociation,
+			field -> DetermineFieldProperties[field, \[ScriptCapitalL]Mass/.Except[Field[field,___], _Field]->0]
+		]
+		,
+		{field, fieldLabels}
+	];
+
+	(* Throw warnings if Heavy attribute changed *)
+	Do[
+		If[$FieldAssociation[f,Heavy]=!=$currentFieldAssociation[f,Heavy],
+			Print["WARNING: The field ", f, " was defined as ", If[$FieldAssociation[f,Heavy],"heavy","light"], ", but in the given Lagrangian it is ", If[$currentFieldAssociation[f,Heavy],"heavy","light"], "."];
+		];
+		If[$currentFieldAssociation[f,Heavy],
+			If[$currentFieldAssociation[f,Mass]=!=$FieldAssociation[f,Mass],
+				Print["WARNING: The heavy field ", f, " was defined with mass ", NiceForm@$FieldAssociation[f,Mass],", but the mass found in the Lagrangian is ", NiceForm@$currentFieldAssociation[f,Mass], "."]
+			]
+		]
+		,
+		{f, Keys@$currentFieldAssociation}
+	];
+]
+
+
+DetermineFieldProperties[l_, massterm_]:=Module[
+	{
+		defProps = GetFields[l],
+		heavy, mass,
+		massTerm = Contract@ massterm
+	}
+	,
+
+	(* determine mass-coupling depending on field type *)
+	If[massTerm===0,
+		(* massless/light fields -> light masses are treated as interactions *)
+		mass = 0;
+		heavy = False
+		,
+		(* heavy/massive fields *)
+		Switch[defProps[Type],
+			Scalar,
+				If[defProps[SelfConjugate],
+					mass = Sqrt[-2*massTerm/._Operator->1], (*real*)
+					mass = Sqrt[-massTerm/._Operator->1] (*complex*)
+				],
+			Vector,
+				If[defProps[SelfConjugate],
+					mass = Sqrt[2*massTerm/._Operator->1], (*real*)
+					mass = Sqrt[massTerm/._Operator->1] (*complex*)
+				],
+			Fermion,
+				If[defProps[SelfConjugate],
+					mass = -2*massTerm/._Operator->1, (*Majorana*)
+					Switch[defProps[Chiral],
+						LeftHanded | RightHanded, (*Weyl*)
+							mass = -massTerm/._Operator->1,
+						False, (*Dirac*)
+							mass = -massTerm/._Operator->1
+					]
+				]
+		];
+
+		mass = Contract@ mass;
+
+		mass = mass /. {Sqrt[x_Coupling^2]:>x /; GetCouplings[First@x][SelfConjugate]}; (* simplify Sqrt[] for real couplings *)
+		If[MatchQ[mass, _Coupling],
+			(* extract mass label *)
+			If[GetCouplings[First@ mass][EFTOrder]==0,
+				mass = First@ mass;
+				heavy = True
+				,
+				mass = 0; (* light field masses are treated as interactions *)
+				heavy = False
+			]
+			,
+			Message[SetCurrentLagrangian::massterm, l, mass];
+			Abort[]
+		];
+	];
+
+	(* return field properties in given Lagrangian *)
+	<|
+		Type          -> defProps[Type],
+		Indices       -> defProps[Indices],
+		Charges       -> defProps[Charges],
+		SelfConjugate -> defProps[SelfConjugate],
+		Chiral        -> defProps[Chiral],
+		Mass          -> mass,
+		Heavy         -> heavy
+	|>
+]
+
+
+SetCurrentLagrangian::massterm="Could not identify the mass coupling `2` for the field `1`.";
+
+
+(* ::Subsubsection::Closed:: *)
+(*Return most recently determined fields association*)
+
+
+$currentFieldAssociation = 0;
+
+
+GetFieldsUpdated[] := If[Head[$currentFieldAssociation]===Association, $currentFieldAssociation, $FieldAssociation]
+
+
+GetFieldsUpdated[f_] := If[Head[$currentFieldAssociation]===Association && KeyExistsQ[$currentFieldAssociation,f],
+	$currentFieldAssociation@ f,
+	$FieldAssociation@ f
+]
+
+
+GetFieldsUpdated[f_,prop_] := If[Head[$currentFieldAssociation]===Association && KeyExistsQ[$currentFieldAssociation,f],
+	$currentFieldAssociation[f,prop],
+	$FieldAssociation[f,prop]
+]
+
+
+GetFieldsUpdatedByProperty[]:=GetFieldsUpdated[]
+
+GetFieldsUpdatedByProperty[propsSeq__]:=GetFieldsUpdatedByProperty[List[propsSeq]]
+
+GetFieldsUpdatedByProperty[props_Association]:= GetFieldsUpdatedByProperty@ Normal@ props;
+
+GetFieldsUpdatedByProperty[props:_List|_Rule]:= If[Head[$currentFieldAssociation]===Association,
+	Keys@ Select[$currentFieldAssociation, MatchQ[#, KeyValuePattern[props]]&],
+	Keys@ Select[$FieldAssociation, MatchQ[#, KeyValuePattern[props]]&]
+]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Extract all mass terms from a Lagrangian*)
+
+
+Options@ IsolateMassTerms= {Heavy -> All};
+
+
+IsolateMassTerms[L_, OptionsPattern[]] := Module[{res},
+	res = Plus@@ Table[
+		If[Plus@@Cases[RemovePower@term, Field[___,aux_List] :> 1+Length[aux], All]==2,
+			Switch[OptionValue[Heavy],
+				True, If[OperatorDimension2[term]<4, term, Nothing],
+				False, If[OperatorDimension2[term]>=4, term, Nothing],
+				All, term
+			]
+			,
+			Nothing
+		]
+		,
+		{term, List@@ (EvenBetterExpand@ HcExpand@ L)}
+	]
+]
+
+
+(* ::Subsubsection::Closed:: *)
+(*OperatorDimension2*)
+
+
+(* ::Text:: *)
+(*Same as OperatorDimension[...], but all/heavy fields are counted with their canonical mass dimension, i.e., w/o EFT suppression factors.*)
+
+
+OperatorDimension2[x_Operator] := OperatorDimension2[NormalForm@x];
+OperatorDimension2[c_ x_Operator] := OperatorDimension2[c] + OperatorDimension2[NormalForm@x];
+
+
+OperatorDimension2[0]= 100;
+OperatorDimension2[expr_Plus]:= Min[OperatorDimension2/@ (List@@ expr)];
+OperatorDimension2[expr_List]:= Min[OperatorDimension2/@ expr];
+
+
+OperatorDimension2[op_]:=Module[
+	{
+		expr = RemovePower@op,
+		dim
+	},
+	(*Dimensions of all fields*)
+	dim = Plus@@ Cases[expr, Field[arg___]:>FieldDimension2@Field[arg], All];
+	(*Dimensions of all FS-tensors*)
+	dim += Plus@@ Cases[expr, FieldStrength[___, devs_]:> 2 + Length@ devs, All];
+	(*Dimensions of couplings*)
+	dim += Plus@@ Cases[Numerator@expr, Coupling[_,_,n_]:>n, All] - Plus@@Cases[Denominator@expr, Coupling[_,_,n_]:>n, All];
+	(*Dimension of symmetrized CD*)
+	dim += Plus@@ Cases[expr, SymmetrizedCD[\[Mu]_List, _]:> Length@ \[Mu], All];
+	(*Dimension of the IR regulator from the loop integral*)
+	(*dim += Plus@@ Cases[expr, Power[InvProp@ mIR, n_]:> 4 + 2 n, All]; *)
+	dim
+]
+
+
+FieldDimension2[Field[f:Except[List[___]],type_,_,derivs_List]] := Length[derivs] + TypeDim[type];
 
 
 (* ::Subsection::Closed:: *)
@@ -285,7 +529,7 @@ FindUvFields::error = "The field `1` is not part of the Lagrangian.";
 
 FindUvFields[lagrangian_]:=Module[
 	{
-		fieldAssociation = GetFields[],
+		fieldAssociation = GetFieldsUpdated[],
 		uvFields
 	},
 	(* find all field labels *)
@@ -320,42 +564,42 @@ Options@ CovariantLoop= {
 	};
 
 
-CovariantLoop[lag_, fields_List, opts:OptionsPattern[]]? OptionsCheck:= 
-CovariantLoop[lag, fields, opts]=Module[{lagFields, n, types, dofNumbers, ord, out},
-	lagFields= LagrangianDofs@ lag; 
+CovariantLoop[lagrangian_, fields_List, opts:OptionsPattern[]]? OptionsCheck:=
+CovariantLoop[lagrangian, fields, opts]=Module[{lagFields, n, types, dofNumbers, ord, out, lag=lagrangian},
+	lagFields= LagrangianDofs@ lag;
 	(*Check fields*)
 	If[!SubsetQ[Join@@ List@@ lagFields, fields],
 		Message[CovariantLoop::ukwnfld, Complement[fields, Join@@ List@@ lagFields]];
 		Abort[];
 	];
-	If[Intersection[GetFieldsByProperty[Heavy-> True], fields] === {},
+	If[Intersection[GetFieldsUpdatedByProperty[Heavy-> True], fields] === {},
 		Message[CovariantLoop::noheavy];
 		Abort[];
 	];
-	
-	
+
+
 	(*Update Lagrangian*)
 	ord= OptionValue@ EFTOrder;
-	SetCurrentLagrangian[lag, 1, If[Head@ ord === List, First @ord, ord]];
-	
+	lag = SetCurrentLagrangian[lag, 1, If[Head@ ord === List, First @ord, ord]];
+
 	(*Number the fields *)
 	types= FieldType/@ fields;
 	dofNumbers= Table[
 		Position[lagFields@ types[[n]], fields[[n]]][[;;, 1]]
 	, {n, Length@ types}];
-	
+
 	(*Add log type STr*)
 	out= If[Length@ fields === 1,
 			LogTypeSTr[First@ types, ord, Fields-> dofNumbers]
 		,
 			0
 		];
-		
+
 	out+ PowerTypeSTr[types, ord, Fields-> dofNumbers]//ContractCGs//MatchReduce
 ];
 
 
-CovariantLoop[lag_, field_Symbol, ord_, opts:OptionsPattern[]]:= 
+CovariantLoop[lag_, field_Symbol, ord_, opts:OptionsPattern[]]:=
 	CovariantLoop[lag, {field}, ord, opts];
 
 
@@ -366,33 +610,39 @@ CovariantLoop[lag_, field_Symbol, ord_, opts:OptionsPattern[]]:=
 Options[Match]={EFTOrder -> 6, LoopOrder-> 1, Simplifications -> All, Verbose -> Monitor};
 
 
-Match[lag_, opts:OptionsPattern[]]? OptionsCheck := 
+Match[lag_, opts:OptionsPattern[]]? OptionsCheck :=
 Match[lag, opts] = Module[{
-		lagrangian = BetterExpand[ContractCGs@lag],
+		(*lagrangian = BetterExpand[ContractCGs@lag],*)
+		lagrangian = lag,
 		eftOrder=OptionValue@EFTOrder,
 		loopOrder=OptionValue@LoopOrder,
 		LagrangianEFT,
 		ReplaceHeavyEOMOpts = Sequence@@FilterRules[{opts},Options[ReplaceHeavyEOM]],
 		VerboseOption = (OptionValue@Verbose===Print||OptionValue@Verbose===Monitor)
 	},
-	
+
+	(*
 	(*Check Lagrangian*)
-	If[!CheckLagrangian@ lagrangian, 
-		Abort[]; 
-	]; 
-	
+	If[!CheckLagrangian@ lagrangian,
+		Abort[];
+	];
+	*)
+
+	(* canonize fermion masses *)
+	(*lagrangian = CanonizeFermionMassTerms[lagrangian];*)
+
 	(* canonize fermion masses *)
 	lagrangian = CanonizeFermionMassTerms[lagrangian];
-	
+
 	(* Set global variables for the given Lagrangian *)
-	SetCurrentLagrangian[lagrangian, If[loopOrder === {1}, 1, loopOrder], 
+	lagrangian = SetCurrentLagrangian[lagrangian, If[loopOrder === {1}, 1, loopOrder],
 		If[Head@ eftOrder === List, First @eftOrder, eftOrder], Verbose-> VerboseOption];
-	
-	MyPrint["Integrating out the fields: ", Sequence@@Riffle[Intersection[Matchete`PackageScope`OccuringFields[lagrangian],GetFieldsByProperty[Heavy->True]],", "], Verbose->OptionValue@Verbose===Print];
-	
+
+	MyPrint["Integrating out the fields: ", Sequence@@Riffle[Intersection[Matchete`PackageScope`OccuringFields[lagrangian],GetFieldsUpdatedByProperty[Heavy->True]],", "], Verbose->OptionValue@Verbose===Print];
+
 	LagrangianEFT= If[MatchQ[loopOrder, 0|1],
 			(*Tree-level Lagrangian*)
-			OptionalMonitor[VerboseOption, 
+			OptionalMonitor[VerboseOption,
 				RelabelIndices@ ReplaceHeavyEOM[lagrangian, ReplaceHeavyEOMOpts]
 			, "Matching at tree level..."]
 		, 0]+ If[MatchQ[loopOrder, 1|{1}],
@@ -401,7 +651,7 @@ Match[lag, opts] = Module[{
 				LagrangianEFT = LoopMatch[EFTOrder->eftOrder,Verbose->VerboseOption]
 			, "Matching at 1-loop level..."]
 		, 0];
-	
+
 	LagrangianEFT//ContractCGs//MatchReduce
 ];
 
@@ -418,9 +668,9 @@ MatchReduce[expr_]:= Module[{},
 	Contract[ContractCGs[expr/.
 	{
 		(*\[Epsilon]^-1-> 0,*)(*Needs to be done after Gamma reduction*)
-		FieldStrength[label_,linds_,{Bar@ind1_,ind2_},{CDer___}]:> Module[{A}, 
+		FieldStrength[label_,linds_,{Bar@ind1_,ind2_},{CDer___}]:> Module[{A},
 				-CG[Bar[gen[ind2[[2]]]],{Index[A,GroupFromRep[ind2[[2]]][adj]],Bar@ind1,ind2}] FieldStrength[label,linds,{Index[A,GroupFromRep[ind2[[2]]][adj]]},{CDer}]
-			],	
+			],
 		FieldStrength[label_,linds_,{ind1_,Bar@ind2_},{CDer___}]:> Module[{A},
 				CG[gen[ind2[[2]]],{Index[A,GroupFromRep[ind2[[2]]][adj]],ind1,Bar@ind2}] FieldStrength[label,linds,{Index[A,GroupFromRep[ind2[[2]]][adj]]},{CDer}]
 			],
@@ -436,7 +686,7 @@ MatchReduce[expr_]:= Module[{},
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Canonize fermion mass terms*)
 
 

@@ -49,6 +49,7 @@ PackageScope["ContractDelta"]
 
 PackageScope["FindDummyIndices"]
 PackageScope["FindOpenIndices"]
+PackageScope["FindDiagonalIndices"]
 
 
 PackageScope["RelabelIndicesInTerm"]
@@ -67,7 +68,7 @@ PackageScope["RemovePower"]
 PackageScope["DimRep"]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Usage definitions*)
 
 
@@ -89,7 +90,7 @@ Delta::usage    = "Delta[Index[a,rep],Index[b,rep]] denotes the delta function f
 Metric::usage   = "Metric[\[Mu],\[Nu]] denotes the Lorentz metric tensor \!\(\*SubscriptBox[\(g\), \(\[Mu]\[Nu]\)]\).";
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Internal*)
 
 
@@ -233,6 +234,7 @@ FindDummyIndices= First@* FindIndices;
 FindIndices[expression_]:=Block[
 	{
 		list,
+		diagCouplReplacement,
 		(*Temporarly remove all powers*)
 		expr=PseudoTimes@ expression
 	},
@@ -240,8 +242,29 @@ FindIndices[expression_]:=Block[
 	(* ignore indices from diagonal couplings since these are not considered for the dummy index summation *)
 	(*expr = expr/. Coupling[a:Alternatives@@ ($FieldAssociation[#][Mass]&/@ Keys@ Select[$FieldAssociation, #[Heavy] &]), {Index[b_,rep_]}, n_]:> 
 		Coupling[a, {}, n];*)
-	expr= DeleteCases[expr, Coupling[Alternatives@@ ($FieldAssociation[#][Mass]&/@ Keys@ Select[$FieldAssociation, #[Heavy] &]), {_Index}, _], All];
-
+	(*expr= DeleteCases[expr, Coupling[Alternatives@@ ($FieldAssociation[#][Mass]&/@ Keys@ Select[$FieldAssociation, #[Heavy] &]), {_Index}, _], All];*)
+	(*
+	expr= DeleteCases[expr, Coupling[Alternatives@@ (Keys@ Select[GetCouplings[], #[DiagonalCoupling]&]), {_Index}, _], All];
+	*)
+	
+	
+	(* for much better performance this rule is now constructed once globally when a coupling is defined *)
+	(*diagCouplReplacement = Table[
+		With[{tmp= Position[GetCouplings[x][DiagonalCoupling],True]},
+			If[tmp==={},
+				Nothing,
+				Coupling[x,ind_List,ord_]:>Coupling[x,ReplacePart[ind,tmp->Nothing],ord]
+			]
+		]
+		,
+		{x,Keys@GetCouplings[]}
+	];
+	
+	expr = expr /. diagCouplReplacement;
+	*)
+	
+	expr = expr /. DropDiagonalCouplings;
+	
 	(* list all indices and their multiplicity found in expr *)
 	list = Tally[Cases[expr, _Index, (*{-3,-2}*)All]];
 
@@ -269,7 +292,25 @@ FindOpenIndices[expression_]:=Module[
 ]
 
 
-(* ::Subsection:: *)
+(* returns a list of indices in the expr that are from couplings with the "DiagonalCoupling -> True" flag *)
+FindDiagonalIndices[expr_]:=If[
+		Head[ Expand @ expr ]===Plus
+	,
+		(* we are allowing sums of terms with different numbers of indices, since we can have flavor-universal expressions added to non-universal ones - the final number of vector indices is the largest we find *)
+		Last @ SortBy[ DeleteDuplicates [ DiagonalInidicesSingleTerm /@ List @@ Expand @ expr ], Length ],
+		DiagonalInidicesSingleTerm @ expr
+	]
+	
+DiagonalInidicesSingleTerm[expr_]:=Module[{dummies,opens, all},
+	{dummies,opens} = FindIndices[expr];
+	(* we only allow flavor indices to be of this type *)
+	all = Cases[ DeleteDuplicates @ Cases[ expr , _Index, Infinity], Index[_,f_]/;MemberQ[Keys[$FlavorIndices],f]];
+	(* diagonal indices show up neither as dummies nor as open indices, so just return all flavor indices that  *)
+	Complement[all, dummies, opens]
+]
+
+
+(* ::Subsection::Closed:: *)
 (*Relabel repeated indices (in single term)*)
 
 
@@ -528,7 +569,7 @@ DimRep[rep_]:=Block[{},
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Metric*)
 
 
@@ -621,7 +662,7 @@ ContractMetricSingleTerm[expr_] :=
 	]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Levi-Civita tensor*)
 
 

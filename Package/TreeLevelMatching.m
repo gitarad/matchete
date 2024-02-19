@@ -229,7 +229,7 @@ ReplaceHeavyEOM[arg_, OptionsPattern[]] := Module[
 (*Rewrite: Subscript[F^a, \[Mu]\[Nu]]=(Subscript[D, \[Mu]] Subscript[A, \[Nu]])^a-(Subscript[D, \[Nu]] Subscript[A, \[Mu]])^a*)
 
 
-SubstituteHeavyFieldStrength[expr_] := Expand[expr/.(FieldStrength[l_,x___]:>SubstituteFS@FieldStrength[l,x]/;GetFields[l][Heavy])]
+SubstituteHeavyFieldStrength[expr_] := Expand[expr/.(FieldStrength[l_,x___]:>SubstituteFS@FieldStrength[l,x]/;GetFieldsUpdated[l][Heavy])]
 
 
 SubstituteFS[FieldStrength[label_, {\[Mu]_Index,\[Nu]_Index}, gaugeIndices_List, lorentzIndices_List]] :=

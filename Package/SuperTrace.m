@@ -111,7 +111,7 @@ $FieldTypes= <|
 |>;
 
 
-FieldType[f_]:= Switch[Lookup[GetFields[f], {Type, Heavy}]
+FieldType[f_]:= Switch[Lookup[GetFieldsUpdated[f], {Type, Heavy}]
 	,{Scalar, True}, hScalar
 	,{Scalar, False}, lScalar
 	,{Fermion, True}, hFermion
@@ -292,7 +292,7 @@ LagrangianDofs[lag_]:= LagrangianDofs[lag]= Module[{fields},
 	fields= DeleteDuplicates@ Cases[lag, (Field|FieldStrength)[f_, __]:> f, Infinity];
 	(*Create association by field type*)
 	fields= Association@@ 
-		KeyValueMap[(#1-> Intersection[GetFieldsByProperty[#2], fields]&), $FieldTypes];
+		KeyValueMap[(#1-> Intersection[GetFieldsUpdatedByProperty[#2], fields]&), $FieldTypes];
 	(*Add conjugate DoFs*)
 	LagrangianDofsAux/@ fields
  ]; 
@@ -303,7 +303,7 @@ LagrangianDofs[lag_]:= LagrangianDofs[lag]= Module[{fields},
 
 
 LagrangianDofsAux@ fieldList_List:= LagrangianDofsAux/@ fieldList// Flatten;
-LagrangianDofsAux@ field_Symbol:= If[GetFields[field, SelfConjugate], field, {field, Conj@ field}];
+LagrangianDofsAux@ field_Symbol:= If[GetFieldsUpdated[field, SelfConjugate], field, {field, Conj@ field}];
 
 
 (* ::Text:: *)
@@ -342,6 +342,7 @@ DeriveSubstitutions[lag_, OptionsPattern[]]:= Module[
 		(*To avoid the LO kinetic from the fluctuation operator*)
 		(*NB. for the gauge field this does not work... nor for light fields*)
 		effLag= lag - If[ftype1 === ftype2, KinOpLagrangian@@ DeleteCases[fields@ ftype1, _Conj], 0];
+		
 		(*If[ftype1 === ftype2 && ftype1 === lVector, effLag= lag- FreeLag@@ fields@ ftype1];*)
 		sub= Table[
 			(*temp= FluctuationOperator[effLag, Bar@ f1@ i, f2@ j, EFTOrder->OptionValue[EFTOrder]];*)
@@ -394,7 +395,7 @@ DeriveSubstitutions[lag_, OptionsPattern[]]:= Module[
 	(*Determine mass substitutions*)
 	Msub= Flatten@ Table[
 		sub= Table[ 
-			temp= GetFields[f, Mass];
+			temp= GetFieldsUpdated[f, Mass];
 			If[Length@ GetCouplings[temp][Indices]=== 1,
 				temp@ i
 			,
@@ -561,7 +562,7 @@ PowerTypeTraces[order_Integer, lightOnly_:False]:= Module[{possibilities, seed, 
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Ancillary functions*)
 
 
@@ -643,7 +644,7 @@ MatrixToMomNCM@ ncm_MatrixNCM:= Module[{deltas, indTypes, massInds, out, replace
 MatrixToMomNCM@ expr_:= expr/. ncm_MatrixNCM:> MatrixToMomNCM@ ncm;
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Power-type supertraces*)
 
 
@@ -718,7 +719,7 @@ PowerTypeSTr[propagatorTypes_List, eftOrder:(_Integer|{_Integer}), OptionsPatter
 	len= Length@ propagatorTypes;
 	
 	{preFact, traceXords, traceTemplate}= CDETemplates@ propagatorTypes;
-
+	
 	(*Sum over the number of open derivatives*)
 	Sum[
 		expr= traceTemplate;
@@ -728,7 +729,7 @@ PowerTypeSTr[propagatorTypes_List, eftOrder:(_Integer|{_Integer}), OptionsPatter
 			(*For debugging. Remove all CDs not compatible with Pattern*)
 			If[!MatchQ[OptionValue@ Pattern]@ extraOrds, Throw@ 0;]; 
 			(*CDE expansion of the term*)
-			temp= expr; temp[[;;-2, -1]]+= extraOrds;
+			temp= expr; temp[[;;, -1]]+= extraOrds;
 			temp= SuperTraceCDE@ temp/. MomNCM-> MatrixNCM;
 			(*Substitute in the model specific terms*)
 			temp= If[OptionValue@ Fields === All, 
@@ -736,6 +737,7 @@ PowerTypeSTr[propagatorTypes_List, eftOrder:(_Integer|{_Integer}), OptionsPatter
 			, (*$currentXsubs \[Rule] FS in Gop*)
 				Tr[PickParts[temp/. Index[a_, GenericIndex]-> a, OptionValue@ Fields]/. $currentXsubs/. HoldPart-> Part]
 			];
+			
 			temp= temp// ExpandMatrixNCM// MatrixToMomNCM;
 			temp= temp/. Tr@ 0-> 0/. x:Alternatives[_InvProp, Power[_InvProp, _]]:> Commutative@ x/. Commutative@ x_-> x;  
 			
@@ -744,7 +746,7 @@ PowerTypeSTr[propagatorTypes_List, eftOrder:(_Integer|{_Integer}), OptionsPatter
 			(*SplitSymmetrizedCDs@ RelabelIndices@ Contract@ CollectGammaMatrices@ temp *)
 			SplitSymmetrizedCDs@ RelabelIndices@ temp 
 			]
-		, {order, maxOrd}, {extraOrds, IntegerSets[order -openDevs[[-1]], 2 len -1]}];
+		, {order, maxOrd}, {extraOrds, IntegerSets[order -openDevs[[-1]], 2 len]}];
 		
 		expr= CloseFermionLoop[propagatorTypes, expr];
 				
@@ -924,7 +926,7 @@ LoopMatch[opt:OptionsPattern[]]? OptionsCheck:= Module[
 		{field, fields, out, powerTraces, i=0},
 	out= OptionalMonitor[OptionValue@ Verbose,
 			Sum[
-				If[Length@ GetFieldsByProperty@ $FieldTypes@ field > 0,
+				If[Length@ GetFieldsUpdatedByProperty@ $FieldTypes@ field > 0,
 					LogTypeSTr[field, OptionValue@ EFTOrder],
 					0
 				]

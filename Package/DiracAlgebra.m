@@ -71,6 +71,7 @@ PackageExport["DiracTrace"]
 
 PackageScope["GammaReduction"]
 PackageScope["Fierz"]
+PackageScope["Fierz4D"]
 PackageScope["EvaOp"]
 PackageScope["Origin"]
 PackageScope["RedundantOperator"]

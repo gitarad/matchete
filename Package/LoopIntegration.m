@@ -45,6 +45,8 @@ PackageScope["MomDev"]
 
 
 PackageScope["LoopIntegrate"]
+PackageScope["LFFull"]
+PackageScope["LFFull2LF"]
 
 
 PackageScope["ExtractMomenta"]
@@ -102,6 +104,8 @@ MomDev::usage=
 LoopIntegrate::usage=
 "LoopIntegrate[expr, LogTerm ->True/False] performs the scalar integral over the loop momentum propagators in the expression, written in the form: InvProp[m1\!\(\*SuperscriptBox[\(]\), \(-i1\)]\)...InvProp[mn\!\(\*SuperscriptBox[\(]\), \(-in\)]\)InvProp[0\!\(\*SuperscriptBox[\(]\), \(j\)]\); 
 By default, LogTerm is False. If turned on (LogTerm-> True), there is an additional factor corresponding to the integral over \[Xi] from the integral expression of the log."
+LFFull::usage="LFFull[{\!\(\*SubscriptBox[\(m\), \(1\)]\),...,\!\(\*SubscriptBox[\(m\), \(n\)]\)},{\!\(\*SubscriptBox[\(i\), \(1\)]\),..., \!\(\*SubscriptBox[\(i\), \(n\)]\), \!\(\*SubscriptBox[\(i\), \(n + 1\)]\)}] is a placeholder for the loop integration (including divergent pieces) performed over \!\(\*FractionBox[\(1\), \(\(\*SuperscriptBox[\((\*SuperscriptBox[\(k\), \(2\)] - \*SuperscriptBox[SubscriptBox[\(m\), \(1\)], \(2\)])\), SubscriptBox[\(i\), \(1\)]] ... \) \*SuperscriptBox[\((\*SuperscriptBox[\(k\), \(2\)] - \*SuperscriptBox[SubscriptBox[\(m\), \(n\)], \(2\)])\), SubscriptBox[\(i\), \(n\)]] \*SuperscriptBox[\((\*SuperscriptBox[\(k\), \(2\)])\), SubscriptBox[\(i\), \(n + 1\)]]\)]\) where k is the loop momentum."
+LFFull2LF::usage="LFFull2LF takes an expression with LFFull, and separates the loop function into divergent and finite pieces, the latter given in terms of LF."
 
 
 ExtractMomenta::usage=
@@ -179,7 +183,7 @@ hbar^x_/;x>=2 ^:= 0
 ev^x_/;x>=2 ^:= ev;
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Scalar integrals*)
 
 
@@ -267,12 +271,14 @@ Module[{preFact},
 (*Multiscale integrals*)
 
 
-MultiScaleIntegral[propPowers_Association, \[Alpha]_, OptionsPattern[{Pole->False}]]:= Module[{mi, pi, mj, temp},
-	If[OptionValue[Pole],If[Plus@@ propPowers + \[Alpha]> 2 && \[Alpha]<2, Return@ 0;]];
-	Sum[temp= KeyDrop[propPowers, mi];
+MultiScaleIntegral[propPowers_Association, \[Alpha]_, OptionsPattern[{Pole->False}]]:= Module[{mi, pi, mj, temp, isFinite, firstMass, out},
+	isFinite = Plus@@ propPowers + \[Alpha]> 2 && \[Alpha]<2;
+	If[OptionValue[Pole],If[isFinite, Return@ 0;]];
+	out= Sum[temp= KeyDrop[propPowers, mi];
 		SingleScaleIntegral[{mi, propPowers@ mi - pi}, \[Alpha], Pole -> OptionValue[Pole]] /pi! D[Product[Power[M2@ mi -M2@ mj, -propPowers@ mj],
 			{mj, Keys@ temp}], {M2@ mi, pi}]
-	,{mi, Keys@ propPowers}, {pi, 0, propPowers@ mi -1}]/. M2@ mass_:> mass^2 
+	,{mi, Keys@ propPowers}, {pi, 0, propPowers@ mi -1}]/. M2@ mass_:> mass^2;
+	If[isFinite, firstMass = First@Sort@Keys@propPowers; out /. \[Mu]bar2 -> firstMass^2, out]
 ];
 
 
@@ -294,18 +300,45 @@ LF[m_List?(!DuplicateFreeQ@# &),ind_List]:= Module[{dupm,posm,newind,newm},
 
 
 (* ::Text:: *)
+(*Simplification rules for the loop functions*)
+
+
+(* Canonical order *)
+LFFull[m_?(Sort[#]=!=#&),ord_]:=LFFull[Sort[m],Append[ord[[;;-2]][[Ordering[m]]],ord[[-1]]]]
+
+(* Remove zero entries (other than the last one) *)
+LFFull[m_,ord_?(MemberQ[#[[;;-2]],0]&)]:=LFFull[Delete[m,Position[ord[[;;-2]],0]],Append[DeleteCases[ord[[;;-2]],0],ord[[-1]]]]
+
+(* Set to zero scaleless integrals *)
+LFFull[{},ord_]:=0
+
+(* IBP rule to make the first power one *)
+LFFull[m_,ord_?(#[[1]]>1 &)]:=(\[ScriptD]/2-ord[[-1]]-1)/(ord[[1]]-1)LFFull[m,ord+UnitVector[Length@ord,Length@ord]-UnitVector[Length@ord,1]]-Sum[ord[[i]]/(ord[[1]]-1)LFFull[m,ord+UnitVector[Length@ord,i]-UnitVector[Length@ord,1]],{i,2,Length@ord-1}]
+
+(* Mass relation to reduce massless propagators (only used after first power is one) *)
+LFFull[m_,ord_?(#[[1]]==1 && #[[-1]]>0 &)]:= - 1/m[[1]]^2 LFFull[m[[2;;]],ord[[2;;]]] + 1/m[[1]]^2 LFFull[m,ord - UnitVector[Length@ord,Length@ord]]
+
+(* Mass relation to reduce positive powers of mass terms multiplying loop functions *)
+LFFull/: Power[mi_, 2] LFFull[m:{m1___,mi_,mn___},ord_]:= LFFull[{m1,mi,mn},ord-UnitVector[Length@ord,Length@ord]] - LFFull[{m1,mi,mn},ord-UnitVector[Length@ord,Position[m,mi][[1,1]]]]
+
+
+(* ::Text:: *)
 (*A factor "i" is extracted from the definition of the loop function, so that it is real*)
 
 
-ToLoopFunctions[propPowers_Association, \[Alpha]_]:= Module[{props},
+ToLoopFunctions[propPowers_Association, \[Alpha]_]:= Module[{props,full,pole},
 	props= SortBy[KeyValueMap[{#1, #2}&, propPowers], (-#[[2]]&)];
-	I LF[props[[;;, 1]], props[[;;, 2]] ~ Join ~ {\[Alpha]}] + Simplify@ MultiScaleIntegral[propPowers, \[Alpha], Pole-> True] 
+	full= I LFFull[props[[;;, 1]], props[[;;, 2]] ~ Join ~ {\[Alpha]}];
+	LFFull2LF[full]
 ]
 
 
-EvaluateLoopFunctions@ LF[denoms_, powers_]:= Module[{association},
+LFFull2LF[full_]:= Normal@Series[Expand@full/. {\[ScriptD]->4-2\[Epsilon], LFFull[args__]:> LF[args] + EvaluateLoopFunctions[LF[args], Pole -> True]},{\[Epsilon],0,0}]
+
+
+EvaluateLoopFunctions[LF[denoms_, powers_], OptionsPattern[{Pole->False}]]:= Module[{association},
 	association= Association@@ (#[[1]]->#[[2]]&)/@ Transpose@ {denoms, powers[[;;-2]]};
-	-I MultiScaleIntegral[association, Last@ powers, Pole-> False] //Simplify
+	-I MultiScaleIntegral[association, Last@ powers, Pole-> OptionValue[Pole]] //Simplify
 ];
 EvaluateLoopFunctions@ expr_:= expr/. lf_LF:> EvaluateLoopFunctions@ lf;
 
@@ -371,7 +404,7 @@ ExtractMomenta@ expr_ := Module[{out, pInds},
 (*Momentum structures for CDE*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Non-commutative products*)
 
 
@@ -484,7 +517,7 @@ MatrixNCM[a___, x: Except[_List], y_List, b___]:= MatrixNCM[a, MatrixNCM[x, #]&/
 (*Extracting commuting objects (no deltas on account of summation over heavy mass indices)*)
 
 
-MatrixNCM[a___, (x:Except[_Delta|_Times]?MomCommuteQ), c___]:= x * MatrixNCM[a, c];
+MatrixNCM[a___, (x:Except[_Delta|_Times|_Coupling]?MomCommuteQ), c___]:= x * MatrixNCM[a, c];
 
 
 (* ::Subsubsection::Closed:: *)

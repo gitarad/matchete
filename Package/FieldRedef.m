@@ -34,12 +34,14 @@ PackageExport["DummyCoefficients"]
 PackageExport["IntroduceEffectiveCouplings"]
 PackageExport["EffectiveCouplingSymbol"]
 PackageExport["OverrideDuplicateCouplingCheck"]
+PackageExport["ShiftRenCouplings"]
 
 
 (* ::Subsubsection::Closed:: *)
 (*Internal*)
 
 
+PackageScope["IntroduceEffectiveMasses"]
 PackageScope["LCurrent"]
 PackageScope["EoMSimplificationStep"]
 PackageScope["ReduceField"]
@@ -59,7 +61,7 @@ PackageScope["ResetTempCouplings"]
 (*Usage messages*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Exported*)
 
 
@@ -70,6 +72,8 @@ ReplaceEffectiveCouplings::usage =      "ReplaceEffectiveCouplings[L] resubstitu
 Rules::usage =                          "Rules is an option to specify whether output should be a list of replacement rules instead of printed.";
 EffectiveCouplingSymbol::usage =        "EffectiveCouplingSymbol an option of IntroduceEffectiveCouplings and is the symbol used for automatically defined effective couplings. The standard option is EffectiveCouplingSymbol -> \"C\"";
 OverrideDuplicateCouplingCheck::usage = "OverrideDuplicateCouplingCheck is an option for IntroduceEffectiveCouplings (standard is False). If set to true, the function will introduce effective couplings even if an identical one has been defined previously.";
+ShiftRenCouplings::usage              = "ShiftRenCouplings[L] shifts the EFT corrections in the renormalizable couplings to the higher-dimensional operators.";
+IntroduceEffectiveMasses::usage =       "IntroduceEffectiveMasses[L] replaces mass terms with newly defined, generic mass couplings to compress the structure of the Lagrangian. Use ReplaceEffectiveCouplings to resubstitute them or PrintEffectiveCouplings to show a list of the couplings and their definitions.";
 
 
 (* ::Chapter:: *)
@@ -173,7 +177,7 @@ SeparateByFieldContent[{L0_,L1_}, f_Symbol]:=Module[{l0,ol0=0,ol1=L1},
 			ol0+=term
 		]
 	,{term,l0}];
-	
+
 	{ol0,ol1}
 ]
 
@@ -310,7 +314,7 @@ rslist=List@@(rs+Nothing);
 rslistV = (
 	Total[
 		Cases[rslist, (c_:1)(x:Operator@Field[_, _Vector,___])/;FreeQ[c, Field|FieldStrength]]
-		] /. 
+		] /.
 	Index[vectormu,Lorentz]:> mu) /. Field[lab_,Vector[mu],in_,_] :> FieldStrength[lab,{Index[mu,Lorentz],Index[nu,Lorentz]},in,{}];
 (* currents that we will act on with the CD *)
 rslistJ=NormalForm[RelabelIndices[Total[DeleteCases[rslist, (c_:1)(x:Operator[Field[_, _Vector,___]])/;FreeQ[c, Field|FieldStrength]]],Unique->True], CanonizeKinetic->False];
@@ -346,7 +350,7 @@ ShiftVectorFields[expr_,fields_List,shift_List]:=Module[
 	(* make sure shapes are compatible *)
 	If[Length@fields =!= Length@shift,
 	Message[ShiftVectorFields::shiftmismatch,fields,shift];Return[expr]];
-	
+
 	(* split fields and their shifts into gauge and non-gauge *)
 	pairs=Transpose@{fields,Operator/@(Expand@shift)};
 	pairsA=Cases[pairs,{x_,y_}/;GaugeFieldQ@x];
@@ -390,7 +394,7 @@ ShiftVectorFields[expr_,fields_List,shift_List]:=Module[
 
 	(* now we need to remove EoM operators, so the shifts trigger on them, but still need to deactivate Mathematica's x*x -> x\.b2 rule *)
 	temp=(RelabelIndices[NormalForm@expr,Unique->True])/.(a1_:1) Power[b1_/;(!FreeQ[b1, Field|FieldStrength]), k1_Integer?Positive]:>a1 Inactive[Times]@@ConstantArray[b1,k1];
-	
+
 	(* set up replacement rules for the non-gauge vectors, meaning V -> dVV *)
 	temp=temp/.Flatten[VectorFieldReplacement/@({V,dVV}\[Transpose])];
 
@@ -402,16 +406,16 @@ ShiftVectorFields[expr_,fields_List,shift_List]:=Module[
 	(* now we replace the gauge fields *)
 	temp=temp/.Flatten[VectorFieldReplacement/@({A,dAV+dAA}\[Transpose])];
 	(*temp=temp/.(Map[Inactive@RelabelIndices[#,Unique->True]&,Association@Flatten[VectorFieldReplacement/@({A,dAV+dAA}\[Transpose])],1] /.Association->List );*)
-	
+
 	temp=temp//Activate;
 	(* now we remove the gauge fields explicitly showing since they are a relic of our method *)
 	temp=temp/.Field[Alternatives@@(GetGaugeGroups[#][Field]&/@Keys@GetGaugeGroups[]), ___]:>0;
 	temp
-	
+
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Field redefinitions*)
 
 
@@ -447,12 +451,12 @@ CoefficientOperator[a_,b_]/;(Head[a]=!= Plus&&(!FreeQ[a, Plus])):=(CoefficientOp
 CoefficientOperator[(c_:1)o_Operator, b_]:=Module[{internalize,bPattern, rule={}, repcounter=0},
 	internalize[m_]:=Symbol[SymbolName[m]<>"int"];
 	internalize[Index[m_, t_]]:=Index[internalize[m],t];
-	
+
 	bPattern=b/. Index[mu_, t_]:> Index[Pattern[Evaluate@internalize[mu], _],t];
-		
+
 	AppendTo[rule,RuleDelayed[Condition[bPattern,repcounter++==0],Evaluate[(Times@@Table[Delta[k,internalize[k]],{k,FindOpenIndices[b]}])]]];
 
-	
+
 	Operator[ ContractDelta[NormalForm[If[FreeQ[o,bPattern],0,ReplaceAll[c* Operator@o,rule]], CanonizeKinetic -> False]]]
 ]
 
@@ -478,7 +482,7 @@ ReduceField[iL_, f_Symbol, OptionsPattern[]]:=Module[{real, type,oShift,oRes},
 	(* handle arguments *)
 	oShift=If[MatchQ[OptionValue[ShiftOrder],_Integer],OptionValue[ShiftOrder],GetMaxOrder[iL]];
 	oRes=If[MatchQ[OptionValue[ResultOrder],_Integer],OptionValue[ResultOrder],GetMaxOrder[iL]];
-		
+
 	$MonitorString2="-> Reducing "<> ToString@f<> " in terms of dimension "<>ToString@OptionValue@ShiftOrder <>".";
 
 	Switch[{type,real},
@@ -489,7 +493,7 @@ ReduceField[iL_, f_Symbol, OptionsPattern[]]:=Module[{real, type,oShift,oRes},
 		{Vector,True}, ReduceRealVector[iL, f, oShift, oRes],
 		_, Message[ReduceField::unimplemented, f];iL
 	]
-	
+
 ]
 
 
@@ -510,20 +514,20 @@ Module[
 	shift= RelabelIndices[NormalForm[CoefficientOperator[L, EoM[f[Sequence@@inds]]], CanonizeKinetic -> False],Unique->True];
 	shift0 = Coefficient[shift, hbar, 0];
 	shift1 = Coefficient[shift, hbar, 1];
-	
+
 	(* set up the redefinition *)
 	field=First@Cases[{f[Sequence@@inds]},_Field,Infinity]/. Field[a_,b_,c_,{}]:> Field[a,b,c,drvs];
 	fieldPattern0=First@Cases[{f[Sequence@@pinds]},_Field,Infinity]/. Field[a_,b_,c_,{}]:> Field[{a, oShift-4,0},b,c,Pattern[drvs,_]];
 	fieldPattern1=First@Cases[{f[Sequence@@pinds]},_Field,Infinity]/. Field[a_,b_,c_,{}]:> Field[{a, oShift-4,1},b,c,Pattern[drvs,_]];
-	
+
 	With[{temp0=shift0,temp1=shift1,tfield=field,tdrvs=drvs},
 		rule0 = (fieldPattern0 :> RelabelIndices[CD[tdrvs, temp0],Unique->True]);
 		rule1 = (fieldPattern1 :> RelabelIndices[CD[tdrvs, temp1],Unique->True])
 	];
-	
+
 	(* split the Lagrangian into terms affected and unaffected by the shift *)
 	{LR,LNoShift}=SeparateByFieldContent[SplitLagrangianByPower[iL,4+oRes-oShift],f];
-	
+
 	(* insert the field expansion, return to NormalForm since we're inserting fields into EoM objects as well *)
 	LR = SeriesEFT[BetterExpand @ NormalForm @ LR /. Field[f,args__]:>Field[f,args] + Field[{f, oShift-4,0},args] + hbar Field[{f, oShift-4,1},args],EFTOrder->oRes];
 
@@ -532,7 +536,7 @@ Module[
 
 	(* plug in the rule, reactivate the powers and IBPSimplify *)
 	LR = IBPSimplify19 @ Activate[LR/.{rule0,rule1}];
-	
+
 	LR+LNoShift
 ]
 
@@ -545,17 +549,17 @@ ReduceComplexScalar[iL_, f_Symbol, oShift_,oRes_]:=Module[
 	{L,LNoShift,Ltemp,LR,inds,pinds,  chi1, chi2, shift,
 	shift0,rule0,shift1,rule1,LR0,LR1,
 	field, fieldPattern0,fieldPattern1, drvs,Lread,a,b,c,ri},
-	
+
 	inds=Symbol["i"<>ToString[#]]&/@Range@Length@GetFields[][f][Indices];
 	pinds=Pattern[#, _]&/@inds;
-	        
-	
+
+
 	(* expand Lagrangian to ShiftOrder, keep only terms depending on the field f and IBPSimplify them *)
 	L=SeriesEFT[DropFreeQ[iL,f]-IBPSimplify@FreeLag[f],EFTOrder->oShift];
-	
+
 	(* factor out the EoM[f] term *)
 	chi1=RelabelIndices[NormalForm[CoefficientOperator[L, EoM[f[Sequence@@inds]]],CanonizeKinetic -> False],Unique->True];
-	
+
 	(* ...and subtract the terms we found, to now get the EoM[Bar@f] coefficients *)
 	chi2=RelabelIndices[CoefficientOperator[RelabelIndices@(L - Operator[chi1 EoM[f[Sequence@@inds]]]),EoM[Bar@f[Sequence@@inds]]],Unique->True];
 
@@ -563,31 +567,31 @@ ReduceComplexScalar[iL_, f_Symbol, oShift_,oRes_]:=Module[
 	shift=1/2 Bar@NormalForm[(chi1+Bar@chi2),CanonizeKinetic -> False];
 	shift0 = Coefficient[shift, hbar, 0];
 	shift1 = Coefficient[shift, hbar, 1];
-	
+
 	field=First@Cases[{f[Sequence@@inds]},_Field,Infinity] /. Field[a_,b_,c_,{}] :> Field[a,b,c,drvs];
 	fieldPattern0=First@Cases[{f[Sequence@@pinds]},_Field,Infinity] /. Field[a_,b_,c_,{}] :> Field[{a,oShift-4,0},b,c,Pattern[drvs,_]];
 	fieldPattern1=First@Cases[{f[Sequence@@pinds]},_Field,Infinity] /. Field[a_,b_,c_,{}] :> Field[{a,oShift-4,1},b,c,Pattern[drvs,_]];
-	
+
 	With[{temp0=shift0,temp1=shift1,tfield=field,tdrvs=drvs},
 		rule0 = (fieldPattern0 :> RelabelIndices[CD[tdrvs, temp0],Unique->True]);
 		rule1 = (fieldPattern1 :> RelabelIndices[CD[tdrvs, temp1],Unique->True])
 	];
-	
+
 	(* split the Lagrangian into terms affected and unaffected by the shift *)
 	{LR,LNoShift}=SeparateByFieldContent[SplitLagrangianByPower[iL,4+oRes-oShift],f];
-	
-	
+
+
 	(* we now expand the field and then the Lagrangian *)
 	LR = SeriesEFT[BetterExpand @ NormalForm @ LR /. Field[f, args__] :> Field[f, args ] + Field[{f,oShift-4,0},args] + hbar Field[{f,oShift-4,1},args],EFTOrder->oRes];
-	
-	
+
+
 	(* we need to prepare the Lagrangian: powers need to be removed but we cannot use operators, because we need EoM-type objects to stay unchanged *)
 	LR = (RelabelIndices[LR,Unique->True])/.(a1_:1) Power[b1_/;(!FreeQ[b1, Field|FieldStrength]), k1_Integer?Positive]:>a1 Inactive[Times]@@ConstantArray[b1,k1];
-	
+
 	LR = Activate[LR /. {rule0,rule1}];
-	
+
 	LR=IBPSimplify19 @ LR;
-	
+
 	LR+LNoShift
 ]
 
@@ -606,14 +610,14 @@ ReduceMajoranaFermion[iL_, f_Symbol, oShift_, oRes_]:=Module[{start=Now,LNoShift
 
 	(* factor out the EoM[f] term *)
 	chi1=RelabelIndices[NormalForm[CoefficientOperator[L, EoM[First@Cases[{f[Sequence@@inds]},_Field,Infinity]]],CanonizeKinetic->False],Unique->True];
-	
+
 	(* ...and subtract the terms we found, to now get the EoM[Bar@f] coefficients *)
 	chi2=RelabelIndices[NormalForm[CoefficientOperator[RelabelIndices[L-Operator[chi1**EoM[First@Cases[{f[Sequence@@inds]},_Field,Infinity]]]],EoM[First@Cases[{Transp@f[Sequence@@inds]},Transp[_Field],Infinity]]],CanonizeKinetic->False],Unique->True];
-	
+
 	shift=RelabelIndices[I*CC**(Transp@chi1-chi2)];
 	shift0 = Coefficient[shift, hbar, 0];
 	shift1 = Coefficient[shift, hbar, 1];
-	
+
 	field=First@Cases[{f[Sequence@@inds]},_Field,Infinity]/. Field[a_,b_,c_,{}]-> Field[a,b,c,drvs];
 	fieldPattern0=First@Cases[{f[Sequence@@pinds]},_Field,Infinity]/. Field[a_,b_,c_,{}]-> Field[{a,oShift-4,0},b,c,Pattern[drvs,_]];
 	fieldPattern1=First@Cases[{f[Sequence@@pinds]},_Field,Infinity]/. Field[a_,b_,c_,{}]-> Field[{a,oShift-4,1},b,c,Pattern[drvs,_]];
@@ -622,19 +626,19 @@ ReduceMajoranaFermion[iL_, f_Symbol, oShift_, oRes_]:=Module[{start=Now,LNoShift
 		rule0 = (fieldPattern0 :> RelabelIndices[CD[tdrvs, temp0],Unique->True]);
 		rule1 = (fieldPattern1 :> RelabelIndices[CD[tdrvs, temp1],Unique->True])
 	];
-	
+
 	(* the shift should be homogeneous in power-counting, so we split the Lagrangian into two pieces *)
 	{LR,LNoShift}=SplitLagrangianByPower[iL,4+oRes-oShift];
-	
+
 	LR = SeriesEFT[ NormalForm @ LR /. Field[f, args__] :> Field[f, args] + Field[{f, oShift-4,0}, args]+hbar Field[{f, oShift-4,1}, args] , EFTOrder->oRes];
 
 	(* we need to prepare the Lagrangian: powers need to be removed but we cannot use operators, because we need EoM-type objects to stay unchanged *)
 	LR = (RelabelIndices[LR,Unique->True])/.(a1_:1) Power[b1_/;(!FreeQ[b1, Field|FieldStrength]), k1_Integer?Positive]:>a1 Inactive[Times]@@ConstantArray[b1,k1];
-	
+
 	LR=Activate[LR/.{rule0,rule1}];
 
 	LR=IBPSimplify19 @ LR;
-				
+
 	LR+LNoShift
 ]
 
@@ -649,7 +653,7 @@ ReduceDiracFermion[iL_, f_Symbol, oShift_, oRes_]:=Module[
 
 		inds=Symbol["i"<>ToString[#]]&/@Range@Length@GetFields[][f][Indices];
 	pinds=Pattern[#, _]&/@inds;
-	
+
 	(* expand Lagrangian to ShiftOrder, keep only terms depending on the field f and IBPSimplify them *)
 	L=SeriesEFT[DropFreeQ[iL,f]-IBPSimplify@FreeLag[f],EFTOrder->oShift];
 
@@ -665,7 +669,7 @@ ReduceDiracFermion[iL_, f_Symbol, oShift_, oRes_]:=Module[
 	shift=-I/2*Bar@NormalForm[( chi1+ Bar@chi2),CanonizeKinetic->False];
 	shift0 = Coefficient[shift, hbar, 0];
 	shift1 = Coefficient[shift, hbar, 1];
-	
+
 	field=First@Cases[{f[Sequence@@inds]},_Field,Infinity]/. Field[a_,b_,c_,{}]-> Field[a,b,c,drvs];
 	fieldPattern0=First@Cases[{f[Sequence@@pinds]},_Field,Infinity]/. Field[a_,b_,c_,{}]:> Field[{a,oShift-4,0},b,c,Pattern[drvs,_]];
 	fieldPattern1=First@Cases[{f[Sequence@@pinds]},_Field,Infinity]/. Field[a_,b_,c_,{}]:> Field[{a,oShift-4,1},b,c,Pattern[drvs,_]];
@@ -674,18 +678,18 @@ ReduceDiracFermion[iL_, f_Symbol, oShift_, oRes_]:=Module[
 		rule0 = (fieldPattern0 :> RelabelIndices[CD[tdrvs, temp0],Unique->True]);
 		rule1 = (fieldPattern1 :> RelabelIndices[CD[tdrvs, temp1],Unique->True])
 	];
-	
+
 	{LR,LNoShift}=SeparateByFieldContent[SplitLagrangianByPower[iL,4+oRes-oShift],f];
-	
+
 	LR = SeriesEFT[BetterExpand @ NormalForm @ LR /. Field[f, args__] :> Field[f,args] + Field[{f, oShift-4,0}, args] +hbar Field[{f, oShift-4, 1}, args] , EFTOrder-> oRes];
-	
+
 	(* we need to prepare the Lagrangian: powers need to be removed but we cannot use operators, because we need EoM-type objects to stay unchanged *)
 	LR=(RelabelIndices[LR,Unique->True])/.(a1_:1) Power[b1_/;(!FreeQ[b1, Field|FieldStrength]), k1_Integer?Positive]:>a1 Inactive[Times]@@ConstantArray[b1,k1];
-	
+
 	LR= Activate[LR/.{rule0,rule1}];
 
 	LR=IBPSimplify19 @  LR;
-	
+
 	LR+LNoShift
 ]
 
@@ -721,7 +725,7 @@ GetZMatrix[L_,f_List]:=Module[{Z,emptyList,\[Lambda],\[Mu],\[Nu],GetMaxMassDimen
 		(* no, we have tree-level subleading power mixing *)
 		Return[(BiPerturbativeInvertRegular[Map[WriteEFTLambda[#,\[Lambda]]&,Z,{2}],{hbar,0,1},{\[Lambda],0,GetMaxOrder[L]-4}]/.\[Lambda]->1)]
 	,
-		(* kinetic mixing only at loop-level, inversion is trivial *)	
+		(* kinetic mixing only at loop-level, inversion is trivial *)
 		Return[(2IdentityMatrix[Length@f]-Z)]
 	]
 
@@ -736,20 +740,20 @@ ReduceRealVector[iL_, f_Symbol, oShift_, oRes_]:=Module[
 	pinds=Pattern[#, _]&/@inds;
 
 	L=iL;
-	
+
 	(* find if the the field f mixes with any other field *)
 	mixingFields=GetMixingVectorFields[L,f];
-	
+
 	If[mixingFields==={f},
 		(* f does not mix with any other field -> straightforward redefinition *)
 		shift= -RelabelIndices[NormalForm@CoefficientOperator[(SeriesEFT[DropFreeQ[L,f],EFTOrder->oShift]), EoM[f[Sequence@@inds]]],Unique->True];
-	
+
 		field=First@Cases[{f[Sequence@@inds]},_Field,Infinity];
-		
+
 		If[OptionValue[ShiftOrder]===All,
 				{LR,LNoShift}={L,0}
 			,
-				
+
 				{LR,LNoShift}=SplitLagrangianByPower[L,4+oRes-oShift];
 		];
 		LR=(*IBPSimplify@*)RelabelIndices@Activate@ShiftVectorFields[NormalForm@LR, {field},{field+shift}]
@@ -757,18 +761,18 @@ ReduceRealVector[iL_, f_Symbol, oShift_, oRes_]:=Module[
 
 		(* there is mixing, so we need to work a bit harder, first extract the rotation matrix *)
 		Z = GetZMatrix[L,mixingFields];
-		
+
 		(* the shift is now vector-valued, with the standard shift in the 1 component and then rotated by Z *)
 		shift=Z . (-(SparseArray[{1->1},{Length@mixingFields}])RelabelIndices[NormalForm[CoefficientOperator[Operator@(SeriesEFT[DropFreeQ[L,mixingFields],EFTOrder->oShift]), EoM[f[Sequence@@inds]]], CanonizeKinetic->False],Unique->True]);
 		field=(First@Cases[{#[Sequence@@inds]},_Field,Infinity])&/@mixingFields;
 
-		
+
 		{LR,LNoShift}=SplitLagrangianByPower[L,4+oRes-oShift];
 
-		
+
 		LR=RelabelIndices@NormalForm@Activate@ShiftVectorFields[NormalForm@LR, field,field+shift]
 	];
-	
+
 	LR=IBPSimplify19@SeriesEFT[HBarExpand @ LR, EFTOrder->oRes];
 	LR+LNoShift
 ]
@@ -822,15 +826,17 @@ SameRuleQ[r_, q_]:=Module[{rx=r,qx=q,tlbl,rd},
 ]
 
 
+ToEffectiveCoupling::IndexProblem="The expression `1` contains a mixture of diagonal and non-diagonal indices and cannot be treated.";
+
 (* option Superleading specifies if this coupling acts as a replacement of superleading terms or just as an internal coupling
    option Internal specifies if this coupling is saved to the temporary internal list or the public one *)
 Options @ ToEffectiveCoupling = { Superleading -> True, Internal -> True, EffectiveCouplingSymbol -> "C", HermitianTerm -> False, OverrideDuplicateCouplingCheck -> False };
 
 (* exp is only the coupling, this expression returns only the effective coupling as well, not the product with the operator *)
 ToEffectiveCoupling[exp_, operator_Operator, OptionsPattern[] ] :=Module[
-		{superleading,internal,power,index,indexType,\[Lambda]EFT, outCoupling,temp,inds, pinds, ruleLHS,ruleRHS,hermite, derivativePhase = 1, preRHS, 
+		{superleading,internal,power,diagIndex,nDiagIndex,index,indexType,\[Lambda]EFT, outCoupling,temp,inds, pinds, ruleLHS,ruleRHS,hermite, derivativePhase = 1, preRHS,
 		preExisting, candidates, candidateLabels, hermitianTerm, pOrder, permConversion, symmetries = {},
-		tbdassociation, couplingsSameProperty, ignoreduplicates,
+		tbdassociation, couplingsSameProperty, ignoreduplicates, isdiagonal = False,
 		baseString, incr=1, opdevcount, fieldtally, prettylabel, couplingstring = "C"}
 	,
 		(* get options *)
@@ -838,62 +844,73 @@ ToEffectiveCoupling[exp_, operator_Operator, OptionsPattern[] ] :=Module[
 		superleading = TrueQ @ OptionValue @ Superleading;
 		internal = TrueQ @ OptionValue @ Internal;
 		ignoreduplicates = TrueQ @ OptionValue @ OverrideDuplicateCouplingCheck;
-			
+
 		If[Head @ OptionValue[ EffectiveCouplingSymbol ] === String, couplingstring = OptionValue[ EffectiveCouplingSymbol ] ];
-		
+
 		(* build the coupling name from the operator field content and number of derivatives *)
 		opdevcount = Length@Flatten@Cases[operator, Field[__,k_/;Length[k]>0]|FieldStrength[__,k_/;Length[k]>0] :> k,Infinity] +
-					2 Length@Flatten@Cases[operator, EoM[Field[_,Scalar,__]]|EoM[Bar @ Field[_,Scalar,__]],Infinity] + 
+					2 Length@Flatten@Cases[operator, EoM[Field[_,Scalar,__]]|EoM[Bar @ Field[_,Scalar,__]],Infinity] +
 					Length@Flatten@Cases[operator, EoM[Field[_,Except@ Scalar,__]]|EoM[Bar @ Field[_,Except@ Scalar,__]],Infinity];
 		fieldtally = Tally@Cases[operator,Field[f_,__]|FieldStrength[f_,__]:> f,Infinity];
 		baseString = couplingstring <> StringJoin[ ToString/@ Flatten[ If[MatchQ[#,{_,k_/;k>1}], #, {#[[1]]}]& /@ Join[fieldtally, {If[opdevcount>0,{"D",opdevcount},Nothing]}] ] ];
-		If[Defined[Symbol@baseString], 
+		If[Defined[Symbol@baseString],
 			While[Defined[Symbol[baseString<>ToString[incr]]], incr++];
 			temp = Symbol[baseString<>ToString[incr]];
 			prettylabel = StandardForm[
-							Subsuperscript[StandardForm[Symbol @ couplingstring],
+							Subsuperscript[StandardForm[couplingstring],
 									  Row@ Join[If[#[[2]]>1,Superscript[StandardForm[#[[1]]],#[[2]]],StandardForm[#[[1]]]]&/@fieldtally,
 									            {If[#>0,If[#>1,Superscript[StandardForm[D],#],StandardForm[D]],Nothing]&@opdevcount}],Row[{"(",incr,")"}]]]
 		,
 			temp = Symbol@baseString;
 			prettylabel = StandardForm[
-							Subscript[StandardForm[Symbol @ couplingstring],
+							Subscript[StandardForm[couplingstring],
 									  Row@ Join[If[#[[2]]>1,Superscript[StandardForm[#[[1]]],#[[2]]],StandardForm[#[[1]]]]&/@fieldtally,
 									            {If[#>0,If[#>1,Superscript[StandardForm[D],#],StandardForm[D]],Nothing]&@opdevcount}]]]
-		];	
-		
+		];
+
 		(* determine the open indices that the coupling needs to have *)
-		index = FindOpenIndices @ First[List @@ (NormalForm @ operator + Nothing)];
+		nDiagIndex = FindOpenIndices @ First[List @@ (NormalForm @ operator + Nothing)];
+		(* check the prefactor for diagonal indices *)
+		diagIndex = FindDiagonalIndices @ exp;
+
+		index = Join[nDiagIndex,diagIndex];
 		indexType = Last /@ index;
-	
-		
+		isdiagonal = Join[ ConstantArray[False, Length@nDiagIndex] , ConstantArray[False, Length@diagIndex] ];
+
 		(* determine the phase coming from derivatives *)
 		derivativePhase = (operator /. {Field[A__, ders_List] :> I^Length@ders Field[A, ders],EoM[Field[f_,Fermion, A___,ders_List]] :> I EoM @ Field[f, Fermion, A, ders]})/operator;
-		
+
 		(* power-counting of the object depending on context *)
-		If[superleading, 
+		If[superleading,
 			power = 4 - OperatorDimension @ operator
-		, 
+		,
 			power = GetMinOrder @ exp
 		];
-		
+
 		(* the coupling as it appears in the Lagrangian term *)
 		outCoupling = derivativePhase Coupling[temp, index, power];
-		
-		(* is the operator hermitian? different *)
-		If[ superleading || internal || !hermitianTerm , 
+
+		(* is the operator hermitian? *)
+		If[ superleading || internal || !hermitianTerm ,
 			(* for the automated routes or if this is not overridden by HermitianTerm -> True, just determine it from the operator *)
 			hermite = MHermitianQ[derivativePhase NormalForm@operator]
 		,
 			(* called by IntroduceEffectiveCouplings with HermitianTerm -> True, need to determine symmetries *)
-			
-			(*  pull the symmetries in coefficient from the database of IBPSimplify, but have to account for different ordering there vs here *)
-			permConversion= FindPermutationOrder[Last@MatchOperatorPatterns@NormalForm@operator, FindOpenIndices @ First[List @@ (NormalForm @ operator + Nothing)]];
-			pOrder = FindPermutationOrder[(Last@MatchOperatorPatterns@NormalForm@operator)[[permConversion]],(Last@MatchOperatorPatterns@Bar@NormalForm@operator)[[permConversion]]];
-			
-			
-			(* if the list is empty, this operator is simply hermitian without further constraints *)
-			If[Length @ pOrder > 0, hermite = pOrder , hermite=True];
+			If[Length @ FindOpenIndices @ First[List @@ (NormalForm @ operator + Nothing)] > 0,
+				(*  pull the symmetries in coefficient from the database of IBPSimplify, but have to account for different ordering there vs here *)
+				permConversion = Echo@FindPermutationOrder[ Last @ MatchOperatorPatterns @ NormalForm @ operator, FindOpenIndices @ First[List @@ (NormalForm @ operator + Nothing)]];
+				pOrder = FindPermutationOrder[(Last@MatchOperatorPatterns@NormalForm@operator)[[permConversion]],(Last@MatchOperatorPatterns@Bar@NormalForm@operator)[[permConversion]]];
+
+				(* if the list is empty, this operator is simply hermitian without further constraints *)
+				If[Length @ pOrder > 0,
+					hermite = pOrder
+				,
+					hermite=True
+				]
+			,
+				(* actually no open indices so just hermitian right away *)
+				hermite=True
+			];
 		];
 
 		(* define the default symmetries - we can get more fancy about this later *)
@@ -902,67 +919,67 @@ ToEffectiveCoupling[exp_, operator_Operator, OptionsPattern[] ] :=Module[
 		(* indices for the replacement rules *)
 		inds = Symbol["i" <> ToString[#]]& /@ Range@Length@index;
 		pinds = Pattern[#, _]& /@ inds;
-		
+
 		(* setting up the rules *)
 		ruleRHS = exp /. Thread[index->inds];
 		ruleLHS = Coupling[temp, pinds, power];
-		
+
 		preRHS = With[{RHS = ruleRHS derivativePhase^-1}, ruleLHS :> RelabelIndices[RHS,Unique -> True]];
-			
-		If[!ignoreduplicates, 
+
+		If[!ignoreduplicates,
 			(* check for any couplings with the identical properties to the one we are about to define *)
-			tbdassociation = Association[EFTOrder -> power, Indices -> indexType, SelfConjugate -> hermite, Symmetries -> symmetries];
+			tbdassociation = CouplingAssociationEntry[power, indexType,hermite, symmetries, isdiagonal];
 			couplingsSameProperty = Cases[{Keys@$CouplingAssociation,Values@$CouplingAssociation}\[Transpose],{val_, tbdassociation} :> val]
 		];
-			
+
 		If[superleading == True ||(superleading == False && internal == False),
 			(* this branch is for couplings visible to the user *)
-			
-			If[!ignoreduplicates, 
+
+			If[!ignoreduplicates,
 				(* check we do not define duplicate couplings *)
 				candidates =  Cases[$TempCouplingRules, HoldPattern[ Coupling[f_/;MemberQ[couplingsSameProperty,f],__] :> _ ]];
 				candidateLabels = Cases[$TempCouplingRules, HoldPattern[ Coupling[f_/;MemberQ[couplingsSameProperty,f],__] :> _ ] :> f ];
 				preExisting = (SameRuleQ[preRHS,#]& /@ candidates)
 			];
-			
+
 			If[Or@@preExisting && !ignoreduplicates,
 				(* the coupling has already be defined so figure out which one it is and use it instead *)
 				outCoupling = derivativePhase Coupling[candidateLabels[[FirstPosition[preExisting,True][[1]]]], index, power]
 			,
 				(* does not exist so define it *)
-				DefineCoupling[temp, Indices -> indexType, EFTOrder -> power, SelfConjugate -> hermite, Symmetries -> SymmetryOverride[symmetries]];
+				DefineCoupling[temp, Indices -> indexType, EFTOrder -> power, SelfConjugate -> hermite, Symmetries -> SymmetryOverride[symmetries], DiagonalCoupling -> isdiagonal];
 				AppendTo[$TempCouplings,temp];
 				AppendTo[$TempCouplingRules, preRHS];
 				(* define the NiceForm of this new coupling *)
 				Format[Coupling[temp, in_,_], NiceForm] := UpDownIndices[prettylabel,in];
 				If[hermite===False, Format[Bar @ Coupling[temp, in_,_], NiceForm] := UpDownIndices[OverBar @ prettylabel, Bar /@ in]]
 			]
-			
+
 		,
 			(* this branch is for couplings invisible to the user *)
-			
+
 			If[!ignoreduplicates,
 				(* check we do not define duplicate couplings *)
 				candidates = Cases[$IntCouplingRules, HoldPattern[ Coupling[f_/;MemberQ[couplingsSameProperty,f],__] ]];
 				candidateLabels = Cases[$IntCouplingRules, HoldPattern[ Coupling[f_/;MemberQ[couplingsSameProperty,f],__] :> _ ] :> f ];
 				preExisting = (SameRuleQ[preRHS,#]&/@ candidates)
 			];
-			
+
 			If[Or@@preExisting && !ignoreduplicates,
 				(* the coupling has already be defined so figure out which one it is and use it instead *)
 				outCoupling = derivativePhase Coupling[candidateLabels[[FirstPosition[preExisting,True][[1]]]], index, power]
 			,
 				(* does not exist so define it *)
-				DefineCoupling[temp, Indices -> indexType, EFTOrder -> power, SelfConjugate -> hermite];
+				DefineCoupling[temp, Indices -> indexType, EFTOrder -> power, SelfConjugate -> hermite, DiagonalCoupling -> isdiagonal];
 				AppendTo[$InternalCouplings,temp];
 				AppendTo[$IntCouplingRules, preRHS];
 				(* define the NiceForm of this new coupling *)
 				Format[Coupling[temp, in_,_], NiceForm] := UpDownIndices[prettylabel,in];
 				If[hermite===False, Format[Bar @ Coupling[temp, in_,_], NiceForm] := UpDownIndices[OverBar @ prettylabel, Bar /@ in]]
 			]
-			
+
 		];
-		
+
 		Return[outCoupling]
 	]
 
@@ -972,13 +989,13 @@ Options @ SubstituteCoefficients = {EffectiveCouplingSymbol -> "c"};
 SubstituteCoefficients[L_, OptionsPattern[]]:=Module[{op3,tempCplPre,newCpls,LOut},
 	(* list of all operators that appear at superleading power *)
 	op3 =  DeleteDuplicates [ SortBy[DeleteDuplicates@Cases[SeriesEFT[L, EFTOrder -> 3],_Operator,Infinity],LeafCount], SameOperatorQ];
-	
+
 	(* replace the coefficients of all operators appearing in the above list by a newly defined effective coupling *)
 	tempCplPre = $TempCouplings;
 	LOut=Collect[L, _Operator]/.{
-		x_Operator*c_ /;(MemberQ[op3, x] && !BarredOpQ[x]) :> Operator@PlusHc@NormalForm[x ToEffectiveCoupling[c, x, EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol]]]-Operator@Bar@NormalForm[x c], 
+		x_Operator*c_ /;(MemberQ[op3, x] && !BarredOpQ[x]) :> Operator@PlusHc@NormalForm[x ToEffectiveCoupling[c, x, EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol]]]-Operator@Bar@NormalForm[x c],
 		x_Operator * c_ /;(MemberQ[op3, x] && BarredOpQ[x]) :> x ToEffectiveCoupling[c, x, EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol]]};
-	
+
 	newCpls=TreeReplacement /@ DeleteCases[$TempCouplings, x_/;MemberQ[tempCplPre,x]];
 	LOut /. newCpls
 ]
@@ -1014,10 +1031,10 @@ Options @ PrintEffectiveCouplings= { Rules -> False}
 PrintEffectiveCouplings[L_, OptionsPattern[]]? OptionsCheck:= Module[{rules={},couplings,inds},
 	couplings = Cases[DeleteDuplicates[Cases[L, _Coupling, Infinity]/.Coupling[a_,__]:> a], x_/;MemberQ[ $TempCouplings,x]];
 	If[Length@couplings === 0, Print["The supplied Lagrangian does not contain effective couplings."];Return[]];
-	
+
 	(* return replacement rules if Rules-> True*)
-	If[OptionValue@ Rules, 
-		Return@ DeleteCases[$TempCouplingRules, _? (FreeQ[First@ #, Alternatives@@ couplings]&) ]; 
+	If[OptionValue@ Rules,
+		Return@ DeleteCases[$TempCouplingRules, _? (FreeQ[First@ #, Alternatives@@ couplings]&) ];
 	];
 	Do[
 		inds=With[{l=Alphabet[], n=Length@(GetCouplings[term][Indices])},
@@ -1032,7 +1049,7 @@ PrintEffectiveCouplings[L_, OptionsPattern[]]? OptionsCheck:= Module[{rules={},c
 ReplaceEffectiveCouplings[L_]:=L /. $TempCouplingRules
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Replacing coefficients with effective couplings*)
 
 
@@ -1046,10 +1063,10 @@ IntroduceDummyCoefficients[L_]:=Module[{tL, L0, tLHcTerms, tLHTerms},
 	tL = List@@(Nothing + (HcSimplify@Coefficient[L0, hbar]));
 	tLHcTerms = Collect[Operator[(Total@Cases[tL, _HcTerms])/.HcTerms -> Identity],_Operator];
 	tLHTerms = Collect[Operator@Total@(tL /. _HcTerms -> 0),_Operator];
-	
+
 	tLHcTerms = tLHcTerms /. x_Operator * c_ :> x ToEffectiveCoupling[c, x, Superleading -> False];
 	tLHTerms = tLHTerms /. x_Operator * c_ :> x ToEffectiveCoupling[c, x, Superleading -> False];
-	
+
 	RelabelIndices[hbar(Operator@PlusHc[NormalForm@tLHcTerms]+1/2 Operator@PlusHc[NormalForm@tLHTerms])+Operator@(L0/.hbar->0)]
 ]
 
@@ -1061,23 +1078,137 @@ IntroduceDummyCoefficients[L_]:=Module[{tL, L0, tLHcTerms, tLHTerms},
 Options @ IntroduceEffectiveCouplings = {EffectiveCouplingSymbol -> "C", OverrideDuplicateCouplingCheck -> False};
 
 
-IntroduceEffectiveCouplings[L_ , OptionsPattern[]] := Module[{L0,LHcTerms, LHTerms, noCouplingTerms},
+IntroduceEffectiveCouplings[L_ , OptionsPattern[]] := Module[{L0, LHcTerms, LHTerms, noCouplingTerms},
 	L0 = Expand @ L;
-	
+
 	(* determine which terms have no couplings at all and subtract these from the Lagrangian *)
 	noCouplingTerms = Total @ Select[List @@ (Nothing + L0), (FreeQ[#,hbar] && FreeQ[#,Coupling]&)];
-	
+
 	L0 = L0 - noCouplingTerms;
-	
+
 	L0 = List @@ (Nothing + HcSimplify @ L0);
-	
-	LHcTerms =  Collect[Operator[(Total @ Cases[L0, _HcTerms])/.HcTerms -> Identity], _Operator];
-	LHTerms  =  Collect[Operator @ Total @ (L0 /. _HcTerms -> 0), _Operator];
-	
+
+	LHcTerms = Collect[ Contract @ Operator[(Total @ Cases[L0, _HcTerms])/.HcTerms -> Identity], _Operator ];
+	LHTerms  = Collect[ Contract @ Operator @ Total @ (L0 /. _HcTerms -> 0), _Operator ];
+
 	LHcTerms = LHcTerms /. x_Operator * c_ :> x ToEffectiveCoupling[c, x, Superleading -> False, Internal -> False, HermitianTerm -> False , EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol] , OverrideDuplicateCouplingCheck -> OptionValue[OverrideDuplicateCouplingCheck] ];
 	LHTerms  = LHTerms  /. x_Operator * c_ :> x ToEffectiveCoupling[c, x, Superleading -> False, Internal -> False, HermitianTerm -> True , EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol] , OverrideDuplicateCouplingCheck -> OptionValue[OverrideDuplicateCouplingCheck] ];
-	
+
 	HcTerms[ RelabelIndices @ CollectOperators @ NormalForm @ LHcTerms] +  RelabelIndices @ CollectOperators[ ( PlusHc @ NormalForm @  LHTerms) / 2 ] + noCouplingTerms
+]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Effective masses*)
+
+
+Options @ IntroduceEffectiveMasses = {EffectiveCouplingSymbol -> "\[ScriptCapitalM]", OverrideDuplicateCouplingCheck -> False, Heavy -> True};
+
+
+IntroduceEffectiveMasses[L_ , OptionsPattern[]] := Module[{L0, LHcTerms, LHTerms, noCouplingTerms, Lmass, field, prop, newMasses},
+	L0 = Expand @ L;
+
+	(* Extrac mass terms *)
+	Lmass = IsolateMassTerms[L0, Heavy -> OptionValue[Heavy]];
+	L0 = L0 - Lmass;
+
+	Lmass = List @@ (Nothing + HcSimplify @ Lmass);
+	Lmass = Contract/@Lmass;
+
+	LHcTerms = Collect[Operator[(Total @ Cases[Lmass, _HcTerms])/.HcTerms -> Identity], _Operator];
+	LHTerms  = Collect[Operator @ Total @ (Lmass /. _HcTerms -> 0), _Operator];
+
+	Switch[Head[LHTerms],
+		Plus, LHTerms = List@@ LHTerms,
+		Times, LHTerms = {LHTerms}
+	];
+
+	Switch[Head[LHcTerms],
+		Plus, LHcTerms = List@@ LHcTerms,
+		Times, LHcTerms = {LHcTerms}
+	];
+
+	newMasses = Last@ Reap[
+	LHcTerms = Plus@@ Table[
+		(*find fields*)
+		field = DeleteDuplicates[Cases[term, Field[lab_,___]:>lab, All]];
+		If[Length@field > 1,
+			term (*ignore mass mixing terms*)
+			,
+			field = First@ field;
+			prop = GetFields[field];
+			(* only chiral fermions have non-hermitian mass terms *)
+			If[prop[Type]===Fermion && (!prop[SelfConjugate]) && MatchQ[prop[Chiral], LeftHanded|RightHanded],
+				If[MatchQ[term,-(1/2)*_Coupling*_Operator],
+					term,
+					term /. x_Operator * c_ :> -(1/2)*x Sow@ToEffectiveCoupling[-2*c, x, Superleading -> False, Internal -> False, HermitianTerm -> True , EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol] , OverrideDuplicateCouplingCheck -> OptionValue[OverrideDuplicateCouplingCheck] ]
+				],
+				term
+			]
+		]
+		,
+		{term, LHcTerms}
+	];
+
+	LHTerms = Plus@@ Table[
+		(*find fields*)
+		field = DeleteDuplicates[Cases[term, Field[lab_,___]:>lab, All]];
+		If[Length@field > 1,
+			term (*ignore mass mixing terms*)
+			,
+			field = First@ field;
+			prop = GetFields[field];
+			Switch[prop[Type],
+				Scalar,
+					If[prop[SelfConjugate],
+						If[MatchQ[term,-(1/2)*(_Coupling)^2*_Operator],
+							term,
+							term /. x_Operator * c_ :> -(1/2)*x Sow@(ToEffectiveCoupling[Sqrt[-2*c], x, Superleading -> False, Internal -> False, HermitianTerm -> True , EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol] , OverrideDuplicateCouplingCheck -> OptionValue[OverrideDuplicateCouplingCheck] ]^2)
+						], (*real*)
+						If[MatchQ[term,-(_Coupling)^2*_Operator],
+							term,
+							term /. x_Operator * c_ :> -x Sow@(ToEffectiveCoupling[Sqrt[-c], x, Superleading -> False, Internal -> False, HermitianTerm -> True , EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol] , OverrideDuplicateCouplingCheck -> OptionValue[OverrideDuplicateCouplingCheck] ]^2)
+						] (*complex*)
+					],
+				Vector,
+					If[prop[SelfConjugate],
+						If[MatchQ[term,1/2*(_Coupling)^2*_Operator],
+							term,
+							term /. x_Operator * c_ :> 1/2*x Sow@(ToEffectiveCoupling[Sqrt[2*c], x, Superleading -> False, Internal -> False, HermitianTerm -> True , EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol] , OverrideDuplicateCouplingCheck -> OptionValue[OverrideDuplicateCouplingCheck] ]^2)
+						], (*real*)
+						If[MatchQ[term,(_Coupling)^2*_Operator],
+							term,
+							term /. x_Operator * c_ :> x Sow@(ToEffectiveCoupling[Sqrt[c], x, Superleading -> False, Internal -> False, HermitianTerm -> True , EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol] , OverrideDuplicateCouplingCheck -> OptionValue[OverrideDuplicateCouplingCheck] ]^2)
+						] (*complex*)
+					],
+				Fermion,
+					If[prop[SelfConjugate],
+						If[MatchQ[term,-(1/2)*_Coupling*_Operator],
+							term,
+							term /. x_Operator * c_ :> -(1/2)*x Sow@ToEffectiveCoupling[-2*c, x, Superleading -> False, Internal -> False, HermitianTerm -> True , EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol] , OverrideDuplicateCouplingCheck -> OptionValue[OverrideDuplicateCouplingCheck] ]
+						], (*Majorana*)
+						If[MatchQ[prop[Chiral],False],
+							If[MatchQ[term,-_Coupling*_Operator],
+								term,
+								term /. x_Operator * c_ :> -x Sow@ToEffectiveCoupling[-c, x, Superleading -> False, Internal -> False, HermitianTerm -> True , EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol] , OverrideDuplicateCouplingCheck -> OptionValue[OverrideDuplicateCouplingCheck] ]
+							], (*Dirac*)
+							term
+						]
+					],
+				_ , term
+			]
+		]
+		,
+		{term, LHTerms}
+	];
+	];
+
+	If[Length@newMasses>0,
+		Print["The following effective mass terms have been defined to simpify the Lagrangian:"];
+		PrintEffectiveCouplings[newMasses];
+	];
+
+	HcTerms[ RelabelIndices @ CollectOperators @ NormalForm @ LHcTerms] +  RelabelIndices @ CollectOperators[ ( PlusHc @ NormalForm @  LHTerms) / 2 ] + L0
 ]
 
 
@@ -1110,10 +1241,10 @@ FieldsToShift[L0_]:=Module[{freeL,L,fields, list},
 	(* the free Lagrangian of all of these fields - so we get non-standard kinetic terms *)
 	freeL = IBPSimplify19@Total[FreeLag[#]&/@fields];
 	L = Collect[L0 - freeL,_Operator];
-	
+
 	(* vector fields get a special treatment, so their kinetic terms have to be removed completely *)
 	L = L - SelectOperatorClass[L,{},4];
-	
+
 	(* now extract all EoM terms *)
 	list = Cases[List@@Expand[L+Nothing], x_/;MemberQ[x, EoM[___],{0,Infinity}]];
 	list = SortBy[{(First@Cases[#, _EoM,{0,Infinity}]&/@list)/.EoM[Field[f_,___]]|EoM[Bar@Field[f_,___]]|EoM[Transp@Field[f_,___]]:>f,(OperatorDimension@NormalForm@#)&/@list}\[Transpose],{First,Last}];
@@ -1155,11 +1286,11 @@ EOMSimplify[L_,OptionsPattern[]]:=Module[{out,maxOrder,operatorList,L3,L4,La},
 	out = OptionalMonitor[OptionValue@Verbose,FixedPoint[EoMSimplificationStep[#,EFTOrder->maxOrder]&, La],$MonitorString1<>"\n"<>$MonitorString2];
 	$MonitorString1="";
 	$MonitorString2="";
-	
+
 	If[OptionValue@DummyCoefficients === True,
 		out = RelabelIndices[ out , Unique -> True ] //. $IntCouplingRules
 	];
-	
+
 	out = GreensSimplify @ out
 ]
 
@@ -1172,7 +1303,7 @@ EoMSimplificationStep[L_,OptionsPattern[]]:=Module[{task, fields,order,temp,maxo
 	task=GatherBy[FieldsToShift[L],Last];
 	(* if nothing to simplify -> break out *)
 	If[Length[task]==0, Return[L]];
-	
+
 	(* the task list is sorted by mass dimension -> start at the lowest order *)
 	task=Transpose@First@task;
 	fields=First@task;
@@ -1224,4 +1355,79 @@ eqs=DeleteCases[Thread[0==Flatten[CoefficientList[Normal@Series[R . M -IdentityM
 var=Cases[eqs,r[__],{0,Infinity}];
 
 Quiet[R/.(Last@Solve[Reduce@eqs,var]),{Solve::incnst}]
+]
+
+
+(* ::Subsection:: *)
+(*Shifting corrections to renormalizable operators*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Auxiliary functions*)
+
+
+(* ::Text:: *)
+(*Truncates Lagrangian to the renormalizable operators only*)
+
+
+TrucanteRen[expr_]:= Operator@expr/.op_Operator:> TruncateOperator[op,4]//CollectOperators
+
+
+(* ::Text:: *)
+(*Function to put Lagrangian couplings in a list*)
+
+
+SelectCouplings[expr_]:= Operator/@List@@((HcSimplify@expr/.HcTerms -> Identity)+Nothing)/._Operator->1
+
+
+(* ::Text:: *)
+(*Function to create the replacement rules*)
+
+
+OpenIndexToPattern[rule_]:=Module[{lhs=rule[[1]],rhs=rule[[2]],index,inds,pinds,coeff},
+	 (* looking for open indices and creating the pattern *)
+	index = FindOpenIndices@lhs/.Index[a_,_]:>a;
+	inds = Symbol["i" <> ToString[#]]& /@ Range@Length@index;
+	pinds = Pattern[#, _]& /@ inds;
+
+	coeff=lhs/(lhs/.Times[pre___,fact_?NumericQ,post___]:>pre post);
+
+	(* setting up the rule *)
+	(lhs/coeff/. Thread[index->pinds])-> (RelabelIndices[rhs/coeff,Unique->True]/. Thread[index->inds])
+]
+
+
+(* ::Subsubsection:: *)
+(*Main module*)
+
+
+Options[ShiftRenCouplings] = {EFTOrder->All};
+
+
+ShiftRenCouplings[Lag_,OptionsPattern[]]:=Module[{SimpLag=GreensSimplify@Lag,LEFTRen,RenOpList,LEFTCorrections,LighFields,CouplingCorrections,RenCouplings,RepRules,OperatorList,MaxOrder},
+
+	LighFields=Select[OccuringFields[SimpLag],!$FieldAssociation[#][Heavy]&];
+	LEFTRen= SeriesEFT[SimpLag,EFTOrder->4]-FreeLag@@LighFields/.hbar->0//CollectOperators;
+
+	If[LEFTRen=!=0,
+		(* The corrections to the gauge boson kinetic terms are not shifted as this requires to redefine the gauge coupling *)
+		LEFTCorrections=TrucanteRen@SimpLag-FreeLag@@LighFields/._FieldStrength->0//CollectOperators;
+
+		(* Renormalizable operators not present in LEFTRen are set to zero *)
+		RenOpList= (Collect[Operator@LEFTRen, _Operator] /. x_Operator * c_ :> x) + Nothing /. Plus->List;
+		LEFTCorrections= Collect[Operator@LEFTCorrections, _Operator] /. x_Operator?(!MemberQ[RenOpList,#]&) * c_ :> 0 //CollectOperators;
+
+	    (* If there are multiple renormalizables couplings for a single operator, I take the first one *)
+		RenCouplings=SelectCouplings@LEFTRen/.terms_Plus:>terms[[1]];
+		CouplingCorrections=SelectCouplings@LEFTCorrections-RenCouplings;
+
+		RepRules=OpenIndexToPattern/@MapThread[#1->#1-#2&,{RenCouplings}~Join~{CouplingCorrections}];
+
+		OperatorList=OperatorDimension/@ List@@Expand[Lag+Nothing];
+		If[Head@OptionValue[EFTOrder]===Integer, MaxOrder = OptionValue@EFTOrder, MaxOrder=Max[OperatorList]];
+
+		SeriesEFT[SimpLag/.RepRules, EFTOrder->MaxOrder]//CollectOperators
+		,
+		Lag
+	]
 ]
