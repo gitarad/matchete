@@ -217,7 +217,7 @@ ReplaceHeavyEOM[arg_, OptionsPattern[]] := Module[
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Auxiliary functionalities*)
 
 
@@ -261,6 +261,33 @@ LargeSumExpand[sum_Plus] := Expand[#]& /@ sum
 LargeSumExpand[expr:Except[_Plus]] := Expand[expr]
 
 
+(* ::Subsubsection::Closed:: *)
+(*Finds the UV fields in the given expression*)
+
+
+FindUvFields::error = "The field `1` is not part of the Lagrangian.";
+
+
+FindUvFields[lagrangian_]:=Module[
+	{
+		fieldAssociation = GetFieldsUpdated[],
+		uvFields
+	},
+	(* find all field labels *)
+	uvFields = DeleteDuplicates@Join[
+		Cases[lagrangian, Field[label_,___]:>label, All],
+		Cases[lagrangian, FieldStrength[label_,___]:>label, All]
+	];
+	(* select labels of all heavy fields *)
+	uvFields = If[fieldAssociation[#][Heavy]===True,#,Nothing[]]&/@uvFields;
+	(* pick the apropriate fields *)
+	uvFields = FirstCase[lagrangian,Field[#,___],Message[FindUvFields::error,#]; Abort[],All]&/@uvFields;
+	(* make the indices unique *)
+	uvFields = uvFields /. Index[_,rep_]:>Index[Unique[],rep];
+	Return[uvFields]
+]
+
+
 (* ::Section:: *)
 (*Solving the EoM *)
 
@@ -269,7 +296,7 @@ LargeSumExpand[expr:Except[_Plus]] := Expand[expr]
 (*Solve EOM at a fixed order in the EFT power counting*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Solve single EOM at a given order*)
 
 
@@ -469,7 +496,7 @@ DetermineEOMs[lag_, OptionsPattern[]] := Module[
 ]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Printing EOMs*)
 
 

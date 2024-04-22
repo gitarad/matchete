@@ -26,7 +26,7 @@ PackageImport["GroupMagic`"]
 (*Exported*)
 
 
-PackageExport["\[Mu]bar2"] 
+PackageExport["\[Mu]bar2"]
 PackageExport["hbar"]
 PackageExport["\[Epsilon]"]
 PackageExport["LF"]
@@ -35,10 +35,11 @@ PackageExport["LF"]
 PackageExport["EvaluateLoopFunctions"]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Internal*)
 
 
+PackageScope["Prop"]
 PackageScope["InvProp"]
 PackageScope["LoopMom"]
 PackageScope["MomDev"]
@@ -49,12 +50,16 @@ PackageScope["LFFull"]
 PackageScope["LFFull2LF"]
 
 
-PackageScope["ExtractMomenta"]
+PackageScope["GatherLoopMomenta"]
+PackageScope["SymmetricLorentzInds"]
+PackageScope["EvaluateSymmetricLorentzInds"]
+
+
 PackageScope["EpsExpand"]
 PackageScope["PerformMomDerivatives"]
 
 
-PackageScope["TermsToList"]
+PackageScope["FuncNCM"]
 
 
 PackageScope["MomNCM"]
@@ -75,13 +80,13 @@ PackageScope["ev"]
 (*Exported*)
 
 
-\[Mu]bar2::usage= 
+\[Mu]bar2::usage=
 "\!\(\*SuperscriptBox[\(\[Mu]\), \(2\)]\) is the matching scale squared.";
 hbar::usage=
 "\[HBar] is the power-counting parameter for the loop-order in an expression. It is understood as a \!\(\*FractionBox[\(1\), \(16 \*SuperscriptBox[\(\[Pi]\), \(2\)]\)]\) factor in the final result.";
-\[Epsilon]::usage= 
+\[Epsilon]::usage=
 "\[Epsilon] is the parameter defined by expanding the space-time dimension \[ScriptD] around four dimensions, i.e. \[ScriptD]=4-2\[Epsilon].";
-LF::usage= 
+LF::usage=
 "LF[{\!\(\*SubscriptBox[\(m\), \(1\)]\),...,\!\(\*SubscriptBox[\(m\), \(n\)]\)},{\!\(\*SubscriptBox[\(i\), \(1\)]\),..., \!\(\*SubscriptBox[\(i\), \(n\)]\), \!\(\*SubscriptBox[\(i\), \(n + 1\)]\)}] is a placeholder for the finite piece of the loop integration performed over \!\(\*FractionBox[\(1\), \(\(\*SuperscriptBox[\((\*SuperscriptBox[\(k\), \(2\)] - \*SuperscriptBox[SubscriptBox[\(m\), \(1\)], \(2\)])\), SubscriptBox[\(i\), \(1\)]] ... \) \*SuperscriptBox[\((\*SuperscriptBox[\(k\), \(2\)] - \*SuperscriptBox[SubscriptBox[\(m\), \(n\)], \(2\)])\), SubscriptBox[\(i\), \(n\)]] \*SuperscriptBox[\((\*SuperscriptBox[\(k\), \(2\)])\), SubscriptBox[\(i\), \(n + 1\)]]\)]\) where k is the loop momentum.";
 
 
@@ -102,28 +107,28 @@ MomDev::usage=
 
 
 LoopIntegrate::usage=
-"LoopIntegrate[expr, LogTerm ->True/False] performs the scalar integral over the loop momentum propagators in the expression, written in the form: InvProp[m1\!\(\*SuperscriptBox[\(]\), \(-i1\)]\)...InvProp[mn\!\(\*SuperscriptBox[\(]\), \(-in\)]\)InvProp[0\!\(\*SuperscriptBox[\(]\), \(j\)]\); 
+"LoopIntegrate[expr, LogTerm ->True/False] performs the scalar integral over the loop momentum propagators in the expression, written in the form: InvProp[m1\!\(\*SuperscriptBox[\(]\), \(-i1\)]\)...InvProp[mn\!\(\*SuperscriptBox[\(]\), \(-in\)]\)InvProp[0\!\(\*SuperscriptBox[\(]\), \(j\)]\);
 By default, LogTerm is False. If turned on (LogTerm-> True), there is an additional factor corresponding to the integral over \[Xi] from the integral expression of the log."
 LFFull::usage="LFFull[{\!\(\*SubscriptBox[\(m\), \(1\)]\),...,\!\(\*SubscriptBox[\(m\), \(n\)]\)},{\!\(\*SubscriptBox[\(i\), \(1\)]\),..., \!\(\*SubscriptBox[\(i\), \(n\)]\), \!\(\*SubscriptBox[\(i\), \(n + 1\)]\)}] is a placeholder for the loop integration (including divergent pieces) performed over \!\(\*FractionBox[\(1\), \(\(\*SuperscriptBox[\((\*SuperscriptBox[\(k\), \(2\)] - \*SuperscriptBox[SubscriptBox[\(m\), \(1\)], \(2\)])\), SubscriptBox[\(i\), \(1\)]] ... \) \*SuperscriptBox[\((\*SuperscriptBox[\(k\), \(2\)] - \*SuperscriptBox[SubscriptBox[\(m\), \(n\)], \(2\)])\), SubscriptBox[\(i\), \(n\)]] \*SuperscriptBox[\((\*SuperscriptBox[\(k\), \(2\)])\), SubscriptBox[\(i\), \(n + 1\)]]\)]\) where k is the loop momentum."
 LFFull2LF::usage="LFFull2LF takes an expression with LFFull, and separates the loop function into divergent and finite pieces, the latter given in terms of LF."
 
 
 ExtractMomenta::usage=
-"Extract slashed LoopMom from DiracProduct by replace product of momentum vectors with symmetrized product of metrics, 
-e.g. LoopMom[Index[mu, Lorentz]] LoopMom[Index[nu, Lorentz]] -> InvProp[0] Metric[Index[mu, Lorentz], Index[nu, Lorentz]] /\[ScriptD], etc.";
+"Extract slashed LoopMom from DiracProduct by replace product of momentum vectors with symmetrized product of metrics,
+e.g. LoopMom[Index[mu, Lorentz]] LoopMom[Index[nu, Lorentz]] -> Prop[0]^-1 Metric[Index[mu, Lorentz], Index[nu, Lorentz]] /\[ScriptD], etc.";
 EpsExpand::usage=
 "EpsExpand[expr,Order->n] expands an expression to nth order (by default 0) in \[Epsilon], the regulator from dimensional regularization, after replacing the space-time dimension \[ScriptD] by 4-2\[Epsilon]."
 PerformMomDerivatives::usage=
 "Perform all momentum derivatives in a loop integral expression using IbP to reduce the number of terms. ";
 
 
-TermsToList::usage= 
+TermsToList::usage=
 "Transform a sum of terms into a list, or convert a single term into a list."
 
 
-MomNCM::usage= 
+MomNCM::usage=
 "Internal NCM head for use in the CDE of the SuperTraces."
-MatrixNCM::usage= 
+MatrixNCM::usage=
 "Temporary NCM for use in X-term multiplication in SuperTraces (non-distributive)."
 MomAntiCommutator::usage=
 "Anti commutator used in the CDE expansion."
@@ -145,8 +150,12 @@ ev::usage=
 (*Momentum integrals*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Properties*)
+
+
+(* ::Text:: *)
+(*Proporties of loop labels 'hbar' and 'ev,'  used to account for ordering of terms *)
 
 
 (* ::Subsubsection::Closed:: *)
@@ -184,27 +193,62 @@ ev^x_/;x>=2 ^:= ev;
 
 
 (* ::Subsection:: *)
-(*Scalar integrals*)
-
-
-(* ::Subsubsection::Closed:: *)
-(*Auxiliary functions*)
+(*Epsilon expansion*)
 
 
 (* ::Text:: *)
-(*Transform a sum of terms into a list, or convert a single term into a list*)
+(*Function for expanding an expression around \[Epsilon] = 0, keeping poles and terms up to power 'order.'*)
 
 
-TermsToList@ expr_:= Module[{temp= BetterExpand@ expr},
-	If[Head@ temp === Plus, List@@ temp, List@ temp]
+EpsExpand[expr_, opt:OptionsPattern[{Order-> 0}]]:= EpsilonExpand[#, opt]&/@ BetterExpand@ expr
+
+
+EpsilonExpand[expr_, OptionsPattern[{Order-> 0}]]:= Module[{sub},
+	Normal@ Series[expr/. SymGammaFactor:> EvaluateGammaFactor/. \[ScriptD]-> 4- 2\[Epsilon], {\[Epsilon], 0, OptionValue@Order}] ];
+
+
+(* ::Subsection:: *)
+(*Scalar integrals*)
+
+
+(* ::Subsubsection:: *)
+(*General loop integration function*)
+
+
+(* ::Text:: *)
+(*Performs the 1-loop integral over an expression. Assumes that all loop-momenta occurs in 'Prop' objects. *)
+
+
+LoopIntegrate::onescale="There is more than one scale in the LogTerm integration."
+
+
+Options@ LoopIntegrate= {LogTerm-> False};
+
+
+LoopIntegrate[expr_, opt:OptionsPattern[]]:=Module[{out},
+	out= Expand[expr* integralType[<||>, 0]];
+	If[OptionValue@ LogTerm,
+		If[!AllTrue[Cases[out, integralType[x_, _]:> Length@ x, Infinity], # < 2&],
+			Message[LoopIntegrate::onescale];
+			Abort[]
+		];
+		out/. integralType[<|m_-> \[Beta]_|>, \[Alpha]_]:> integralType[{m, \[Beta]}, \[Alpha], LogTerm-> True]/.
+			x_integralType:> SingleScaleIntegral@@ x
+	,
+		out/. x_integralType:> ToLoopFunctions@@ x
+	]
 ];
 
 
-EpsExpand[expr_,opt:OptionsPattern[{Order->0}]]:= EpsilonExpand[#, opt]&/@ BetterExpand@ expr
+(* ::Subsubsection:: *)
+(*Auxiliary functions*)
 
 
-EpsilonExpand[expr_,OptionsPattern[{Order->0}]]:= Module[{sub},
-	Normal@ Series[expr/.gf:>GammaFactor/. \[ScriptD]-> 4-2\[Epsilon], {\[Epsilon], 0, OptionValue@Order}] ];
+(*GatherPropagatorsInTerm@ term_:= Module[{props},
+	props= If[Head@ term === Times, List@@ term, {term}];
+	props= Proppagators@@ Cases[temp, Prop@ m_|Power[Prop@ m_, p_.]:> {m, Times@ p}];
+	props* (term/. _Prop-> 1)
+]*)
 
 
 (* ::Text:: *)
@@ -213,9 +257,10 @@ EpsilonExpand[expr_,OptionsPattern[{Order->0}]]:= Module[{sub},
 (*\[Alpha] is the power of (1/p^2)^\[Alpha].*)
 
 
-integralType/: integralType[mprops_, \[Alpha]_] InvProp@ 0:= integralType[mprops, \[Alpha]-1 ];
-integralType/: integralType[mprops_, \[Alpha]_] Power[InvProp@ 0, n_]:= integralType[mprops, \[Alpha]-n];
-integralType/: integralType[mprops_, \[Alpha]_] Power[InvProp@ m_, n_]:= integralType[Merge[{mprops, <|m-> -n|>}, Total], \[Alpha]];
+integralType/: integralType[mprops_, \[Alpha]_] Prop@ 0:= integralType[mprops, \[Alpha]+ 1];
+integralType/: integralType[mprops_, \[Alpha]_] Prop@ m_:= integralType[Merge[{mprops, <|m-> 1|>}, Total], \[Alpha]];
+integralType/: integralType[mprops_, \[Alpha]_] Power[Prop@ 0, n_]:= integralType[mprops, \[Alpha]+ n];
+integralType/: integralType[mprops_, \[Alpha]_] Power[Prop@ m_, n_]:= integralType[Merge[{mprops, <|m-> n|>}, Total], \[Alpha]];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -227,10 +272,10 @@ integralType/: integralType[mprops_, \[Alpha]_] Power[InvProp@ m_, n_]:= integra
 (*SingleScaleIntegral can either evaluate the pole (Pole ->True) or the finite part of the integral (Pole ->False). In the latter case, expansion with respect to \[Epsilon] is already performed.*)
 
 
-LoopIntegration::error="The LogTerm option might have been turned on by mistake." 
+LoopIntegration::error="The LogTerm option might have been turned on by mistake."
 
 
-SingleScaleIntegral[{mass_, \[Beta]_Integer}, \[Alpha]_Integer, OptionsPattern[{LogTerm->False, Pole->False}]]:= 
+SingleScaleIntegral[{mass_, \[Beta]_Integer}, \[Alpha]_Integer, OptionsPattern[{LogTerm->False, Pole->False}]]:=
 Module[{preFact},
 	If[OptionValue[LogTerm],
 		If[\[Beta] <= 0 || \[Alpha] >= 2 || \[Alpha]+ \[Beta] <= 2,
@@ -243,31 +288,33 @@ Module[{preFact},
 	If[\[Beta] <= 0, Return@ 0;];
 	preFact= (-1)^(\[Alpha]+\[Beta]) I mass^(2(2- \[Alpha]- \[Beta]))/ Gamma@ \[Beta];
 
-	If[\[Alpha] >= 2,
-		Return[-preFact Gamma[\[Alpha]+ \[Beta]- 2] (-1)^\[Alpha]/ (\[Alpha]-2)!
+	If[\[Alpha] >= 2, (* Expand around IR pole*)
+		Return[-preFact Gamma[\[Alpha]+ \[Beta]- 2] (-1)^\[Alpha]/ (\[Alpha]-2)! *
 			If[OptionValue[Pole],
-				1/\[Epsilon],
+				1/\[Epsilon]
+			,
 				(-HarmonicNumber[\[Alpha]-2]+ Log[\[Mu]bar2/ mass^2]+ 1+ PolyGamma[\[Alpha]+\[Beta]-2]+ EulerGamma)
 			]
 		];
 	];
-	If[\[Alpha]+ \[Beta] <= 2,
-		Return[preFact Gamma[2- \[Alpha]] (-1)^(\[Alpha]+\[Beta])/(2-\[Alpha]-\[Beta])! 
+	If[\[Alpha]+ \[Beta] <= 2, (* Expand around UV pole*)
+		Return[preFact Gamma[2- \[Alpha]] (-1)^(\[Alpha]+\[Beta])/(2-\[Alpha]-\[Beta])! *
 			If[OptionValue[Pole],
-				1/\[Epsilon],
+				1/\[Epsilon]
+			,
 				(+HarmonicNumber[2-\[Alpha]-\[Beta]]+ Log[\[Mu]bar2/ mass^2]+ 1- PolyGamma[2- \[Alpha]]- EulerGamma)
 			]
 		];
 	];
-	Return[If[OptionValue[Pole],
-			0,
-			preFact Gamma[2- \[Alpha]]Gamma[\[Alpha]+ \[Beta]- 2]
-		]
+	If[OptionValue[Pole],
+		0
+	,
+		preFact Gamma[2- \[Alpha]]Gamma[\[Alpha]+ \[Beta]- 2]
 	]
 ];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Multiscale integrals*)
 
 
@@ -343,23 +390,7 @@ EvaluateLoopFunctions[LF[denoms_, powers_], OptionsPattern[{Pole->False}]]:= Mod
 EvaluateLoopFunctions@ expr_:= expr/. lf_LF:> EvaluateLoopFunctions@ lf;
 
 
-(* ::Subsubsection::Closed:: *)
-(*General loop integration function*)
-
-
-LoopIntegrate::onescale="There is more than one scale in the LogTerm integration." 
-
-
-LoopIntegrate[expr_,OptionsPattern[{LogTerm->False}]]:=Module[{temp= expr, term, masses},
-	temp= TermsToList@ temp integralType[<||>, 0]; 
-	If[OptionValue[LogTerm],
-		If[!AllTrue[Length/@Cases[temp,integralType[x_,_]:>x,Infinity],#<2&],Message[LoopIntegrate::onescale];Abort[]];
-		Sum[term/.integralType[<|m_->\[Beta]_|>,\[Alpha]_]:>integralType[{m,\[Beta]},\[Alpha],LogTerm->True] /. x_integralType:> SingleScaleIntegral@@ x, {term, temp}],
-		Sum[term/. x_integralType:> ToLoopFunctions@@ x, {term, temp}]]
-];
-
-
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Numerator momentum structures*)
 
 
@@ -367,37 +398,76 @@ LoopIntegrate[expr_,OptionsPattern[{LogTerm->False}]]:=Module[{temp= expr, term,
 (*Bring momenta to propagator (with zero mass) form.*)
 
 
-LoopMom/:Power[_LoopMom,2] := InvProp@ 0;
+LoopMom/: Power[_LoopMom, 2] := Power[Prop@ 0, -1];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Extract momenta*)
 
 
+GatherLoopMomenta@ expr_:= CollectMomenta@ ExtractMomenta@ expr
+
+
 (* ::Text:: *)
-(*Extract LoopMom-slashes from DiracProduct: replaces product of momentum vectors with symmetrized product of metrics, e.g. LoopMom[Index[mu, Lorentz]] LoopMom[Index[nu, Lorentz]] -> InvProp[0] Metric[Index[mu, Lorentz], Index[nu, Lorentz]] /\[ScriptD], etc. *)
+(*Extract LoopMom-slashes from DiracProduct*)
 
 
-SymmetricLoopMomReplacement@ momInds___:= Module[{inds, n, symTensor},
-	inds= Flatten@ List@ momInds;
-	n= Length@ inds/ 2; 
+ExtractMomenta@ expr_:= expr//. {
+		DiracProduct[a___, GammaM@ LoopMom, b___] :>
+			Module[{nu}, DiracProduct[a, GammaM@ Index[nu, Lorentz], b] LoopMom@ Index[nu, Lorentz]],
+		DiracProduct[a___, Transp@ GammaM@ LoopMom, b___] :>
+			Module[{nu}, DiracProduct[a, Transp@ GammaM@ Index[nu, Lorentz], b] LoopMom@ Index[nu, Lorentz]]
+	};
+
+
+(* ::Text:: *)
+(*Replaces product of momentum vectors with symmetrized product of metrics, e.g. LoopMom[Index[mu, Lorentz]] LoopMom[Index[nu, Lorentz]] -> Prop[0]^-1 Metric[Index[mu, Lorentz], Index[nu, Lorentz]] /\[ScriptD], etc. *)
+
+
+CollectMomenta@ expr_:= Module[{out= BetterExpand@ expr},
+	If[Head@ out === Plus, Return[CollectMomenta/@ out]; ];
+	LoopMoms@@ Cases[out, LoopMom@ l_:> l, All]* (out/. _LoopMom-> 1)
+]
+
+
+LoopMoms[]:= 1;
+LoopMoms@ inds__:= If[EvenQ@ Length@ {inds}, Power[Prop@ 0, -Length@ {inds}/ 2] SymmetricLorentzInds@ inds, 0];
+
+
+(* ::Subsubsection:: *)
+(*Evaluating the symmetric tensor *)
+
+
+(* ::Text:: *)
+(*The symmetric Lorentz tensor coming from the product of loop momenta*)
+
+
+EvaluateSymmetricLorentzInds@ expr_:=
+	expr/. SymmetricLorentzInds-> SymmetricLorentzIndsReplacement// ContractMetric;
+
+
+SetAttributes[SymmetricLorentzInds, Orderless]
+
+
+SymmetricLorentzInds[a_, a_, rest___]:= SymmetricLorentzInds@ rest;
+
+
+(*This method only works for non-repeating indices due to behavior of Permutations*)
+SymmetricLorentzIndsReplacement@ lorentzInds___:= Module[{inds, n, symTensor},
+	inds= List@ lorentzInds;
+	n= Length@ inds/ 2;
 	symTensor= If[OddQ@ Length@ inds, 0,
-	Plus@@ Times@@@ Map[Metric, DeleteDuplicatesBy[Partition[#, 2]&/@ Permutations@ inds, (Sort[Sort/@ #] &)], {2}]];
-	(*gf[n] = Gamma[d/2]/ (Gamma[d/2 +n] 2^n)*)
-	symTensor InvProp[0]^n gf@n/.Metric[{\[Alpha]_,\[Beta]_}]:>Metric[\[Alpha],\[Beta]] 
+		Plus@@ Times@@@ Apply[Metric,
+			DeleteDuplicatesBy[Partition[#, 2]&/@ Permutations@ inds, (Sort[Sort/@ #] &)], {2}]];
+	(*SymGammaFactor[n] = Gamma[d/2]/ (Gamma[d/2 +n] 2^n)*)
+	symTensor SymGammaFactor@ n
 ];
 
 
-GammaFactor@ n_Integer:= GammaFactor@ n= Normal@ Series[Gamma[2- \[Epsilon]]/(2^n Gamma[2- \[Epsilon]+ n]), {\[Epsilon], 0, 1}];
+SymGammaFactor@ 0= 1;
 
 
-ExtractMomenta@ expr_ := Module[{out, pInds},
-	out= expr//.{
-		DiracProduct[a___, GammaM@ LoopMom, b___] :> 
-			Module[{\[Delta]}, DiracProduct[a, GammaM@ Index[\[Delta], Lorentz], b] LoopMom@ Index[\[Delta], Lorentz]]
-	}/.{x:Alternatives[_LoopMom, InvProp[0]]-> Commutative@ x}/. Commutative@ x_->x// BetterExpand;
-	Expand[out pInds[]]//. pInds[x___] LoopMom@ Index[\[Mu]_,Lorentz]:> pInds[x, \[Mu]]/. pInds-> SymmetricLoopMomReplacement// BetterExpand
-]
+EvaluateGammaFactor@ n_Integer:= EvaluateGammaFactor@ n= Normal@ Series[Gamma[2- \[Epsilon]]/(2^n Gamma[2- \[Epsilon]+ n]), {\[Epsilon], 0, 1}];
 
 
 (* ::Section:: *)
@@ -405,7 +475,91 @@ ExtractMomenta@ expr_ := Module[{out, pInds},
 
 
 (* ::Subsection:: *)
+(*Functional Non-commutative product *)
+
+
+(* ::Text:: *)
+(*A non-commutative product used in the evaluation on functional loops*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Commutative check*)
+
+
+(* ::Text:: *)
+(*Default assumption: everything is commutative*)
+
+
+FuncCommuteQ[f_?FuncCommuteQ[x___]] := And@@ FuncCommuteQ/@ {x};
+FuncCommuteQ[f_[x___]] := False;
+FuncCommuteQ[_] := True;
+
+
+(* ::Text:: *)
+(*Define the non-commutative objects*)
+
+
+FuncCommuteQ@ Alternatives[Pattern, Blank, BlankSequence, BlankNullSequence, Except, Hold] = False;
+
+
+(* ::Text:: *)
+(*Commutative is a head that can be used to temporarily treat an object as commutative*)
+
+
+FuncCommuteQ@ Commutative@ _ ^= True;
+
+
+(* ::Subsubsection::Closed:: *)
+(*Non-commutative symbols used in Matchete declared here*)
+
+
+(* ::Text:: *)
+(*Define non-commutative objects*)
+
+
+((FuncCommuteQ@ # ^= False) &) /@ {
+	Field,
+	FieldStrength,
+	DiracProduct,
+	OpenCD,
+	Xop, Xterm,
+	WilsonLine, WilsonTerm
+	};
+
+
+(* ::Subsubsection::Closed:: *)
+(*Properties of FuncNCM*)
+
+
+(* ::Text:: *)
+(*Flatness*)
+
+
+FuncNCM[a___, FuncNCM[b__], c___]:= FuncNCM[a, b, c];
+FuncNCM[] = 1;
+(*FuncNCM@ x_FuncNCM:= x;*)
+
+
+(* ::Text:: *)
+(*Extracting commuting objects*)
+
+
+FuncNCM[a___, b_?FuncCommuteQ, c___]:= b * FuncNCM[a, c];
+FuncNCM[a___, b_?FuncCommuteQ * x_, c___]:= b * FuncNCM[a, x, c];
+
+
+(* ::Text:: *)
+(*Distributivity*)
+
+
+FuncNCM[a___, b_Plus, c___]:= FuncNCM[a, #, c] & /@ b
+
+
+(* ::Subsection:: *)
 (*Non-commutative products*)
+
+
+(*To be deleted*)
 
 
 (* ::Text:: *)
@@ -422,7 +576,7 @@ ExtractMomenta@ expr_ := Module[{out, pInds},
 
 MomCommuteQ[f_?MomCommuteQ[x___]] := And@@ MomCommuteQ/@ {x};
 MomCommuteQ[f_[x___]] := False;
-MomCommuteQ[_] := True; 
+MomCommuteQ[_] := True;
 
 
 (* ::Text:: *)
@@ -436,7 +590,7 @@ MomCommuteQ@ Alternatives[Pattern, Blank, BlankSequence, BlankNullSequence, Exce
 (*Commutative is a head that can be used to temporarily treat an object as commutative*)
 
 
-MomCommuteQ@ Commutative@ _ ^= True; 
+MomCommuteQ@ Commutative@ _ ^= True;
 
 
 (* ::Subsubsection::Closed:: *)
@@ -454,9 +608,9 @@ MomCommuteQ@ Commutative@ _ ^= True;
 	MomDev,
 	LoopMom,
 	InvProp,
-	Gop, 
-	Xop, 
-	HoldPart, 
+	Gop,
+	Xop,
+	HoldPart,
 	MassOp
 	};
 
@@ -486,7 +640,7 @@ MomNCM[a___, b_?MomCommuteQ * x_, c___]:= b * MomNCM[a, x, c];
 (*Distributivity*)
 
 
-MomNCM[a___, b_Plus, c___]:= MomNCM[a, #, c] & /@ b 
+MomNCM[a___, b_Plus, c___]:= MomNCM[a, #, c] & /@ b
 
 
 (* ::Subsubsection::Closed:: *)
@@ -545,8 +699,11 @@ ExpandMatrixNCM@ expr_:= expr//. {
 	}
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Momentum derivatives*)
+
+
+(*To be deleted*)
 
 
 (* ::Subsubsection::Closed:: *)
@@ -563,10 +720,10 @@ LastPosition[x_, y_]:= Module[{temp},
 (*Test if expression is independent of loop momentum (Subscript[LoopMom, \[Mu]]) *)
 
 
-MomFreeQ[f_?MomFreeQ[x___]]:= And@@ MomFreeQ/@ {x}; 
+MomFreeQ[f_?MomFreeQ[x___]]:= And@@ MomFreeQ/@ {x};
 MomFreeQ[f_[x___]]:= False;
-MomFreeQ[_]:= True; 
-MomFreeQ[LoopMom| InvProp]:= False; 
+MomFreeQ[_]:= True;
+MomFreeQ[LoopMom| InvProp]:= False;
 
 
 (* ::Subsubsection::Closed:: *)
@@ -578,14 +735,14 @@ MomFreeQ[LoopMom| InvProp]:= False;
 
 
 MomDerivative[_?MomFreeQ, _]:= 0;
-MomDerivative[x_Plus, \[Mu]_]:= MomDerivative[#, \[Mu]]&/@ x;   
+MomDerivative[x_Plus, \[Mu]_]:= MomDerivative[#, \[Mu]]&/@ x;
 MomDerivative[Times[x_, y__], \[Mu]_]:= MomDerivative[x, \[Mu]] y + x MomDerivative[Times@ y, \[Mu]];
 MomDerivative[Power[x_, n_], \[Mu]_]:= n Power[x, n-1] MomDerivative[x, \[Mu]];
 
 
 MomDerivative[LoopMom@ Index[\[Mu]_,Lorentz], Index[\[Nu]_,Lorentz]]:= Metric[Index[\[Mu],Lorentz], Index[\[Nu],Lorentz]];
 MomDerivative[_InvProp, Index[\[Mu]_,Lorentz]]:= 2 LoopMom@ Index[\[Mu],Lorentz];
-MomDerivative[\[Gamma]@ LoopMom, Index[\[Mu]_,Lorentz]]:= \[Gamma]@ Index[\[Mu],Lorentz]; 
+MomDerivative[\[Gamma]@ LoopMom, Index[\[Mu]_,Lorentz]]:= \[Gamma]@ Index[\[Mu],Lorentz];
 
 
 (* ::Text:: *)
@@ -593,7 +750,7 @@ MomDerivative[\[Gamma]@ LoopMom, Index[\[Mu]_,Lorentz]]:= \[Gamma]@ Index[\[Mu],
 
 
 TakeMomDerivatives@ expr_:= expr//. {
-	MomNCM[a___, MomDev@ \[Mu]_, x:Except[_MomDev], b___]:> 
+	MomNCM[a___, MomDev@ \[Mu]_, x:Except[_MomDev], b___]:>
 		MomNCM[a, x, MomDev@ \[Mu], b] + MomNCM[a, MomDerivative[x, \[Mu]], b],
 	MomNCM[___, _MomDev]:> 0
 };
@@ -609,9 +766,9 @@ PerformMomDerivatives@ expr_MomNCM:= Module[{pos},
 	If[pos === None, Return@ expr];
 	(*Decides whether to do IbP or not*)
 	PerformMomDerivatives@ If[Count[expr[[;; pos- 1]], Except[_?MomFreeQ], {1}]- Count[expr[[pos+ 1;; ]], Except[_?MomFreeQ], {1}] > 0,
-		MomNCM[expr[[;; pos- 1]], (TakeMomDerivatives@ expr[[pos;;]])]   
+		MomNCM[expr[[;; pos- 1]], (TakeMomDerivatives@ expr[[pos;;]])]
 	,
 		pos= First@ FirstPosition[expr, _MomDev, None, {1}];
-		-MomNCM[TakeMomDerivatives@ MomNCM[expr[[pos]], expr[[;;pos-1]]], expr[[pos+1;;]] ] 
+		-MomNCM[TakeMomDerivatives@ MomNCM[expr[[pos]], expr[[;;pos-1]]], expr[[pos+1;;]] ]
 	]
 ];

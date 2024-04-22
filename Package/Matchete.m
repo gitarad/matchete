@@ -22,7 +22,7 @@ Package["Matchete`"]
 PackageImport["GroupMagic`"]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Exported*)
 
 
@@ -30,7 +30,7 @@ PackageExport["$MatchetePath"]
 PackageExport["CheckForUpdate"]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Internal*)
 
 
@@ -58,6 +58,9 @@ PackageScope["ReplaceFirst"]
 
 
 PackageScope["SelectAndDelteCases"]
+
+
+PackageScope["TermsToList"]
 
 
 PackageScope["IntegerSets"]
@@ -327,8 +330,20 @@ ReleasePseudoTimes@ expr_:= expr/. PseudoTimes-> Times;
 (*Function mimicking ReplaceList but on all subexpressions*)
 
 
-ReplaceListSubExprs[expr_, rule_Rule|rule_RuleDelayed]:=
-	MapAt[Function[{x}, x/. rule], expr, #]&/@ Position[expr, First@ rule, Infinity];
+(*This implementation does not apply the rules in all posible ways at each subexpression*)
+(*ReplaceListSubExprs[expr_, rule_Rule|rule_RuleDelayed]:=
+	MapAt[Function[{x}, x/. rule], expr, #]&/@ Position[expr, First@ rule, Infinity];*)
+
+
+ReplaceListSubExprs[expr_, rule_Rule|rule_RuleDelayed]:= Module[{op, pos, rep},
+	Flatten[Table[
+			op= expr;
+			op[[Sequence@@ pos]]= rep;
+			op
+		, {pos, Position[expr, First@ rule, Infinity]}
+		, {rep, ReplaceList[expr[[Sequence@@ pos]], rule]}]
+	, 1]
+]
 
 
 (* ::Text:: *)
@@ -360,7 +375,7 @@ IntegerSets[sum_, ints_]:= Flatten[Permutations@ PadRight[#, ints]&/@
 	DeleteCases[IntegerPartitions@ sum, _?(Length@ # > ints &)], 1];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Print function that can be globally deactivated*)
 
 
@@ -396,3 +411,66 @@ Options[MyPrint]={Verbose :> $PrintMessages}
 MyPrint[string__,OptionsPattern[]]? OptionsCheck:=Module[{},
 	If[OptionValue@Verbose,Print[string]];
 ];
+
+
+(* ::Subsection::Closed:: *)
+(*TermsToList*)
+
+
+(* ::Text:: *)
+(*Transform a sum of terms into a list, or convert a single term into a list*)
+
+
+TermsToList@ expr_:= Module[{temp= BetterExpand@ expr},
+	If[Head@ temp === Plus, List@@ temp, List@ temp]
+];
+
+
+(* ::Section:: *)
+(*DumpSave*)
+
+
+(* ::Text:: *)
+(*W.I.P.*)
+
+
+(*SetAttributes[SaveMatcheteSession, HoldRest]*)
+
+
+(*SaveMatcheteSession[fileName_String, symbols_List:{}]:=Module[
+	{
+		(* For some reason averything crashes when you DumpSave GroupMagic`... *)
+		builtInDefs={"Matchete`", (*"GroupMagic`",*) Hold[Global`$MatcheteVersion], NonCommutativeMultiply, Format, NiceForm},
+		file,
+		mySymbols,
+		$DumpSave,
+		tmp
+	}
+,
+	(* determine file for saving *)
+	Switch[FileExtension[fileName],
+		"",   file=fileName<>".mx",
+		"mx", file=fileName,
+		_,    (Print["Changing file extension from \"",FileExtension[fileName],"\" to \"mx\"."];file=DirectoryName[fileName]<>FileBaseName[fileName]<>".mx")
+	];
+
+	(* keep symbols unevaluated *)
+	mySymbols= Map[Hold, Hold@symbols, {2}][[1]];
+
+	(* list of everything that must be saved *)
+	mySymbols= Echo@Join[builtInDefs, mySymbols];
+
+	(* dummy function that does not evaluate and keeps its arguments unevaluated *)
+	SetAttributes[$DumpSave, HoldRest];
+
+	(* save Matchete session *)
+	With[{symb= mySymbols}, (* needds a dummy function to remove Hold *)
+		tmp= $DumpSave[file,symb]/.Hold[arg_]:>arg;
+	];
+	Echo[tmp];
+	tmp/.$DumpSave->DumpSave;
+
+	Print["Saved the current Matchete session to the file: ", Style[file,"Code"],". \[Rule] Symbols included: ",HoldForm[symbols],"."
+	];
+	Print["It can be loaded again at a later point using: ",Style["Get["<>file<>"];","Code"],". This overrides the definitions of any Matchete session that might be active at this later point."];
+]*)

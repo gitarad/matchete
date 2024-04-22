@@ -91,7 +91,6 @@ PackageExport["U1"]
 PackageExport["fund"]
 PackageExport["tFundf"]
 PackageExport["adj"]
-PackageExport["del"]
 PackageExport["gen"]
 PackageExport["fStruct"]
 PackageExport["eps"]
@@ -237,7 +236,6 @@ U1::usage      = "Standard name for Abelian U(1) group.";
 fund::usage    = "Fundamental representations of groups are refered to by group@ fund."
 tFundf::usage  = "Standard head for the Clebsch-Gordan coefficient, CG[tFundf@ group, {i, j, A, B}] associated with the commonly occuring combination \!\(\*SubscriptBox[SuperscriptBox[\(T\), \(Ci\)], \(j\)]\)\!\(\*SuperscriptBox[\(f\), \(CAB\)]\), where T is the generator of the fundamental representation of the group.";
 adj::usage     = "Adjoint representations of groups are refered to by group@ adj."
-del::usage     = "Standard head for delta Clebsch-Gordan coefficients. E.g., CG[del@ rep, {a, b}] for \!\(\*SubscriptBox[\(\[Delta]\), \(ab\)]\).";
 gen::usage     = "Standard head for generator Clebsch-Gordan coefficients. E.g., CG[gen@ rep, {A, i, j}] for \!\(\*SubscriptBox[SuperscriptBox[\(T\), \(Ai\)], \(j\)]\), where A is an adjoint index and i an index of the representation rep.";
 fStruct::usage = "Standard head for structure constant Clebsch-Gordan coefficients. E.g., CG[fStruct@ group, {A, B, C}] for \!\(\*SuperscriptBox[\(f\), \(ABC\)]\)";
 eps::usage     = "Standard head for Levi-Civita type Clebsch-Gordan coefficients for SU(N) groups. E.g., CG[eps@ group, {a, b, ...}] for \!\(\*SuperscriptBox[\(\[Epsilon]\), \(ab ... \)]\), with indices in the fundamental representation.";
@@ -673,7 +671,7 @@ DefineCoupling[label,opts]= Module[
 ]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Determine all symmetric permutation of coupling indices *)
 
 
@@ -861,7 +859,7 @@ RemoveFlavorIndex[alias_]:= Module[{},
 ResetFlavorIndices[]:=(RemoveFlavorIndex/@Keys[$FlavorIndices[]];);
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Gauge and global groups*)
 
 
@@ -949,10 +947,8 @@ DefineGroupRepresentation[repName, grName, dynkLabel, opts]=Module[{lieAlg},
 
 	(* Define delta and generator for the representation *)
 	If[FSIndicator[lieAlg, dynkLabel]=== 1,
-			DefineCG[del@repName,{repName,repName},First@InvariantTensors[lieAlg, {dynkLabel, dynkLabel},SymmetricIndices->{1,2}]];
 			DefineCG[gen@repName,{grName@adj,repName,repName},Generators[lieAlg,dynkLabel]];
 		,
-			DefineCG[del@repName,{repName,Bar@repName},First@InvariantTensors[lieAlg, {dynkLabel, CRep@dynkLabel}]];
 			DefineCG[gen@repName,{grName@adj,repName,Bar@repName},Generators[lieAlg,dynkLabel]];
 	];
 
@@ -1019,7 +1015,7 @@ CouplingsFromGroup[group_]:= Module[{},
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Get field generators*)
 
 
@@ -1273,6 +1269,13 @@ DefineGaugeGroup[grName,lieGroup, coupling, gaugeField,opts]= Module[{fundRep, a
 					SymmetricIndices-> {1, 2, 3},
 					Normalization-> ((rank+1)^2-1)((rank+1)^2-4)/(rank+1)]];
 		];
+		
+		(*Add two-index invariant CGs for Sp(N) algebras*)
+		If[MatchQ[lieGroup, Alg["C", _]],
+			DefineCG[eps@ grName, Table[grName@ fund, 2], 
+				First@ InvariantTensors[lieGroup, Table[FundamentalRepresentation@lieGroup, 2],
+					AntisymmetricIndices-> {1, 2}, Normalization-> 2* lieGroup[[2]]]];
+		];
 	];
 
 	(*Add gauge coupling*)
@@ -1404,6 +1407,13 @@ DefineGlobalGroup[grName,lieGroup,opts]=Module[{},
 		If[MatchQ[lieGroup, Alg["A",n_?(#>1 && #<5 &)]],
 			DefineCG[dSym@grName,{grName@adj,grName@adj,grName@adj},First@InvariantTensors[lieGroup, {AdjointRepresentation@lieGroup, AdjointRepresentation@lieGroup, AdjointRepresentation@lieGroup},SymmetricIndices->{1,2,3},Normalization->((lieGroup[[2]]+1)^2-1)((lieGroup[[2]]+1)^2-4)/(lieGroup[[2]]+1)]];
 		];
+		
+		(*Add two-index invariant CGs for Sp(N) algebras*)
+		If[MatchQ[lieGroup, Alg["C", _]],
+			DefineCG[eps@ grName, Table[grName@ fund, 2], 
+				First@ InvariantTensors[lieGroup, Table[FundamentalRepresentation@lieGroup, 2],
+					AntisymmetricIndices-> {1, 2}, Normalization-> 2* lieGroup[[2]]]];
+		];
 	];
 ];
 
@@ -1437,12 +1447,13 @@ ResetAll[]:= (
 		ResetFlavorIndices[];
 		ResetGaugeGroups[];
 		ResetGlobalGroups[];
+		ClearGroups[];(*needed to reset the CG numbering*)
 		ResetOperatorAssociations[];
 		ResetTempCouplings[];
 	);
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Lagrangian*)
 
 
@@ -1532,7 +1543,7 @@ KinOpLagrangian[field_Symbol]:=Module[
 	indK= Sequence@@ Table[a, {n, Length@ FieldInd}];
 
 	If[GetFieldsUpdated[field, Heavy],
-		MassInd= DeleteDuplicates@ GetCouplings[GetFields[field, Mass], Indices];
+		MassInd= DeleteDuplicates@ GetCouplings[GetFieldsUpdated[field, Mass], Indices];
 		ind1 = Sequence@@ Table[If[MemberQ[MassInd, FieldInd[[n]]], i, a], {n, Length@ FieldInd}];
 		indM = Sequence@@ Table[i, Length@ MassInd];
 		ind2 = ind1;

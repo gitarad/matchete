@@ -1,5 +1,21 @@
 # Matchete changelog
 
+## v0.2.0 (2024-04-22)
+- Traces are now computed covariantly with Wilson lines rather than CDE. Improved 'Match' performance at one-loop order.
+- Match automatically identifies heavy and light fields and updates the masses according to the Lagrangian.
+- Introduced Option DummyCoefficients -> True/False in EOMSimplify.
+- Implemented GetOperatorCoefficient to extract coefficients of specific EFT operators.
+- Improved GreensSimplify's ability to determine when operators trivially vanish under symmetry.
+- Collection of coefficients in CollectOperators and GreensSimplify now accounts for flavor symmetries of operators.
+- Improved performance of GreensSimplify.
+- New, robust implementation of HcSimplify.
+- Various bug fixes:
+    - Fixed ContractCGs for higher dimensional groups.
+	- Fixed GreensSimplify bug with flavor indices.
+	- Fixed GreensSimplify bug with multiple gamma matrices on the same fermion line.
+	- Allows HcTerms as input in various functions.
+	- Allows constants in GreensSimplify and CollectOperators.
+
 ### v0.1.8 (2024-02-19)
 - Fixed a bug in the CDE of CovariantLoop/Match that caused non-cyclicity of the traces.
 - Improved HcSimplify.

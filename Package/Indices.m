@@ -477,11 +477,11 @@ Delta /: Delta[Index[a_,rep_],Index[b_,rep_]]^2 :=
 Delta[Index[a_,rep_],Index[a_,rep_]] := DimRep[rep]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Contractions*)
 
 
-ContractDelta::duplicate = "Could not contract the Delta[_,_].";
+ContractDelta::duplicate = "Could not contract all Delta in the term: `1`";
 
 
 Options[ContractDelta] = {Expand->True};
@@ -493,7 +493,7 @@ ContractDelta[expr_Plus, OptionsPattern[]] := ContractDelta[#, Expand->OptionVal
 (* Contract *)
 ContractDelta[arg:Except[_Plus], OptionsPattern[]] := 
 	Module[
-		{ expr = arg}
+		{ expr = HcExpand[arg](*avoids error when applied so expression containing HcTerms*)}
 		,
 		(* By default expand the argument before contraction *)
 		If[OptionValue[Expand],
@@ -533,7 +533,7 @@ ContractDeltaSingleTerm[expr_] :=
 		noDelta = result/.Delta[_,_]->1;
 		
 		If[!DuplicateFreeQ[Flatten[indicesDelta/.{a_,a_}:>{a}]],
-			Message[ContractDelta::duplicate];
+			Message[ContractDelta::duplicate, Format[expr,NiceForm]];
 			Return[expr]
 		];
 		

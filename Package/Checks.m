@@ -114,7 +114,7 @@ GaugeAnomalyContribution::usage = "GaugeAnomalyContribution[field/fieldList] ret
 (*Modules*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Lagrange-like expression*)
 
 
@@ -122,13 +122,13 @@ GaugeAnomalyContribution::usage = "GaugeAnomalyContribution[field/fieldList] ret
 (*Throws an error if the overall form of an expression can not conceivably correspond to a Lagrangian or an operator.  *)
 
 
-LagrangianLikeCheck::nofield= "A term in the expression does not contain fields or field strength tensors and the expression is not compatible with a Lagrangian or an operator.";
+LagrangianLikeCheck::nofield= "The following term(s) in the expression does not contain fields or field strength tensors and the expression is not compatible with a Lagrangian or an operator: `1`";
 
 
 LagrangianLikeCheck@ 0:= Null;
 LagrangianLikeCheck@ expr_:= Module[{temp= TermsToList@ expr},
 	If[(Or@@ FreeQ[Field|FieldStrength]/@ temp) && temp=!={0} ,
-		Message[LagrangianLikeCheck::nofield];
+		Message[LagrangianLikeCheck::nofield, Format[Cases[temp,a_/;FreeQ[a,_Field|_FieldStrength,All],1],NiceForm]];
 		Abort[]; 
 	];
 	Null
@@ -195,7 +195,7 @@ KineticCanonicalQ[L_]:=Module[{fields, LShouldBe,LIs},
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Heavy mass basis*)
 
 

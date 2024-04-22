@@ -41,6 +41,9 @@ PackageExport["ReplaceCGs"]
 PackageExport["CGsToReplace"]
 
 
+PackageExport["del"]
+
+
 (* ::Subsection:: *)
 (*Internal*)
 
@@ -59,9 +62,10 @@ PackageScope["Symmetries"]
 PackageScope["Indices"]
 PackageScope["InBasis"]
 PackageScope["UniqueConj"]
+PackageScope["DeltaDecomposable"]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Definitions*)
 
 
@@ -122,6 +126,9 @@ ReplaceCGs::usage=
 CGsToReplace::usage= "Option used in ReplaceCGs.";
 
 
+del::usage     = "Standard head for delta Clebsch-Gordan coefficients. E.g., CG[del@ rep, {a, b}] for \!\(\*SubscriptBox[\(\[Delta]\), \(ab\)]\).";
+
+
 (* ::Section:: *)
 (*Tensor contractions *)
 
@@ -161,7 +168,7 @@ DefineRepresentation::repinuse= "`1` is already used to denote a representation 
 DefineRepresentation::args= "Invalid arguments."
 
 
-DefineRepresentation[repName_, groupName_Symbol, dynkCoef_]:= Module[{},
+DefineRepresentation[repName_, groupName_Symbol, dynkCoef_]:= Module[{fsIndicator},
 	If[KeyFreeQ[$Groups, groupName], 
 		Message[DefineRepresentation::unkwngroup, groupName];
 		Abort[];
@@ -177,17 +184,28 @@ DefineRepresentation[repName_, groupName_Symbol, dynkCoef_]:= Module[{},
 		];
 	];
 	
+	fsIndicator= FSIndicator[$Groups@ groupName, dynkCoef];
+	
 	(*Set up the representation*)
 	AppendTo[$Representations, repName-> <|
 		GroupName-> groupName, 
 		DynkinCoefficients-> dynkCoef, 
 		RepDimension-> RepresentationDimension[$Groups@ groupName, dynkCoef],
-		Reality-> FSIndicator[$Groups@ groupName, dynkCoef]
+		Reality-> fsIndicator
 		|>];
 	If[$Representations[repName, Reality]=== 1, 
 		Bar@ ind:Index[_, repName]:= ind;
 	,
 		SetBarable@ repName;
+	];
+	
+	(*Add delta CG to the representation*)
+	If[fsIndicator=== 1,
+		DefineCG[del@ repName, {repName, repName}, 
+			First@ InvariantTensors[$Groups@ groupName, {dynkCoef, dynkCoef}, SymmetricIndices-> {1, 2}] ];
+	,
+		DefineCG[del@ repName, {repName, Bar@ repName}, 
+			First@InvariantTensors[$Groups@ groupName, {dynkCoef, CRep@ dynkCoef}] ];
 	];
 ];
 DefineRepresentation@ ___:= (Message[DefineRepresentation::args]; Abort[];) 
@@ -250,21 +268,11 @@ CG[symb_, inds: {_Symbol..}]:= Block[{indexTypes},
 ];
 
 
-(*CG[symb_, inds: Except[{(_Index| _Bar)..}, _List]]:= Block[{indexTypes},
-	If[!MemberQ[Keys@ $CGtensors, symb], 
-		Message[CG::unkwn, symb]; Abort[]; ];
-	indexTypes= $CGproperties[symb, Indices];
-	If[Length@ inds =!= Length@ indexTypes,
-		Message[CG::inds, symb, Length@ indexTypes]; Abort[]; ];
-	CG[symb, MapThread[Index, {inds, indexTypes}] ]
-];*)
-
-
 CG::args= "CG should have 2 arguments.";
 CG[_, _, __]:= (Message[CG::args]; Abort[];) 
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Utility functions *)
 
 
@@ -353,7 +361,7 @@ SubsetMultQ[subset_, set_]:= And@@ NonNegative/@ Merge[{Association@@ Rule@@@ Ta
 (*Test if an explicit tensor, with indices in representation set, is invariant*)
 
 
-TensorIsInvariant[indexTypes_, tensor_]:= Module[{alg, rep, reps, generators, 
+TensorInvariantQ[indexTypes_, tensor_]:= Module[{alg, rep, reps, generators, 
 		n= Length@ indexTypes},
 	alg= $Groups@ $Representations[First@ indexTypes/. Bar-> Identity, GroupName];
 	(*Find the generators of associated to the representation of all external indicies*)
@@ -374,7 +382,16 @@ TensorIsInvariant[indexTypes_, tensor_]:= Module[{alg, rep, reps, generators,
 ];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Text:: *)
+(*Get all the elements of an association that satisfy certain properties*)
+
+
+GetByProperty[assoc_Association, props_Association]:= GetCGsByProperty[assoc, Normal@ props];
+GetByProperty[assoc_Association, props:_List|_Rule]:=
+	Keys@ Select[assoc, MatchQ[#, KeyValuePattern[props]]&];
+
+
+(* ::Subsection::Closed:: *)
 (*Defining CG tensors*)
 
 
@@ -384,6 +401,10 @@ TensorIsInvariant[indexTypes_, tensor_]:= Module[{alg, rep, reps, generators,
 
 $CGtensors= <||>;
 $CGproperties= <||>;
+
+
+(* ::Subsubsection:: *)
+(*Definition from tensor*)
 
 
 (* ::Text:: *)
@@ -399,7 +420,8 @@ DefineCG::notInvariant= "The tensor is not invariant under group transformations
 DefineCG::dimensions= "The dimensions of the indexTypes do not match those of the tensor representation.";
 
 
-DefineCG[symb_, indexTypes_List, tensorIn_]:= Module[{temp, inBasis, indices, rep, reps, tensor, i},
+DefineCG[symb_, indexTypes_List, tensorIn_]:= Module[
+		{decomposable, temp, inBasis, indices, rep, reps, tensor, i},
 	(*If symb is already used for a cg, abort or do nothing*)
 	If[!KeyFreeQ[$CGproperties, symb],
 		If[indexTypes === $CGproperties[symb, Indices] && SAZeroQ[tensorIn- $CGtensors@ symb],
@@ -409,7 +431,7 @@ DefineCG[symb_, indexTypes_List, tensorIn_]:= Module[{temp, inBasis, indices, re
 			Abort[];		
 		];
 	];
-
+	
 	reps= indexTypes/. {Bar@ x_:> x};
 	Do[
 		If[KeyFreeQ[$Representations, rep],
@@ -434,7 +456,7 @@ DefineCG[symb_, indexTypes_List, tensorIn_]:= Module[{temp, inBasis, indices, re
 		Abort[];
 	];
 	
-	If[!TensorIsInvariant[indexTypes, tensorIn],
+	If[!TensorInvariantQ[indexTypes, tensorIn],
 		Message[DefineCG::notInvariant];
 		Abort[];
 	];
@@ -446,6 +468,13 @@ DefineCG[symb_, indexTypes_List, tensorIn_]:= Module[{temp, inBasis, indices, re
 		ResetCGProjectors[];
 	];
 	
+	(*Determine whether cg\[CircleTimes] cgConj should be included in tensor basis*)
+	decomposable= If[Length@ indexTypes === 2,
+			DeltaDecomposableQ[indexTypes, tensor]
+		,
+			False
+		];
+	
 	AppendTo[$CGtensors, symb-> tensor];	
 	AppendTo[$CGproperties, symb-> <|
 			GroupName-> $Representations[First@ reps, GroupName], 
@@ -453,7 +482,8 @@ DefineCG[symb_, indexTypes_List, tensorIn_]:= Module[{temp, inBasis, indices, re
 			UniqueConj-> UniqueConjQ[indexTypes, tensor],
 			Symmetries-> FindTensorSymmetries[symb/. $CGtensors, indexTypes],
 			Real-> Element[Normal@tensor, Reals] === True,
-			InBasis-> inBasis
+			InBasis-> inBasis,
+			DeltaDecomposable-> decomposable
 		|>]; 
 	(*Symbol is complex unless tensor and indices are real*)
 	If[!($CGproperties[symb, Real] && (Bar/@ indexTypes === indexTypes) ), 
@@ -462,6 +492,24 @@ DefineCG[symb_, indexTypes_List, tensorIn_]:= Module[{temp, inBasis, indices, re
 		
 ];
 DefineCG@ ___:= (Message[DefineCG::args]; Abort[];) 
+
+
+(* ::Text:: *)
+(*Checks whether the tensor product of a CG and its conjugate is decomposable in terms of deltas*)
+
+
+DeltaDecomposableQ[indexTypes_, tensor_]:= Block[{indProd, match},
+	indProd= Table[Index[Unique@ u, rep], {rep, Join[indexTypes, Bar/@ indexTypes]}];
+	match= Expand@ FindCGMatch[TensorProduct[tensor, Conjugate@ tensor], indProd];
+	
+	If[match === None, Return@ False; ];
+	If[Head@ match === Plus, match= First@ match; ];
+	If[Count[match, _CG, {0, Infinity}] === Length@ indexTypes, True, False]
+]
+
+
+(* ::Subsubsection:: *)
+(*Renaming*)
 
 
 (* ::Text:: *)
@@ -558,6 +606,10 @@ DefineCompositeCG[name_, cgs_List, indicesIn:{_List..}, OptionsPattern[]]:= Bloc
 DefineCompositeCG@ ___:= (Message[DefineCompositeCG::args]; Abort[];) 
 
 
+(* ::Subsubsection:: *)
+(*GetCGTensor*)
+
+
 (* ::Text:: *)
 (*Return the tensor representation of a CG *)
 
@@ -572,7 +624,7 @@ GetCGTensor[symb_]:= Block[{},
 ];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsection::Closed:: *)
 (*Clean up*)
 
 
@@ -731,6 +783,9 @@ TensorBasis[indexTypes_List]:= Block[{compTensors, types, eTensInds, len, cur, t
 	If[Length@ compTensors < 1, Return@ {}; ];
 	compTensors= Flatten@ MapThread[ConstantArray, {Keys@ eTensInds, #}]&/@ compTensors[[1]];
 	
+	(*Remove posibility of e.g., \[CurlyEpsilon]* \[CurlyEpsilon] combinations for SU(2) groups*)
+	compTensors= RemoveDeltaDecomposables@ compTensors;
+	
 	(*For each ECG combination determines the linearly independent permutations*)
 	compTensors= Table[
 		inds= Flatten[tens/. eTensInds];
@@ -755,6 +810,21 @@ TensorBasis[indexTypes_List]:= Block[{compTensors, types, eTensInds, len, cur, t
 
 
 VecCompare[logOp_, comp_, v1_, v2_]:= logOp@@ MapThread[comp, {v1, v2}];
+
+
+(* ::Text:: *)
+(*Remove delta-decomposable  products of tensors from the basis sets*)
+
+
+RemoveDeltaDecomposables@ tensorSets_:= Block[{decomposableCGs, out= tensorSets},
+	decomposableCGs= Intersection[DeleteDuplicates@ Flatten[tensorSets/. Bar-> Identity],
+		GetByProperty[$CGproperties, DeltaDecomposable-> True] ];
+	decomposableCGs= {#, Bar@ #}&/@ decomposableCGs;
+	Do[
+		out= Select[out, (!ContainsAll[#, dcg] &)];
+	, {dcg, decomposableCGs}];
+	out
+]
 
 
 (* ::Subsubsection:: *)
@@ -812,6 +882,9 @@ RedundantSubsets[innerProducts_]:= Block[{mat, blocks},
 (*Function for matching a tensor with certain indices to the predefined set of CG coefficients. *)
 
 
+MatchToCGs::failed= "Failed to add new CG basis tensor from `1`"
+
+
 MatchToCGs[tensor_, inds_, originalTensors_: None]:= Block[{out, indTypes},
 	out= FindCGMatch[tensor, inds];
 	
@@ -820,6 +893,10 @@ MatchToCGs[tensor_, inds_, originalTensors_: None]:= Block[{out, indTypes},
 		indTypes= inds/. Index[_, rep_]-> rep;
 		DefineNewCG[indTypes, tensor];
 		out= FindCGMatch[tensor, inds];
+		If[out === None,
+			Message[MatchToCGs::failed, originalTensors];
+			Abort[];
+		];
 		NewCGReplacement[out, originalTensors];
 	];
 	out
@@ -873,8 +950,11 @@ FindCGMatch[tensor_, inds_]:= Block[{indTypes, indTypesOut, indPerm, tens, indsO
 	composition= RowReduce[Join[cgMetric, List/@ overlaps, 2]][[;;, -1]];
 		
 	(*Test if projection succesfull: otherwise add new CG*)
-	temp= SparseArray[tens- composition . cgTensors];
+	(*temp= SparseArray[tens- composition . cgTensors];
 	If[Length@ ArrayRules@ temp> 1,
+		Return@ None;
+	];*)
+	If[!SAZeroQ[tens- composition . cgTensors],
 		Return@ None;
 	];
 	
@@ -1168,17 +1248,17 @@ SARemove0@ expr_:= expr;
 
 
 (* ::Text:: *)
-(*Checks if a SparseArray vanishes identically*)
+(*Checks if a SparseArray or Tensor vanishes identically*)
 
 
-SAZeroQ@ expr_SparseArray:= MatchQ[{_List-> 0}]@ ArrayRules@ SparseArray@ expr;
+SAZeroQ@ expr_:= MatchQ[{0}]@ DeleteDuplicates@ Simplify@ DeleteDuplicates@ ArrayRules[expr][[;;,2]];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Tensor functions*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Tensor symmetries *)
 
 
