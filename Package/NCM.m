@@ -29,7 +29,7 @@ PackageImport["GroupMagic`"]
 Unprotect@ NonCommutativeMultiply; (* overwrite NonCommutativeMultiply *)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Internal*)
 
 
@@ -85,7 +85,7 @@ CanonizeSpinorLines::usage = "CanonizeSpinorLines[expr] separates out nested spi
 (*NonCommutativeMultiply functionality*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Commutative check*)
 
 
@@ -93,8 +93,13 @@ CanonizeSpinorLines::usage = "CanonizeSpinorLines[expr] separates out nested spi
 (*Default assumption is that everything is commutative*)
 
 
-CommutativeQ@ x_NonCommutativeMultiply:= ClosedSpinChainQ@ x;
-CommutativeQ[f_?CommutativeQ[x___]] := And@@ CommutativeQ/@ {x};
+CommutativeQ[x_NonCommutativeMultiply]:= (CommutativeQ[x]= ClosedSpinChainQ[x]);
+CommutativeQ[f_?CommutativeQ[x___]]:= (CommutativeQ[f[x]]= And@@ CommutativeQ/@ {x});
+
+(* The above speeds up DeriveSubstitutions by a factor of ~2 or so *)
+(*CommutativeQ@ x_NonCommutativeMultiply:= ClosedSpinChainQ@ x;
+CommutativeQ[f_?CommutativeQ[x___]] := And@@ CommutativeQ/@ {x};*)
+
 CommutativeQ[f_[x___]] := False;
 CommutativeQ[_] := True; 
 
@@ -117,7 +122,7 @@ SetNonCommutative[x_Symbol] := (CommutativeQ@ x ^= False;);
 CommutativeQ@ Commutative@ _ ^= True; 
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Properties of NonCommutativeMultiply*)
 
 
@@ -152,7 +157,7 @@ NonCommutativeMultiply[a___, b_?CommutativeQ * x_, c___]:= b * NonCommutativeMul
 NonCommutativeMultiply[a___, b_Plus, c___]:= NonCommutativeMultiply[a, #, c] & /@ b 
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Contraction of spin chains*)
 
 
@@ -227,7 +232,7 @@ SetNonCommutative[GammaM, Gamma5, GammaCC];
 
 (* SetNonCommutative[TransposeThisSpinChain] *)
 (* For some reason the lie above does not work, but the one below does... *)
-CommutativeQ[TransposeThisSpinChain]:=False
+CommutativeQ[TransposeThisSpinChain]=False
 
 
 (* ::Section:: *)
@@ -238,7 +243,7 @@ CommutativeQ[TransposeThisSpinChain]:=False
 (*Organize fermion lines*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Fermion trace*)
 
 

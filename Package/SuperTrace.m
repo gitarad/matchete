@@ -8,7 +8,7 @@ Package["Matchete`"]
 
 
 (* ::Subtitle:: *)
-(*Paclet for calculating the covariant derivative expansion (CDE) for use in functional matching methods.*)
+(*Paclet for evaluating supertraces in the functional matching methods.*)
 
 
 (* ::Chapter:: *)
@@ -26,7 +26,7 @@ PackageImport["GroupMagic`"]
 (*Exported*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Internal*)
 
 
@@ -38,48 +38,26 @@ PackageScope["LoopMatch"]
 PackageScope["EvanescentSTr"]
 
 
-PackageScope["hScalar"]
-PackageScope["lScalar"]
-PackageScope["hFermion"]
-PackageScope["lFermion"]
-PackageScope["hVector"]
-PackageScope["lVector"]
-PackageScope["hGhost"]
-PackageScope["lGhost"]
-PackageScope["$FieldTypes"]
-
-
-PackageScope["Gop"]
 PackageScope["Xop"]
-PackageScope["MassOp"]
+PackageScope["Xterm"]
+PackageScope["Mop"]
+PackageScope["Mterm"]
+PackageScope["WilsonLine"]
+PackageScope["WilsonTerm"]
 PackageScope["GenericIndex"]
 PackageScope["XOrders"]
 
 
-PackageScope["HoldPart"]
-
-
-PackageScope["LagrangianDofs"]
-
-
-PackageScope["PowerTypeTraces"]
-
-
-PackageScope["DeriveSubstitutions"]
-
-
-PackageScope["FieldType"]
 PackageScope["Fields"]
 
 
 PackageScope["mIR"]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Usage messages*)
 
 
-PowerTypeTraces::usage= "PowerTypeTrace[lag, order] returns a list of all the propagator set that can contribute in the supertraces up to a given order and given a Lagrangian.";
 PowerTypeSTr::usage= "PowerTypeSTr[lag, props, order] returns the Super trace term of \!\(\*SubscriptBox[\(L\), \(EFT\)]\) with the specified propagator types."; 
 
 
@@ -92,761 +70,259 @@ LoopMatch::usage=
 
 
 (* ::Section:: *)
-(*Internal functions*)
-
-
-(* ::Subsubsection::Closed:: *)
-(*Field type info*)
-
-
-$FieldTypes= <|
-	hScalar-> <|Type-> Scalar, Heavy-> True|>,
-	lScalar-> <|Type-> Scalar, Heavy-> False|>,
-	hFermion-> <|Type-> Fermion, Heavy-> True|>,
-	lFermion-> <|Type-> Fermion, Heavy-> False|>,
-	hVector-> <|Type-> Vector, Heavy-> True|>,
-	lVector-> <|Type-> Vector, Heavy-> False|>,
-	hGhost-> <|Type-> Ghost, Heavy-> True|>,
-	lGhost-> <|Type-> Ghost, Heavy-> False|>
-|>;
-
-
-FieldType[f_]:= Switch[Lookup[GetFieldsUpdated[f], {Type, Heavy}]
-	,{Scalar, True}, hScalar
-	,{Scalar, False}, lScalar
-	,{Fermion, True}, hFermion
-	,{Fermion, False}, lFermion
-	,{Vector, True}, hVector
-	,{Vector, False}, lVector
-	,{Ghost, True}, hGhost
-	,{Ghost, False}, lGhost
-]; 
-
-
-(* ::Subsection::Closed:: *)
-(*CDE expansion of propagators and X operators *)
+(*Power-type traces*)
 
 
 (* ::Text:: *)
-(*Assorted functions for the CDE expansion of propagators and X-terms.*)
-
-
-(* ::Subsubsection::Closed:: *)
-(*G operators from propagators*)
-
-
-(* ::Text:: *)
-(*G operators: Gop[\[Phi], {i1, i2}, {\[Mu],\[Nu]}, {\[Rho],...} ] is interpreted as D_{\[Rho],... } (G_\[Phi])_{i1,i2}^{\[Mu],\[Nu]}*)
-
-
-Gop[_, _, {a_, a_}, _]:= 0;
-Gop[_, _, {a_, b_}, List@ OrderlessPatternSequence[a_, b_, ___]]:= 0;
-
-
-(* ::Text:: *)
-(*Building the Subscript[Overscript[G, ~], \[Mu]\[Nu]]*)
-
-
-GTilde[f_, inds_, \[Mu]_, \[Nu]_, ord_/; ord >= 2]:= Module[{cofs, n},
-	cofs= Index[#, Lorentz]&/@ Unique@ Table[Symbol["\[Beta]"<> ToString@ n], {n, 1, ord-2}];
-	(-1)(-I)^ord/(ord (ord -2)!) MomNCM[
-		Gop[f, inds, {Index[\[Mu], Lorentz], Index[\[Nu], Lorentz]}, cofs], 
-		MomNCM@@ (MomDev/@ cofs) ]
-];
-GTilde[f_, inds_, \[Mu]_, \[Nu]_, ord_/; ord < 2]= 0;
-
-
-(* ::Text:: *)
-(*Build the \[ScriptCapitalG]_\[Eta] for the tilde propagators Subscript[Overscript[\[CapitalDelta], ~], \[Eta]]=Subscript[\[CapitalDelta], \[Eta]]-Subscript[\[ScriptCapitalG], \[Eta]] *)
-
-
-GopBos[f_, inds_, ord_]:= Module[{\[Alpha], \[Beta], \[Rho], n, generator, ind},
-	ind= Index[generator, GenericIndex];
-	-I MomNCM[MomAntiCommutator[LoopMom@ Index[\[Alpha], Lorentz], GTilde[f, inds, \[Alpha], \[Beta], ord]], MomDev@ Index[\[Beta], Lorentz] ] +
-		Sum[MomNCM[GTilde[f, {inds[[1]], ind}, \[Alpha], \[Beta], n], GTilde[f, {ind, inds[[2]]}, \[Alpha], \[Rho], ord-n], 
-			MomDev@ Index[\[Beta], Lorentz], MomDev@ Index[\[Rho], Lorentz] ], {n, 2, ord- 2}]
-];
-GopFerm[f_, inds_, ord_]:= Module[{\[Alpha], \[Beta]}, -I MomNCM[\[Gamma]@ \[Alpha], GTilde[f, inds, \[Alpha], \[Beta], ord], MomDev@ Index[\[Beta], Lorentz] ] ];
-
-
-(* ::Subsubsection::Closed:: *)
-(*Tilde expand propagators*)
-
-
-PropTilde[f_, inds_, ord_]:= Module[{mass},
-	mass= If[$FieldTypes[f, Heavy], MassOp[f, inds[[1]] ], 0]; 
-	Switch[$FieldTypes[f, Type]
-	,Fermion,
-		PropTildeDirac[f, inds, mass, ord]
-	,Vector,
-		-PropTildeBos[f, inds, mass, ord]
-	,_,
-		PropTildeBos[f, inds, mass, ord]
-	]
-];
-
-
-(* ::Text:: *)
-(*Extracts Subscript[\!\(\*OverscriptBox[\(\[CapitalDelta]\), \(~\)]\), \[Eta]]=(Subscript[\[CapitalSigma], m=1] (1/Subscript[\[CapitalDelta], \[Eta]] Subscript[\[ScriptCapitalG], \[Eta]])^m) 1/Subscript[\[CapitalDelta], \[Eta]]  to a given order*)
-
-
-(*Scalar propagator: 1/(P^2 -M^2)*)
-PropTildeBos[f_, inds_, mass_, 0]:= Delta@@ inds InvProp[mass]^(-1);
-PropTildeBos[f_, inds_, mass_, ord_]:= Module[{j, m, extraOrd, ords, count, indices, indNames},
-	indNames= Index[#, GenericIndex]&/@ Unique@ Table[Symbol["$k"<> ToString@ m], {m, 1, ord/2 -1}];
-	Sum[
-		extraOrd= IntegerSets[ord -2m, m]+ 2;
-		indices= Join[inds[[{1}]], indNames[[;; m-1]], inds[[{2}]]];
-		Sum[
-			count= 1;
-			MomNCM[
-				MomNCM@@ Table[
-					MomNCM[InvProp[mass]^(-1), GopBos[f, indices[[{j, j+1}]], ords[[count++ ]] ] ]
-					, {j, m}], 
-				InvProp[mass]^(-1)]
-		,{ords, extraOrd}]
-	,{m, 1, ord/2}]
-];
-
-
-(*Dirac type propagator: 1/(\salshed P -M)*)
-PropTildeDirac[f_, inds_, mass_, 0]:= 
-	MomNCM[Delta@@ inds InvProp[mass]^(-1), (DiracProduct@ GammaM@ LoopMom+ mass)];
-PropTildeDirac[f_, inds_, mass_, ord_]:= Module[{j, m, orders, ords, indices, indNames},
-	indNames= Index[#, GenericIndex]&/@ Unique@ Table[Symbol["$k"<> ToString@ m], {m, 1, ord/2 -1}];
-	Sum[
-		orders= IntegerSets[ord -2m, m]+ 2;
-		indices= Join[inds[[{1}]], indNames[[;; m-1]], inds[[{2}]]];
-		Sum[MomNCM[
-				MomNCM@@ Table[
-					MomNCM[InvProp[mass]^(-1), (DiracProduct@ GammaM@ LoopMom+ mass), 
-						GopFerm[f, indices[[{j, j+1}]], ords[[j]] ] ]
-					, {j, m}],
-				InvProp[mass]^(-1),
-				(DiracProduct@ GammaM@ LoopMom+ mass)]
-		,{ords, orders}]
-	,{m, 1, ord/2}]
-];
-
-
-(* ::Subsubsection::Closed:: *)
-(*Tilde Expand X*)
-
-
-(* ::Text:: *)
-(*X operators: Xop[{\[Phi]1, \[Phi]2}, {i1, i2}, {\[Mu],...}, {\[Nu],...} ] is interpreted as D_{\[Nu],... } X_{\[Phi]1_i1, \[Phi]2_i2}^{\[Mu],...}*)
-
-
-XTilde[fields_, inds_, openDevs_, extraOrd_]:= Module[{expCofs, devCofs, indices, ords, n, m, xord},
-	expCofs= Index[#, Lorentz]&/@ Unique@ Table[Symbol["\[Beta]"<> ToString@ n], {n, extraOrd}];
-	devCofs= Index[#, Lorentz]&/@ Unique@ Table[Symbol["\[Rho]"<> ToString@ n], {n, openDevs}];
-	indices= Index[#, GenericIndex]&/@ Unique@ Table[Symbol["$k"<> ToString@ n], {n, openDevs}];
-	indices= Partition[Join[inds[[{1}]], indices, inds[[{2}]]], 2, 1];
-	ContractDelta@ Sum[
-		xord= First@ ords;
-		(-I)^xord/ xord!  MomNCM[Xop[fields, First@ indices, devCofs, expCofs[[;;xord]] ],
-			MomNCM@@ (MomDev/@ expCofs[[;; xord]]),
-			MomNCM@@ Thread@ XTildeAux[Last@ fields, indices[[2;;]], devCofs, ords[[2;;]] ]
-		]
-	,{ords, IntegerSets[extraOrd, openDevs+ 1]} ]
-];
-
-XTildeAux[f_, inds_, \[Mu]_, 0]:= LoopMom@ \[Mu] Delta@@ inds;
-XTildeAux[f_, inds_, Index[\[Mu]_Symbol, Lorentz], ord_Integer]:= Module[{\[Delta]}, 
-	I MomNCM[GTilde[f, inds, \[Mu], \[Delta], ord], MomDev@ Index[\[Delta], Lorentz] ] 
-];
-
-
-(* ::Subsubsection::Closed:: *)
-(*Tilde expand Function*)
-
-
-(* ::Text:: *)
-(*Apply tilde operation (CDE) on propagators and X operators [2012.08506, (2.15, 2.16, 2.26)]*)
-
-
-TildeExpand@ expr_:= expr/. {
-		PropTil:> PropTilde,
-		XTil:> XTilde
-	}
+(*Evaluation of power-type supertraces*)
 
 
 (* ::Subsection:: *)
-(*Extract information from the Lagrangian *)
+(*Evaluate power-type traces*)
 
 
-(* ::Text:: *)
-(*Functions for deriving the X-term, mass, and FS tensor substitutions from a given Lagrangian.*)
+Options@ PowerTypeSTr= {Fields-> All};
 
 
-(* ::Subsubsection::Closed:: *)
-(*Lagrangian DoFs*)
-
-
-(* ::Text:: *)
-(*Gives an association with the DoFs of a Lagrangian for each field type .*)
-
-
-LagrangianDofs[lag_]:= LagrangianDofs[lag]= Module[{fields}, 
-	(*Get all fields from Lagrangian*)
-	fields= DeleteDuplicates@ Cases[lag, (Field|FieldStrength)[f_, __]:> f, Infinity];
-	(*Create association by field type*)
-	fields= Association@@ 
-		KeyValueMap[(#1-> Intersection[GetFieldsUpdatedByProperty[#2], fields]&), $FieldTypes];
-	(*Add conjugate DoFs*)
-	LagrangianDofsAux/@ fields
- ]; 
-
-
-(* ::Text:: *)
-(*Extends list of fields with conjugate DoFs if they are not selfconjugate *)
-
-
-LagrangianDofsAux@ fieldList_List:= LagrangianDofsAux/@ fieldList// Flatten;
-LagrangianDofsAux@ field_Symbol:= If[GetFieldsUpdated[field, SelfConjugate], field, {field, Conj@ field}];
-
-
-(* ::Text:: *)
-(*"Conj" is used to describe the conjugated DoF.*)
-
-
-(* ::Subsubsection::Closed:: *)
-(*Substitution rules*)
-
-
-Options[DeriveSubstitutions] = {EFTOrder -> 6};
-
-
-DeriveSubstitutions[lag_, OptionsPattern[]]:= Module[
-		{abelianVectors, fields, fieldDofs, effLag, Xords, sub, 
-			f1, f2, ftype1, ftype2, i, j,k, temp, devs, lIndices, n, Xsub, Msub, Gsub, conj,\[Alpha],\[Beta],group,fluctuation},
-	(*List of groups associated to vector fields*)
-	abelianVectors= If[Length@GetGaugeGroups[]> 0,
-			GetGaugeGroups[#,Abelian]&/@ Association@@ Reverse/@ Normal@ 
-				Query[Transpose][GetGaugeGroups[]]@ Field,
-			<||>
+PowerTypeSTr[propTypes_List, eftOrder_, OptionsPattern[]]:= Module[
+		{maxEFTOrd, maxPropExpansionOrder, propOrder, result, genexp, insertions, preFactor},
+	(* propTypes: list of propagator types as obtained by ListPowerTypeTraces. *)
+	preFactor= -I hbar/ 2 Switch[First@ propTypes,
+			hScalar| hVector| lScalar| lVector, 1,
+			hFermion| hGhost| lFermion| lGhost, - 1
 		];
+	maxEFTOrd= (eftOrder/. List-> Identity);
 	
-	lIndices= Table[Symbol["$\[Mu]"<> ToString@ n], {n, 10}];
+	(* Determine maximal expansion order for propagators: MaxPropExpansionOrder. *)
+	maxPropExpansionOrder = maxEFTOrd - Total[Partition[propTypes, 2, 1, 1]/. $XOrdMin];
 	
-	(*Determine fields to accounting for complex dofs, see [2012.08506, (2.33)] *)
-	fields= LagrangianDofs@ lag; 
-	(*Association with field variable functions*)
-	fieldDofs= FieldDoFs/@ fields;
-	
-	(*Default EFT order of empty X term is 100 (infinity) *)
-	Xords= Association@@ Table[{f1, f2}-> 100, {f1, Keys@ $FieldTypes}, {f2, Keys@ $FieldTypes}];
-	
-	(*Determine X operator substitution rules*)
-	Xsub= Flatten@ Table[
-		(*To avoid the LO kinetic from the fluctuation operator*)
-		(*NB. for the gauge field this does not work... nor for light fields*)
-		effLag= lag - If[ftype1 === ftype2, KinOpLagrangian@@ DeleteCases[fields@ ftype1, _Conj], 0];
+	(* Expand and evaluate STr *)
+	(*Sum exclusively over all possible propagator expansion orders*)
+	result = Sum[
+		(* Expand all propagators in STr to the given propOrder (exclusive) *)
+		genexp = GenericPropagatorExpansion[propTypes, propOrder]; (* This could be cached *)
 		
-		(*If[ftype1 === ftype2 && ftype1 === lVector, effLag= lag- FreeLag@@ fields@ ftype1];*)
-		sub= Table[
-			(*temp= FluctuationOperator[effLag, Bar@ f1@ i, f2@ j, EFTOrder->OptionValue[EFTOrder]];*)
-			(*Temporary fix*)
-			If[ftype1 === lVector && ftype2 === lVector, 
-				(*temp = If[!abelianVectors@ f1[i][[1]] && f1[i][[1]] === f2[j][[1]],
-					(*Check sign!*)(*sign wrong*) 
-						- 2 I $GaugeGroups[GroupFromRep[f1[i][[3, 1, 2]] ], Coupling][] *
-							FieldStrength[f1[i][[1]], {Index[i, Lorentz], Index[j, Lorentz]}, 
-								{f1[i][[3,1]], f2[j][[3,1]]}, {}]
-						
-					,
-						0
-					];*)
-					
-				(*Add gauge fixing in Feynman gauge, i.e. \[Xi]=1    -> add it in the step before in the future*)
-				(*Print[{First@f1@i,First@f2@j}];*)
-				If[First@f1@i===First@f2@j, effLag+= GaugeFixing@GreensSimplify[-(1/2)CD[\[Alpha], Bar@ (f1@i/.Index[_,Lorentz]->Index[\[Alpha],Lorentz])] CD[\[Beta], f2@i/.Index[_,Lorentz]->Index[\[Beta],Lorentz]]]];
-				temp= -FluctuationOperator[effLag, Bar@ f1@ i, f2@ j, EFTOrder->OptionValue[EFTOrder]];
-				(*Print[temp //NiceForm]*)
-				
-				(*temp+= -FluctuationOperator[effLag, Bar@ f1@ i, f2@ j];*)
-			,	
-				temp= -FluctuationOperator[effLag, Bar@ f1@ i, f2@ j, EFTOrder->OptionValue[EFTOrder]];
-			];
-			(*Put OpenCDs into vector form:*)
-			temp= Expand[OpenCD@ {} temp]/. (OpenCD@ {} x_OpenCD-> x);
-			devs= Max@ Cases[temp, OpenCD@ inds_:> Length@ inds, Infinity];
-			temp= temp/. OpenCD@ inds_:> 
-				UnitVector[devs +1, Length@ inds +1] Times@@ MapThread[Metric, {inds, lIndices[[;;Length@ inds]]}]
-		, {f1, fieldDofs@ ftype1}, {f2, fieldDofs@ ftype2}];
-
-		(*Organize one X substitution for every number of open devs*)
-		If[!MatchQ[sub, {}| {{}..}],
-			sub= Replace[sub, 0-> {0}, {2}];
-			sub= Transpose[PadRight@ sub, {2, 3, 1}];
-			Xords@ {ftype1, ftype2}= OperatorDimension/@ sub; 
-			Table[
-				(*The X terms with open derivatives are defined in terms of P= iD, and hence must compensate 
-				with factors of (-i)*)
-				temp= {Xop[{ftype1, ftype2}, {i_, j_}, Pattern[#, Blank[]]&/@ lIndices[[;;n-1]], devIndices_], 
-					Power[-I, n-1] SymmetrizedCD[devIndices, sub[[n]]]};
-				MapAt[(RelabelIndices[#, Unique-> True] &), RuleDelayed@@ temp, 2]
-			, {n, Length@ sub}]
-		, (*If operator does not occur in lag*)
-			{Xop[{ftype1, ftype2}, __]-> 0}
-		]
-	, {ftype1, Keys@ $FieldTypes}, {ftype2, Keys@ $FieldTypes}];
-	
-	(*Determine mass substitutions*)
-	Msub= Flatten@ Table[
-		sub= Table[ 
-			temp= GetFieldsUpdated[f, Mass];
-			If[Length@ GetCouplings[temp][Indices]=== 1,
-				temp@ i
-			,
-				temp[]
-			]
-		, {f, fields@ ftype1/. Conj@ x_-> x}];
-		If[Length@ sub > 0, 
-			temp= Pattern[i, Blank[]]; (*Indirect use of pattern required to prevent local renaming... Just great.*)
-			{
-				MassOp[ftype1, temp] Power[InvProp@ MassOp[ftype1, temp ], n_]-> 
-					DiagonalMatrix[sub Power[InvProp/@sub ,n]],
-				Power[MassOp[ftype1, temp], m_] Power[InvProp@ MassOp[ftype1, temp ], n_]-> 
-					DiagonalMatrix[Power[sub, m] Power[InvProp/@sub ,n]],
-				Power[InvProp@ MassOp[ftype1, temp ], n_]-> 
-					DiagonalMatrix[Power[InvProp/@sub ,n]],
-				MassOp[ftype1, temp] -> 
-					DiagonalMatrix@ sub,
-				Power[MassOp[ftype1, temp], m_] -> 
-					DiagonalMatrix@ Power[sub, m]
-			}
-		, (*If operator does not occur in lag*)
-			{}
-		]
-	, {ftype1, {hScalar, hFermion, hVector, hGhost}}]; (*NB. Loop only over heavy DoFs*)
-	
-	(*Determine G substitutions (field-strength)*)
-	Gsub= Flatten@ Table[
-		(*Construct the field strength tensors of the field representation.*)
-		sub= Table[ 
-			If[MatchQ[f, _Conj],
-				f= First@ f;
-				CreateGTensor[GetFields[f, Indices], GetFields[f, Charges], True][lIndices[[1]], lIndices[[2]], i, j]
-			,
-				CreateGTensor[GetFields[f, Indices], GetFields[f, Charges], False][lIndices[[1]], lIndices[[2]], i, j] 
-			]
-		, {f, fields@ ftype1}];
+		(* Determine all allowed insertions of X-terms, Masses, ... such that the total EFT order of the STr is \[LessEqual] EFTOrder.
+		Only return unique insertions and include count how often they are repeated. *)
+		insertions = DeterminePowerInsertions[propTypes, maxEFTOrd- propOrder, OptionValue@ Fields];
 		
-		(*Include Lorenz index for vectors*)
-		If[MatchQ[ftype1, lVector|hVector], 
-			sub *= Metric[i, j];
-		];
-
-		(*Again with some indirect use of patterns. This is straight-forward and intuitive.*)
-		If[Length@ sub > 0,
-			Gop[ftype1, Pattern[#, Blank[]]&/@ {i, j}, Pattern[#, Blank[]]&/@ lIndices[[;;2]], devIndices_]-> 
-				DiagonalMatrix@ SymmetrizedCD[devIndices, sub]
-		, (*If operator does not occur in lag*)
-			{Gop[ftype1, __]-> 0}
-		]
-	, {ftype1, Keys@ $FieldTypes}];
-	
-	{Xords, (*Dispatch@*) Join[Xsub, Msub, Gsub]}
-];
-
-
-(* ::Text:: *)
-(*Auxiliary function for constructing the relevant DoFs of a field with indices to go in functional derivatives*)
-
-
-FieldDoFs[fields_List]:= FieldDoFs/@ fields;
-FieldDoFs[Conj@ f_Symbol]:= FieldDoFs[f, True];
-FieldDoFs[f_Symbol]:= FieldDoFs[f, False];
-FieldDoFs[f_Symbol, conj_]:= Block[{props= GetFields[f], inds, i},
-	inds= Sequence@@ ConstantArray[i, Length@ props@ Indices + If[GetFields[f, Type]=== Vector, 1, 0]];
-	ReplacePart[Switch[{props@ Type, conj}
-		,{Fermion, False},
-			Function[i, Evaluate@ f@ inds]
-		,{Fermion, True},
-			Function[i, Evaluate@ CConj@ f@ inds]
-		,{_, False},
-			Function[i, Evaluate@ f@ inds]
-		,{_, True},
-			Function[i, Evaluate@ Bar@ f@ inds]
-	], {1}-> i]
-];
-
-
-(* ::Subsubsection::Closed:: *)
-(*Make field-strength associated to field*)
-
-
-(* ::Text:: *)
-(*Constructs the field strength tensor associated with a set of index representations and charges*)
-
-
-CreateGTensor[reps_List, charges_List, conj_]:= Module[{i, j, \[Mu], \[Nu], gaugeInds, 
-		flavorInds, flavorDeltas, rep, rep2, abelFS, nonAbelFS, gaugeCharges, charge, group},
-	(*Global*)
-	gaugeInds= Cases[reps, _? (MemberQ[Keys@$GaugeGroups,GroupFromRep@ #] &)];
-	gaugeCharges= Cases[charges, _? (MemberQ[Keys@$GaugeGroups,Head@ #] &)];
-	flavorInds= Complement[Join[reps, charges], gaugeInds, gaugeCharges];
-	flavorDeltas= Product[Delta[Index[i, rep], Index[j, rep]], {rep, flavorInds}];
-	
-	(*Abelian*)
-	abelFS= Product[Delta[Index[i, rep], Index[j, rep]], {rep, gaugeInds}]*
+		(* Sum over all possible insertions and evaluate the traces *)
 		Sum[
-			{group, charge}= {Head@ charge, First@ charge};
-			If[conj, -1, 1] 
-			$GaugeGroups[group, Coupling][]
-			charge FieldStrength[$GaugeGroups[group, Field], {\[Mu], \[Nu]}, {}, {}]
-		, {charge, gaugeCharges}];
+			EvaluateSTr[genexp, ins, propTypes]
+		,
+			{ins, insertions}
+		]
+	,
+		{propOrder, 0, maxPropExpansionOrder}
+	];
 	
-	(*Non-Abelian*)
-	nonAbelFS= Sum[
-		group= GroupFromRep@ rep;
-		$GaugeGroups[group, Coupling][] 
-		Product[Delta[Index[i, rep2], Index[j, rep2]], {rep2, DeleteCases[gaugeInds, rep]}]*
-			FieldStrength[$GaugeGroups[group, Field], {\[Mu], \[Nu]}, 
-				If[conj, 
-					{Bar@ Index[i, rep], Index[j, rep]}
-				,
-					{Index[i, rep], Bar@ Index[j, rep]}
-				]
-			, {}]
-	, {rep, gaugeInds}];
+	result= ReplaceHeavyEOM[result, EFTOrder-> eftOrder];
 	
-	Function@@ {{\[Mu], \[Nu], i, j}, flavorDeltas(nonAbelFS+ abelFS)}
-];
+	preFactor result
+]
+
+
+(* ::Subsection:: *)
+(*Generic power-type hard-region expansion of propagators*)
+
+
+(* ::Text:: *)
+(*Function to determine the generic hard-region expanded trace blue-print based on the propagator types*)
+(*	propTypes: list of propagator types as obtained by GenerateSuperTraces.*)
+(*	Expand each propagator in propTypes such that the overall EFT order of the STr is exactly expOrder.*)
+
+
+GenericPropagatorExpansion[propTypes_List, expOrder_]:= Module[
+		{genInds, n, masses, props, Xops, types, orders, propNo= Length@ propTypes},
+	genInds=  Table[Symbol["$i"<> ToString@ n], {n, propNo+ 1}];
+	
+	(*Create the list of X-op (+ WilsonLine) templates to go in template*)
+	Xops= MapThread[Xop, 
+		{Partition[propTypes, 2, 1, 1], Partition[genInds, 2, 1], Table[n, {n, propNo}]}];
+	AppendTo[Xops, WilsonLine[First@ propTypes, genInds[[{-1, 1}]]]];
+	
+	(*Determine the correspinding propagator masses *)
+	types= RotateLeft[propTypes];
+	masses= MapThread[Mop, {types, genInds[[2;;]], Table[n, {n, propNo}]}];
+	
+	(*Sum over all ways to expand the propagators*)
+	Sum[
+		props= MapThread[PropAtOrder, {types, masses, orders}];
+		(*Interweave Xops and expanded propagators *)
+		FuncNCM@@ (Riffle[Xops, props]/. PropAtOrder-> PropExpand)
+	, {orders, IntegerSets[expOrder, propNo]}]
+]
+
+
+(*Return[
+		FuncNCM[Xop[{\[CapitalPhi],\[CapitalPhi]},{i,j},1], (Prop@Mop[\[CapitalPhi],j,1])^k, LoopMom[___], CD[___], .. , WilsonLine[\[CapitalPhi],{i,j}]]
+		+FuncNCM[Xop[{\[CapitalPhi],\[CapitalPhi]},{i,j},2], (Prop@Mop[\[CapitalPhi],j,2])^k, LoopMom[___], CD[___], .. , WilsonLine[\[CapitalPhi],{i,j}]]
+		+ ...
+	]*)
+
+
+(* ::Subsubsection:: *)
+(*Expansion of propagators*)
+
+
+(* ::Text:: *)
+(*Determine expansion type*)
+
+
+PropExpand[fType_, mass_, ord_, OptionsPattern[]]:= Switch[$FieldTypes[fType, Type]
+	,Fermion, 
+		PropFermionExpand[mass, ord]
+	,Vector,
+		-PropBosonExpand[mass, ord]
+	,_,
+		PropBosonExpand[mass, ord]
+]
+
+
+(* ::Subsubsection:: *)
+(*Expansion of boson propagator*)
+
+
+(* ::Text:: *)
+(*The expansion is the n'th EFT order term of 1/[(k+ P)^2 - M^2] = 1/[k^2 - M^2] \sum_{n=0} ( -1)^n ( [2 k.P + P^2] / [k^2 - M^2] )^n  *)
+
+
+PropBosonExpand[mass_, 0]:= Prop@ mass;
+PropBosonExpand[mass_, ord_]:= Module[{indices, m, set, singleCDs,  pairCDs},
+	indices= Index[#, Lorentz]&/@ Table[Unique@ "mu", {m, ord}]; 
+	
+	(*Sum over the number of D^2 insertions*)
+	Power[-I, ord] Sum[
+		Power[-1, m]* Power[2, ord- 2m]* Power[Prop@ mass, ord+ 1- m]*
+		 Times@@ LoopMom/@ indices[[;;-2 m-1]]* 
+		(*Sum the ways to position the D^2 insertions*)
+		Sum[
+			singleCDs= OpenCD/@ List/@ indices[[;;-2 m-1]];
+			pairCDs= FuncNCM@@ OpenCD/@ {{#}, {#}} &/@  indices[[-2m;; -m-1]];
+			pairCDs= FuncNCM@@@ VariableLengthPartition[pairCDs, set];
+			(*interweave the list of D_mu's and D^2's*)
+			FuncNCM@@ Riffle[pairCDs, singleCDs]
+		, {set, IntegerSets[m, 1+ord- 2m]}]
+	, {m, 0, Floor[ord/2]}]
+]
+
+
+(* ::Subsubsection:: *)
+(*Expansion of fermion propagator*)
+
+
+(* ::Text:: *)
+(*The expansion is the n'th EFT order term of 1/[(k.\[Gamma]+ P.\[Gamma]) - M] = [k.\[Gamma] + P.\[Gamma]+ M] [k^2 +2 k.P +P.\[Gamma] P.\[Gamma] - M^2]*)
+(*=    [k.\[Gamma] + P.\[Gamma]+ M]/[k^2 - M^2] \sum_{n=0} ( -1)^n ( [2 k.P + P.\[Gamma] P.\[Gamma]] / [k^2 - M^2] )^n *)
+
+
+PropFermionExpand[mass_, ord_]:= Module[{ind= Index[Unique@ "mu", Lorentz]},
+	FuncNCM[(DiracProduct@ GammaM@ LoopMom+ mass), PropFermionExpandHelper[mass, ord]]+
+	I* FuncNCM[DiracProduct@ GammaM@ ind, OpenCD@ {ind}, PropFermionExpandHelper[mass, ord -1]]
+]
+
+
+PropFermionExpandHelper[mass_, -1]:= 0;
+PropFermionExpandHelper[mass_, 0]:= Prop@ mass;
+PropFermionExpandHelper[mass_, ord_]:= Module[{indices, m, set, singleCDs,  pairCDs},
+	indices= Index[#, Lorentz]&/@ Table[Unique@ "mu", {m, ord}]; 
+	
+	(*Sum over the number of D^2 insertions*)
+	Power[-I, ord] Sum[
+		Power[-1, m]* Power[2, ord- 2m]* Power[Prop@ mass, ord+ 1- m]*
+		 Times@@ LoopMom/@ indices[[;;-2 m-1]]* 
+		(*Sum the ways to position the D^2 insertions*)
+		Sum[
+			singleCDs= OpenCD/@ List/@ indices[[;;-2 m-1]];
+			pairCDs= FuncNCM@@@ Partition[FuncNCM[DiracProduct@ GammaM@ #, OpenCD@ {#}]&/@ indices[[-2m;;]], 2];
+			pairCDs= FuncNCM@@@ VariableLengthPartition[pairCDs, set];
+			(*interweave the list of D_mu's and D^2's*)
+			FuncNCM@@ Riffle[pairCDs, singleCDs]
+		, {set, IntegerSets[m, 1+ ord- 2m]}]
+	, {m, 0, Floor[ord/2]}]
+]
+
+
+(* ::Subsection:: *)
+(*Determine insertions of X *)
+
+
+(* ::Text:: *)
+(*Determine all insertions (with total EFT order <= order) for Xop, Mop, and Wilson line.	 For equivalent insertions only return one of them and the count.*)
+(*propTypes: list of propagator types as obtained by ListPowerTypeTraces. *)
+(*order: EFT order to which the insertions are allowed to sum maximally.*)
+
+
+DeterminePowerInsertions[propTypes_List, order_, propFields_]:= Module[
+		{fieldPattern, insertionOrders, XSamples, subs, Xtypes},
+	Xtypes= Partition[propTypes, 2, 1, 1];
+	XSamples= Partition[#, 2, 1, 1]&/@ Tuples[propTypes/. $XFieldDofs];
+	
+	(*Remove fields if a particular loop is considered*)
+	If[propFields =!= All,
+		fieldPattern= Partition[propFields, 2, 1, 1];
+		XSamples= Cases[XSamples, x_/; MatchQ[x/. Conj-> Identity, fieldPattern]];
+	];
+	
+	(*Select only the samples that might work*)
+	subs=Min/@ $XOrders;
+	XSamples= Select[XSamples, (Total[(#/. subs)]<= order) &];
+	If[Length@ XSamples === 0, Return@ {};];
+	
+	(*List all concrete combinations Xterms+order not greater than "order"*)
+	insertionOrders= Select[Tuples[#/. $XOrders], x|-> (Total@x <= order)]&/@ XSamples;
+	XSamples= Flatten[MapThread[{x, y}|-> Transpose/@ Thread[{x, y}, List, {2}], 
+		{XSamples, insertionOrders}], 1];
+	
+	(*Delete cyclically identical insertions and add sym. factor*)
+	XSamples= {CyclicSymFactor@ #, #}&/@ DeleteDuplicatesByCylcicity@ XSamples;
+	
+	(*Create replacement patterns*)
+	MapAt[Xs|-> Flatten@ MapIndexed[
+		{Xop[Xtypes[[First@ #2]], {i_, j_}, First@ #2]-> Xterm[First@ #1, {i, j}, Last@ #1],
+		If[$FieldTypes[Xtypes[[First@ #2, 2]], Heavy],
+			Mop[Xtypes[[First@ #2, 2]], i_, First@ #2]-> Mterm[#1[[1, 2]], i],
+			Nothing],
+		If[First@ #2=== Length@ propTypes, 
+			WilsonLine[Xtypes[[First@ #2, 2]], {i_, j_}]-> WilsonTerm[#1[[1, 2]], {i, j}, {}]
+		, Nothing]} &, 
+		Xs], XSamples, {All, 2}]
+]
+
+
+	(*Return[{
+		{1/2 (*count*), {Xop[{\[CapitalPhi],\[CapitalPhi]},{i,j},1]->Xterm[{\[Phi],h},{i,j},ord], .., Mop[\[CapitalPhi],j,1]->Mterm[h,j], .., WilsonLine[\[CapitalPhi],{i,j}]->WilsonTerm[\[Phi],{i,j},{}]}}, 
+		.. (* other insertions *)
+	}]*)
+
+
+(* ::Text:: *)
+(*Adjust for cyclic permutations*)
+
+
+DeleteDuplicatesByCylcicity@ list_:= DeleteDuplicatesBy[list, 
+	First@ Sort@ NestList[RotateRight, #, Length@ #- 1]& ];
+CyclicSymFactor@ list_:= Length@ DeleteDuplicates@ NestList[RotateRight, list, Length@ list- 1]/ 
+	Length@ list;
 
 
 (* ::Section:: *)
-(*SuperTrace functions *)
-
-
-(* ::Subsection::Closed:: *)
-(*Determine power type traces*)
+(*Log traces *)
 
 
 (* ::Text:: *)
-(*To determine all the kinds of power type tracers labelled by their propagators*)
-
-
-PowerTypeTraces[{order_Integer}, opt___]:= PowerTypeTraces[order, opt];
-
-
-PowerTypeTraces[order_Integer, lightOnly_:False]:= Module[{possibilities, seed, temp, Xords},
-	Xords= $currentXdims;
-	
-	(*Recursively determines candidates for traces with order \[LessEqual] order*)
-	possibilities= Flatten[Last@ Reap[
-		(*Determines whether to only consider light traces or traces with at least one heavy field*)
-		If[lightOnly,
-			seed= Sow@ {{lScalar}, {lFermion}, {lVector}};
-			While[(Length@ seed> 0),
-				temp= Flatten/@ Tuples[{seed, {lScalar, lFermion, lVector}}];
-				seed= Sow@ DeleteCases[temp, _? (Total[Min/@ BlockMap[Xords, #, 2, 1]]>= order&), {1}];
-			];
-		,
-			seed= Sow@ {{hScalar}, {hFermion}, {hVector}, {hGhost}};
-			While[(Length@ seed> 0),
-				temp= Flatten/@ Tuples[{seed, {hScalar, lScalar, hFermion, lFermion, hVector, lVector, hGhost, lGhost}}];
-				seed= Sow@ DeleteCases[temp, _? (Total[Min/@ BlockMap[Xords, #, 2, 1]]>= order&), {1}];
-			];
-		];
-	], 2];
-	
-	
-	(*Eliminates traces with order > order*)
-	possibilities= DeleteCases[possibilities, 
-		_? (Total[Min/@ BlockMap[Xords, #, 2, 1]]+ Min@ Xords@ #[[{-1, 1}]] > order&), {1}];
-	
-	(*Delete duplicates under cyclic permutations*)
-	DeleteDuplicatesBy[possibilities, (First@ Sort@ NestList[RotateLeft, #, Length@# - 1] &)]
-];
+(*Evaluation of log-type supertraces*)
 
 
 (* ::Subsection:: *)
-(*Ancillary functions*)
-
-
-(* ::Subsubsection::Closed:: *)
-(*Supertrace setup *)
+(*Evaluate log-type traces*)
 
 
 (* ::Text:: *)
-(*CDE expansion of a list of propagators and X-terms constituting a supertrace*)
+(*Evaluate the particular log-type supertrace as indicated by the propagator class *)
 
 
-SuperTraceCDE@ expr_List:= ContractMetric[
-		ExtractMomenta@ CollectGammaMatrices@ PerformMomDerivatives@ ContractDelta@ (MomNCM@@ TildeExpand@ expr),
-		Expand-> False];
-
-
-(* ::Text:: *)
-(*Symmetry factor of power-type supertrace (depends on the type of propagators).*)
-
-
-PowerTypeSymmetryFactor[props_]:= 
-	Length@ DeleteDuplicates@ NestList[RotateRight, props, Length@ props- 1]/ Length@ props;
-
-
-(* ::Subsubsection::Closed:: *)
-(*Matrix handling *)
-
-
-(* ::Text:: *)
-(*To select only submatrices of the X operators, G terms and propagators, corresponding to particular fields. HoldPart (later to be replaced with part) is used to because Part always evaluates.  *)
-
-
-PickParts[expr_MatrixNCM, parts_]:= Module[{i= 1, len= Length@ parts},
-	Replace[expr, {
-			op_Xop:> HoldPart[op, parts[[i++]], parts[[Mod[i, len, 1] ]] ],
-			op:Except[_DiracProduct]:> HoldPart[op, parts[[i]], parts[[i]]] 
-		}, {1}]
-];
-PickParts[expr_, parts_]:= expr/. x_MatrixNCM:> PickParts[x, parts];
-
-
-(* ::Subsubsection::Closed:: *)
-(*Flavors on heavy masses*)
-
-
-(* ::Text:: *)
-(*Function that takes expression from MatrixNCM to MomNCM form. It first separates out all flavor indices associated with the heavy masses, to ensure there is no conflict from triple-repeated indices*)
-
-
-MatrixToMomNCM@ ncm_MatrixNCM:= Module[{deltas, indTypes, massInds, out, replacements},
-	(*If no mass indices return*)
-	massInds= Cases[ncm, InvProp[Coupling[_, {ind_Index}, 0]]:> ind, All];
-	If[Length@ massInds === 0, Return[MomNCM@@ ncm]];
-	
-	(*Find all deltas of the mass index types*)
-	indTypes= DeleteDuplicates[massInds/. Index[_, type_]-> type];
-	{deltas, out}= SelectAndDelteCases[ncm, 
-		delt:Delta[Index[_, Alternatives@@ indTypes], _]:> List@@ delt, All];
-	
-	(*Determine what delta chains contain the mass indices*)
-	deltas= deltas//. {OrderlessPatternSequence[{a___, x_, b___}, {c___, x_, d___}, rest___]}:> 
-		{{x, x, a, b, c, d}, rest};
-	
-	(*The mass chain indices are replaced in output; the others are reinstated as contracted deltas*)
-	{replacements, deltas}= SelectAndDelteCases[deltas, 
-		inds_?(ContainsAny[massInds])];
-	replacements= (Thread@ Rule[#[[2;;]],#[[1]]] &)/@ DeleteDuplicates/@ replacements// Flatten;
-	Product[
-			delt= Tally@ delt;  
-			If[Length[temp= DeleteCases[delt, {_, 2}]] === 0,
-				DimRep@ delt[[1, 1, -1]]
-			,
-				Delta@@ temp[[;;, 1]]
-			] 
-		,{delt, deltas}]* (MomNCM@@ out/. replacements)
-]
-
-
-MatrixToMomNCM@ expr_:= expr/. ncm_MatrixNCM:> MatrixToMomNCM@ ncm;
-
-
-(* ::Subsection:: *)
-(*Power-type supertraces*)
-
-
-(* ::Subsubsection::Closed:: *)
-(*CDE setup   *)
-
-
-(* ::Text:: *)
-(*Function for making CDE templates for the power-type traces providing also the overall loop factor and the options for X orders based on the current Lagrangian*)
-
-
-CDETemplates[propagatorTypes_List]:= Module[{inds, preFact, temp, traceXords, traceTemplate, len= Length@ propagatorTypes},
-	(*Determines Supertrace sign and symmetry factor*)
-	preFact= -I/2 hbar PowerTypeSymmetryFactor@ propagatorTypes Switch[First@ propagatorTypes,
-		hScalar | lScalar | hVector  | lVector,  +1,
-		hFermion | lFermion | hGhost | lGhost, -1
-	];
-	
-	(*Construct all combinations of no. of open derivatives on the X operators with min dimension of contribution.
-		List with {<set of No. of open devs for the Xs>, <total order of all those Xs>}*)
-	temp= Table[$currentXdims@ propagatorTypes[[{n, Mod[n +1, len, 1]}]], {n, len}];
-	traceXords= Tuples[Range/@ Length/@ temp];
-	traceXords= Table[
-			{openDevs- 1, Sum[temp[[n, openDevs[[n]]]], {n, len}]}
-		,{openDevs, traceXords}];
-	
-	(*Defines an index label for every propagator*)
-	inds= Index[#, GenericIndex]&/@ Table[Symbol["$i"<> ToString@ n], {n, 2 len}];
-	(*Make template for the trace*)
-	traceTemplate= Flatten@ Table[
-			{PropTil[propagatorTypes[[n]], inds[[{2n-1, 2n}]], 0],
-			XTil[propagatorTypes[[{n, Mod[n +1, len, 1]}]], inds[[{2n, Mod[2n +1, 2len, 1]}]], 0, 0]}
-		, {n, len}];
-	{preFact, traceXords, traceTemplate}
-]
-
-
-(* ::Text:: *)
-(*Traces fermion line if necessary and performs Dirac product simplifications.*)
-
-
-CloseFermionLoop[propagators_, expr_]:= Module[{out= ReleaseMomNCM@ expr},
-	out= If[MatchQ[First@ propagators, hFermion| lFermion],
-			FermionTrace@ out,
-			out
-		];
-	ContractMetric@ RefineDiracProducts@ CanonizeSpinorLines@ out
-]
-
-
-(* ::Subsubsection::Closed:: *)
-(*Power-type matching function*)
-
-
-(* ::Text:: *)
-(*This is the core function that computes a specific power-type super trace given Lagrangian and a list of propagator types. Option pattern can be used to restrict loop to certain field DoFs. *)
-
-
-Options[PowerTypeSTr]= {
-	Fields-> All,
-	Pattern-> _List
-	};
-
-
-PowerTypeSTr[propagatorTypes_List, eftOrder:(_Integer|{_Integer}), OptionsPattern[]]:= Module[{expr, extraOrds, inds, len, maxOrd, n, openDevs, 
-	preFact, temp, traceTemplate, Xs, traceXords},
-	
-	maxOrd= If[Head@ eftOrder === List, 
-			First@ eftOrder,
-			eftOrder
-		];
-	len= Length@ propagatorTypes;
-	
-	{preFact, traceXords, traceTemplate}= CDETemplates@ propagatorTypes;
-	
-	(*Sum over the number of open derivatives*)
-	Sum[
-		expr= traceTemplate;
-		expr[[2;; ;;2, 3]]= First@ openDevs;
-		(*Sum over the ways of distributing the CDE orders*)
-		expr= Sum[Catch[
-			(*For debugging. Remove all CDs not compatible with Pattern*)
-			If[!MatchQ[OptionValue@ Pattern]@ extraOrds, Throw@ 0;]; 
-			(*CDE expansion of the term*)
-			temp= expr; temp[[;;, -1]]+= extraOrds;
-			temp= SuperTraceCDE@ temp/. MomNCM-> MatrixNCM;
-			(*Substitute in the model specific terms*)
-			temp= If[OptionValue@ Fields === All, 
-				Tr[temp/. Index[a_, GenericIndex]-> a/. $currentXsubs]
-			, (*$currentXsubs \[Rule] FS in Gop*)
-				Tr[PickParts[temp/. Index[a_, GenericIndex]-> a, OptionValue@ Fields]/. $currentXsubs/. HoldPart-> Part]
-			];
-			
-			temp= temp// ExpandMatrixNCM// MatrixToMomNCM;
-			temp= temp/. Tr@ 0-> 0/. x:Alternatives[_InvProp, Power[_InvProp, _]]:> Commutative@ x/. Commutative@ x_-> x;  
-			
-			(*Eliminate terms with too high of an eftOrder*)
-			temp= SeriesEFT[temp, EFTOrder-> maxOrd];
-			(*SplitSymmetrizedCDs@ RelabelIndices@ Contract@ CollectGammaMatrices@ temp *)
-			SplitSymmetrizedCDs@ RelabelIndices@ temp 
-			]
-		, {order, maxOrd}, {extraOrds, IntegerSets[order -openDevs[[-1]], 2 len]}];
-		
-		expr= CloseFermionLoop[propagatorTypes, expr];
-				
-		(*Loop integrate*)
-		expr= EpsExpand@ LoopIntegrate@ expr;
-		expr= CollectGammaMatrices@ Contract@ ReplaceHeavyEOM[expr, EFTOrder-> eftOrder];
-		expr= ContractDelta@ ContractCGs@ SeparateGeneratorsFromFS@ expr; 
-		RelabelIndices[preFact expr]
-		 
-	,{openDevs, traceXords}]
-];
-
-
-(* ::Subsubsection::Closed:: *)
-(*Evanescent supertrace*)
-
-
-(* ::Text:: *)
-(*This is the core function that computes a specific power-type super trace given Lagrangian and a list of propagator types. Option pattern can be used to restrict loop to certain field DoFs. *)
-
-
-Options[EvanescentSTr]= {
-	Fields-> All,
-	Pattern-> _List
-	};
-
-
-EvanescentSTr[propagatorTypes_List, eftOrder:(_Integer|{_Integer}), OptionsPattern[]]:= Module[{expr, extraOrds, inds, len, maxOrd, n, openDevs, 
-	preFact, temp, traceTemplate, Xs, traceXords},
-	
-	maxOrd= If[Head@ eftOrder === List, 
-			First@ eftOrder,
-			eftOrder
-		];
-	len= Length@ propagatorTypes;
-	
-	{preFact, traceXords, traceTemplate}= CDETemplates@ propagatorTypes;
-	
-	(*Sum over the number of open derivatives*)
-	Sum[
-		expr= traceTemplate;
-		expr[[2;; ;;2, 3]]= First@ openDevs;
-		(*Sum over the ways of distributing the CDE orders*)
-		expr= Sum[Catch[
-			(*For debugging. Remove all CDs not compatible with Pattern*)
-			If[!MatchQ[OptionValue@ Pattern]@ extraOrds, Throw@ 0;]; 
-			(*CDE expansion of the term*)
-			temp= expr; temp[[;;-2, -1]]+= extraOrds;
-			temp= SuperTraceCDE@ temp/. MomNCM-> MatrixNCM;
-			(*Substitute in the model specific terms*)
-			temp= If[OptionValue@ Fields === All, 
-				Tr[temp/. Index[a_, GenericIndex]-> a/. $currentXsubs]
-			, (*$currentXsubs \[Rule] FS in Gop*)
-				Tr[PickParts[temp/. Index[a_, GenericIndex]-> a, OptionValue@ Fields]/. $currentXsubs/. HoldPart-> Part]
-			]/. MatrixNCM-> MomNCM;
-			temp= temp/. Tr@ 0-> 0/. x:Alternatives[_InvProp, Power[_InvProp, _]]:> Commutative@ x/. Commutative@ x_-> x;  
-			
-			(*Eliminate terms with too high of an eftOrder*)
-			temp= SeriesEFT[temp, EFTOrder-> maxOrd];
-			
-			(*Select evanescent contributions*)
-			temp= Coefficient[EvenBetterExpand@ temp, ev];
-			
-			(*Implement IR mass regulator*)
-			temp= Coefficient[temp, InvProp[0]^-2]; 
-			(*temp= temp/. InvProp@ 0-> InvProp@ mIR;*)
-			
-			SplitSymmetrizedCDs@ RelabelIndices@ temp 
-			]
-		, {order, maxOrd}, {extraOrds, IntegerSets[order -openDevs[[-1]], 2 len -1]}];
-		
-		expr= CloseFermionLoop[propagatorTypes, expr];
-		
-		(*Loop integrate: epsilon pole from 1/(l^2- mIR)^2*)
-		expr= EpsExpand[I/\[Epsilon] expr//Expand];
-		
-		expr= ContractMetric@ CollectGammaMatrices@ expr;
-		expr= ContractDelta@ ContractCGs@ SeparateGeneratorsFromFS@ expr; 
-		
-		expr= RelabelIndices[preFact expr];
-		
-		(*Reduce multiple Gamma Products *)
-		EpsExpand[expr//Expand//GammaReduction]
-		
-	,{openDevs, traceXords}]
-]
-
-
-(* ::Subsection::Closed:: *)
-(*Log-type supertrace*)
-
-
-(* ::Text:: *)
-(*This is the core function that computes a specific log-type super trace given Lagrangian and a heavy field type. Option pattern can be used to restrict loop to certain field DoFs. *)
-
-
-(*NB implement test to check if field type is part of Lagrangian: if so return 0.*)
-
-
-Options[LogTypeSTr]= {Fields-> All};
+Options@ LogTypeSTr= {Fields-> All};
 
 
 (*Inclusive*)
@@ -855,95 +331,424 @@ LogTypeSTr[propType_, order_Integer, opt:OptionsPattern[]]:= Module[{m},
 ];
 
 (*Exclusive*)
-LogTypeSTr[propType_, {order_Integer}, OptionsPattern[]]:= Module[
-		{expr, ind, preFact},
-	ind= Index[Symbol@ "$i1", GenericIndex];
+LogTypeSTr[propType_, {eftOrder_}, OptionsPattern[]]:= Module[
+		{result, genexp, insertions, preFactor},
 	
-	(*Overall factor determined by boson/fermion, \[Xi] integral, and Lorentz trace.*)
-	(*crosschecked*)
-	preFact= I/2 hbar Switch[propType,
-		hScalar, 2 MassOp[hScalar, ind]^2,
-		hFermion, - MassOp[hFermion, ind],
-		hVector, -2 MassOp[hVector, ind]^2,
-		hGhost, -2 MassOp[hGhost, ind]^2
-	]/ (order- 4+ 2\[Epsilon]);
+	preFactor= I hbar/ 2 Switch[propType,
+			hScalar| hVector, 1,
+			hFermion| hGhost, - 1
+		];
 	
-	(*CDE of the propagator*)
-	expr= MomNCM[preFact, #]&/@ SuperTraceCDE@ {PropTil[propType, {ind, ind}, order]}/. MomNCM-> MatrixNCM;
+	(* Determine all allowed insertions of X-terms, Masses, ... such that the total EFT order of the STr is \[LessEqual] EFTOrder.
+	Only return unique insertions and include count how often they are repeated. *)
+	insertions = DetermineLogInsertions[propType, OptionValue@ Fields];
+	If[Length@ insertions === 0, Return@ 0;];
 	
-	(*Substitute in the model specific terms*)
-	expr= If[OptionValue@ Fields === All, 
-		Tr[expr/. Index[a_, GenericIndex]-> a/. $currentXsubs]
-	,
-		Tr[PickParts[expr/. Index[a_, GenericIndex]-> a, OptionValue@ Fields]/. $currentXsubs/. HoldPart-> Part]
-	];
-	expr= expr// ExpandMatrixNCM// MatrixToMomNCM;
+	(* Expand all propagators in STr to the given propOrder (exclusive) *)
+	genexp = GenericLogExpansion[propType, eftOrder]; (* This could be cached *)
+	
+	(* Sum over all possible insertions and evaluate the traces *)
+	result= Sum[
+		EvaluateSTr[genexp, ins, {propType}]
+	, {ins, insertions}];
+	
+	preFactor result
+]
 
-	(*Further simplifications and spinor trace*)
-	expr= expr/. Tr@ 0-> 0/. x:Alternatives[_InvProp, Power[_InvProp, _]]:> Commutative@ x/. Commutative@ x_-> x;
+
+(* ::Subsection:: *)
+(*Generic log- type hard-region expansion of the log term*)
+
+
+(* ::Text:: *)
+(*Function to determine the generic hard-region expanded log blue-print based on field type*)
+(*	Expand the log such that the overall EFT is exactly expOrder.*)
+
+
+GenericLogExpansion[propType_, expOrder_] := Module[
+		{genInd, n, masses, prop, Xops, types, orders, propNo= Length@ propTypes},
+	genInd= Symbol["$i"<> ToString@ 1];
 	
-	(*expr= RelabelIndices@ Contract@ CollectGammaMatrices@ expr //Timing;*)
+	prop= PropLogExpand[propType, Mop[propType, genInd, 1], expOrder];
+	FuncNCM[prop, WilsonLine[propType, {genInd, genInd}]]
+]
+
+
+(* ::Subsubsection:: *)
+(*Expansion of log*)
+
+
+(* ::Text:: *)
+(*Determine expansion type*)
+
+
+PropLogExpand[fType_, mass_, ord_, OptionsPattern[]]:= Switch[$FieldTypes[fType, Type]
+	,Fermion, 
+		LogFermionExpand[mass, ord]
+	,Vector,
+		-LogBosonExpand[mass, ord]
+	,_,
+		LogBosonExpand[mass, ord]
+]
+
+
+(* ::Subsubsection:: *)
+(*Expansion of boson log*)
+
+
+(* ::Text:: *)
+(*The expansion is the n'th EFT order term of log[(k+ P)^2 - M^2] = cst. - \sum_{n=1} ( -1)^n ( [2 k.P + P^2] / [k^2 - M^2] )^n  *)
+
+
+LogBosonExpand[mass_, 0]:= 0;
+LogBosonExpand[mass_, ord_]:= Module[{indices, m, set, singleCDs,  pairCDs},
+	indices= Index[#, Lorentz]&/@ Table[Unique@ "mu", {m, ord}]; 
 	
-	expr = Contract@ expr;
-	(*expr= Contract@ CollectGammaMatrices@ expr;*)
-(*	If[MatchQ[propType, hFermion],
-		expr= Contract@ FermionTrace@ expr; 
-	];*)
+	(*Sum over the number of D^2 insertions*)
+	Power[-I, ord] Sum[
+		Power[-1, m+1]/ (ord- m)* Power[2, ord- 2m]* Power[Prop@ mass, ord- m]*
+		 Times@@ LoopMom/@ indices[[;;-2 m-1]]* 
+		(*Sum the ways to position the D^2 insertions*)
+		Sum[
+			singleCDs= OpenCD/@ List/@ indices[[;;-2 m-1]];
+			pairCDs= FuncNCM@@ OpenCD/@ {{#}, {#}} &/@  indices[[-2m;; -m-1]];
+			pairCDs= FuncNCM@@@ VariableLengthPartition[pairCDs, set];
+			(*interweave the list of D_mu's and D^2's*)
+			FuncNCM@@ Riffle[pairCDs, singleCDs]
+		, {set, IntegerSets[m, 1+ ord- 2m]}]
+	, {m, 0, Floor[ord/2]}]
+]
+
+
+(* ::Subsubsection:: *)
+(*Expansion of fermion log*)
+
+
+(* ::Text:: *)
+(*The n'th term of the squared fermion log reads tr log[(k.\[Gamma]+ P.\[Gamma]) - M] = cst.  - 1/2 \sum_{n=1} ( -1)^n ( [2 k.P + P^2 - i \sigma_{ab} P_a P_b] / [k^2 - M^2] )^n*)
+
+
+LogFermionExpand[mass_, 0]:= 0;
+LogFermionExpand[mass_, ord_]:= Module[{indices, m, set, singleCDs,  pairCDs},
+	indices= Index[#, Lorentz]&/@ Table[Unique@ "mu", {m, ord}]; 
 	
-	expr= CloseFermionLoop[{propType}, expr];
+	(*Sum over the number of D^2 insertions*)
+	Power[-I, ord] Sum[
+		Power[-1, m+1]/ (ord- m)* Power[2, ord- 2m- 1]* Power[Prop@ mass, ord- m]*
+		 Times@@ LoopMom/@ indices[[;;-2 m-1]]* 
+		(*Sum the ways to position the D^2 insertions*)
+		Sum[
+			singleCDs= OpenCD/@ List/@ indices[[;;-2 m-1]];
+			pairCDs= FuncNCM@@@ Partition[FuncNCM[DiracProduct@ GammaM@ #, OpenCD@ {#}]&/@ indices[[-2m;;]], 2];
+			pairCDs= FuncNCM@@@ VariableLengthPartition[pairCDs, set];
+			(*interweave the list of D_mu's and D^2's*)
+			FuncNCM@@ Riffle[pairCDs, singleCDs]
+		, {set, IntegerSets[m, 1+ ord- 2m]}]
+	, {m, 0, Floor[ord/2]}]
+]
+
+
+(* ::Subsection:: *)
+(*Determine log insertions *)
+
+
+(* ::Text:: *)
+(*Determine the log insertions corresponding to the propagator type*)
+
+
+DetermineLogInsertions[propType_, propFields_]:= Module[{lagFields, chargedFields, fields},
+	lagFields= Lookup[$XFieldDofs, propType, {}];
 	
-(*	expr= If[MatchQ[propType, hFermion| lFermion],
-			FermionTrace@ expr,
-			ReleaseMomNCM@ expr
-		];*)
+	(*Filter out uncharged fields*)
+	chargedFields= Union[
+		GetFieldsByProperty[Sequence@@ Normal@ $FieldTypes@ propType, Charges-> {__}], 
+		GetFieldsByProperty[Sequence@@ Normal@ $FieldTypes@ propType, Indices-> inds_/; 
+			IntersectingQ[GroupFromRep/@ inds, Keys@ $GaugeGroups]]
+		];
+	fields= Cases[lagFields, f_/; MemberQ[chargedFields, f/. Conj-> Identity]];
 	
-	(*Loop integral*)
-	expr= EvaluateLoopFunctions@ SplitSymmetrizedCDs@ EpsExpand@ LoopIntegrate[expr, LogTerm-> True];
-	expr= ContractDelta@ ContractCGs@ SeparateGeneratorsFromFS@ expr; 
-	RelabelIndices@ expr
+	(*Remove fields if a particular loop is considered*)
+	If[propFields =!= All,
+		fields= Cases[fields, f_/; MatchQ[f/. Conj-> Identity, First@ propFields]];
+	];
+	
+	
+	If[Length@ fields === 0, Return@ {};];
+	
+	{1, {
+		Mop[propType, i_, 1]-> Mterm[#, i],
+		WilsonLine[propType, {i_, j_}] -> WilsonTerm[#, {i, j}, {}]
+	} }&/@ fields
+]
+
+
+	(*Return[{
+		{1 (*count*), {Mop[\[CapitalPhi],j,1]->Mterm[h,j], .., WilsonLine[\[CapitalPhi],{i,j}]->WilsonTerm[\[Phi],{i,j},{}]}}, 
+		.. (* other insertions *)
+	}]*)
+
+
+(* ::Section:: *)
+(*Shared evaluation functions*)
+
+
+(* ::Subsection:: *)
+(*Main evaluation of supertraces*)
+
+
+(* ::Text:: *)
+(*Function for performing a supertrace given a generic propagator expansion and an X-term substitution*)
+
+
+EvaluateSTr[expr_, {factor_, replacement_}, propTypes_]:= Module[{out},
+	out= factor expr/. replacement/. $Xsubs/. $Msubs;
+	out= ActWithOpenCDs@ out/. FuncNCM-> NonCommutativeMultiply// GatherLoopMomenta// RemoveSymmetryVanishingWilsonTerms;
+	out= CloseFermionLoop[out, propTypes];
+	out= out// EvaluateSymmetricLorentzInds// ContractMetric//RelabelIndices// WilsonExpand;
+	out= out// LoopIntegrate;
+	out= out// RelabelIndices// ExpandGenFSs// ContractDelta// ContractCGs// ContractDelta;
+	out// RefineDiracProducts// ContractMetric// EpsExpand// RelabelIndices
+]
+
+
+(* ::Subsubsection:: *)
+(*Identify vanishing WilsonTerms*)
+
+
+(* ::Text:: *)
+(*A fully symmetric tensor from the CDs contracting into the WilsonTerm vanish identically.*)
+(*Assumes one WilsonTerm and at most one SymmetricLorentzInds in each term. It should be called after acting with all CDs.*)
+
+
+RemoveSymmetryVanishingWilsonTerms@ expr_:= Module[{out= BetterExpand@ expr, symInds, wilsonInds},
+	If[Head@ out === Plus, Return[RemoveSymmetryVanishingWilsonTerms/@ out];];
+	symInds= FirstCase[out, SymmetricLorentzInds@ inds___-> {inds}, {}, All];
+	wilsonInds= FirstCase[out, WilsonTerm[__, inds_]-> inds, {}, All];
+	If[Length@ wilsonInds === 0, Return@ out;];
+	
+	(*Checks for overlap between wilsonInds and symInds*)
+	If[SubsetQ[symInds, wilsonInds] || MatchQ[wilsonInds, {a_, a_}], 0, out]
+]
+
+
+(* ::Subsubsection:: *)
+(*Close fermion lines*)
+
+
+(* ::Text:: *)
+(*Traces fermion line if necessary and performs Dirac product simplifications.*)
+
+
+CloseFermionLoop[expr_, propagators_]:= Module[{out= expr},
+	out= If[MatchQ[First@ propagators, hFermion| lFermion],
+			FermionTrace@ out,
+			out
+		];
+	ContractMetric@ CanonizeSpinorLines@ out
+]
+
+
+(* ::Subsubsection:: *)
+(*Act with the open covariant derivatives*)
+
+
+(* ::Text:: *)
+(*Terminate all open CDs to the right in the functional expression. *)
+
+
+ActWithOpenCDs@ expr_:= expr//. {
+	FuncNCM[a___, cd:OpenCD[{mu_}], x:Except[_OpenCD], b___]:> 
+		FuncNCM[a, x, cd, b] + FuncNCM[a, CD[mu, x], b],
+	FuncNCM[a___, _OpenCD]:> 0
+};
+
+
+(* ::Subsection:: *)
+(*Wilson lines*)
+
+
+(* ::Text:: *)
+(*WilsonTerms are understood as WilsonTerm[\[Phi], {i, j}, {\[Mu], \[Nu], ...}] = D_x^\[Mu] D_x^\[Nu]... U^i_j(x, y) |_{y=x}, where index i transforms in the representation of field \[Phi], and j in the conjugate representation. *)
+
+
+(* ::Subsubsection:: *)
+(*Derivatives on the Wilson lines (parallel displacement propagators)*)
+
+
+(* ::Text:: *)
+(*Compute derivatives of all Wilson lines in an expression in the coincidence limit*)
+
+
+WilsonExpand@ expr_:= expr/. w_WilsonTerm:> WilsonTermExpand@@ w;
+
+
+(* ::Text:: *)
+(*Compute derivatives acting on single line, depending on the gauge representation of the underlying object*)
+
+
+WilsonTermExpand[field_, {ind1_, ind2_}, devInds_List]:= Module[
+		{conj, devSet, fieldCharges, fsSum, indices, fieldLabel, flavorIndices, 
+		gaugeIndSet, gaugeIndices, flavorDeltas, fieldStrengthFactor, lorentz},
+	fieldLabel= If[(conj= MatchQ[field, _Conj]), First@ field, field];
+	lorentz= If[$FieldAssociation[fieldLabel, Type] === Vector, Metric[ind1, ind2], 1]; 
+	indices= If[conj, Bar, Identity]@ Map[{Index[ind1, #1], Bar@ Index[ind2, #1]} &, 
+		GetFields[fieldLabel, Indices]];
+	
+	(*Returns the trivial line*)
+	If[Length@ devInds === 0,
+		Return[lorentz* Times@@ Delta@@@ indices];
+	];
+	
+	(*Determines gauge and flavor indices*)
+	gaugeIndices= Cases[indices, _? (MemberQ[Keys@ $GaugeGroups, GroupFromInd@ First@ #] &)];
+	flavorIndices= Complement[indices, gaugeIndices];
+	fieldCharges= If[conj, MapAt[Minus, #, {All, 1}]&, Identity]@ GetFields[fieldLabel, Charges];
+	
+	flavorDeltas= Times@@ Delta@@@ flavorIndices;
+	
+	(*Determines the sum over various field strength tensors*)
+	fieldStrengthFactor= Sum[
+		gaugeIndSet= GaugeIndexSet[gaugeIndices, Length@ devSet];
+		DevPreFact@ devSet* ContractDelta[Times@@ 
+			MapThread[FSWilsonFactor[#1, #2, fieldCharges]&, {devSet, gaugeIndSet}]]
+	, {devSet, DerivativeSubLists@ devInds}];
+	
+	lorentz* flavorDeltas* fieldStrengthFactor
+]
+
+
+DevPreFact[indSets_]:= Times@@ (-I (Length@ # -1)/ Length@ #&)/@indSets;
+
+
+(* ::Text:: *)
+(*Determines all index sets relevant to the computation of the CDs on the Wilson line. Returns a List of all ways to partition the original list in sublists.*)
+
+
+DerivativeSubLists@ l_List:=Block[{sets, len= Length@ l},
+	If[len< 2, Return@ {}; ];
+	If[len< 4, Return@ {{l}}; ];
+	
+	(*Constructs a list of partitions removing a valid subset from the original list*)
+	sets= Subsets[Range[len -1], {2, len -2}] ~Join ~{{}};
+	sets= PartDrop[l, #]&/@ sets;
+	
+	(*If possible make further partitions of the first subset of each set*)
+	Join@@ Table[
+		If[!MatchQ[set, {{}, _}],
+			Join[#, set[[{-1}]]]&/@ DerivativeSubLists@ First@ set
+		,
+			{{Last@ set}}
+		]
+	, {set, sets}]
+];
+
+
+(* ::Text:: *)
+(*Partitions out a subset of the list *)
+
+
+PartDrop[l_List, i_]:= {l[[i]], l[[Complement[Range@ Length@ l, i]]]};
+
+
+(* ::Subsubsection:: *)
+(*Generic field strength tensors*)
+
+
+(* ::Text:: *)
+(*Properties*)
+
+
+FSWilsonFactor[{a_, a_}, _, _]= 0;
+FSWilsonFactor[_, {___, {(Index[a_, rep_]|Bar@ Index[a_, rep_])..}, ___}, _]= 0;
+
+
+(* ::Text:: *)
+(*Expand out all generic field strength tensors in an expression*)
+
+
+ExpandGenFSs@ expr_:= expr/. FSWilsonFactor:> DevTermOnWilson// ContractDelta// SeparateGeneratorsFromFS
+
+
+(* ::Text:: *)
+(*A particular index set in the formula for the derivative set on a Wilson line *)
+
+
+DevTermOnWilson[devInds_, gaugeInds_, charges_]:= Block[
+		{abelFS, nonAbelFS, charge, group, n, perm, permutations, prefact},
+	permutations= Permutations@ devInds[[;; -2]];
+	
+	(*Abelian*)
+	abelFS= Times@@ Delta@@@ gaugeInds* Sum[
+			First@ charge* $GaugeGroups[Head@ charge, Coupling][]* 
+			Sum[ 
+				(*FieldStrength[$GaugeGroups[Head@ charge, Field], devInds[[-2;;]], {}, devInds[[;; -3]]]*)
+				FieldStrength[$GaugeGroups[Head@ charge, Field], {perm[[-1]], devInds[[-1]]}, 
+					{}, perm[[;; -2]]]
+			, {perm, permutations}]
+		, {charge, charges}];
+	
+	(*Non-Abelian FS*)
+	nonAbelFS= Sum[
+			group= GroupFromInd@ gaugeInds[[n, 1]];
+			$GaugeGroups[group, Coupling][]* Times@@ Delta@@@ Delete[gaugeInds, n]* 
+			Sum[
+				FieldStrength[$GaugeGroups[group, Field], {perm[[-1]], devInds[[-1]]}, 
+					gaugeInds[[n]], perm[[;; -2]]]
+			, {perm, permutations}]
+		, {n, Length@ gaugeInds}];
+	
+	(*Sum over all permutations of the of all but the last index of indSet*)
+	(abelFS+ nonAbelFS)/ Length@ permutations
+]
+
+
+PermutationReplacements@ list_:= Thread@ Rule[list, #]&/@ Permutations@ list;
+
+
+(* ::Text:: *)
+(*Creates several sets of gauge indices that contract to the original set, e.g., {{i, j}} -> { {{i, i[1]}}, {{i[1], j}} }*)
+
+
+GaugeIndexSet[originalSet_, 1]:= {originalSet};
+GaugeIndexSet[originalSet_, multiples_Integer]:= Block[{lab, out},
+	If[Length@ originalSet === 0, Return@ ConstantArray[{}, multiples];];
+	lab= FirstCase[originalSet[[1, 1]], Index[ind_, _]:> ind, {}, All];
+	out= ConstantArray[originalSet, multiples];
+	out[[;;-2, ;;, 2]]= MapIndexed[#1/. Index[_, rep_]:> Index[lab@ First@ #2, rep] &, out[[;;-2, ;;, 2]] ];
+	out[[2;;, ;;, 1]]= MapIndexed[#1/. Index[_, rep_]:> Index[lab@ First@ #2, rep] &, out[[2;;, ;;, 1]] ];
+	out
 ]
 
 
 (* ::Section:: *)
-(*One-loop matching*)
+(*General properties*)
 
 
-(* ::Subsubsection::Closed:: *)
-(*All one-loop contributions*)
+(* ::Subsection:: *)
+(*Mass term properties*)
 
 
 (* ::Text:: *)
-(*The full 1-loop matching function evaluating all log- and power-type traces relevant to the Lagrangian.*)
+(*Masses of light field types vanish*)
 
 
-Options[LoopMatch]= {
-	EFTOrder -> 6,
-	Verbose -> True 
-	};
+Mop[lScalar|lFermion|lVector|lGhost, __]:= 0;
 
 
-LoopMatch[opt:OptionsPattern[]]? OptionsCheck:= Module[
-		{field, fields, out, powerTraces, i=0},
-	out= OptionalMonitor[OptionValue@ Verbose,
-			Sum[
-				If[Length@ GetFieldsUpdatedByProperty@ $FieldTypes@ field > 0,
-					LogTypeSTr[field, OptionValue@ EFTOrder],
-					0
-				]
-			, {field, {hScalar, hFermion, hVector, hGhost}}]
-		, StringForm["Evaluating log-type supertrace: `1`", field/. fieldFormat] ];
-	
-	powerTraces= PowerTypeTraces[OptionValue@ EFTOrder];
-	out+= OptionalMonitor[OptionValue@ Verbose,
-			Sum[i++;
-				PowerTypeSTr[fields, OptionValue@ EFTOrder, 
-					Sequence@@ FilterRules[{opt}, Options@ PowerTypeSTr] ]
-			, {fields, powerTraces}]
-		, StringForm["Evaluating power-type supertrace: `1` \t (`2` / `3`)", 
-			fields/. fieldFormat, i, Length@ powerTraces] ];
-	
-	out
-];
+(* ::Text:: *)
+(*Heavy masses are assumed to be real*)
 
 
-fieldFormat= {hScalar-> "\[CapitalPhi]", lScalar-> "\[Phi]", hFermion-> "\[CapitalPsi]", lFermion-> "\[Psi]", hVector-> "V", lVector-> "A", lGhost-> "cA", hGhost-> "cV"};
+Mterm[Conj@ lab_, i_]:= Mterm[lab, i];
+
+
+(* ::Subsection:: *)
+(*Ancillary functions*)
+
+
+(* ::Text:: *)
+(*Partition a list into lists of variabel length  *)
+
+
+VariableLengthPartition[list_, lengths_]:= 
+	list[[#1 +1;; #2]]&@@@ Partition[Accumulate@Prepend[lengths, 0], 2, 1];

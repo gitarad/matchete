@@ -133,6 +133,7 @@ DZeroQ[_]= True;
 DZeroQ[Field]= False;
 DZeroQ[FieldStrength]= False;
 DZeroQ[OpenCD]= False;
+DZeroQ[WilsonTerm]= False;
 
 
 (* ::Subsection::Closed:: *)
@@ -147,17 +148,24 @@ TakeDev[{}, expr_]:= expr;
 TakeDev[{\[Mu]_, \[Nu]__}, expr_]:= TakeDev[{\[Mu]}, TakeDev[{\[Nu]}, expr]];
 TakeDev[\[Mu]_, _?DZeroQ]= 0;
 TakeDev[\[Mu]_, expr:Alternatives[_Plus, _List]]:= TakeDev[\[Mu], #]&/@ expr;
-TakeDev[\[Mu]_, expr:Alternatives[_Times, _NonCommutativeMultiply, _NCProduct]]:=
+TakeDev[\[Mu]_, expr:Alternatives[_Times, _NonCommutativeMultiply, _NCProduct, _FuncNCM]]:=
 	Module[{n}, Sum[MapAt[TakeDev[\[Mu], #]&, expr, n], {n, Length@expr}] ];
 TakeDev[{\[Mu]_}, Power[expr_, n_]]:= n TakeDev[{\[Mu]}, expr] Power[expr, n-1];
+
+
 TakeDev[\[Mu]_,Field[label_,type_,indices_,\[Nu]_]]:= Field[label,type,indices,Join[\[Mu],\[Nu]]];
 TakeDev[\[Mu]_,Bar@Field[label_,type_,indices_,\[Nu]_]]:= Bar@Field[label,type,indices,Join[\[Mu],\[Nu]]];
 TakeDev[\[Mu]_,Transp@Field[label_,type_,indices_,\[Nu]_]]:= Transp@Field[label,type,indices,Join[\[Mu],\[Nu]]];
 TakeDev[\[Mu]_,Transp@Bar@Field[label_,type_,indices_,\[Nu]_]]:= Transp@Bar@Field[label,type,indices,Join[\[Mu],\[Nu]]];
 TakeDev[\[Mu]_,FieldStrength[label_,li_,indices_,\[Nu]_]]:= FieldStrength[label,li,indices,Join[\[Mu],\[Nu]]];
+TakeDev[\[Mu]_,Bar@FieldStrength[label_,li_,indices_,\[Nu]_]]:= Bar@FieldStrength[label,li,indices,Join[\[Mu],\[Nu]]];
+
+
 TakeDev[\[Mu]_,X_EoM]:= CD[\[Mu],NormalForm@X];
 TakeDev[\[Mu]_, op_Operator]:= Operator@ CD[\[Mu], NormalForm@ op];
-TakeDev[\[Mu]_,Bar@FieldStrength[label_,li_,indices_,\[Nu]_]]:= Bar@FieldStrength[label,li,indices,Join[\[Mu],\[Nu]]];
+
+
+TakeDev[\[Mu]_, WilsonTerm[a__, \[Nu]_]]:= WilsonTerm[a, Join[\[Mu], \[Nu]]]; 
 
 
 (* derivatives acting to the right *)

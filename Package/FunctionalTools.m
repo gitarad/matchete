@@ -26,7 +26,7 @@ PackageImport["GroupMagic`"]
 (*Exported*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Internal*)
 
 
@@ -77,7 +77,7 @@ PackageScope["BackgroundFS"]
 (*Exported*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Internal*)
 
 
@@ -191,7 +191,7 @@ FD[_,y_,OptionsPattern[]] := Message[FD::invalidargument,y] /; !MatchQ[y, Field[
 (*Expansion of Field Strength tensors and Covariant Derivatives*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Expand fluctuations of vector fields*)
 
 
@@ -199,7 +199,8 @@ ExpandVectorFluctuations[lag_, f1_, f2__]:= ExpandVectorFluctuations[ExpandVecto
 
 
 (* This functions expands out the vector field fluctuations of the vector field y in Field Strengh tensors and Covariant Derivatives *)
-ExpandVectorFluctuations[x_, y_]:=Module[
+ExpandVectorFluctuations[x_, y_]:=
+ExpandVectorFluctuations[x, y]= Module[
 	{
 		gaugeGroup,
 		gaugeCoupling,
@@ -581,7 +582,7 @@ FuncD[Plus[x1_,x2__],y_,OptionsPattern[]] :=
 	]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Product rules*)
 
 
@@ -825,7 +826,7 @@ FuncD[
 ] := 0
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*FuncD  w.r.t. Bar@CC@Field[...]*)
 
 
@@ -885,7 +886,7 @@ FuncDSimplify[expr_] := Module[{solution=expr},
 Options[VarDraw] = {Grassmann->True, EFTOrder -> 6};
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Check Arguments*)
 
 
@@ -918,11 +919,16 @@ VarDraw[
 (*The total functional derivative*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Single application of variational derivative*)
 
 
-VarDraw[L_, x : SecondArgVarD, OptionsPattern[]] := Module[
+CovariantLoop[lagrangian_, fields_List, opts:OptionsPattern[]]? OptionsCheck:=
+CovariantLoop[lagrangian, fields, opts]= Module[{},0];
+
+
+VarDraw[L_, x : SecondArgVarD, opts:OptionsPattern[]]:= 
+VarDraw[L, x, opts]= Module[
   	{
    		n,
    		arg,
@@ -951,7 +957,7 @@ VarDraw[L_, x : SecondArgVarD, OptionsPattern[]] := Module[
   ]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Variational derivatives*)
 
 
@@ -1006,9 +1012,18 @@ VarD1[lag_, f1 : SecondArgVarD, opt:OptionsPattern[]] :=
 (*Variational derivative w.r.t. 2 fields*)
 
 
-VarD1[lag_, f1 : SecondArgVarD, f2 : SecondArgVarD, opt:OptionsPattern[]] :=
-	RelabelIndices@VarDraw[Expand[VarDraw[lag, f2,opt] * OpenCD[{}]], f1, opt]/.
-		OpenCD[{}]-> 1/. $\[Epsilon]FD-> 0/. BackgroundField[l_]:>l
+(* THIS VERSION DOES NOT WORK: the result must we wrapped inside a FuncNCM with the OpenCD last *)
+(*VarD1[lag_, f1 : SecondArgVarD, f2 : SecondArgVarD, opt:OptionsPattern[]] :=
+	RelabelIndices@VarDraw[Expand[VarDraw[lag, f2,opt] * FuncNCM[OpenCD[{}]]], f1, opt]/.
+		OpenCD[{}]-> 1/. $\[Epsilon]FD-> 0/. BackgroundField[l_]:>l*)
+
+
+VarD1[lag_, f1 : SecondArgVarD, f2 : SecondArgVarD, opt:OptionsPattern[]] := Module[{res},
+	res = RelabelIndices@VarDraw[Expand[VarDraw[lag, f2,opt] * FuncNCM[OpenCD[{}]]], f1, opt]/.
+		OpenCD[{}]-> 1/. $\[Epsilon]FD-> 0/. BackgroundField[l_]:>l;
+	res = res/.Times->FuncNCM;
+	res = res/.{FuncNCM[a___,ocd_OpenCD,b___]:>FuncNCM[a,b,ocd]}
+]
 
 
 (* ::Section:: *)
@@ -1063,7 +1078,7 @@ DeriveEOM::invalarg = "The argument `1` is invalid; only Field[...] or Bar[Field
 DeriveEOM[_,arg:Except[List[___]|Field[___]|Bar@Field[___]], OptionsPattern[]] := Message[DeriveEOM::invalarg,arg]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Fluctuation operator*)
 
 
@@ -1124,7 +1139,7 @@ FluctuationOperator[lag_, field1_, field2_, OptionsPattern[]] := Module[
 (*Auxiliary NCProduct*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Properties of NCProduct*)
 
 
@@ -1133,7 +1148,7 @@ NCProduct[] = 1;
 NCProduct@NCProduct[x___]:=NCProduct[x];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*General properties*)
 
 

@@ -49,7 +49,7 @@ PackageExport["Transp"]
 PackageExport["CConj"]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Exported*)
 
 
@@ -65,21 +65,8 @@ PackageExport["Proj"]
 PackageExport["DiracTrace"]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Internal*)
-
-
-PackageScope["GammaReduction"]
-PackageScope["Fierz"]
-PackageScope["Fierz4D"]
-PackageScope["EvaOp"]
-PackageScope["Origin"]
-PackageScope["RedundantOperator"]
-PackageScope["BasisOperator"]
-PackageScope["Evanescent"]
-PackageScope["GetEvanescentTerm"]
-PackageScope["ResetEvanescentOperators"]
-PackageScope["ExpandEvanescentOperators"]
 
 
 PackageScope["FermionQ"]
@@ -103,8 +90,32 @@ PackageScope["RefineDiracProducts"]
 PackageScope["\[Gamma]CommuteQ"]
 
 
+PackageScope["FierzScore"]
+PackageScope["FbasisQ"]
+PackageScope["Origin"]
+PackageScope["RedundantOperator"]
+PackageScope["BasisOperator"]
+
+
 PackageScope["LC2Gamma5"]
 PackageScope["Gamma52LC"]
+PackageScope["LC2Delta"]
+PackageScope["SchoutenID"]
+
+
+PackageScope["EvaOp"]
+
+
+PackageScope["Evanescent"]
+PackageScope["GetEvanescentTerm"]
+PackageScope["ResetEvanescentOperators"]
+PackageScope["ExpandEvanescentOperators"]
+PackageScope["FindEvanescentOperator"]
+
+
+PackageScope["GammaReduction"]
+PackageScope["Fierz"]
+PackageScope["RemoveLCTensor"]
 
 
 (* ::Section:: *)
@@ -154,18 +165,24 @@ The associated shortcut is PR/PL.";
 DiracTrace::usage = "DiracTrace[expr] evaluates the Dirac trace of expr.";
 
 
+EvaOp::usage                     = "EvaOp[label, (indices)] denotes the evanescent operator stored in the association $EvanescentTerms. To obtain the definition, use GetEvanescentTerm[label]."
+
+
+GammaReduction::usage            = "GammaReduction[SP1 * SP2] returns the simplification of SP1 and SP2 current after a projection of the Dirac structures to the 4D basis.";
+Fierz::usage                     = "Fierz[SP1 * SP2] returns the fierzing of the product of SP1 and SP2 by exchanging the second spinor in each closed spin chain."
+RemoveLCTensor::usage            = "Get rid of Levi-Civita tensors either by combining with a Lorentz sigma to give a \!\(\*SubscriptBox[\(\[Gamma]\), \(5\)]\) or by expanding the product of two Levi-Civita tensor to give the fully antisymmetric product of metrics."
+
+
+Evanescent::usage                = "Evanescent is an option for Fierz, GammaReduction and RemoveLCTensor. If set to True (default), it stores the evanescent operator (if generated) in an association and includes it in the result."
+GetEvanescentTerm::usage         = "GetEvanescentTerm[label] outputs the informations (Operators, Origin) about the evanescent operator given as an argument.
+									If no argument is given, it returns the full list of generated evanescent operators."
+ResetEvanescentOperators::usage  = "ResetEvanescentOperators[] resets the association containing the definition of all evanescent operators generated."
+ExpandEvanescentOperators::usage = "ExpandEvanescentOperators[expr] replaces EvaOp[label,(indices)] by the corresponding definition of the evanescent operator."
+FindEvanescentOperator::usage    = "Identifies an evanescent operator already defined and replace it with an EvaOp object."
+
+
 (* ::Subsubsection::Closed:: *)
 (*Internal*)
-
-
-GammaReduction::usage            = "GammaReduction[SP1 * SP2] returns the simplification of SP1 and SP2 current after a.";
-Fierz::usage                     = "Fierz[SP1 * SP2] returns the fierzing of the product of SP1 and SP2 by exchanging the second spinor in each closed spin chain."
-EvaOp::usage                     = "EvaOp[label] denotes the evanescent operator stored in the association $EvanescentTerms. To obtain the definition, use GetEvanescentTerm[EvaOp[label]]."
-Origin::usage                    = "Origin is an attribute of evanescent operators. It is either Fierz or GammaReduction."
-Evanescent::usage                = "Evanescent is an option for Fierz and GammaReduction. If set to True (default), it stores the evanescent operator if generated in an association and includes it in the result."
-GetEvanescentTerm::usage         = "GetEvanescentTerm[EvaOp[label]] outputs the informations (Operator, Origin, LoopOrder) about the evanescent operator given as an argument."
-ResetEvanescentOperators::usage  = "ResetEvanescentOperators[] resets the association containing the definition of all evanescent operators generated."
-ExpandEvanescentOperators::usage = "ExpandEvanescentOperators[expr] replaces EvaOp[label] by the corresponding definition of the evanescent operator."
 
 
 FermionQ::usage         = "FermionQ[expr] returns True if a expr is a fermion or False otherwise.";
@@ -190,7 +207,12 @@ RefineDiracProducts::usage = "RefineDiracProducts[expr] matches all Dirac produc
 
 
 LC2Gamma5::usage= "LC2Gamma5[expr] combines \[Epsilon]^\[Mu]\[Nu]\[Rho]\[Sigma] with gamma matrices in expr to obtain Subscript[\[Gamma], 5], using the relation Subscript[\[Gamma], 5] = -I/4! \[Epsilon]^\[Mu]\[Nu]\[Rho]\[Sigma] \[Gamma][\[Mu]]**\[Gamma][\[Nu]]**\[Gamma][\[Rho]]**\[Gamma][\[Sigma]].";
-Gamma52LC::usage= "LC2Gamma5[expr] decomposes Subscript[\[Gamma], 5] in expr as Subscript[\[Gamma], 5] = -I/4! \[Epsilon]^\[Mu]\[Nu]\[Rho]\[Sigma] \[Gamma][\[Mu]]**\[Gamma][\[Nu]]**\[Gamma][\[Rho]]**\[Gamma][\[Sigma]].";
+Gamma52LC::usage= "Gamma52LC[expr] decomposes Subscript[\[Gamma], 5] in expr as Subscript[\[Gamma], 5] = -I/4! \[Epsilon]^\[Mu]\[Nu]\[Rho]\[Sigma] \[Gamma][\[Mu]]**\[Gamma][\[Nu]]**\[Gamma][\[Rho]]**\[Gamma][\[Sigma]].";
+
+
+RedundantOperator::usage         = "RedundantOperator is an attribute of evanescent operators. It stores the operator that generated the evanescent structure before the 4D operation."
+BasisOperator::usage             = "BasisOperator is an attribute of evanescent operators. It stores the operator generated by RedundantOperator after applying the 4D operation."
+Origin::usage                    = "Origin is an attribute of evanescent operators. It is either Fierz, GammaReduction or LCTensor."
 
 
 (* ::Chapter:: *)
@@ -219,7 +241,7 @@ PR= DiracProduct@ Proj@ 1;
 CC = DiracProduct@ GammaCC;
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Properties of DiracProduct*)
 
 
@@ -297,27 +319,74 @@ DiracProduct[a___, gm: Transp@GammaM@ \[Mu]_Index, gn: Transp@GammaM@\[Nu]_Index
 (*p slash :  combine two into a propagator (using use {\[Gamma]_\[Mu], \[Gamma]_\[Nu]}= 2 g_{\[Mu]\[Nu]} if needed).*)
 
 
-DiracProduct[a___, GammaM@ LoopMom, GammaM@ LoopMom, b___]:= InvProp[0] DiracProduct[a, b];
+DiracProduct[a___, GammaM@ LoopMom, GammaM@ LoopMom, b___]:= Power[Prop[0], -1] DiracProduct[a, b];
 DiracProduct[a___, gL: GammaM@ LoopMom, gn: GammaM@ \[Nu]_Index, b___, GammaM@ LoopMom, c___]:= 
 	2 LoopMom@ \[Nu] * DiracProduct[a, b, gL, c] - DiracProduct[a, gn, gL, b, gL, c];
 
 
-DiracProduct[a___, Transp@ GammaM@ LoopMom, Transp@ GammaM@ LoopMom, b___]:= InvProp[0] DiracProduct[a, b];
+DiracProduct[a___, Transp@ GammaM@ LoopMom, Transp@ GammaM@ LoopMom, b___]:= Power[Prop[0], -1] DiracProduct[a, b];
 DiracProduct[a___, gL: Transp@ GammaM@ LoopMom, gn: Transp@ GammaM@ \[Nu]_Index, b___, Transp@ GammaM@ LoopMom, c___]:= 
 	2 LoopMom@ \[Nu] * DiracProduct[a, b, gL, c] - DiracProduct[a, gn, gL, b, gL, c];
 
 
 (* ::Subsubsection::Closed:: *)
-(*4D function to switch between Subscript[\[Gamma], 5] and \[Epsilon]^\[Mu]\[Nu]\[Rho]\[Sigma]*)
+(*4D function to remove Levi-Civita tensor*)
 
 
 (*Combine \[Epsilon]^\[Mu]\[Nu]\[Rho]\[Sigma] with tensor to obtain Subscript[\[Gamma], 5]*)
-LC2Gamma5[exp_]:=exp/.LCTensor[a_,b_,c_,d_]* rest1___*f1_**DiracProduct[x___,GammaM[a_,b_],y___]**f2_ *rest2___:>-2 I * rest1*f1**DiracProduct[x,Gamma5,GammaM[c,d],y]**f2*rest2;
+LC2Gamma5[exp_]:=Module[{LCind, LCt,Sigmaindpos, Sigmat, Compind, sign,res},
+	If[Length[LCt=Cases[exp,_LCTensor ,Infinity]]=!=1,
+		exp,
+		LCind=List@@First@LCt;
+		Sigmat=Cases[exp, GammaM[a___]/;(Length@{a}===2), Infinity];
+		Catch[
+		(Sigmaindpos=Flatten[Position[LCind,#]&/@(List@@#)];
+		If[Length@Sigmaindpos===2,
+			Compind=Complement[Range[4],Sigmaindpos];
+			sign=Signature@Flatten@Join[Compind,Sigmaindpos];
+			Compind=LCind[[Compind]];
+			Throw[-2I* sign* exp/.{_LCTensor->1, #->Sequence[GammaM@@Compind, Gamma5] }];
+			]
+		)&/@Sigmat;
+		Throw[exp]]
+		]	
+	];
 (*Expand Subscript[\[Gamma], 5]*)
 Gamma52LC[exp_]:=exp/.DiracProduct[dp___,Gamma5]:> -I/4! LCTensor[\[Alpha],\[Beta],\[Delta],\[Eta]]DiracProduct[dp]**\[Gamma][\[Alpha]]**\[Gamma][\[Beta]]**\[Gamma][\[Delta]]**\[Gamma][\[Eta]] //RelabelIndices ;
 
 
-(* ::Subsection::Closed:: *)
+(*Expand product of two Levi-Civita tensors into antisymmetric product of metric*)
+LC2Delta[exp_]:=exp/.{LCTensor[a:Sequence[_Index..]] * LCTensor[b:Sequence[_Index..]] :> - Det[Outer[Metric,List@a,List@b]]};
+
+
+(*Perform cyclic permutations of indices on the product of a Levi-Civita tensor with a metric*)
+SchoutenID[exp_]:=Module[{tempind, Tind, LCt, LCind, LMind, newLind, out},
+	If[Length[LCt=Cases[exp,_LCTensor ,Infinity]]=!=1,
+		exp, 
+		LCt=First@LCt;
+		LCind=List@@LCt;
+		LMind=Cases[exp,Index[_,Lorentz],Infinity];
+		LMind=Part[Select[Tally@LMind,Part[#,2]===2&],All,1];
+		LMind=Complement[LMind, LCind];
+		If[LMind==={},
+			exp, 
+			(*If several indices, another than First might be prefered*)
+			LMind=First@LMind;
+			out= ReleaseHold[exp/.LMind->Index[HoldForm@Unique[],tempind]];
+			Tind=Cases[out, Index[_,tempind],Infinity];
+			newLind=Index[Unique[d], Lorentz];
+			out= out/.Tind[[1]]->LMind/.Tind[[2]]->newLind;
+			out= - Metric[LCind[[1]], LMind] (out /.{LCt->LCTensor[LCind[[2]],LCind[[3]],LCind[[4]],newLind]})
+				 - Metric[LCind[[2]], LMind] (out /.{LCt->LCTensor[LCind[[3]],LCind[[4]],newLind,LCind[[1]]]})
+				 - Metric[LCind[[3]], LMind] (out /.{LCt->LCTensor[LCind[[4]],newLind,LCind[[1]],LCind[[2]]]})
+				 - Metric[LCind[[4]], LMind] (out /.{LCt->LCTensor[newLind, LCind[[1]],LCind[[2]],LCind[[3]]]});
+			out //RelabelIndices//Contract
+			]
+		]
+	]
+
+
+(* ::Subsection:: *)
 (*Dirac trace*)
 
 
@@ -433,7 +502,7 @@ DiracTrace[x_DiracProduct, opt:OptionsPattern[]]:= Module[
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Expand to basis*)
 
 
@@ -724,8 +793,12 @@ CConj[(f:Bar[Field[_,Fermion,_,_]])**DiracProduct[Proj[s_]]]:= CConj[f]**DiracPr
 CConj@_:=(Message[CConj::notfermion]; Abort[]);
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Evanescent operators*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Handle functions*)
 
 
 ResetEvanescentOperators[]:= Block[{},
@@ -736,32 +809,60 @@ ResetEvanescentOperators[]:= Block[{},
 ResetEvanescentOperators[];
 
 
-ExpandEvanescentOperators[expr_]:= expr /.EvaOp[x_,___]:>($EvanescentTerms[x][RedundantOperator]-$EvanescentTerms[x][BasisOperator]);
-GetEvanescentTerm[EvName___]:= $EvanescentTerms[EvName];
+ExpandEvanescentOperators[expr_]:= expr /.(EvaOp[x_,ind_]:>(($EvanescentTerms[x][RedundantOperator]-$EvanescentTerms[x][BasisOperator])/.AssociationThread[FindOpenIndices[$EvanescentTerms[x][RedundantOperator]],ind]))/.EvaOp[x_]:>(($EvanescentTerms[x][RedundantOperator]-$EvanescentTerms[x][BasisOperator]));
+GetEvanescentTerm[EvLabel___]:= $EvanescentTerms[EvLabel];
+GetEvanescentTerm[]:= $EvanescentTerms;
+
+
+FindEvanescentOperator[operator_]:= Module[{inputop,openind,indtemp, evaop, evaind, coeff=0,label=0, placeholder4coeff,selectoneop, evacoeff, opcoeff},
+	inputop=MatchOperatorPatterns[CollectOperators@Contract@operator];
+	coeff=(Catch[
+		evaop=MatchOperatorPatterns[ExpandEvanescentOperators[EvaOp[#]]];
+		If[MatchQ[Cases[evaop,_AtomicOp,All], {OrderlessPatternSequence@@(Cases[inputop,_AtomicOp,All])}],
+		(*check ordering of indices too?*)
+			label=#;
+			selectoneop=First@Cases[MatchOperatorPatterns[$EvanescentTerms[#][RedundantOperator]],_AtomicOp,All];
+			opcoeff= Coefficient[inputop/.selectoneop->placeholder4coeff,placeholder4coeff];
+			evacoeff= Coefficient[evaop/.selectoneop->placeholder4coeff,placeholder4coeff];
+			openind=FindOpenIndices@OpsToFieldForm@selectoneop;
+			Throw[opcoeff/evacoeff],
+			Throw[Nothing]]
+		]&/@ (Keys@$EvanescentTerms));
+	If[label=!=0, First@coeff*EvaOp[label, openind], 0]
+]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Helper functions*)
 
 
 ProjExpand[exp_]:=exp/. DiracProduct[b___,Proj[s_]]:> (DiracProduct[b] + s  DiracProduct[b,Gamma5])/2 //Expand;
 
 
-DefineEvanescentOperator[inioperator_,finoperator_,order_,origin_]:=Module[{evaOperator,redOpList,label,looporder},
-	evaOperator= inioperator-finoperator//Expand//ContractCGs//RefineDiracProducts//Contract//Simplify;
-	redOpList=If[Keys@$EvanescentTerms=!={},List@@(Transpose@$EvanescentTerms)[RedundantOperator],{}];
-	If[(evaOperator//ProjExpand)=!=0 , 
-		label=Flatten@Position[redOpList,inioperator];
-		If[label==={},
-			looporder= order; 
-			label={EvaCounter};
+(* ::Subsubsection::Closed:: *)
+(*Define evanescent operators*)
+
+
+DefineEvanescentOperator[inioperator_,finoperator_(*,order_*),origin_]:=Module[{evaOperator,(*evaOpList,*)label(*,looporder*), result},
+	evaOperator= inioperator-finoperator(*//ContractCGs*)(*//RefineDiracProducts//Contract*)//RelabelIndices;
+	(*evaOpList=If[(EvaLabels=Keys@$EvanescentTerms)==={},{},ExpandEvanescentOperators[EvaOp[#,Alphabet[][[;;Length[FindOpenIndices[$EvanescentTerms[#][RedundantOperator]]]]]]]&/@EvaLabels];*)
+	If[(evaOperator//RefineDiracProducts//Contract//ProjExpand)===0 , 
+		0,
+		(*check if evaOperator already exists*)
+		result=FindEvanescentOperator[evaOperator];
+		If[result=!=0,
+			result,
+			(*looporder= order; *)
+			label=EvaCounter;
 			EvaCounter+=1;
-			AppendTo[$EvanescentTerms, First@label-> <|RedundantOperator-> inioperator, BasisOperator-> finoperator, Origin-> origin (*, LoopOrder-> looporder*) |>];	
-		];
-		EvaOp[First@label,FindOpenIndices[inioperator]]
-		,
-		0
+			AppendTo[$EvanescentTerms, label-> <|RedundantOperator-> CollectOperators@Contract@RelabelIndices@inioperator , BasisOperator-> CollectOperators@Contract@RelabelIndices@finoperator, Origin-> origin (*, LoopOrder-> looporder*) |>];
+			EvaOp[label,FindOpenIndices[inioperator]]
+		   ]
 	]
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Fierzing*)
 
 
@@ -770,20 +871,14 @@ DefineEvanescentOperator[inioperator_,finoperator_,order_,origin_]:=Module[{evaO
 
 
 Fierz::error1= "The Fierz function can only be used on the product of two closed spin chains with standard Dirac structures with head DiracProduct (or nothing for scalar currents). ";
-Fierz::order = "Fierz function only support Fierz order {1,3,4,2} or {1,4,3,2}."
+Fierz::Order = "Fierz function only support Fierz Order {1,3,4,2} or {1,4,3,2}."
 
 
 (* ::Subsubsection::Closed:: *)
 (*Property*)
 
 
-Fierz[exp_Plus,ops___]:=Fierz[#,ops]&/@exp;
-Fierz[0,___]:=0;
-Fierz[term_/;(Length@Cases[term,_NonCommutativeMultiply,Infinity] < 2),___]:=term;
-
-
-Options[FierzScore]={Order-> {1,4,3,2}};
-Options[Fierz]={Evanescent-> False};
+Options[Fierz]={Order->{1,4,3,2},Evanescent-> True};
 Options[Fierz4D]={Order->{1,4,3,2}};
 
 
@@ -860,35 +955,47 @@ G1=G12*1, G2=G34*1, P1=1, P2=1, P3=1, P4=1, f1=field1, f2=field2, f3=field3, f4=
 (*Fierz score*)
 
 
-FierzScore[(SP1:NonCommutativeMultiply[field1_,G12___,field2_])*(SP2:NonCommutativeMultiply[field3_,G34___,field4_]),OptionsPattern[]]:=
-Module[
-{result=0,fields={field1,field2,field3,field4},order=OptionValue@Order,
-GaugeGroups,gind,pos},
-	(*Default rules: same fields, higher groups together*)
-	result=Plus[0,
-	    (*same labels*)
-		If[FieldLabel[fields[[1]]]===FieldLabel[fields[[2]]], -1 , 0],
-		If[FieldLabel[fields[[3]]]===FieldLabel[fields[[4]]], -1 , 0],
-		If[FieldLabel[fields[[order[[1]]]]]===FieldLabel[fields[[order[[2]]]]], +1, 0],
-		If[FieldLabel[fields[[order[[4]]]]]===FieldLabel[fields[[order[[3]]]]], +1 , 0],
-		(*many transposed fields*)
-		If[Head[fields[[1]]]===Transp && Head[fields[[2]]]===Transp, -2 , 0],
-		If[Head[fields[[3]]]===Transp && Head[fields[[4]]]===Transp, -2 , 0],
-		If[Head[fields[[order[[1]]]]]===Transp && Head[fields[[order[[2]]]]]===Transp, +2 , 0],
-		If[Head[fields[[order[[4]]]]]===Transp && Head[fields[[order[[3]]]]]===Transp, +2 , 0]
-		];
-	(*same group in only two fields, starting from biggest group*)
-	GaugeGroups=Reverse@SortBy[Keys@GetGaugeGroups[],GroupDimension@* GetGaugeGroups[#][Group]&];
-	gind=Select[FieldIndices@#, (MemberQ[GaugeGroups,GroupFromRep@ #[[2]]] &)]&/@fields;
-	gind=gind/.Index[_,g_[_]]:>g;
-	pos=Position[gind,#]&/@GaugeGroups /.{}->Nothing;
-	If[pos=!={},
-			pos=First@Transpose@First@pos;
-			result+=If[MemberQ[{{1,2},{3,4}},pos], -1 , 0];
-			result+=If[MemberQ[{Sort[order[[1;;2]]],Sort[order[[3;;4]]]},pos], +1 , 0];
-		];
-	result
-]	
+FbasisQ[SP1_,SP2_]:=FreeQ[SP1*SP2//.Join[{_Field->1, GammaCC->1,Proj[1]->1,Proj[-1]->1},Thread[NonCommutativeMultiply/@{DiracProduct@GammaM[x_],DiracProduct@Transp@GammaM[x_],DiracProduct@GammaM[x_, y_],
+DiracProduct@Transp@GammaM[x_, y_]}->1]],NonCommutativeMultiply];
+
+
+FierzScore[op_Operator]:=FierzScore[NormalForm@op];
+
+
+FierzScore[expr_/;(Count[expr,_NonCommutativeMultiply, Infinity]=!=2)]:=0;
+
+
+FierzScore[(SP1 : NonCommutativeMultiply[field1_, G12___, field2_] )*(SP2 : NonCommutativeMultiply[field3_, G34___, field4_])*rest___] :=
+ Module[
+  {result = 0, fields = {field1, field2, field3, field4}, order = OptionValue@Order,
+   GaugeGroups, gind, pos, posmax},
+  	(*Default rules: same fields, higher groups together*)
+  	result = Plus[0,
+    	    (*same labels favored*)
+    		If[FieldLabel[fields[[1]]] === FieldLabel[fields[[2]]], +1 , -1],
+    		If[FieldLabel[fields[[3]]] === FieldLabel[fields[[4]]], +1 , -1],
+    		(*many transposed fields penalized*)
+    		If[Xor[Head[fields[[1]]] === Transp, Head[fields[[2]]] === Transp] && Xor[Head[fields[[3]]] === Transp, Head[fields[[4]]] === Transp] , -6 , .5],
+    		(*double tensor  penalized*)
+    		If[! FreeQ[G12, GammaM[a___] /; (Length[List@a] > 1)] && ! FreeQ[G34, GammaM[b___] /; (Length[List@b] > 1)], -4, 0],
+    		(*Dirac structures not part of the basis penalized*)
+    		If[FbasisQ[SP1, SP2], 0, -10],
+    		(*contracted indices in bilinears encouraged*)
+    		Total[If[MemberQ[FieldIndices@field2,#],+0.2,0]&/@(FieldIndices@field1)],
+    		Total[If[MemberQ[FieldIndices@field4,#],+0.2,0]&/@(FieldIndices@field3)]
+    		];
+  		
+  	(*same group in only two fields, starting from biggest group*)
+  	GaugeGroups = Reverse@SortBy[Keys@GetGaugeGroups[], GroupDimension@* GetGaugeGroups[#][Group] &];
+  	gind = Reverse[SortBy[Select[FieldIndices@#, (MemberQ[GaugeGroups, GroupFromRep@ #[[2]]] &)], GroupDimension@* GetGaugeGroups[#[[2]]][Group] & ]] & /@ fields;
+      pos = Position[gind /. Index[_, g_] :> GroupFromRep@g, #] & /@ GaugeGroups /. {} -> Nothing;
+    	If[pos =!= {},
+    		posmax = First@Transpose@First@pos;
+    		If[Length[posmax]=!=2 && Length@pos>1,posmax=First@Transpose[pos[[2]]]];
+     		result += If[MemberQ[{{1, 2}, {3, 4}}, posmax], +1 , 0];
+     	];
+    	result
+    ]	
 
 
 (* ::Subsubsection::Closed:: *)
@@ -897,15 +1004,32 @@ GaugeGroups,gind,pos},
 
 Fierz[(SP1:NonCommutativeMultiply[field1_,G12___,field2_])*(SP2:NonCommutativeMultiply[field3_,G34___,field4_])*rest___, OptionsPattern[]]/;(FreeQ[rest+1,NonCommutativeMultiply]):=
 Module[
+{result,groupStruct,evaOperator, iniOperator },
+	iniOperator=rest*SP1*SP2//RefineDiracProducts//Contract//RelabelIndices;
+	If[Head@iniOperator===Plus, Fierz[#]&/@iniOperator,
+	result=Fierz4D[SP1*SP2,Order->OptionValue@Order];
+
+	groupStruct=Times@@Cases[{rest},_Delta|_CG,Infinity];
+	
+	evaOperator=If[OptionValue@Evanescent, 
+			DefineEvanescentOperator[groupStruct*(SP1*SP2),groupStruct*result,(*Exponent[rest*1,hbar]+1,*)Fierz]*rest/groupStruct,
+			0];
+	evaOperator+result*rest//Expand//ContractCGs//Contract
+	]
+]
+
+
+(*FierzOld[(SP1:NonCommutativeMultiply[field1_,G12___,field2_])*(SP2:NonCommutativeMultiply[field3_,G34___,field4_])*rest___, OptionsPattern[]]/;(FreeQ[rest+1,NonCommutativeMultiply]):=
+Module[
 {result,groupStruct,evaOperator ,order={1,2,3,4}},
-	order=First@TakeLargestBy[{{1,2,3,4},{1,4,3,2},{1,3,4,2}},FierzScore[SP1*SP2,Order->#]&,1];
+	(*order=First@TakeLargestBy[{{1,2,3,4},{1,4,3,2},{1,3,4,2}},FierzScore[SP1*SP2,Order->#]&,1];*)
 	result=Fierz4D[SP1*SP2,Order->order];
 
 	groupStruct=Times@@Cases[Times@rest,_Delta|_CG,Infinity];
 	
 	evaOperator=If[OptionValue@Evanescent, DefineEvanescentOperator[groupStruct(SP1*SP2),groupStruct*result,Exponent[rest*1,hbar]+1,Fierz]*rest/groupStruct,0];
 	evaOperator+result*rest//Expand//ContractCGs//Contract
-]
+]*)
 
 
 (* ::Subsection::Closed:: *)
@@ -930,7 +1054,7 @@ InverseBasisTrace[]:=InverseBasisTrace[]=Simplify@Inverse@Table[
 		,{bi,Basis4D[]}, {bj,Basis4D[]}];
 
 
-GammaReduction[(SP1:NonCommutativeMultiply[field1_,G12___,field2_])*(SP2:NonCommutativeMultiply[field3_,G34___,field4_])* rest___,OptionsPattern[{Evanescent-> False}]]/;(FreeQ[rest+1,NonCommutativeMultiply]):=
+GammaReduction[(SP1:NonCommutativeMultiply[field1_,G12___,field2_])*(SP2:NonCommutativeMultiply[field3_,G34___,field4_])* rest___,OptionsPattern[{Evanescent-> True}]]/;(FreeQ[rest+1,NonCommutativeMultiply]):=
 Module[{Bcoeff,basis,f1=field1,f2=field2,f3=field3,f4=field4, G1= G12*1,G2= G34*1,invbastr, result, groupStruct, evaOperator},
 (*Check if in the basis*)
 (*If[MemberQ[basis,{G1,G2}],Return[SP1 * SP2* rest]];*)
@@ -952,6 +1076,28 @@ Module[{Bcoeff,basis,f1=field1,f2=field2,f3=field3,f4=field4, G1= G12*1,G2= G34*
 	result= Sum[Bcoeff[[i]]*(f1**basis[[i,1]]**f2) * (f3**basis[[i,2]]**f4) , {i,1,Length@Bcoeff}];
 	groupStruct=Times@@Cases[Times@rest,_Delta|_CG,Infinity];
 	
-	evaOperator=If[OptionValue@Evanescent,DefineEvanescentOperator[groupStruct(SP1*SP2),result,Exponent[rest*1,hbar]+1,GammaReduction]*rest/groupStruct,0];
+	evaOperator=If[OptionValue@Evanescent,
+				DefineEvanescentOperator[groupStruct(SP1*SP2),groupStruct*result,(*Exponent[rest*1,hbar]+1,*)GammaReduction]*rest/groupStruct,
+				0];
 	evaOperator+result*rest//Expand//ContractCGs//Contract
+]
+
+
+(* ::Subsection::Closed:: *)
+(*Levi-Civita relations*)
+
+
+RemoveLCTensor[expr,opt___]/;FreeQ[expr,_LCTensor]:=expr;
+
+
+RemoveLCTensor[expr_,opt___]:= NormalForm[Operator[expr]/.a_Operator:>RemoveLCTensor[a,opt]];
+
+
+RemoveLCTensor[op_Operator,OptionsPattern[{Evanescent-> True}]]:=Module[{opexp=NormalForm@op, evaOperator, result},
+	result=LC2Delta@LC2Gamma5@opexp;
+	(*add SchoutenID?*)
+	evaOperator=If[OptionValue@Evanescent,
+				DefineEvanescentOperator[opexp,result,LCTensor],
+				0];
+	evaOperator+result//RelabelIndices//Contract	
 ]

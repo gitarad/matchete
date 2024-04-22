@@ -22,7 +22,7 @@ PackageImport["GroupMagic`"]
 (*Scoping*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Exported*)
 
 
@@ -31,13 +31,10 @@ PackageExport["PrintEffectiveCouplings"]
 PackageExport["ReplaceEffectiveCouplings"]
 PackageExport["Rules"]
 PackageExport["DummyCoefficients"]
-PackageExport["IntroduceEffectiveCouplings"]
 PackageExport["EffectiveCouplingSymbol"]
-PackageExport["OverrideDuplicateCouplingCheck"]
-PackageExport["ShiftRenCouplings"]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Internal*)
 
 
@@ -57,11 +54,16 @@ PackageScope["OperatorType"]
 PackageScope["ResetTempCouplings"]
 
 
+PackageScope["IntroduceEffectiveCouplings"]
+PackageScope["OverrideDuplicateCouplingCheck"]
+PackageScope["ShiftRenCouplings"]
+
+
 (* ::Section:: *)
 (*Usage messages*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Exported*)
 
 
@@ -415,7 +417,7 @@ ShiftVectorFields[expr_,fields_List,shift_List]:=Module[
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Field redefinitions*)
 
 
@@ -509,7 +511,7 @@ Module[
 	pinds=Pattern[#, _]&/@inds;
 
 	(* prepare the Lagrangian for reading off shift: expand and remove the FreeLag of the field we are reducing *)
-	L=SeriesEFT[DropFreeQ[iL,f]-IBPSimplify@FreeLag[f],EFTOrder->oShift];
+	L=SeriesEFT[DropFreeQ[iL,f]-InternalSimplify@FreeLag[f],EFTOrder->oShift];
 	(* need to relabel indices so the dummy indices don't lead to problems when substituting *)
 	shift= RelabelIndices[NormalForm[CoefficientOperator[L, EoM[f[Sequence@@inds]]], CanonizeKinetic -> False],Unique->True];
 	shift0 = Coefficient[shift, hbar, 0];
@@ -535,7 +537,7 @@ Module[
 	LR = (RelabelIndices[LR,Unique->True])/.(a1_:1) Power[b1_/;(!FreeQ[b1, Field|FieldStrength]), k1_Integer?Positive]:>a1 Inactive[Times]@@ConstantArray[b1,k1];
 
 	(* plug in the rule, reactivate the powers and IBPSimplify *)
-	LR = IBPSimplify19 @ Activate[LR/.{rule0,rule1}];
+	LR = InternalSimplify @ Activate[LR/.{rule0,rule1}];
 
 	LR+LNoShift
 ]
@@ -555,7 +557,7 @@ ReduceComplexScalar[iL_, f_Symbol, oShift_,oRes_]:=Module[
 
 
 	(* expand Lagrangian to ShiftOrder, keep only terms depending on the field f and IBPSimplify them *)
-	L=SeriesEFT[DropFreeQ[iL,f]-IBPSimplify@FreeLag[f],EFTOrder->oShift];
+	L=SeriesEFT[DropFreeQ[iL,f]-InternalSimplify@FreeLag[f],EFTOrder->oShift];
 
 	(* factor out the EoM[f] term *)
 	chi1=RelabelIndices[NormalForm[CoefficientOperator[L, EoM[f[Sequence@@inds]]],CanonizeKinetic -> False],Unique->True];
@@ -590,7 +592,7 @@ ReduceComplexScalar[iL_, f_Symbol, oShift_,oRes_]:=Module[
 
 	LR = Activate[LR /. {rule0,rule1}];
 
-	LR=IBPSimplify19 @ LR;
+	LR=InternalSimplify @ LR;
 
 	LR+LNoShift
 ]
@@ -606,7 +608,7 @@ ReduceMajoranaFermion[iL_, f_Symbol, oShift_, oRes_]:=Module[{start=Now,LNoShift
 	pinds=Pattern[#, _]&/@inds;
 
 	(* expand Lagrangian to ShiftOrder, keep only terms depending on the field f and IBPSimplify them *)
-	L=SeriesEFT[DropFreeQ[iL,f]-IBPSimplify@FreeLag[f],EFTOrder->oShift];
+	L=SeriesEFT[DropFreeQ[iL,f]-InternalSimplify@FreeLag[f],EFTOrder->oShift];
 
 	(* factor out the EoM[f] term *)
 	chi1=RelabelIndices[NormalForm[CoefficientOperator[L, EoM[First@Cases[{f[Sequence@@inds]},_Field,Infinity]]],CanonizeKinetic->False],Unique->True];
@@ -637,7 +639,7 @@ ReduceMajoranaFermion[iL_, f_Symbol, oShift_, oRes_]:=Module[{start=Now,LNoShift
 
 	LR=Activate[LR/.{rule0,rule1}];
 
-	LR=IBPSimplify19 @ LR;
+	LR=InternalSimplify @ LR;
 
 	LR+LNoShift
 ]
@@ -655,7 +657,7 @@ ReduceDiracFermion[iL_, f_Symbol, oShift_, oRes_]:=Module[
 	pinds=Pattern[#, _]&/@inds;
 
 	(* expand Lagrangian to ShiftOrder, keep only terms depending on the field f and IBPSimplify them *)
-	L=SeriesEFT[DropFreeQ[iL,f]-IBPSimplify@FreeLag[f],EFTOrder->oShift];
+	L=SeriesEFT[DropFreeQ[iL,f]-InternalSimplify@FreeLag[f],EFTOrder->oShift];
 
 	(* factor out the EoM[f] term *)
 	chi1=RelabelIndices[NormalForm[CoefficientOperator[L , EoM[First@Cases[{f[Sequence@@inds]},_Field,Infinity]]], CanonizeKinetic->False],Unique->True];
@@ -688,7 +690,7 @@ ReduceDiracFermion[iL_, f_Symbol, oShift_, oRes_]:=Module[
 
 	LR= Activate[LR/.{rule0,rule1}];
 
-	LR=IBPSimplify19 @  LR;
+	LR=InternalSimplify @  LR;
 
 	LR+LNoShift
 ]
@@ -756,7 +758,7 @@ ReduceRealVector[iL_, f_Symbol, oShift_, oRes_]:=Module[
 
 				{LR,LNoShift}=SplitLagrangianByPower[L,4+oRes-oShift];
 		];
-		LR=(*IBPSimplify@*)RelabelIndices@Activate@ShiftVectorFields[NormalForm@LR, {field},{field+shift}]
+		LR=(*InternalSimplify@*)RelabelIndices@Activate@ShiftVectorFields[NormalForm@LR, {field},{field+shift}]
 	,
 
 		(* there is mixing, so we need to work a bit harder, first extract the rotation matrix *)
@@ -773,12 +775,12 @@ ReduceRealVector[iL_, f_Symbol, oShift_, oRes_]:=Module[
 		LR=RelabelIndices@NormalForm@Activate@ShiftVectorFields[NormalForm@LR, field,field+shift]
 	];
 
-	LR=IBPSimplify19@SeriesEFT[HBarExpand @ LR, EFTOrder->oRes];
+	LR=InternalSimplify@SeriesEFT[HBarExpand @ LR, EFTOrder->oRes];
 	LR+LNoShift
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Handling redefined effective couplings*)
 
 
@@ -1098,7 +1100,7 @@ IntroduceEffectiveCouplings[L_ , OptionsPattern[]] := Module[{L0, LHcTerms, LHTe
 ]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Effective masses*)
 
 
@@ -1111,7 +1113,7 @@ IntroduceEffectiveMasses[L_ , OptionsPattern[]] := Module[{L0, LHcTerms, LHTerms
 	(* Extrac mass terms *)
 	Lmass = IsolateMassTerms[L0, Heavy -> OptionValue[Heavy]];
 	L0 = L0 - Lmass;
-
+	
 	Lmass = List @@ (Nothing + HcSimplify @ Lmass);
 	Lmass = Contract/@Lmass;
 
@@ -1225,7 +1227,7 @@ EOMInvalidQ[L_]:=Module[{fieldsInL, L4},
 		Cases[L, _Field, Infinity]/.Field[f_,__]:>f,
 		Cases[L, _FieldStrength, Infinity]/.FieldStrength[f_,__]:>f
 		]];
-	L4 = IBPSimplify@Total@Cases[List@@Expand@(SeriesEFT[L, EFTOrder->4]-Sum[FreeLag[field],{field,fieldsInL}]+Nothing), x_/;FreeQ[x,_Coupling]];
+	L4 = InternalSimplify@Total@Cases[List@@Expand@(SeriesEFT[L, EFTOrder->4]-Sum[FreeLag[field],{field,fieldsInL}]+Nothing), x_/;FreeQ[x,_Coupling]];
 	!(L4 === 0)
 ]
 
@@ -1239,7 +1241,7 @@ FieldsToShift[L0_]:=Module[{freeL,L,fields, list},
 	(* all fields appearing in the input Lagrangian *)
 	fields=DeleteDuplicates@Cases[L0, HoldPattern@Field[a_,__]:>a,Infinity];
 	(* the free Lagrangian of all of these fields - so we get non-standard kinetic terms *)
-	freeL = IBPSimplify19@Total[FreeLag[#]&/@fields];
+	freeL = InternalSimplify@Total[FreeLag[#]&/@fields];
 	L = Collect[L0 - freeL,_Operator];
 
 	(* vector fields get a special treatment, so their kinetic terms have to be removed completely *)
@@ -1274,14 +1276,14 @@ EOMSimplify[L_,OptionsPattern[]]:=Module[{out,maxOrder,operatorList,L3,L4,La},
 	If[Min[operatorList]<4,
 		(* there are superleading terms in the Lagrangian, redefine them *)
 		Echo[EOMSimplify::EffectiveCoupling];
-		La = SeriesEFT[SubstituteCoefficients[IBPSimplify @ L, EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol]], EFTOrder -> maxOrder]
+		La = SeriesEFT[SubstituteCoefficients[InternalSimplify @ L, EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol]], EFTOrder -> maxOrder]
 		,
 		La = L;
 	];
 	If[OptionValue@DummyCoefficients === True,
-		La = IBPSimplify19 @ IntroduceDummyCoefficients @ La;
+		La = InternalSimplify @ IntroduceDummyCoefficients @ La;
 		,
-		La = IBPSimplify19 @ La;
+		La = InternalSimplify @ La;
 	];
 	out = OptionalMonitor[OptionValue@Verbose,FixedPoint[EoMSimplificationStep[#,EFTOrder->maxOrder]&, La],$MonitorString1<>"\n"<>$MonitorString2];
 	$MonitorString1="";
@@ -1313,7 +1315,7 @@ EoMSimplificationStep[L_,OptionsPattern[]]:=Module[{task, fields,order,temp,maxo
 	temp=ReduceField[L,fields, ShiftOrder-> order,ResultOrder->maxorder];
 	LCurrent=temp;
 	$MonitorString2="Simplifying Lagrangian...";
-	IBPSimplify19 @ temp
+	InternalSimplify @ temp
 ]
 
 
@@ -1397,7 +1399,7 @@ OpenIndexToPattern[rule_]:=Module[{lhs=rule[[1]],rhs=rule[[2]],index,inds,pinds,
 ]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Main module*)
 
 
@@ -1406,7 +1408,7 @@ Options[ShiftRenCouplings] = {EFTOrder->All};
 
 ShiftRenCouplings[Lag_,OptionsPattern[]]:=Module[{SimpLag=GreensSimplify@Lag,LEFTRen,RenOpList,LEFTCorrections,LighFields,CouplingCorrections,RenCouplings,RepRules,OperatorList,MaxOrder},
 
-	LighFields=Select[OccuringFields[SimpLag],!$FieldAssociation[#][Heavy]&];
+	LighFields=Select[OccuringFields[SimpLag],!GetFieldsUpdated[#][Heavy]&];
 	LEFTRen= SeriesEFT[SimpLag,EFTOrder->4]-FreeLag@@LighFields/.hbar->0//CollectOperators;
 
 	If[LEFTRen=!=0,
