@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-Package["GroupMagic`"] 
+Package["Matchete`"] 
 
 
 (* ::Title:: *)
@@ -26,7 +26,6 @@ Package["GroupMagic`"]
 PackageExport["CartanMatrix"]
 PackageExport["AlgebraRank"]
 PackageExport["GroupDimension"]
-PackageExport["MatCommutator"]
 
 
 PackageExport["AdjointRepresentation"]
@@ -78,6 +77,9 @@ PackageScope["TestAlg"]
 PackageScope["RepresentationCheck"]
 
 
+PackageScope["MatCommutator"]
+
+
 (* ::Subsection::Closed:: *)
 (*Definitions*)
 
@@ -94,7 +96,7 @@ PositiveRoots::usage             = "PositiveRoots[alg] provides the weights of t
 
 
 RepresentationWeights::usage        = "RepresentationWeights[alg, DynkinCoef] returns the weights of a representation with multiplicity.";
-RepresentationDimension::usage      = "RepresentationWeights[alg, DynkinCoef] returns the dimension of a representation.";
+RepresentationDimension::usage      = "RepresentationDimension[alg, DynkinCoef] returns the dimension of a representation.";
 RepresentationsUpToDimension::usage = "RepresentationsUpToDimension[alg, n] returns all representations with dimensions \[LessEqual] n, as a list with {dim, Dynkin coefficients}.";
 FSIndicator::usage                  = "FSIndicator[alg, DynkinCoef] returns the Frobenius-Schur indicator of the representation -- +1 for real, 0 for complex, and -1 for pseudo-real representations." ;
 DualRepresentation::usage           = "DualRepresentation[alg, rep] returns the Dynkin coefficients of the dual representation to rep (the same if rep is (pseudo)real)." 
@@ -103,7 +105,7 @@ DynkinIndex::usage                  = "DynkinIndex[alg,rep] returns the Dynkin i
 Casimir2::usage                     = "Casimir2[alg,rep] returns the quadratic Casimir of the representation.";
 
 
-Levels::usage               = "Levels -> True/False indicate . ";
+Levels::usage               = "Levels -> True/False is an option to indicate whether RepresentationWeights should be sorted by their level.";
 SymmetricIndices::usage     = "SymmetricIndices[{set of numbers representing indices}] restricts to CGs with those indices completely symmetrized." ;
 AntisymmetricIndices::usage = "AntisymmetricIndices[{set of numbers representing indices}] restricts to CGs with those indices completely antisymmetrized."  ;
 Orthonormalize::usage       = "Orthonormalize -> True/False determines whether the to orthogonalize a set of CGs.";
@@ -507,7 +509,14 @@ DynkinIndex@ ___:= (Message[DynkinIndex::arg]; Abort[];)
 Options@ RepresentationWeights= {Levels-> False}
 
 
-RepresentationWeights[alg_, \[CapitalLambda]_, opt:OptionsPattern[] ]:= RepresentationWeights[alg, \[CapitalLambda], opt]=
+(* ::Text:: *)
+(*The weights of the conjugate representation (produced by taking \[Phi]^* of weight vector \[Phi]) are minus the weight of the original vector.*)
+
+
+RepresentationWeights[alg_, CRep@ \[CapitalLambda]_List, opt:OptionsPattern[]]? OptionsCheck:= KeyMap[-#&, RepresentationWeights[alg, \[CapitalLambda], opt]];
+
+
+RepresentationWeights[alg_, \[CapitalLambda]_, opt:OptionsPattern[] ]? OptionsCheck:= RepresentationWeights[alg, \[CapitalLambda], opt]=
 Block[{rank, weights, prevWeights, m, p, w, pos, i, M,
 	weightDimensions, posRoots, dMetric, level, root, dim, num,
 	cartanMat= CartanMatrix@ alg},
@@ -560,13 +569,6 @@ Block[{rank, weights, prevWeights, m, p, w, pos, i, M,
 		weightDimensions
 	]
 ]; 
-
-
-(* ::Text:: *)
-(*The weights of the conjugate representation (produced by taking \[Phi]^* of weight vector \[Phi]) are minus the weight of the original vector.*)
-
-
-RepresentationWeights[alg_, CRep@ \[CapitalLambda]_List]:= KeyMap[-#&, RepresentationWeights[alg, \[CapitalLambda]]];
 
 
 (* ::Subsubsection::Closed:: *)

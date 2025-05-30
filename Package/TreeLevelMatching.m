@@ -15,18 +15,15 @@ Package["Matchete`"]
 (*Public:*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Scoping*)
 
 
-PackageImport["GroupMagic`"]
-
-
-(* ::Subsection:: *)
+(* ::Subsubsection:: *)
 (*Exported*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Internal*)
 
 
@@ -39,15 +36,18 @@ PackageScope["DetermineEOMs"]
 PackageScope["ReplaceHeavyEOM"]
 
 
-(* ::Section::Closed:: *)
+PackageScope["IndexToPattern"]
+
+
+(* ::Section:: *)
 (*Usage messages*)
 
 
-(* ::Subsection:: *)
+(* ::Subsubsection:: *)
 (*Exported*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Internal*)
 
 
@@ -64,7 +64,7 @@ PrintEOM[L, Field -> {l1, l2, ...}] prints only the EOM of a specific set of fie
 (*Expanding the EoMs in the EFT power counting*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Expands fields in the EFT power counting*)
 
 
@@ -119,7 +119,7 @@ ExpandField[Field[label_,type_,indices_,derivs_],OptionsPattern[]]:=Module[
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Expand EOMs in the EFT power counting*)
 
 
@@ -144,7 +144,7 @@ ExpandEOM[eoms_List, fieldsUV_List, OptionsPattern[]]:=Module[
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Expand heavy fields in operators*)
 
 
@@ -182,9 +182,7 @@ ExpandOp[arg_, uvFields_, OptionsPattern[]] := Module[
 		inclusiveOrder = order
 	];
 	(* expand uv fields in EFT power counting *)
-	expr = Expand[arg /. (ExpandField[#, EFTOrder->inclusiveOrder]&/@uvFields)/. 
-			SymmetrizedCD[ind_, expr_]:> SymmetrizedCD[ind, Expand@ expr]
-		];
+	expr = Expand[arg /. (ExpandField[#, EFTOrder->inclusiveOrder]&/@uvFields)];
 	(* expand up to desired order *)
 	expr = SeriesEFT[expr, EFTOrder->order];
 	(* remove the power *)
@@ -196,7 +194,7 @@ ExpandOp[arg_, uvFields_, OptionsPattern[]] := Module[
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Substitute EOM*)
 
 
@@ -421,7 +419,11 @@ SolveAllEOMfixedOrder[eoms_List,fields_List,n_?IntegerQ]:=Module[
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
+(*Full EOM function*)
+
+
+(* ::Subsubsection::Closed:: *)
 (*Full solution to EOM expanded to all required orders*)
 
 
@@ -467,7 +469,7 @@ FullEomSolution[uvEOMs_List, uvFields_List, OptionsPattern[]] := Module[
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Main EOM function*)
 
 
@@ -496,8 +498,12 @@ DetermineEOMs[lag_, OptionsPattern[]] := Module[
 ]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Printing EOMs*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Print EOM*)
 
 
 Options[PrintEOM]={Field -> All, EFTOrder -> 6};

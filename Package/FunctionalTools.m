@@ -19,14 +19,11 @@ Package["Matchete`"]
 (*Scoping*)
 
 
-PackageImport["GroupMagic`"]
-
-
-(* ::Subsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Exported*)
 
 
-(* ::Subsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Internal*)
 
 
@@ -64,6 +61,9 @@ PackageScope["ChangeFieldIndex"]
 PackageScope["NCProduct"]
 
 
+PackageScope["FieldTransformsUnderGaugeGroupQ"]
+
+
 PackageScope["BackgroundField"]
 PackageScope["BackgroundCD"]
 PackageScope["BackgroundFS"]
@@ -73,11 +73,11 @@ PackageScope["BackgroundFS"]
 (*Usage messages*)
 
 
-(* ::Subsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Exported*)
 
 
-(* ::Subsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Internal*)
 
 
@@ -134,7 +134,7 @@ ChangeFieldIndex::usage="ChangeFieldIndex[field, group, indexLabel] returns the 
 (*This function calls FuncD (which does the actual partial functional derivative) and applies some simplifications to it.*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Main entry point for computing partial functional derivatives *)
 
 
@@ -191,7 +191,7 @@ FD[_,y_,OptionsPattern[]] := Message[FD::invalidargument,y] /; !MatchQ[y, Field[
 (*Expansion of Field Strength tensors and Covariant Derivatives*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Expand fluctuations of vector fields*)
 
 
@@ -203,7 +203,6 @@ ExpandVectorFluctuations[x_, y_]:=
 ExpandVectorFluctuations[x, y]= Module[
 	{
 		gaugeGroup,
-		gaugeCoupling,
 		yField = First@Cases[y,Field[___],All],
 		yFieldLabel,
 		arg = Expand[x]
@@ -220,9 +219,8 @@ ExpandVectorFluctuations[x, y]= Module[
 		(* remove powers for pattern matching *)
 		arg = RemovePower[arg];
 
-		(* determine gauge group and coupling *)
+		(* determine gauge group *)
 		gaugeGroup = First@First@FirstPosition[$GaugeGroups, KeyValuePattern[Field->First[yField]]];
-		gaugeCoupling = $GaugeGroups[gaugeGroup][Coupling][];
 
 		(* shift covariant derivatives iff field is charged under gauge group *)
 		arg = arg/.Field[l_,t_,ind_List,deriv_List] :> ShiftCD[deriv,gaugeGroup,Field[l,t,ind,{}],$\[Epsilon]FD] /; (Length[deriv]>0 && FieldTransformsUnderGaugeGroupQ[Field[l,t,ind,{}], gaugeGroup]);
@@ -321,30 +319,20 @@ FieldTransformsUnderGaugeGroupQ[FieldStrength[l_,lorentz_,ind_List,derive_List],
 (*gauge fields*)
 
 
-GaugeFieldQ[f:Field[label_,type_,___]]:=Module[{},
-	(* check if field is a vector *)
-	If[MatchQ[type,Vector[_]],
-		(* check if field is gauge *)
-		If[MemberQ[$GaugeGroups,KeyValuePattern[Field->label]],
-			Return[True],
-			Return[False]
-		],
-		Return[False]
-	]
-]
+GaugeFieldQ@ label_Symbol:= MemberQ[$GaugeGroups, KeyValuePattern[Field-> label] ];
+
+
+GaugeFieldQ@ Field[label_, _Vector, __]:= GaugeFieldQ@ label;
+
+
+GaugeFieldQ@ _Field= False;
 
 
 (* ::Text:: *)
 (*heavy vectors*)
 
 
-VectorFieldQ[f:Field[label_,type_,___]]:=Module[{},
-	(* check if field is a vector *)
-	If[MatchQ[type,Vector[_]],
-		Return[True],
-		Return[False]
-	]
-]
+VectorFieldQ@ Field[_, type_, __]:= MatchQ[type, Vector[_]]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -363,10 +351,13 @@ ShiftCD[indices_List, group_, field_, globalCounter_:1] := Module[{result,counte
 		,
 		result = Expand@RecursiveExpandCD[indices, group, field, counter];
 	];
-
+	
+	(* fluctuations should not be truncated to leading order when multiple derivatives are present *)
+	(*
 	(* truncate at leading order in the fluctuation *)
 	result = Normal@Series[result,{counter,0,1}];
-
+	*)
+	
 	(* remove counting parameter *)
 	result = Expand[result/.counter->globalCounter];
 
@@ -398,7 +389,7 @@ RecursiveExpandCD[indices_List, group_, initField_, \[Lambda]_:1] := Module[
 		Return@Plus[
 			Times[-1,
 				\[Lambda],I,
-				$GaugeGroups[group][Coupling][],
+				(*$GaugeGroups[group][Coupling][],*)
 				$GaugeGroups[group][Field][\[Mu]1[[1,1]],indexAdj],
 				FieldGenerators[GetFieldLabel[field], group, {indexAdj, First[generatorIndices], Last[generatorIndices]}],
 				RecursiveExpandCD[more\[Mu],group,field,\[Lambda]]
@@ -411,7 +402,7 @@ RecursiveExpandCD[indices_List, group_, initField_, \[Lambda]_:1] := Module[
 			Return@Plus[
 				Times[-1,
 					\[Lambda],I,
-					$GaugeGroups[group][Coupling][],
+					(*$GaugeGroups[group][Coupling][],*)
 					$GaugeGroups[group][Field][\[Mu]1[[1,1]],indexAdj],
 					FieldGenerators[GetFieldLabel[field], group, {indexAdj, First[generatorIndices], Last[generatorIndices]}],
 					field
@@ -442,7 +433,7 @@ RecursiveExpandAbelianCD[indices_List, group_, initField_, \[Lambda]_:1] := Modu
 		Return@Plus[
 			Times[-1, (*crosschecked*)
 				\[Lambda],I,
-				$GaugeGroups[group][Coupling][],
+				(*$GaugeGroups[group][Coupling][],*)
 				$GaugeGroups[group][Field][\[Mu]1[[1,1]]],
 				FieldGenerators[GetFieldLabel[field], group],
 				RecursiveExpandAbelianCD[more\[Mu],group,field,\[Lambda]]
@@ -455,7 +446,7 @@ RecursiveExpandAbelianCD[indices_List, group_, initField_, \[Lambda]_:1] := Modu
 			Return@Plus[
 				Times[-1, (*crosschecked*)
 					\[Lambda],I,
-					$GaugeGroups[group][Coupling][],
+					(*$GaugeGroups[group][Coupling][],*)
 					$GaugeGroups[group][Field][\[Mu]1[[1,1]]],
 					FieldGenerators[GetFieldLabel[field], group],
 					field
@@ -541,13 +532,17 @@ ShiftFS[FieldStrength[label_, {\[Mu]_Index,\[Nu]_Index}, {}, lorentzIndices_List
 	],Unique->True]
 
 
+(* ::Text:: *)
+(*Nb. this is not a conclusive way of telling if a field strength tensor is for a gauge field or not*)
+
+
 ShiftFS[FieldStrength[label_, {\[Mu]_Index,\[Nu]_Index}, gaugeIndices:{Index[a_,group_[adj]]}, lorentzIndices_List], counter_:1] :=
 	Module[{b,c},
 	RelabelIndices[Plus[
 		FieldStrength[label, {\[Mu],\[Nu]}, gaugeIndices, lorentzIndices],
 		counter*Field[label, Vector[\[Nu]], gaugeIndices, Append[lorentzIndices,\[Mu]]],
 		-counter*Field[label, Vector[\[Mu]], gaugeIndices, Append[lorentzIndices,\[Nu]]],
-		counter^2*$GaugeGroups[group, Coupling][]*CG[fStruct[group],{Index[a,group[adj]],Index[b,group[adj]],Index[c,group[adj]]}]*
+		counter^2(**$GaugeGroups[group, Coupling][]*)* CG[fStruct[group],{Index[a,group[adj]],Index[b,group[adj]],Index[c,group[adj]]}]*
 		CD[lorentzIndices,Field[label, Vector[\[Mu]], {Index[b,group[adj]]},{}]*Field[label, Vector[\[Nu]], {Index[c,group[adj]]}, {}]]
 	],Unique->True]
 	]
@@ -582,7 +577,7 @@ FuncD[Plus[x1_,x2__],y_,OptionsPattern[]] :=
 	]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Product rules*)
 
 
@@ -858,7 +853,7 @@ FuncD[
 ] := 0
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*FuncDSimplify*)
 
 
@@ -919,7 +914,7 @@ VarDraw[
 (*The total functional derivative*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Single application of variational derivative*)
 
 
@@ -946,7 +941,7 @@ VarDraw[L, x, opts]= Module[
    		(*create unique lorentz indices for covariant derivatives*)
    		indices = Table[Unique[],{i, n}];
    		result += ((-1)^n) * FuncDSimplify@CD[
-       			indices,
+       			Reverse@indices, (* indices need to be reversed due to IBP *)
        			FD[arg, CD[indices, x], Grassmann -> OptionValue[Grassmann]]
        		];
    		,
@@ -957,7 +952,7 @@ VarDraw[L, x, opts]= Module[
   ]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Variational derivatives*)
 
 
@@ -1148,7 +1143,7 @@ NCProduct[] = 1;
 NCProduct@NCProduct[x___]:=NCProduct[x];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*General properties*)
 
 

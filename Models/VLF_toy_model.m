@@ -5,42 +5,26 @@
 
 
 (* ::Subtitle:: *)
-(*Toy model with a heavy vectorlike fermion*)
+(*Toy model with a heavy vector-like fermion*)
 
 
 (* ::Section:: *)
 (*Lagrangian*)
 
 
-MatcheteLagrangianParameters["VLF_toy_model"] = 
-{
-	"U1e", "e", "A",
-	"\[CapitalPsi]", "\[Psi]", "\[Phi]",
-	"M", "m", "y"
-};
+DefineGaugeGroup[U1e, U1, e, A];
 
 
-MatcheteLagrangianAlphabets["VLF_toy_model"] = 
-{
-};
+DefineField[\[CapitalPsi], Fermion, Charges-> {U1e[1]}, Mass-> {Heavy, M}];
+DefineField[\[Psi], Fermion, Charges-> {U1e[1]}, Mass-> 0];
+DefineField[\[Phi], Scalar, Mass-> {Light, m}, SelfConjugate-> True];
 
 
-MatcheteLagrangian["VLF_toy_model",ModParam_,IndAlphabet_]:= MatcheteLagrangian["VLF_toy_model",ModParam,IndAlphabet]=
-Module[{},
-	Hold[	
-	Module[{Lint},	
+DefineCoupling[y];
+
+
+Module[{Lint},			 
+	Lint = -y[] Bar@\[Psi][]** PR** \[CapitalPsi][] \[Phi][];
 		
-		DefineGaugeGroup["U1e", U1, "e", "A"];
-		
-		DefineField["\[CapitalPsi]", Fermion, Charges->{"U1e"[1]}, Mass->{Heavy,"M"}];
-		DefineField["\[Psi]", Fermion, Charges->{"U1e"[1]}, Mass->0];
-		DefineField["\[Phi]", Scalar, Mass->{Light,"m"}, SelfConjugate->True];
-		
-		DefineCoupling["y"];
-		 
-		Lint = -"y"[] Bar@"\[Psi]"[]**PR**"\[CapitalPsi]"[] "\[Phi]"[];
-		
-		FreeLag[] + PlusHc[Lint] //RelabelIndices
-	]
-	]/.Join[ModParam,IndAlphabet]//ReleaseHold
+	FreeLag[A, \[CapitalPsi], \[Psi], \[Phi]] + PlusHc[Lint] //RelabelIndices
 ]

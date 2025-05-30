@@ -19,9 +19,6 @@ Package["Matchete`"]
 (*Scoping*)
 
 
-PackageImport["GroupMagic`"]
-
-
 (* ::Subsection::Closed:: *)
 (*Exported*)
 
@@ -37,10 +34,6 @@ PackageScope["OpenCD"]
 
 
 PackageScope["TakeDev"]
-
-
-PackageScope["SymmetrizedCD"]
-PackageScope["SplitSymmetrizedCDs"]
 
 
 PackageScope["CommuteCDs"]
@@ -67,10 +60,6 @@ OpenCD::usage = "OpenCD[indices] denotes open covariant derivatives that act on 
 
 
 TakeDev::usage = "TakeDev[{Index[\[Mu],Lorentz],Index[\[Nu],Lorentz],...}, expr] is an internal function encoding the covariant derivative rules.";
-
-
-SymmetrizedCD::usage       = "SymmetrizedCD[{Index[\[Mu],Lorentz],Index[\[Nu],Lorentz],...}, expr] is an internal function denoting a CD symmetrized in all Lorentz indices.";
-SplitSymmetrizedCDs::usage = "SplitSymmetrizedCDs[expr] expands the derivates inside any SymmetrizedCD in a given expression.";
 
 
 CommuteCDs::usage               = "CommuteCDs[field,n] commutes derivatives n and n+1 (from the left) of a Field object D_{\[Mu]1, ... \[Mu]n, \[Mu](n+1), ...} f.";
@@ -161,8 +150,8 @@ TakeDev[\[Mu]_,FieldStrength[label_,li_,indices_,\[Nu]_]]:= FieldStrength[label,
 TakeDev[\[Mu]_,Bar@FieldStrength[label_,li_,indices_,\[Nu]_]]:= Bar@FieldStrength[label,li,indices,Join[\[Mu],\[Nu]]];
 
 
-TakeDev[\[Mu]_,X_EoM]:= CD[\[Mu],NormalForm@X];
-TakeDev[\[Mu]_, op_Operator]:= Operator@ CD[\[Mu], NormalForm@ op];
+TakeDev[\[Mu]_,X_EoM]:= CD[\[Mu], OperatorToNormalForm@ X];
+TakeDev[\[Mu]_, op_Operator]:= Operator@ CD[\[Mu], OperatorToNormalForm@ op];
 
 
 TakeDev[\[Mu]_, WilsonTerm[a__, \[Nu]_]]:= WilsonTerm[a, Join[\[Mu], \[Nu]]]; 
@@ -170,38 +159,6 @@ TakeDev[\[Mu]_, WilsonTerm[a__, \[Nu]_]]:= WilsonTerm[a, Join[\[Mu], \[Nu]]];
 
 (* derivatives acting to the right *)
 TakeDev[\[Mu]_List,OpenCD[\[Nu]_List]]:= OpenCD[Join[\[Mu],\[Nu]]];
-
-
-(* ::Subsection::Closed:: *)
-(*Symmetrized CD*)
-
-
-(* ::Text:: *)
-(*Completely symmetrized covariant derivatives appear in the CDE. Format is *)
-(*SymmetrizedCD[{Index[\[Mu], Lorentz], ...}, f] = D_{ \{\mu,...\} } f. *)
-
-
-(* ::Subsubsection::Closed:: *)
-(*General properties*)
-
-
-SymmetrizedCD[{}, expr_]= expr;
-(*SymmetrizedCD[inds_, 0]= 0;*)
-SymmetrizedCD[inds_, expr:Alternatives[_Plus, _List]]:= SymmetrizedCD[inds, #]&/@ expr;
-SymmetrizedCD[inds_List, _? DZeroQ]:= 0;
-SymmetrizedCD[inds_List, a_? DZeroQ op_]:= a SymmetrizedCD[inds, op];
-SymmetrizedCD[inds_List, op_** x_DiracProduct]:= SymmetrizedCD[inds, op]** x;
-SymmetrizedCD[inds_List, x_DiracProduct** op_]:= x** SymmetrizedCD[inds, op];
-
-
-(* ::Subsubsection::Closed:: *)
-(*Expand symmetrized CDs*)
-
-
-SplitSymmetrizedCDs@ SymmetrizedCD[inds_List, expr_]:= Module[{out, sets= Permutations@ inds},
-	out= Sum[TakeDev[set, expr], {set, sets}]/ Length@ sets
-];
-SplitSymmetrizedCDs@ expr_:= expr/. x_SymmetrizedCD:> SplitSymmetrizedCDs@ x;
 
 
 (* ::Subsection::Closed:: *)
@@ -217,8 +174,7 @@ SplitSymmetrizedCDs@ expr_:= expr/. x_SymmetrizedCD:> SplitSymmetrizedCDs@ x;
 
 
 GAction[lInds_List, field:(Field|FieldStrength)[lab_, _, inds_, devs_]]:= Module[{charge, charges, gaugeCharges, gaugeInds, group, 
-		indc, out, ind, rep, j, A},
-		
+		indc, out, ind, rep, j, A},	
 	
 	(*Abelian FS*)
 	charges= GetFields[lab, Charges];
@@ -226,7 +182,7 @@ GAction[lInds_List, field:(Field|FieldStrength)[lab_, _, inds_, devs_]]:= Module
 	out= Sum[
 			{group, charge}= {Head@ charge, First@ charge};
 			charge 
-			$GaugeGroups[group, Coupling][] (*added*)
+			(*$GaugeGroups[group, Coupling][] (*added*)*)
 			FieldStrength[$GaugeGroups[group, Field], lInds, {}, {}]
 		, {charge, gaugeCharges}]* field;
 	
@@ -242,7 +198,7 @@ GAction[lInds_List, field:(Field|FieldStrength)[lab_, _, inds_, devs_]]:= Module
 				- CG[gen@ rep, {Index[A, group@ adj], indc, ind}],
 				CG[gen@ rep, {Index[A, group@ adj], ind, indc}] 
 			]]
-		$GaugeGroups[group, Coupling][] (*added*)
+		(*$GaugeGroups[group, Coupling][] (*added*)*)
 		FieldStrength[$GaugeGroups[group, Field], lInds, {Index[A, group@ adj]}, {}] 
 		(field/. ind-> Bar@ indc)
 	, {ind, gaugeInds}];
