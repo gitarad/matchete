@@ -19,9 +19,6 @@ Package["Matchete`"]
 (*Scoping*)
 
 
-PackageImport["GroupMagic`"]
-
-
 (* ::Subsubsection::Closed:: *)
 (*Exported*)
 
@@ -35,7 +32,7 @@ PackageExport["LF"]
 PackageExport["EvaluateLoopFunctions"]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Internal*)
 
 
@@ -48,6 +45,9 @@ PackageScope["MomDev"]
 PackageScope["LoopIntegrate"]
 PackageScope["LFFull"]
 PackageScope["LFFull2LF"]
+PackageScope["CanonizeLoopFunctions"]
+PackageScope["ReduceLoopFunctions"]
+PackageScope["SimplifyMassFunction"]
 
 
 PackageScope["GatherLoopMomenta"]
@@ -200,18 +200,21 @@ ev^x_/;x>=2 ^:= ev;
 (*Function for expanding an expression around \[Epsilon] = 0, keeping poles and terms up to power 'order.'*)
 
 
-EpsExpand[expr_, opt:OptionsPattern[{Order-> 0}]]:= EpsilonExpand[#, opt]&/@ BetterExpand@ expr
+Options@ EpsExpand= {Order-> 0};
 
 
-EpsilonExpand[expr_, OptionsPattern[{Order-> 0}]]:= Module[{sub},
-	Normal@ Series[expr/. SymGammaFactor:> EvaluateGammaFactor/. \[ScriptD]-> 4- 2\[Epsilon], {\[Epsilon], 0, OptionValue@Order}] ];
+EpsExpand[expr_, OptionsPattern[]]:= Module[{term},
+	Sum[
+		Normal@ Series[term/. SymGammaFactor:> EvaluateGammaFactor/. \[ScriptD]-> 4- 2\[Epsilon], {\[Epsilon], 0, OptionValue@Order}]
+	, {term, TermsToList@ expr}]
+]
 
 
 (* ::Subsection:: *)
 (*Scalar integrals*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*General loop integration function*)
 
 
@@ -225,6 +228,10 @@ LoopIntegrate::onescale="There is more than one scale in the LogTerm integration
 Options@ LoopIntegrate= {LogTerm-> False};
 
 
+(* 
+TO DO:
+apply HcSimplify first, then integralType & ToLoopFunctions, and eventually use PlusHc, to ensure manifest hermiticity 
+*)
 LoopIntegrate[expr_, opt:OptionsPattern[]]:=Module[{out},
 	out= Expand[expr* integralType[<||>, 0]];
 	If[OptionValue@ LogTerm,
@@ -240,7 +247,7 @@ LoopIntegrate[expr_, opt:OptionsPattern[]]:=Module[{out},
 ];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Auxiliary functions*)
 
 
@@ -314,7 +321,7 @@ Module[{preFact},
 ];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Multiscale integrals*)
 
 
@@ -347,11 +354,25 @@ LF[m_List?(!DuplicateFreeQ@# &),ind_List]:= Module[{dupm,posm,newind,newm},
 
 
 (* ::Text:: *)
+(*Canonically order the loop function*)
+
+
+CanonizeLoopFunctions@ expr_:= expr/. lf:LF[{_,__}, _]:> CanonizeLoopFunctions@ lf;
+
+
+CanonizeLoopFunctions@ LF[masses_, subscripts_]:= Module[{props},
+	props= Transpose@ {masses, Most@ subscripts};
+	props= Transpose@ SortBy[props, {Minus@* Last, First}];
+	LF[First@ props, Append[Last@ props, Last@ subscripts]]
+];
+
+
+(* ::Text:: *)
 (*Simplification rules for the loop functions*)
 
 
-(* Canonical order *)
-LFFull[m_?(Sort[#]=!=#&),ord_]:=LFFull[Sort[m],Append[ord[[;;-2]][[Ordering[m]]],ord[[-1]]]]
+(* Canonical order *) (* this ordering is not canonical once flavor indices are considered on masses *)
+LFFull[m_?(!OrderedQ[#]&), ord_]:= LFFull[Sort[m],Append[ord[[;;-2]][[Ordering[m]]],ord[[-1]]]]
 
 (* Remove zero entries (other than the last one) *)
 LFFull[m_,ord_?(MemberQ[#[[;;-2]],0]&)]:=LFFull[Delete[m,Position[ord[[;;-2]],0]],Append[DeleteCases[ord[[;;-2]],0],ord[[-1]]]]
@@ -359,6 +380,13 @@ LFFull[m_,ord_?(MemberQ[#[[;;-2]],0]&)]:=LFFull[Delete[m,Position[ord[[;;-2]],0]
 (* Set to zero scaleless integrals *)
 LFFull[{},ord_]:=0
 
+
+(* ::Text:: *)
+(*The  reduction  identities  below  are  problematic  as  they  can  significantly  complicate  coefficients .*)
+(* It  is  also  not  guaranteed  that  a  term  and  its  hermitian  conjugate  are  reduced  in  the  same  way .*)
+
+
+(*
 (* IBP rule to make the first power one *)
 LFFull[m_,ord_?(#[[1]]>1 &)]:=(\[ScriptD]/2-ord[[-1]]-1)/(ord[[1]]-1)LFFull[m,ord+UnitVector[Length@ord,Length@ord]-UnitVector[Length@ord,1]]-Sum[ord[[i]]/(ord[[1]]-1)LFFull[m,ord+UnitVector[Length@ord,i]-UnitVector[Length@ord,1]],{i,2,Length@ord-1}]
 
@@ -367,6 +395,7 @@ LFFull[m_,ord_?(#[[1]]==1 && #[[-1]]>0 &)]:= - 1/m[[1]]^2 LFFull[m[[2;;]],ord[[2
 
 (* Mass relation to reduce positive powers of mass terms multiplying loop functions *)
 LFFull/: Power[mi_, 2] LFFull[m:{m1___,mi_,mn___},ord_]:= LFFull[{m1,mi,mn},ord-UnitVector[Length@ord,Length@ord]] - LFFull[{m1,mi,mn},ord-UnitVector[Length@ord,Position[m,mi][[1,1]]]]
+*)
 
 
 (* ::Text:: *)
@@ -375,6 +404,7 @@ LFFull/: Power[mi_, 2] LFFull[m:{m1___,mi_,mn___},ord_]:= LFFull[{m1,mi,mn},ord-
 
 ToLoopFunctions[propPowers_Association, \[Alpha]_]:= Module[{props,full,pole},
 	props= SortBy[KeyValueMap[{#1, #2}&, propPowers], (-#[[2]]&)];
+	(*full= I LFFullEntry[props[[;;, 1]], props[[;;, 2]] ~ Join ~ {\[Alpha]}];*)
 	full= I LFFull[props[[;;, 1]], props[[;;, 2]] ~ Join ~ {\[Alpha]}];
 	LFFull2LF[full]
 ]
@@ -383,11 +413,33 @@ ToLoopFunctions[propPowers_Association, \[Alpha]_]:= Module[{props,full,pole},
 LFFull2LF[full_]:= Normal@Series[Expand@full/. {\[ScriptD]->4-2\[Epsilon], LFFull[args__]:> LF[args] + EvaluateLoopFunctions[LF[args], Pole -> True]},{\[Epsilon],0,0}]
 
 
-EvaluateLoopFunctions[LF[denoms_, powers_], OptionsPattern[{Pole->False}]]:= Module[{association},
+EvaluateLoopFunctions[LF[denoms_, powers_], opt:OptionsPattern[{Pole->False}]]:= 
+EvaluateLoopFunctions[LF[denoms, powers], opt]= Module[{association},
 	association= Association@@ (#[[1]]->#[[2]]&)/@ Transpose@ {denoms, powers[[;;-2]]};
-	-I MultiScaleIntegral[association, Last@ powers, Pole-> OptionValue[Pole]] //Simplify
-];
-EvaluateLoopFunctions@ expr_:= expr/. lf_LF:> EvaluateLoopFunctions@ lf;
+	-I MultiScaleIntegral[association, Last@ powers, Pole-> OptionValue[Pole]]//Simplify
+]
+
+EvaluateLoopFunctions@ expr_:= Module[{res,summedInd},
+	(* substitute loop functions *)
+	res= expr/. lf_LF:> EvaluateLoopFunctions@ lf;
+	(* expand *)
+	res= TermsToList@BetterExpand[res];
+	(* remove unnecessary FlavorSums *)
+	res=Sum[
+		If[FreeQ[term,_FlavorSum,All],
+			term
+			,
+			summedInd= FirstCase[term,FlavorSum[ind_]:>ind,Nothing,All];
+			If[FreeQ[term/._FlavorSum->1,summedInd,All],
+				term/._FlavorSum->DimRep[Last@summedInd],
+				term
+			]
+		]
+		,
+		{term,res}
+	];
+	res
+]
 
 
 (* ::Subsection:: *)
@@ -401,7 +453,7 @@ EvaluateLoopFunctions@ expr_:= expr/. lf_LF:> EvaluateLoopFunctions@ lf;
 LoopMom/: Power[_LoopMom, 2] := Power[Prop@ 0, -1];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Extract momenta*)
 
 
@@ -434,7 +486,7 @@ LoopMoms[]:= 1;
 LoopMoms@ inds__:= If[EvenQ@ Length@ {inds}, Power[Prop@ 0, -Length@ {inds}/ 2] SymmetricLorentzInds@ inds, 0];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Evaluating the symmetric tensor *)
 
 
@@ -468,6 +520,104 @@ SymGammaFactor@ 0= 1;
 
 
 EvaluateGammaFactor@ n_Integer:= EvaluateGammaFactor@ n= Normal@ Series[Gamma[2- \[Epsilon]]/(2^n Gamma[2- \[Epsilon]+ n]), {\[Epsilon], 0, 1}];
+
+
+(* ::Subsection:: *)
+(*Loop function reduction*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Simplification of loop function sum*)
+
+
+(* ::Text:: *)
+(*Function to simplify a sum of loop functions \[Dash] a mass function*)
+(*The strategy is to reduce the propagator power associated with a given mass to 1, then try this for every possible mass to obtain the best result.*)
+
+
+SimplifyMassFunction@ expr_Plus:= Module[{lfs, out= List@@ expr, keep, simp, temp, types, target},
+	out= LFtoTempLF@ out;
+	types= SortBy[FirstCase[#, TempLF[masses_, _]:> masses, {}, All]&/@ out// DeleteDuplicates, 
+		Minus@* Length];
+	Do[
+		If[Length@ masses< 2, Continue[];];
+		{keep, simp}= SelectAndDeleteCases[out, a_/; FreeQ[a, TempLF[masses, _]]];
+		If[(target= Length@ simp) < 2, Continue[];];
+		Do[
+			temp= Plus@@ simp/. lf_TempLF:> PermuteTempLF[lf, {i, 1}];
+			temp= temp// SimpTempLFRules// TermsToList;
+			If[Length@ temp> target, Continue[]; ];
+			target= Length@ temp;
+			out= Join[keep, temp];
+		, {i, Length@ masses}];
+	, {masses, types}];
+	Plus@@ out/. lf:TempLF[masses_, inds_]:> PermuteTempLF[lf, Ordering@ masses]/. TempLF-> LF
+];
+SimplifyMassFunction@ expr_:= expr;
+
+
+(* ::Text:: *)
+(*Replace LF with a temporary loop function*)
+
+
+LFtoTempLF@ expr_:= expr/. LF-> TempLF /. lf:TempLF[masses_, inds_]:> PermuteTempLF[lf, Ordering@ masses];
+
+
+PermuteTempLF[TempLF[masses_, inds_], order_]:= Module[{newMasses= masses, newInds= inds, old= Sort@ order},
+	newMasses[[old]]= masses[[order]];
+	newInds[[old]]= newInds[[order]];
+	TempLF[newMasses, newInds]
+]
+
+
+(* ::Text:: *)
+(*The IBP reduction rules are based on full loop functions with divergent pieces. By contrast LF is only the finite part. The pole part difference between LF and TempLF never multiplies O(\[Epsilon]) pieces before simplification and can be ignored. The O(\[Epsilon]) pieces picked up by IBP can combine with poles in TempLF to give finite contributions, which must be kept. After truncation of the O(\[Epsilon]) pieces the poles in TempLF can once again be ignored, when we convert back to LF. We know that the original LF expression was finite.*)
+
+
+SimpTempLFRules@ expr_:= Block[{out},
+	out= expr//. TempLF[masses_, ord:{first_/; first>1, mid__, last_}]:>
+	(1 -\[Epsilon] -last)/(first -1) TempLF[masses, {first -1 , mid, last+1}] -
+		Sum[{mid}[[i]]/(first-1) TempLF[masses, {first- 1, mid, last}+ UnitVector[Length@ ord, i+1]], {i, Length@ {mid}}];
+	TempLFFiniteExtraction@ out
+]
+
+
+TempLFFiniteExtraction@ expr_:= Normal@ Series[
+		Expand@ expr/. lf_TempLF:> lf + EvaluateLoopFunctions[LF@@ lf, Pole -> True]
+	, {\[Epsilon], 0, 0}]/. Power[\[Epsilon], -1]-> 0;
+
+
+(* ::Subsubsection::Closed:: *)
+(*IBP reduction (not in use)*)
+
+
+(* ::Text:: *)
+(*For IBP reduction of the  loop functions *)
+
+
+ReduceLoopFunctions@ expr_:= expr/. lf_LF:> ReduceLoopFunction@ lf;
+
+
+ReduceLoopFunction@ lf_LF:= Module[{out},
+	(*Possible divergent pieces would cancel in the end anyway*)
+	out= LFFull@@ lf;
+	out= out//. lfFullReductionRules;
+	LFFull2LF@ out/. Power[\[Epsilon], -1]-> 1
+]
+
+
+lfFullReductionRules= {
+	(* IBP rule to make the first power one *)
+	LFFull[masses_, ord:{first_/; first>1, mid___, last_}]:>
+		(2 -\[Epsilon] -last -1)/(first-1) LFFull[masses, {first- 1, mid, last+ 1}]
+			-Sum[ord[[i]]/(first -1)LFFull[masses, {first- 1, mid, last}+ UnitVector[Length@ ord, i]], {i, 2, Length@ ord-1}],
+	(* Mass relation to reduce massless propagators (only used after first power is one) *)
+	LFFull[masses_,ord:{1, mid___, last_/; last>0}]:> 
+		- 1/masses[[1]]^2 LFFull[masses[[2;;]], ord[[2;;]]] + 1/masses[[1]]^2 LFFull[masses, {1, mid, last -1}],
+	(*Mass relation to increase massless propagators (only used after first power is one)*)
+	LFFull[masses_, ord:{1, mid___, last_/; last<0}]:> 
+		LFFull[masses[[2 ;;]], {mid, last + 1}] + masses[[1]]^2 LFFull[masses, {1, mid, last + 1}]
+}
 
 
 (* ::Section:: *)

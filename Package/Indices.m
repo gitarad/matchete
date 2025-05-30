@@ -19,11 +19,11 @@ Package["Matchete`"]
 (*Scoping:*)
 
 
-PackageImport["GroupMagic`"]
-
-
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Exported*)
+
+
+PackageExport["Index"]
 
 
 PackageExport["Lorentz"]
@@ -39,7 +39,10 @@ PackageExport["Delta"]
 PackageExport["Metric"]
 
 
-(* ::Subsection::Closed:: *)
+PackageExport["FlavorSum"]
+
+
+(* ::Subsubsection::Closed:: *)
 (*Internal*)
 
 
@@ -47,17 +50,22 @@ PackageScope["ContractMetric"]
 PackageScope["ContractDelta"]
 
 
+PackageScope["ContractDeltaSingleTerm"]
+
+
 PackageScope["FindDummyIndices"]
 PackageScope["FindOpenIndices"]
 PackageScope["FindDiagonalIndices"]
 
 
+PackageScope["RelabelNonFlavorIndices"]
+
+
 PackageScope["RelabelIndicesInTerm"]
 
 
-PackageScope["$LorentzAlphabetAssoc"]
-PackageScope["$IndexAlphabetAssoc"]
 PackageScope["BuildIndexAssoc"]
+PackageScope["ResetIndexAlphabets"]
 PackageScope["$IndexAlphabets"]
 PackageScope["$UndefinedIndexAlphabet"]
 
@@ -68,12 +76,15 @@ PackageScope["RemovePower"]
 PackageScope["DimRep"]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Usage definitions*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Exported*)
+
+
+Index::usage = "Index[label, representation] specifies an index with label 'label' belonging to certain representation. For representations of non-Abelian groups, the representation will often take the form group[rep].";
 
 
 Lorentz::usage  = "Index[\[Mu],Lorentz] specifies the index \[Mu] belongs to the Lorentz group.";
@@ -90,7 +101,10 @@ Delta::usage    = "Delta[Index[a,rep],Index[b,rep]] denotes the delta function f
 Metric::usage   = "Metric[\[Mu],\[Nu]] denotes the Lorentz metric tensor \!\(\*SubscriptBox[\(g\), \(\[Mu]\[Nu]\)]\).";
 
 
-(* ::Subsection::Closed:: *)
+FlavorSum::usage = "FlavorSum[index] represents a sum over the diagonal flavor index.";
+
+
+(* ::Subsubsection::Closed:: *)
 (*Internal*)
 
 
@@ -105,8 +119,6 @@ FindOpenIndices::usage  = "FindOpenIndices[expr] returns a list of all non-repea
 RelabelIndicesInTerm::usage = "RelabelIndicesInTerm[expr] relabels all repeated indices with canonical labels in expr, where expr must be a single term. RelabelIndicesInTerm[expr,bool] relabels all repeated indices in expr, where expr must be a single term. If the argument bool is True unique labels are be given to the dummy indices, if bool is False canonical labels are given instead.";
 
 
-$LorentzAlphabetAssoc::usage   = "Associantion with the alphabet for the Lorentz indices.";
-$IndexAlphabetAssoc::usage     = "Associantion with the alphabet for all indices other than Lorentz.";
 BuildIndexAssoc::usage         = "BuildIndexAssoc[alphList,n] builds an association of length n (default 20) with the index alphabet using the list of names alphList.";
 $IndexAlphabets::usage         = "Association made of defined index alphabet associations.";
 $UndefinedIndexAlphabet::usage = "Association made of undefined index alphabet associations.";
@@ -122,7 +134,19 @@ DimRep::usage = "DimRep[rep] returns the dimension of the representation or flav
 (*Private:*)
 
 
+(* ::Subsubsection::Closed:: *)
+(*Properties of Index*)
+
+
+(* ::Text:: *)
+(*Index is a wrapper around all dummy index labels to provide information about which representation they belong to*)
+
+
 SetAttributes[Index,OneIdentity]
+
+
+Index[lab_, Bar@ rep_]:= Bar@ Index[lab, rep];
+Index[Index[a_, f_], f_] := Index[a, f]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -137,18 +161,21 @@ Delta[Bar@ a_, b_]:= Delta[a, b];
 Delta[a_, Bar@ b_]:= Delta[a, b];
 
 
-(* ::Section::Closed:: *)
+Delta/:Bar@Delta[a_,b_]:=Delta[a,b];
+
+
+(* ::Section:: *)
 (*Formatting*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Flag determining whether to print the full index or short version*)
 
 
 $PrintFullIndices = True;
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*The default alphabets used for printing indices*)
 
 
@@ -156,7 +183,7 @@ $IndexAlphabet = CharacterRange["a", "z"];
 $LorentzAlphabet = {"\[Mu]", "\[Nu]", "\[Rho]", "\[Sigma]","\[Kappa]"};
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Build up association for index printing alphabet*)
 
 
@@ -172,21 +199,20 @@ BuildIndexAssoc[alph_List,n_:20]:=Association@Table[
 		auxR=auxx[[2]];
 		If[aux==0,
 			ToExpression[dummyIndexLabels<>ToString[c]]->alph[[c]],
-			ToExpression[dummyIndexLabels<>ToString[c]]->Subscript[ToString@alph[[auxR+1]],ToString[aux]]
+			ToExpression[dummyIndexLabels<>ToString[c]]->SubscriptBox[ToString@alph[[auxR+1]],ToString[aux]]
 		]
 	],
 	{c,n}
 ]
 
 
-$IndexAlphabetAssoc = BuildIndexAssoc[$IndexAlphabet];
-$LorentzAlphabetAssoc = BuildIndexAssoc[$LorentzAlphabet];
-
-
-$IndexAlphabets=<|Lorentz->BuildIndexAssoc[$LorentzAlphabet]|>;
-
-
 $UndefinedIndexAlphabet = BuildIndexAssoc[{"x","y","z"}];
+
+
+ResetIndexAlphabets[]:= Block[{},
+	$IndexAlphabets=<|Lorentz->BuildIndexAssoc[$LorentzAlphabet]|>;
+];
+ResetIndexAlphabets[];
 
 
 (* ::Section:: *)
@@ -205,18 +231,8 @@ $UndefinedIndexAlphabet = BuildIndexAssoc[{"x","y","z"}];
 (*Auxiliary function to remove powers in intermediate steps:*)
 
 
-RemovePower[input_]:=Module[
-	{
-		(*negativePowers = {Power[x___,n_Integer] :> Module[{Prod},1/Hold[Evaluate[Prod@@Table[x,{ii,-n}]]]/.Prod->Times]/;n<0},*)
-		positivePowers = {Power[x___,n_Integer] :> Module[{Prod},Hold[Evaluate[Prod@@Table[x,{ii,n}]]]/.Prod->Times]/;n>0},
-		expr = (*Expand[input]*)input
-	},
-	(*expr = expr /. negativePowers;*)
-	expr = expr /. positivePowers;
-
-	(*Applying ReleaseHold[] to the returned expression would yield again the input.*)
-	Return[expr]
-]
+RemovePower[input_]:= input/. Power[x_, n_Integer? Positive]:> 
+	(Hold@ Evaluate[Prod@@ ConstantArray[x, n] ]/.Prod->Times)
 
 
 (* ::Subsubsection::Closed:: *)
@@ -224,7 +240,7 @@ RemovePower[input_]:=Module[
 
 
 FindDummyIndices::sum="Head of argument is Plus. FindDummyIndices cannot be called on a sum, but only on a single term.";
-FindDummyIndices::trippleindex="`1` is appearing more than twice.";
+FindDummyIndices::trippleindex="`1` is appearing more than twice in the expression `2`.";
 
 
 FindDummyIndices= First@* FindIndices;
@@ -235,46 +251,26 @@ FindIndices[expression_]:=Block[
 	{
 		list,
 		diagCouplReplacement,
-		(*Temporarly remove all powers*)
-		expr=PseudoTimes@ expression
+		aux,
+		expr
 	},
+	
+	(* RemovePower must not be replaced by PseudoTimes here *)
+	expr= RemovePower[expression/. $DropDiagonalCouplings];
+	
+	list= Cases[expr, _Index, All];
 
-	(* ignore indices from diagonal couplings since these are not considered for the dummy index summation *)
-	(*expr = expr/. Coupling[a:Alternatives@@ ($FieldAssociation[#][Mass]&/@ Keys@ Select[$FieldAssociation, #[Heavy] &]), {Index[b_,rep_]}, n_]:> 
-		Coupling[a, {}, n];*)
-	(*expr= DeleteCases[expr, Coupling[Alternatives@@ ($FieldAssociation[#][Mass]&/@ Keys@ Select[$FieldAssociation, #[Heavy] &]), {_Index}, _], All];*)
-	(*
-	expr= DeleteCases[expr, Coupling[Alternatives@@ (Keys@ Select[GetCouplings[], #[DiagonalCoupling]&]), {_Index}, _], All];
-	*)
-	
-	
-	(* for much better performance this rule is now constructed once globally when a coupling is defined *)
-	(*diagCouplReplacement = Table[
-		With[{tmp= Position[GetCouplings[x][DiagonalCoupling],True]},
-			If[tmp==={},
-				Nothing,
-				Coupling[x,ind_List,ord_]:>Coupling[x,ReplacePart[ind,tmp->Nothing],ord]
-			]
-		]
-		,
-		{x,Keys@GetCouplings[]}
-	];
-	
-	expr = expr /. diagCouplReplacement;
-	*)
-	
-	expr = expr /. DropDiagonalCouplings;
-	
-	(* list all indices and their multiplicity found in expr *)
-	list = Tally[Cases[expr, _Index, (*{-3,-2}*)All]];
+	(* get multiplicity of the other indices *)
+	list= Tally[list];
 
 	(* throw error if there is a tripple index *)
-	FirstCase[list, {a_, b_/; b> 2}:> 
-		(Message[FindDummyIndices::trippleindex, a]; Abort[];)];
-	
-	(*{dummy indices, open indices}*)
-	(*{Select[list, MatchQ[2]@*Last][[;;,1]], Select[list, MatchQ[1]@*Last][[;;,1]]}*)
-	{Cases[list, {x_, 2}:> x], Cases[list, {x_, 1}:> x]}
+	FirstCase[list, {a_, b_/; b> 2}:>
+		(Message[FindDummyIndices::trippleindex, a, expression]; Abort[];)];
+
+	(* {dummy indices, open indices} *)
+	(* FlavorSum indices are always dummy *)
+	{Join[Cases[list, {x_, 2}:> x], Cases[expression, FlavorSum@ ind_:> ind, All] ], 
+		Cases[list, {x_, 1}:> x]} (*treat summed flavor indices also as dummy indices*)
 ]
 
 
@@ -287,7 +283,7 @@ FindOpenIndices[expression_]:=Module[
 		Message[FindDummyIndices::sum];
 		Abort[]
 	];
-	
+
 	Last@ FindIndices[expr]
 ]
 
@@ -300,72 +296,89 @@ FindDiagonalIndices[expr_]:=If[
 		Last @ SortBy[ DeleteDuplicates [ DiagonalInidicesSingleTerm /@ List @@ Expand @ expr ], Length ],
 		DiagonalInidicesSingleTerm @ expr
 	]
-	
+
+(*
 DiagonalInidicesSingleTerm[expr_]:=Module[{dummies,opens, all},
-	{dummies,opens} = FindIndices[expr];
+	{dummies,opens} = Echo@FindIndices[expr];
 	(* we only allow flavor indices to be of this type *)
 	all = Cases[ DeleteDuplicates @ Cases[ expr , _Index, Infinity], Index[_,f_]/;MemberQ[Keys[$FlavorIndices],f]];
 	(* diagonal indices show up neither as dummies nor as open indices, so just return all flavor indices that  *)
 	Complement[all, dummies, opens]
 ]
+*)
+
+DiagonalInidicesSingleTerm[expression_]:=Block[
+	{
+		list,
+		diagCouplReplacement,
+		(*Temporarly remove all powers*)
+		expr=PseudoTimes@ expression,
+		allInd
+	},
+
+	(* get list of all indices *)
+	allInd = DeleteDuplicates@ Cases[expr, _Index, All];
+
+	(* drop indices of flavor diagonal couplings *)
+	expr = expr /. $DropDiagonalCouplings;
+
+	(* list all indices found in expr that are not diagonal flavor indices *)
+	list = DeleteDuplicates@ Cases[expr, _Index, All];
+
+	(* all diagonal indices that are not contracted to anything *)
+	Complement[allInd, list]
+]
 
 
-(* ::Subsection::Closed:: *)
-(*Relabel repeated indices (in single term)*)
+(* ::Subsection:: *)
+(*Relabel repeated indices *)
+
+
+(* ::Subsubsection::Closed:: *)
+(*In Single term*)
 
 
 (*RelabelIndicesInTerm::sum="Head of argument is Plus. RelabelIndicesInTerm cannot be called on a sum, but only on a single term.";*)
 
 
-$canonicalLabels= Block[{n}, Table[Symbol["Global`d$$" <> ToString[n]], {n,50}]]
+$canonicalLabels= Block[{n}, Table[Symbol["Global`d$$" <> ToString[n]], {n,100}]]
 
 
 RelabelIndicesInTerm[expr_,unique_:False]:=Block[
 	{
 		ind,
-		indexlist={},
+		indexCounter,
+		newInd,
+		dummyIndices,
 		openInds,
-		rule={}
-	},	
+		rule
+	},
 
 	(* Unique | canonical dummy index labels*)
 	If[unique,
 		(*True: unique dummy indices are required:*)
-		Module[{},
-			(*Find dummy indices*)
-			indexlist = FindDummyIndices[expr];
+		(*Find dummy indices*)
+		dummyIndices = FindDummyIndices[expr];
 
-			(*Find replacement rules*)
-			rule = Cases[
-				indexlist,
-				Index[label_,type_]:>(Index[label,type]->Index[Unique["u"],type]),
-				All
-			];
-		]
+		(*Find replacement rules*)
+		rule= Table[
+				ind-> Index[Unique["u"], ind[[2]]]
+			, {ind, dummyIndices}];
 	,
 		(*False: canonically labled dummy indices are required:*)
-		Module[{n},
-			(*Find the new dummy indices*)
-			{indexlist, openInds}= FindIndices@ expr;
-									
-			(*create a separate counter for every type of index*)
-			Map[
-				(n[#]=1)&,
-				DeleteDuplicates@Cases[indexlist,Index[_,type_]:>type,All]
-			];
-			
-			(*Find replacement rules*)
-			(*The While loop ensures no duplicates labels with the open indices*)
-			rule = Cases[
-				indexlist,
-				Index[label_,type_]:> Index[label,type]->
-					(While[True, 
-						If[!MemberQ[openInds, ind= Index[$canonicalLabels[[n[type]++]],type]], 
-							Break[];
-						]; 
-					]; ind)
-			];
-		]
+		(*Find the new dummy indices*)
+		{dummyIndices, openInds}= FindIndices@ expr;
+		
+		(*create a separate counter for every type of index*)
+		(indexCounter[#[[2]]]= 1)&/@ dummyIndices;
+
+		(*Find replacement rules*)
+		(*The While loop ensures no duplicates labels with the open indices*)
+		rule= Table[
+				While[MemberQ[openInds, newInd= Index[$canonicalLabels[[indexCounter[ind[[2]]]++]], ind[[2]]]],
+					0];
+				ind-> newInd
+			, {ind, dummyIndices}];
 	];
 
 	(*apply rules*)
@@ -373,8 +386,8 @@ RelabelIndicesInTerm[expr_,unique_:False]:=Block[
 ]
 
 
-(* ::Subsection::Closed:: *)
-(*Relabel repeated indices (general)*)
+(* ::Subsubsection::Closed:: *)
+(*General*)
 
 
 Options[RelabelIndices] = {Expand->True, Unique->False};
@@ -397,6 +410,9 @@ RelabelIndices[expr_Plus, opt:OptionsPattern[]] := RelabelIndices[#, opt]&/@expr
 (*Relabel indices on HcTerms*)
 RelabelIndices[HcTerms[expr_], opt:OptionsPattern[]]:=HcTerms[RelabelIndices[expr, opt]];
 
+(*Relabel indices on Sqrt*)
+RelabelIndices[Sqrt[expr_], opt:OptionsPattern[]]:=Sqrt[RelabelIndices[expr, opt]];
+
 (* Relabel dummy indices *)
 RelabelIndices[expression:Except[_Plus], OptionsPattern[]]:=Block[
 	{
@@ -406,7 +422,7 @@ RelabelIndices[expression:Except[_Plus], OptionsPattern[]]:=Block[
 	},
 	(* by default expand expression first *)
 	If[OptionValue[Expand],
-		expr = BetterExpand[expr]
+		expr = LagrangianExpand[expr]
 	];
 
 	(*treat every term in a sum separately*)
@@ -420,34 +436,130 @@ RelabelIndices[expression:Except[_Plus], OptionsPattern[]]:=Block[
 ]
 
 
+(* ::Subsection:: *)
+(*Relabel repeated indices (except for flavor indices)*)
+
+
+(* ::Text:: *)
+(*This function is a duplicate of RelabelIndices, except that it ignores all kinds of flavor indices.*)
+(*NOTE: Keep this functionality separate to avoid slowing down the default RelabelIndices.*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Relabel (single term)*)
+
+
+RelabelNonFlavorIndicesInTerm[expr_,unique_:False]:=Block[
+	{
+		ind,
+		indexCounter,
+		newInd,
+		dummyIndices,
+		openInds,
+		rule,
+		dropFlavorInds= Index[_,Alternatives@@Keys[GetFlavorIndices[]]] -> Nothing
+	},
+
+	(* Unique | canonical dummy index labels*)
+	If[unique,
+		(*True: unique dummy indices are required:*)
+		(*Find dummy indices*)
+		dummyIndices = FindDummyIndices[expr]//.dropFlavorInds;
+
+		(*Find replacement rules*)
+		rule= Table[
+				ind-> Index[Unique["u"], ind[[2]]]
+			, {ind, dummyIndices}];
+	,
+		(*False: canonically labled dummy indices are required:*)
+		(*Find the new dummy indices*)
+		{dummyIndices, openInds}= FindIndices[expr];
+		
+		dummyIndices= dummyIndices//.dropFlavorInds;
+		
+		(*create a separate counter for every type of index*)
+		(indexCounter[#[[2]]]= 1)&/@ dummyIndices;
+
+		(*Find replacement rules*)
+		(*The While loop ensures no duplicates labels with the open indices*)
+		rule= Table[
+				While[MemberQ[openInds, newInd= Index[$canonicalLabels[[indexCounter[ind[[2]]]++]], ind[[2]]]],
+					0];
+				ind-> newInd
+			, {ind, dummyIndices}];
+	];
+
+	(*apply rules*)
+	expr/.rule
+]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Relabel (general)*)
+
+
+Options[RelabelNonFlavorIndices] = {Expand->True, Unique->False};
+
+
+(* ::Text:: *)
+(*When relabeling dummy indices in a list or matrix*)
+
+
+RelabelNonFlavorIndices[l_List, opt:OptionsPattern[]]:= RelabelNonFlavorIndices[#, opt]&/@l;
+
+
+(* ::Text:: *)
+(*Function that replaces all dummy indices in a consistent manner*)
+
+
+(* Performance improvements for long expressions *)
+RelabelNonFlavorIndices[expr_Plus, opt:OptionsPattern[]] := RelabelNonFlavorIndices[#, opt]&/@expr
+
+(*Relabel indices on HcTerms*)
+RelabelNonFlavorIndices[HcTerms[expr_], opt:OptionsPattern[]]:=HcTerms[RelabelNonFlavorIndices[expr, opt]];
+
+(*Relabel indices on Sqrt*)
+RelabelNonFlavorIndices[Sqrt[expr_], opt:OptionsPattern[]]:=Sqrt[RelabelNonFlavorIndices[expr, opt]];
+
+(* Relabel dummy indices *)
+RelabelNonFlavorIndices[expression:Except[_Plus], OptionsPattern[]]:=Block[
+	{
+		expr = expression,
+		(* determine whether to use unique or canonical index labels *)
+		unique = OptionValue[Unique]
+	},
+	(* by default expand expression first *)
+	If[OptionValue[Expand],
+		expr = LagrangianExpand[expr]
+	];
+
+	(*treat every term in a sum separately*)
+	If[Head[expr]===Plus,
+		expr = List@@expr,
+		expr = List@expr
+	];
+	(*If[OptionValue@Unique,Print[OptionValue@Unique]];*)
+	(*relabel dummy indices in each term separately and sum them up*)
+	Plus@@ (RelabelNonFlavorIndicesInTerm[#, unique]&/@ expr)
+]
+
+
 (* ::Section:: *)
 (*Index contractions*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Combined*)
 
 
-Options[Contract] = {Expand->True};
+(* ::Text:: *)
+(*Contract fully contracts delta functions and metrics within an expression, and relabels the indices in each term.*)
 
 
-(* Performance improvements for long expressions *)
-Contract[expr_Plus, OptionsPattern[]] := Contract[#,Expand->OptionValue[Expand]]&/@expr
-
-(* Contract *)
-Contract[expr:Except[_Plus], OptionsPattern[]] := Module[
-	{result = expr}
-	,
-	(* by default first expand *)
-	If[OptionValue[Expand],
-		result = Expand[result]
-	];
-	(* carry out all contractions *)
-	result = ContractMetric[result, Expand->False];
-	result = ContractDelta[result, Expand->False];
-	(* relabel all indices *)
-	result = RelabelIndices[result, Expand->False];
-	Return[result]
+Contract@ expr_:= Module[{terms= TermsToList@LagrangianExpand[expr] (* if LagrangianExpand is removed, the Expand option below should be set to False *) },
+	Plus@@ Table[
+		ContractDeltaSingleTerm[ContractMetricSingleTerm@ term(*, Expand->False*)]// RelabelIndicesInTerm
+	, {term, terms}]
 ]
 
 
@@ -466,22 +578,116 @@ SetAttributes[Delta, Orderless]
 (*Properties*)
 
 
-Delta /: Delta[Index[a_,rep_],Index[b_,rep_]] * Delta[Index[b_,rep_],Index[c_,rep_]] := 
+(* ::Text:: *)
+(*Non of these properties hold if the Delta is contracted to a Coupling with a diagonal Flavor index.*)
+
+
+(*Delta /: Delta[Index[a_,rep_:Except[_Pattern]],Index[b_,rep_]] * Delta[Index[b_,rep_],Index[c_,rep_]] :=
+	Delta[Index[a,rep],Index[c,rep]]*)
+
+
+(*Delta /: Delta[Index[a_,rep_:Except[_Pattern]],Index[b_,rep_]]^2 :=
+	Delta[Index[a,rep],Index[a,rep]]*)
+
+
+(*Delta[Index[a_,rep:Except[_Pattern]],Index[a_,rep_]] := DimRep[rep]*)
+
+
+(* ::Text:: *)
+(*Apply these rules for non-flavor indices*)
+
+
+NotFlavorQ[x:Except[_Pattern]]:=!MemberQ[Keys[$FlavorIndices],x]
+FlavorQ[x:Except[_Pattern]]:=MemberQ[Keys[$FlavorIndices],x]
+
+
+Delta /: Delta[Index[a_,rep_?NotFlavorQ],Index[b_,rep_]] * Delta[Index[b_,rep_],Index[c_,rep_]] :=
 	Delta[Index[a,rep],Index[c,rep]]
 
 
-Delta /: Delta[Index[a_,rep_],Index[b_,rep_]]^2 := 
+Delta /: Delta[Index[a_,rep_?NotFlavorQ],Index[b_,rep_]]^2 :=
 	Delta[Index[a,rep],Index[a,rep]]
 
 
-Delta[Index[a_,rep_],Index[a_,rep_]] := DimRep[rep]
+Delta[Index[a_,rep_],Index[a_,rep_]]/;NotFlavorQ[rep] := DimRep[rep]
 
 
-(* ::Subsubsection:: *)
+(* ::Text:: *)
+(*To capture this case the following rule must be used in ContractDelta instead.*)
+
+
+(* THIS RULE IS TOO SLOW *)
+(*
+RuleToSimplifyFlavorDeltas[] := With[{pat = Alternatives@@Keys[$FlavorIndices]},
+Dispatch@{
+	Times[rest___, Delta[Index[a_,rep_(*:pat*)],Index[a_,rep_]]]:>(Times[rest,If[FreeQ[{rest},Index[a,rep],All],DimRep[rep],1]])
+	,
+	Times[rest___, Delta[Index[a_,rep_(*:pat*)],Index[b_,rep_]]^2](*/;(a=!=b)*):>(Times[rest,Delta[Index[a,rep],Index[a,rep]]]/.Index[b,rep]->Index[a,rep])
+	,
+	Times[rest___, Delta[Index[a_,rep_(*:pat*)],Index[b_,rep_]], Delta[Index[b_,rep_],Index[c_,rep_]]](*/;(a=!=c&&a=!=b&&b=!=c)*):>(Times[rest,Delta[Index[a,rep],Index[c,rep]]]/.Index[b,rep]->Index[a,rep])
+}
+]
+*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Simplifications for Flavor Delta*)
+
+
+(* ::Text:: *)
+(*Apply the delta properties manually for flavor deltas*)
+
+
+SimplifyFlavorDelta[arg_] := If[FreeQ[arg, Alternatives@@Keys[$FlavorIndices],All],
+	arg,
+	FixedPoint[SimplifyFlavorDeltaStep, arg]
+]
+
+
+SimplifyFlavorDeltaStep[arg_] := Block[{expr,subs},
+	{expr,subs}= Reap[arg /. {
+		delta:Delta[Index[a_,rep_],Index[a_,rep_]] :> If[FreeQ[arg/.delta->1,Index[a,rep],All],
+			DimRep[rep]
+			,
+			FlavorSum[Index[a,rep]]
+		]
+		,
+		Delta[Index[a_,rep_],Index[b_,rep_]]^2 :> (Sow[Index[b,rep]->Index[a,rep]]; Delta[Index[a,rep],Index[a,rep]])
+		,
+		Delta[Index[a_,rep_],Index[b_,rep_]]*Delta[Index[b_,rep_],Index[c_,rep_]] :> (Sow[Index[b,rep]->Index[a,rep]]; Delta[Index[a,rep],Index[c,rep]])
+		(* this last line is moved to the regular ContractDelta, so that it is also applied if the expression is not expanded *)
+		(*,
+		Delta[Index[a_,rep_],Index[b_,rep_]]*FlavorSum[Index[b_,rep_]] :> (Sow[Index[b,rep]->Index[a,rep]]; Echo@FlavorSum[Index[a,rep]])*)
+	}];
+	subs= Flatten[subs];
+	expr/.subs
+]
+
+
+(* make flavor sums real *)
+FlavorSum/:Bar@FlavorSum[ind_Index]:=FlavorSum[ind]
+
+
+(* ::Text:: *)
+(*Give flavor indices that are not contracted to anything but that should be summed over a special name.*)
+
+
+(*FlavorSumIndexLabel[arg_,rep_]:=Module[{inds=Cases[arg,Index[label_,rep]:>ToString[label],All]},
+	(* find all FlavorSum indices already appearing *)
+	inds= Select[inds,StringStartsQ[#,"FlavorSum$$"]&];
+	(* if no such index is present return first label *)
+	If[inds==={},Return[Global`FlavorSum$$1]];
+	(* otherwise return next smallest label *)
+	inds= ToExpression[StringTake[#,{12,-1}]]&/@inds;
+	Symbol["Global`FlavorSum$$" <> ToString[Max[inds]+1]]
+]*)
+
+
+(* ::Subsubsection::Closed:: *)
 (*Contractions*)
 
 
-ContractDelta::duplicate = "Could not contract all Delta in the term: `1`";
+ContractDelta::duplicate = "Could not contract all Delta in the term: `1`.";
 
 
 Options[ContractDelta] = {Expand->True};
@@ -491,52 +697,71 @@ Options[ContractDelta] = {Expand->True};
 ContractDelta[expr_Plus, OptionsPattern[]] := ContractDelta[#, Expand->OptionValue[Expand]]&/@expr
 
 (* Contract *)
-ContractDelta[arg:Except[_Plus], OptionsPattern[]] := 
+ContractDelta[arg:Except[_Plus], OptionsPattern[]] :=
 	Module[
 		{ expr = HcExpand[arg](*avoids error when applied so expression containing HcTerms*)}
 		,
 		(* By default expand the argument before contraction *)
 		If[OptionValue[Expand],
-			expr = Expand[expr]
+			expr = LagrangianExpand[expr];
 		];
-		
+
 		If[Head[expr]===Plus,
 			expr = List@@expr;
-			Plus@@ (ContractDeltaSingleTerm/@ expr)
+			Plus@@ (ContractDeltaSingleTerm[#, Expand->OptionValue[Expand]]&/@ expr)
 		,
-			ContractDeltaSingleTerm@ expr
+			ContractDeltaSingleTerm[expr, Expand->OptionValue[Expand]]
 		]
 	]
 
 
-ContractDeltaSingleTerm[expr_] := 
+Options[ContractDeltaSingleTerm] = {Expand->True, "overall-only"->False};
+
+
+ContractDelta::notexpanded="Using ContractDelta without expanding might light to incorrect results due to flavor indices on diagonal couplings."
+
+
+ContractDeltaSingleTerm[expr_, OptionsPattern[]] :=
 	Module[
 		{
-			(*
-			result = expr,
-			indicesDelta = Cases[expr, Delta[Index[a_,rep_],Index[b_,rep_]]:>{Index[a,rep],Index[b,rep]},All],
-			noDelta = expr/.Delta[_,_]->1
-			*)
-			result,
+			result=expr,
 			indicesDelta,
 			noDelta
 		}
 		,
+		If[!OptionValue@Expand,Message[ContractDelta::notexpanded]];
+
 		(*Match CG deltas to Matchete deltas*)
-		result= expr/. CG[_del, inds_]:> (Delta@@ inds/. Bar-> Identity);
-		
+		result= result/. CG[_del, inds_]:> (Delta@@ inds/. Bar-> Identity);
+
 		If[FreeQ[result, _Delta],
 			Return[result]
 		];
-		
-		indicesDelta = Cases[result, Delta[Index[a_,rep_],Index[b_,rep_]]:>{Index[a,rep],Index[b,rep]},All];
-		noDelta = result/.Delta[_,_]->1;
-		
-		If[!DuplicateFreeQ[Flatten[indicesDelta/.{a_,a_}:>{a}]],
-			Message[ContractDelta::duplicate, Format[expr,NiceForm]];
-			Return[expr]
+
+		If[OptionValue[Expand],
+			(* correct results only guaranteed for expanded results *)
+			result= SimplifyFlavorDelta[result]
 		];
 		
+		(* The "overall-only" option must only be used if applied to a full Lagrangian term, but can yield inconsistent results on subexpressions *)
+		If[OptionValue["overall-only"],
+			indicesDelta = Cases[result//._Plus->1, Delta[Index[a_,rep_],Index[b_,rep_]]:>{Index[a,rep],Index[b,rep]},All];
+			noDelta = result/.Delta[_,_]->1;
+			,
+			indicesDelta = Cases[result, Delta[Index[a_,rep_],Index[b_,rep_]]:>{Index[a,rep],Index[b,rep]},All];
+			noDelta = (result /. Delta[_,_]->1) /. $DropDiagonalCouplings[[2;;]](* first entry is "_FlavorSum->1" which must be removed *);
+			(* Deltas should not contract if there is only a diagonal flavor index *)
+		];
+		(*noDelta = result/.Delta[_,_]->1;*)
+		(*noDelta = (result /. Delta[_,_]->1) /. $DropDiagonalCouplings[[2;;]]*)
+		(* first entry is "_FlavorSum->1" which must be removed *);
+		(* Deltas should not contract if there is only a diagonal flavor index *)
+
+		If[!DuplicateFreeQ[Flatten[indicesDelta/.{a_,a_}:>{a}]],
+			Message[ContractDelta::duplicate, Format[expr, NiceForm]];
+			Return[expr]
+		];
+
 		Do[
 			If[!FreeQ[noDelta,First@ind],
 				result = (result /. Delta[First@ind,Last@ind]->1)/.First@ind->Last@ind,
@@ -547,6 +772,7 @@ ContractDeltaSingleTerm[expr_] :=
 			,
 			{ind,indicesDelta}
 		];
+		
 		Return[result]
 	]
 
@@ -559,18 +785,25 @@ DimRep::NoRep   = "'`1`' is not an already defined represention or flavor index"
 
 
 DimRep[rep_]:=Block[{},
-	If[Head@GroupMagic`PackageScope`$Representations[rep]===Missing && Head@$FlavorIndices[rep]===Missing,
+	If[Head@$Representations[rep]===Missing && Head@$FlavorIndices[rep]===Missing,
 		Message[DimRep::NoRep ,rep];
 		Abort[]
 	];
-	
-	If[Head@GroupMagic`PackageScope`$Representations[rep]=!=Missing, Return[GroupMagic`PackageScope`$Representations[rep][GroupMagic`PackageScope`RepDimension]]];
+
+	If[Head@$Representations[rep]=!=Missing, Return[$Representations[rep][RepDimension]]];
 	If[Head@$FlavorIndices[rep]=!=Missing, Return[$FlavorIndices[rep][IndexDimension]]];
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Metric*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Error message*)
+
+
+Metric::args= "The arguments of Metric are expected to be 2 symbols or 2 Lorentz indices. The argument `1` was given."
 
 
 (* ::Subsubsection::Closed:: *)
@@ -581,10 +814,26 @@ SetAttributes[Metric, Orderless]
 
 
 (* ::Subsubsection::Closed:: *)
+(*Input  check*)
+
+
+Metric[a_Symbol,b_]:= Metric[Index[a,Lorentz],b]
+
+
+(* ::Text:: *)
+(*Only 2 arguments of Symbol or Index[_, Lorentz] type are valid*)
+
+
+Except[Metric@ Repeated[Index[_, Lorentz], {2}], 
+	Metric[ind___]/; FreeQ[{ind}, Alternatives[_OrderlessPatternSequence, _Pattern, _Blank, _BlankSequence, _BlankNullSequence]]]:=
+Block[{},
+	Message[Metric::args, List@ ind];
+	Abort[];
+];
+
+
+(* ::Subsubsection::Closed:: *)
 (*Properties*)
-
-
-Metric[a_Symbol,b_Symbol]:= Metric[Index[a,Lorentz],Index[b,Lorentz]]
 
 
 Metric /: Metric[a_,b_] * Metric[b_,c_] := Metric[a,c]
@@ -600,70 +849,64 @@ Metric[a_,a_] := \[ScriptD]
 (*Contractions*)
 
 
-ContractMetric::duplicate = "Could not contract the Delta[_,_].";
+ContractMetric@ expr_:= Plus@@ ContractMetricSingleTerm/@ TermsToList@ expr;
 
 
-Options[ContractMetric] = {Expand->True};
+(* ::Text:: *)
+(*In a single term the metrics will always occur at level 1. The automatic evaluation of metrics contracting into each other, ensures that no metric share any indices. Metric relies exclusively of indices of the type Index[<Symbol>, Lorentz] ensuring that they always have Depth 2.*)
 
 
-(* Performance improvements for long expressions *)
-ContractMetric[expr_Plus, OptionsPattern[]] := ContractMetric[#, Expand->OptionValue[Expand]]&/@expr
-
-(* Contract *)
-ContractMetric[arg:Except[_Plus], OptionsPattern[]] := 
-	Module[
-		{ expr = arg}
-		,
-		(* By default expand the argument before contraction *)
-		If[OptionValue[Expand],
-			expr = Expand[expr]
-		];
-		
-		If[Head[expr]===Plus,
-			expr = List@@expr;
-			Plus@@(ContractMetricSingleTerm/@expr)
-			,
-			ContractMetricSingleTerm@ expr
-		]
-	]
-
-
-ContractMetricSingleTerm[expr_] := 
-	Module[
-		{
-			result,
-			indicesMetric,
-			noMetric
-		}
-		,
-		If[FreeQ[expr,_Metric],
-			Return[expr]
-		];
-		result = expr;
-		indicesMetric = Cases[expr, Metric[a_,b_]:>{a,b},All];
-		noMetric = expr/.x_Metric:>1;
-		
-		If[!DuplicateFreeQ[Flatten[indicesMetric/.{a_,a_}:>{a}]],
-			Message[ContractMetric::duplicate];
-			Return[expr]
-		];
-		
-		Do[
-			If[!FreeQ[noMetric,First@ind],
-				result = (result /. Metric[First@ind,Last@ind]->1)/.First@ind->Last@ind,
-			If[!FreeQ[noMetric,Last@ind],
-					result = (result /. Metric[First@ind,Last@ind]->1)/.Last@ind->First@ind
-				]
-			]
-			,
-			{ind,indicesMetric}
-		];
-		Return[result]
-	]
+ContractMetricSingleTerm@ term_Times:= Block[{res, mets},
+	If[FreeQ[term, _Metric, {1}],
+		Return[term]
+	];
+	{res, mets}= Reap[
+		Replace[term, m_Metric:> (Sow[List@@ m]; 1), {1}]
+	];
+	
+	Do[
+		res= Which[
+			!FreeQ[res, ind[[1]], {-2}],
+				Replace[res, ind[[1]]-> ind[[2]], {-2}]
+			,!FreeQ[res, ind[[2]], {-2}],
+				Replace[res, ind[[2]]-> ind[[1]], {-2}]
+			,True, 
+				res* Metric@@ ind
+			];
+	, {ind, mets[[1]]}];
+	res
+];
+ContractMetricSingleTerm@ obj_:= obj;
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Levi-Civita tensor*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Error message*)
+
+
+LCTensor::args= "The arguments of LCTensor are expected to be 4 symbols or 4 Lorentz indices. The argument `1` was given."
+
+
+(* ::Subsubsection::Closed:: *)
+(*Input  check*)
+
+
+LCTensor[ps:OrderlessPatternSequence[a_Symbol, __]]:=LCTensor@@({ps}/.a->Index[a,Lorentz]);
+
+
+(* ::Text:: *)
+(*Only 4 arguments of Symbol or Index[_, Lorentz] type are valid*)
+
+
+Except[LCTensor@ Repeated[Index[_, Lorentz], {4}], 
+	LCTensor[ind___]/; FreeQ[{ind}, Alternatives[_OrderlessPatternSequence, _Pattern, _Blank, _BlankSequence, _BlankNullSequence]]]:=
+Block[{},
+	Message[LCTensor::args, List@ ind];
+	Abort[];
+];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -673,11 +916,4 @@ ContractMetricSingleTerm[expr_] :=
 LCTensor@ OrderlessPatternSequence[a_, a_, __]:= 0
 
 
-LCTensor@ a___/; ! OrderedQ@ {a}:= Signature@ {a} LCTensor@@ Sort@ {a}  
-
-
-LCTensor[a_Symbol,b_Symbol,c_Symbol,d_Symbol]:= LCTensor[Index[a,Lorentz],Index[b,Lorentz],Index[c,Lorentz],Index[d,Lorentz]]
-
-
-(* Deactivated becuase it is a purely 4D identity (to be handled more carefully) *)
-(*LCTensor /: LCTensor[a:Sequence[_Index..]] * LCTensor[b:Sequence[_Index..]]:= - Det[Outer[Metric,List@a,List@b]]*)
+LCTensor@ a__/; ! OrderedQ@ {a}:= Signature@ {a} LCTensor@@ Sort@ {a}

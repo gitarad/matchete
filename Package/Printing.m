@@ -11,6 +11,10 @@ Package["Matchete`"]
 (*Sub package providing the printing routine NiceForm.*)
 
 
+(* ::Text:: *)
+(*Nb. "ToBoxes[expr, NiceForm/StandardForm]" can be used to see how an expression is formatted in the internal Mathematica Box forms.*)
+
+
 (* ::Chapter:: *)
 (*Public:*)
 
@@ -19,10 +23,7 @@ Package["Matchete`"]
 (*Scoping*)
 
 
-PackageImport["GroupMagic`"]
-
-
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Exported*)
 
 
@@ -30,18 +31,18 @@ PackageExport["NiceForm"]
 PackageExport["$PrintIndexLabels"]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Internal*)
 
 
-PackageScope["UpDownIndices"]
+PackageScope["LabelsNiceForm"]
 
 
 (* ::Section:: *)
 (*Usage messages*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Exported*)
 
 
@@ -49,11 +50,8 @@ NiceForm::usage          = "NiceForm[expr] prints the expression expr in a human
 $PrintIndexLabels::usage = "$PrintIndexLabels=True|False determines whether to print the representation of indices as subscripts. It is set to False by default.";
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Internal*)
-
-
-UpDownIndices::usage = "UpDownIndices[label,indices] prints the label with regular indices as superindices and barred indices as subindices.";
 
 
 (* ::Chapter:: *)
@@ -64,29 +62,40 @@ UpDownIndices::usage = "UpDownIndices[label,indices] prints the label with regul
 Off[ParentForm::deflt];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Definition of Format*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Properties of the NiceForm format*)
 
 
 (* ::Text:: *)
 (*Inherit from StandardForm*)
 
 
-ParentForm[NiceForm]^=StandardForm;
+ParentForm[NiceForm]^= StandardForm;
 
 
 (* ::Text:: *)
 (*Add to list of allowed BoxForms*)
 
 
-AppendTo[$BoxForms,NiceForm];
+AppendTo[$BoxForms, NiceForm];
+
+
+(* ::Text:: *)
+(*Sanitize output to remove a wrapping FormBox[..., NiceForm] from the output cell (which is anyway not displayed). This might reduce the option for manipulating with the displayed output in other ways.*)
+
+
+NiceForm/: FormBox[expr_, NiceForm]:= expr;
 
 
 (* ::Text:: *)
 (*Allow printing in NiceForm*)
 
 
-NiceForm /: Print[A___, NiceForm[arg_], B___] := Print[A, Format[arg,NiceForm], B]
+NiceForm /: Print[A___, NiceForm[arg_], B___] := Print[A, Format[arg, NiceForm], B]
 
 
 (* ::Text:: *)
@@ -110,11 +119,61 @@ NiceForm/:EchoFunction[NiceForm]:=(Echo@NiceForm[#];#)&;
 NiceForm/:Message[msg_,NiceForm[arg_]]:=Message[msg,Format[arg,NiceForm]];
 
 
+(* ::Text:: *)
+(*Variables are not  defined with the head NiceForm*)
+
+
+NiceForm /: Set[a_, NiceForm@b_] := (a = b; NiceForm@b)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Auxiliary formatting form*)
+
+
+(* ::Text:: *)
+(*Passing the output through an Auxiliary form means that we can control the font, w/o having to modify the stylesheet.*)
+
+
+AppendTo[$BoxForms, AuxForm];
+ParentForm[AuxForm]^= StandardForm;
+
+
+(* ::Text:: *)
+(*Fix the output font irrespective of the StyleSheet (note that default seems to be Times New Roman, and users wouldn't have predefined any rules for Niceform).*)
+(*Default font is "Source Code Pro" on Mac, "Consolas" on Windows, and "Bitstream Vera Sans Mono" on Linux. *)
+
+
+(*Picks the default code font based on the defautl at the time of loading the package*)
+(*$NiceFormFont= AbsoluteCurrentValue@ {StyleHints, "CodeFont"}; *)
+
+
+(*NiceForm/: MakeBoxes[expr_, NiceForm]:= StyleBox[MakeBoxes[expr, AuxForm], FontFamily-> $NiceFormFont];*)
+NiceForm/: MakeBoxes[expr_, NiceForm]:= StyleBox[MakeBoxes[expr, AuxForm], "StandardForm"];
+
+
+(* ::Text:: *)
+(*AuxForm should never called directly. We can use the FormBox that get's introduced for post-processing: *)
+
+
+AuxForm/: FormBox[expr_, AuxForm]:= expr;
+
+
 (* ::Section:: *)
 (*General printing rules*)
 
 
-SubscriptStyle@ x_:= Style[x, FontSize-> 12];
+(* ::Subsubsection::Closed:: *)
+(*General style*)
+
+
+(* ::Text:: *)
+(*Formatting functions*)
+
+
+SubscriptStyle2@ x_:= StyleBox[x, FontSize-> 10];
+
+
+Overline@ label_:= OverscriptBox[If[Head@ label === String, label, ToString@ label], StyleBox["_", FontWeight-> Bold]]
 
 
 (* ::Text:: *)
@@ -124,18 +183,181 @@ SubscriptStyle@ x_:= Style[x, FontSize-> 12];
 Unset[$MessagePrePrint]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
+(*DiracProduct*)
+
+
+AuxForm/: MakeBoxes[DiracProduct[x_, y__], AuxForm]:=
+	RowBox@ Map[MakeBoxes[#, AuxForm]&, {x, y}]
+
+
+AuxForm/: MakeBoxes[DiracProduct@ x_, AuxForm]:= MakeBoxes[x, AuxForm]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Transpose*)
+
+
+AuxForm/: MakeBoxes[Transp[x:Except[DiracProduct[_, __]]], AuxForm]:= SuperscriptBox[MakeBoxes[x, AuxForm], "T"];
+
+
+AuxForm/: MakeBoxes[Transp[d:DiracProduct[_, __]], AuxForm]:= 
+	SuperscriptBox[FormBox[
+		StyleBox[
+			RowBox@ {"(", MakeBoxes[d, AuxForm], ")"} /. RowBox@ {x___, RowBox@ {a___}, y___}:> RowBox@ {x, a, y},
+			SpanSymmetric-> False
+		], StandardForm], "T"];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Indices*)
+
+
+(* ::Text:: *)
+(*Global flag to set whether index representations are printed*)
+
+
+$PrintIndexLabels = False;
+
+
+(* ::Text:: *)
+(*UpDownIndices[label,indices] prints the label with regular indices as superindices and barred indices as subindices.*)
+
+
+UpDownIndices[label_, indices_]:= Block[{labelPrint},
+	labelPrint= Switch[label
+		,_OverscriptBox| _String,
+			label
+		,_,
+			ToString@ label
+		];
+	If[!MatchQ[indices, _List], 
+		Return[SubscriptBox[labelPrint, MakeBoxes[indices, AuxForm]]//. 
+			RowBox[{a___, RowBox@ {x__}, b___}]:> RowBox@ {a, x, b}];
+	];
+	Which[
+		indices === {},
+			labelPrint,
+		Select[indices, Head[#] === Bar &] === {},
+			SuperscriptBox[labelPrint, SubscriptStyle2@ TemplateBox[Map[MakeBoxes[#, AuxForm]&, indices], "RowDefault"] ],
+		Select[indices, Head[#] =!= Bar &]==={},
+			SubscriptBox[labelPrint, SubscriptStyle2@ TemplateBox[Map[MakeBoxes[#, AuxForm]&, indices[[;;, 1]]], "RowDefault"] ],
+		True, 
+			SubsuperscriptBox[labelPrint, SubscriptStyle2@ TemplateBox[Map[MakeBoxes[#, AuxForm]&, Cases[indices, _Bar][[;;, 1]]], "RowDefault"], 
+				SubscriptStyle2@ TemplateBox[Map[MakeBoxes[#, AuxForm]&, Cases[indices, _Index]], "RowDefault"] ]
+	]/. TemplateBox[{a_}, _]-> a
+];
+
+
+DownIndices[label_, indices_]:= Block[{labelPrint},
+	labelPrint= Switch[label
+		,_OverscriptBox| _String,
+			label
+		,_,
+			ToString@ label
+		];
+	SubscriptBox[labelPrint, SubscriptStyle2@ TemplateBox[Map[MakeBoxes[#, AuxForm]&, indices], "RowDefault"] ]/. TemplateBox[{a_}, _]-> a
+]
+
+
+AuxForm/: MakeBoxes[Index[label_Pattern, rep_], AuxForm]:= 
+		If[$PrintIndexLabels,
+			(* print with rep label *)
+			SuperscriptBox[label, ToString@ rep]
+		,
+			(* print without rep label *)
+			ToString@ label				
+		];
+
+
+AuxForm/: MakeBoxes[Index[label_, rep_], AuxForm]:= Block[{printLabel},
+	(*Determine the appropriate printed label based on the alphabet of the representation*)
+	printLabel= Lookup[Lookup[$IndexAlphabets, rep, $UndefinedIndexAlphabet], label, ToString@ label];
+	
+	If[$PrintIndexLabels,
+		(* Print w/ rep label *)
+		SuperscriptBox[printLabel, ToString@ rep]
+	,
+		(* Print w/o rep label *)
+		printLabel
+	]
+];
+
+
+(* ::Subsubsection::Closed:: *)
+(*NonCommutativeMultiply*)
+
+
+(* ::Text:: *)
+(*Multiple arguments*)
+
+
+AuxForm/: MakeBoxes[x: NonCommutativeMultiply[_,__], AuxForm] := Module[
+		{
+			product=List@@x,
+			rowBox={}
+		}
+	,
+	(* put spin-chains in brackets *)
+	AppendTo[rowBox, "("];
+	(* print the arguments of NCM *)
+	Do[
+		With[{y=factor},
+			If[Head[y]===Plus,
+				AppendTo[rowBox, " "];
+				AppendTo[
+					rowBox, FormBox[
+						StyleBox[
+							RowBox[{"(",MakeBoxes[y, AuxForm],")"}],
+							SpanSymmetric->False
+						],
+						StandardForm
+					]
+				]
+				,
+				AppendTo[rowBox,MakeBoxes[y, AuxForm]]
+			];
+		];
+		(* merge the arguments with a \cdot *)
+		AppendTo[rowBox,"\[CenterDot]"];
+		,
+		{factor, product}
+	];
+	(* remove the last \cdot and close brackets *)
+	rowBox = Drop[rowBox,-1];
+	AppendTo[rowBox,")"];
+	
+	(* return as StandardForm box *)
+	FormBox[StyleBox[RowBox[rowBox], SpanSymmetric->False], StandardForm]
+]
+
+
+(* ::Text:: *)
+(*Single Argument*)
+
+
+AuxForm/: MakeBoxes[NonCommutativeMultiply@ arg_, AuxForm]:= MakeBoxes[arg, AuxForm];
+
+
+(* ::Subsection:: *)
 (*Plus*)
 
 
-(* Definition of how sums are displayed *)
-NiceForm/:MakeBoxes[a_Plus,NiceForm]:=Module[
-	{
-		terms=List@@a,
-		rowBox={},
-		startFlag=True
-	}
-	,
+(* ::Subsubsection::Closed:: *)
+(*AuxForm for Plust*)
+
+
+(* ::Text:: *)
+(*Definition of how sums are displayed*)
+
+
+AuxForm/: MakeBoxes[a_Plus, AuxForm]:= Module[
+		{
+			terms= List@@ a,
+			rowBox= {},
+			startFlag= True
+		},
+		
 	(* sort the factors of Times *)
 	terms = SortPlus[terms];
 	(* Add minus sign where appropriate *)
@@ -159,13 +381,13 @@ NiceForm/:MakeBoxes[a_Plus,NiceForm]:=Module[
 		];
 		(* Apply MakeBoxes to the term *)
 		With[{x=term},
-			AppendTo[rowBox,MakeBoxes[x,NiceForm]]
+			AppendTo[rowBox, MakeBoxes[x, AuxForm]]
 		]
 		,
 		{term,terms}
 	];
 	(* Display as RowBox *)
-	FormBox[RowBox[rowBox],StandardForm]
+	RowBox@ rowBox
 ]
 
 
@@ -191,7 +413,7 @@ MinusSignQ[arg_Times]:=Module[
 				sign*=Sign[x]
 				,
 				(* for complex numbers *)
-				If[Re[x]==0,
+				If[Re[x]===0,
 					(* for imaginary numbers *)
 					sign*=Sign@Im[x]
 					,
@@ -204,7 +426,7 @@ MinusSignQ[arg_Times]:=Module[
 		{x, factors}
 	];
 	Switch[sign,
-		1,Return[False],
+		1, Return[False],
 		-1,Return[True],
 		_,Message[NiceForm::sign]
 	]
@@ -214,7 +436,7 @@ MinusSignQ[arg_Times]:=Module[
 MinusSignQ[x:Except[Times]]:=False
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*SortingFunctionPlus*)
 
 
@@ -273,29 +495,38 @@ SortPlus[terms_]:=Module[
 	eftOperators=Flatten[eftOperators];
 	
 	(* return the sorted list *)
-	Return[Flatten@Join[constants,tadpoles,propagators,marginal,eftOperators,remainingTerms]]
+	Flatten@Join[constants,tadpoles,propagators,marginal,eftOperators,remainingTerms]
 ]
 
 
-(* ::Subsubsection:: *)
-(*Auxiliary functionality*)
+(* ::Subsubsection::Closed:: *)
+(*Ancillary functions*)
 
 
-(* counts the number of covariand derivatives acting on fields *)
+(* ::Text:: *)
+(*Counts the number of covariant derivatives acting on fields*)
+
+
 CountCD[expr_]:=Module[
 	{term=RemovePower[expr]},
 	Plus@@Cases[term,Field[_,_,_,cds_List]:>Length[cds],All]+Plus@@Cases[term,FieldStrength[_,_,_,cds_List]:>Length[cds],All]
 ]
 
 
-(* counts the number of fields and field-strength tensors *)
+(* ::Text:: *)
+(*Counts the number of fields and field-strength tensors*)
+
+
 CountFields[expr_]:=Module[
 	{term=RemovePower[expr]},
 	Plus@@Cases[term,Field[___]:>1,All]+Plus@@Cases[term,FieldStrength[___]:>1,All]
 ]
 
 
-(* Function that returns the field type *)
+(* ::Text:: *)
+(*Function that returns the field type*)
+
+
 GetFieldTypes[expr_]:=Module[
 	{term=RemovePower[expr]},
 	First[
@@ -305,7 +536,10 @@ GetFieldTypes[expr_]:=Module[
 ]
 
 
-(* returns the field content of an expression *)
+(* ::Text:: *)
+(*Returns the field content of an expression*)
+
+
 GetFieldContent[arg_]:=Module[
 	{expr=RemovePower[arg]}
 	,
@@ -316,28 +550,37 @@ GetFieldContent[arg_]:=Module[
 ]
 
 
-(* Returns the spin type of the fields in expr *)
+(* ::Text:: *)
+(*Returns the spin type of the fields in expr*)
+
+
 GetFieldSpin[expr_]:=Flatten@Join[
 	Cases[expr,Field[_,t_,___]:>t,All],
 	Cases[expr,FieldStrength[l_,___]:>FieldStrength,All]
 ]/.Vector[_]->Vector
 
 
-(* returns the maximum dimension of operators in term *)
+(* ::Text:: *)
+(*Returns the maximum dimension of operators in term*)
+
+
 MaxDim[term_]:=If[FreeQ[term,Plus],
 	OperatorDimension[term],
 	Max[OperatorDimension/@(List@@BetterExpand[term])]
 ]
 
 
-(* returns the minimum dimension of operators in term *)
+(* ::Text:: *)
+(*Returns the minimum dimension of operators in term*)
+
+
 MinDim[term_]:=If[FreeQ[term,Plus],
 	OperatorDimension[term],
 	Min[OperatorDimension/@(List@@BetterExpand[term])]
 ]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Find kinetic and mass terms*)
 
 
@@ -383,7 +626,10 @@ FindPropagators[expr_]:=Module[
 ]
 
 
-(* Returns True if expr is a kinetic term and False otherwise *)
+(* ::Text:: *)
+(*Returns True if expr is a kinetic term and False otherwise*)
+
+
 KineticQ[expr_]:=Module[
 	{
 		nFields=CountFields[expr],
@@ -411,7 +657,7 @@ KineticQ[expr_]:=Module[
 
 
 (* ::Text:: *)
-(*The function below might not yet find correctly the mass term for heavy vector fields.*)
+(*The function below might not yet find correctly the mass term for heavy vector fields*)
 
 
 (* finds the mass term belonging to kinTerm in the list of terms *)
@@ -435,7 +681,10 @@ FindMassTerm[kinTerm_,terms_]:=Module[
 ]
 
 
-(* This functino assigns a weight to the kinetic term given as argument which can be used to sort all kinetic terms *)
+(* ::Text:: *)
+(*This function assigns a weight to the kinetic term given as argument which can be used to sort all kinetic terms*)
+
+
 KineticSortingFunction[term_]:=Module[
 	{
 		fieldContent=GetFieldContent[term],
@@ -462,6 +711,7 @@ KineticSortingFunction[term_]:=Module[
 ]
 
 
+(* ::Text:: *)
 (*Sorting interactions*)
 
 
@@ -479,7 +729,10 @@ FindMarginalInteractions[terms_]:=Module[
 ]
 
 
-(* Finds all EFT operators of dimension dim in terms *)
+(* ::Text:: *)
+(*Finds all EFT operators of dimension dim in terms*)
+
+
 FindEFTOperators[terms_,dim_]:=Module[
 	{operators={}}
 	,
@@ -494,7 +747,10 @@ FindEFTOperators[terms_,dim_]:=Module[
 ]
 
 
-(* sorts the given interactions by field content *)
+(* ::Text:: *)
+(*Sorts the given interactions by field content*)
+
+
 SortInteractions[interactionTerms_List]:=Module[
 	{
 		terms,
@@ -564,7 +820,10 @@ SortInteractions[interactionTerms_List]:=Module[
 ]
 
 
-(* Sorts given terms by number of derivatives *)
+(* ::Text:: *)
+(*Sorts given terms by number of derivatives*)
+
+
 SortByCD[terms_List]:=Module[
 	{tab,res}
 	,
@@ -588,18 +847,25 @@ SortByCD[terms_List]:=Module[
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Times*)
 
 
-(* Determines how products are printed *)
-NiceForm/:MakeBoxes[a_Times,NiceForm]:=Module[
-	{
-		product=List@@a,
-		rowBox={},
-		startFlag=True,
-		minusFlag=False
-	}
+(* ::Subsubsection::Closed:: *)
+(*AuxForm for Times*)
+
+
+(* ::Text:: *)
+(*Determines how products are printed *)
+
+
+AuxForm/: MakeBoxes[a_Times, AuxForm]:=Module[
+		{
+			product=List@@a,
+			rowBox={},
+			startFlag=True,
+			minusFlag=False
+		}
 	,
 	(* check if this term is negative *)
 	If[MinusSignQ[a],
@@ -626,25 +892,25 @@ NiceForm/:MakeBoxes[a_Times,NiceForm]:=Module[
 		];
 		(* Apply MakeBoxes to each factor *)
 		With[{x=factor},
-			If[Head[x]===Plus,
+			If[MatchQ[x, _Plus | Complex[Except[0|0.`], _]],
 				AppendTo[rowBox, " "];
 				AppendTo[
 					rowBox, FormBox[
 						StyleBox[
-							RowBox[{"(",MakeBoxes[x,NiceForm],")"}],
+							RowBox[{"(",MakeBoxes[x,AuxForm],")"}],
 							SpanSymmetric->False
 						],
 						StandardForm
 					]
 				]
 				,
-				AppendTo[rowBox,MakeBoxes[x,NiceForm]]
+				AppendTo[rowBox, MakeBoxes[x, AuxForm]]
 			];
 		];
 		,
 		{factor,product}
 	];
-	FormBox[RowBox[rowBox],StandardForm]
+	RowBox[rowBox]
 ]
 
 
@@ -661,38 +927,57 @@ SortingFunctionTimes[x_] := Switch[x,
 	(* numbers *)
 	_Complex, 0,
 	_?NumberQ, 1,
+	Power[_?NumberQ,_],1.1,
+	(* hbar *)
+	hbar,1.5,
 	(* symbols *)
 	Bar[_Symbol],2,
 	_Symbol, 2,
 	Power[Bar[_Symbol],_], 3,
 	Power[_Symbol,_], 3,
+	(* FlavorSum *)
+	_FlavorSum,3.5,
 	(* couplings *)
-	Bar[_Coupling], 4 + AlphabeticLabelOrder[First@First@x],
-	_Coupling, 4 + AlphabeticLabelOrder[First@x],
-	Power[Bar[_Coupling],_], 5 + AlphabeticLabelOrder[First@First@First@x],
-	Power[_Coupling,_], 5 + AlphabeticLabelOrder[First@First@x],
+	(* w/o indices *)
+	Bar[Coupling[_,{},_]], 4 + AlphabeticLabelOrder[First@First@x],
+	Coupling[_,{},_], 4 + AlphabeticLabelOrder[First@x],
+	Power[Bar[Coupling[_,{},_]],_], 5 + AlphabeticLabelOrder[First@First@First@x],
+	Power[Coupling[_,{},_],_], 5 + AlphabeticLabelOrder[First@First@x],
+	(* w/ indices *)
+	Bar[Coupling[_,{__},_]], 6 + AlphabeticLabelOrder[First@First@x],
+	Coupling[_,{__},_], 6 + AlphabeticLabelOrder[First@x],
+	Power[Bar[Coupling[_,{__},_]],_], 7 + AlphabeticLabelOrder[First@First@First@x],
+	Power[Coupling[_,{__},_],_], 7 + AlphabeticLabelOrder[First@First@x],
 	(* Plus *)
-	_Plus, 6,
+	_Plus, 8,
+	(* loop functions *)
+	_LF, 10,
+	(* deltas *)
+	_Delta, 11,
 	(* Dirac product *)
-	_DiracProduct, 7,
+	_DiracProduct, 15,
 	(* - - - - - - fields - - - - - - *)
 	(* scalars *)
-	Bar@Field[_,Scalar,___], 8 + AlphabeticLabelOrder[First@First@x],
-	Field[_,Scalar,___], 8 + AlphabeticLabelOrder[First@x],
-	Power[Bar@Field[_,Scalar,___],_], 9 + AlphabeticLabelOrder[First@First@First@x],
-	Power[Field[_,Scalar,___],_], 9 + AlphabeticLabelOrder[First@First@x],
+	Bar@Field[_,Scalar,___], 20 + AlphabeticLabelOrder[First@First@x],
+	Field[_,Scalar,___], 20 + AlphabeticLabelOrder[First@x],
+	Power[Bar@Field[_,Scalar,___],_], 21 + AlphabeticLabelOrder[First@First@First@x],
+	Power[Field[_,Scalar,___],_], 21 + AlphabeticLabelOrder[First@First@x],
 	(* Vectors *)
-	Bar@Field[_,_Vector,___], 10 + AlphabeticLabelOrder[First@First@x],
-	Field[_,_Vector,___], 10 + AlphabeticLabelOrder[First@x],
-	Power[Bar@Field[_,_Vector,___],_], 11 + AlphabeticLabelOrder[First@First@First@x],
-	Power[Field[_,_Vector,___],_], 11 + AlphabeticLabelOrder[First@First@x],
+	Bar@Field[_,_Vector,___], 22 + AlphabeticLabelOrder[First@First@x],
+	Field[_,_Vector,___], 22 + AlphabeticLabelOrder[First@x],
+	Power[Bar@Field[_,_Vector,___],_], 23 + AlphabeticLabelOrder[First@First@First@x],
+	Power[Field[_,_Vector,___],_], 23 + AlphabeticLabelOrder[First@First@x],
 	(* Field-Strength *)
-	Bar[_FieldStrength], 12 + AlphabeticLabelOrder[First@First@x],
-	_FieldStrength, 12 + AlphabeticLabelOrder[First@x],
-	Power[Bar[_FieldStrength],_], 13 + AlphabeticLabelOrder[First@First@First@x],
-	Power[_FieldStrength,_], 13 + AlphabeticLabelOrder[First@First@x],
+	Bar[_FieldStrength], 24 + AlphabeticLabelOrder[First@First@x],
+	_FieldStrength, 24 + AlphabeticLabelOrder[First@x],
+	Power[Bar[_FieldStrength],_], 25 + AlphabeticLabelOrder[First@First@First@x],
+	Power[_FieldStrength,_], 25 + AlphabeticLabelOrder[First@First@x],
 	(* fermion spin-chains *)
-	_NonCommutativeMultiply, 14,
+	_NonCommutativeMultiply, 26,
+	(* operators *)
+	_Operator, 30,
+	_AtomicOp, 30,
+	_CompOp, 30,
 	(* - - - - - - - - - - - - - *)
 	(* unknown *)
 	_, 100000
@@ -734,374 +1019,288 @@ AlphabeticLabelOrder[x_] := Module[
 (*SpanMaxSize*)(*SpanAdjustments*)(*SpanSymmetric*)
 
 
-(* ::Subsection::Closed:: *)
-(*NonCommutativeMultiply*)
-
-
-(* ::Text:: *)
-(*Multiple arguments*)
-
-
-NiceForm/:MakeBoxes[x:NonCommutativeMultiply[_,__], NiceForm] := Module[
-	{
-		product=List@@x,
-		rowBox={}
-	}
-	,
-	(* put spin-chains in brackets *)
-	AppendTo[rowBox, "("];
-	(* print the arguments of NCM *)
-	Do[
-		With[{y=factor},
-			If[Head[y]===Plus,
-				AppendTo[rowBox, " "];
-				AppendTo[
-					rowBox, FormBox[
-						StyleBox[
-							RowBox[{"(",MakeBoxes[y,NiceForm],")"}],
-							SpanSymmetric->False
-						],
-						StandardForm
-					]
-				]
-				,
-				AppendTo[rowBox,MakeBoxes[y,NiceForm]]
-			];
-		];
-		(* merge the arguments with a \cdot *)
-		AppendTo[rowBox,"\[CenterDot]"];
-		,
-		{factor, product}
-	];
-	(* remove the last \cdot and close brackets *)
-	rowBox = Drop[rowBox,-1];
-	AppendTo[rowBox,")"];
-	
-	(* return as StandardForm box *)
-	FormBox[StyleBox[RowBox[rowBox],SpanSymmetric->False],StandardForm]
-]
-
-
-(* ::Text:: *)
-(*Single Argument*)
-
-
-Format[NonCommutativeMultiply[arg_], NiceForm]:= Format[arg,NiceForm];
-
-
-(* ::Subsection::Closed:: *)
-(*DiracProduct*)
-
-
-NiceForm/:MakeBoxes[x_DiracProduct, NiceForm]:=
-FormBox[
-	RowBox@Map[
-		MakeBoxes[#,NiceForm]&,
-		List@@x
-	],
-	StandardForm
-]
-
-
-(* ::Subsection::Closed:: *)
-(*Symbols*)
-
-
-NiceForm/:MakeBoxes[a_Symbol, NiceForm]:=FormBox[RowBox[{ToString[a]}],StandardForm]
-
-
-(* ::Subsection::Closed:: *)
-(*Numbers*)
-
-
-NiceForm/:MakeBoxes[a_?NumberQ, NiceForm]:=FormBox[MakeBoxes[a, StandardForm],StandardForm]
-
-
-(* ::Subsection::Closed:: *)
-(*Transpose*)
-
-
-Format[Transp[x:Except[DiracProduct[_, __]]], NiceForm]:= Superscript[x, "T"];
-
-
-Format[Transp[x:DiracProduct[_, __]], NiceForm]:= DisplayForm@Superscript[
-	FormBox[
-		StyleBox[
-			RowBox[{"(", x, ")"}],
-			SpanSymmetric->False
-		],
-		StandardForm
-	],
-	"T"
-];
-
-
 (* ::Section:: *)
 (*Specific printing definitions*)
 
 
-(* ::Subsection::Closed:: *)
-(*DiracAlgebra*)
-
-
-Format[Gamma5, NiceForm]:=Subscript[\[Gamma],5]
-
-Format[GammaM[\[Mu]_], NiceForm]:=Subscript[\[Gamma],Format[\[Mu],NiceForm]]
-Format[GammaM[\[Mu]_,\[Nu]__], NiceForm]:=Subscript["\[CapitalGamma]", DisplayForm@FormBox[RowBox[{\[Mu], \[Nu]}],NiceForm]]
-
-
-Format[Proj[1], NiceForm]:= Subscript["P","R"];
-Format[Proj[-1], NiceForm]:= Subscript["P","L"];
-Format[GammaCC, NiceForm]:= "C";
-
-
-(* ::Subsection::Closed:: *)
-(*Fields*)
-
-
-Format[Bar@Field[label_,type_,indices_,CDerivs_], NiceForm]:= Field[OverBar@label,type,Bar/@indices,CDerivs];
-
-
-Format[Field[label_,Scalar|Fermion|Ghost,indices_,CDerivs_], NiceForm]:= 
-	Switch[CDerivs,
-		{}, UpDownIndices[label,indices],
-		{__}, StandardForm@Row@ Flatten@ {Subscript[D, SubscriptStyle@ Format[#,NiceForm]]&/@ CDerivs//.{x___, Subscript[D, a_], Subscript[D, a_], y___}:> {x, D^2, y}, UpDownIndices[label,indices]},
-		_Pattern, StandardForm@Row@ Flatten@ {Subscript[D, ToString@CDerivs], UpDownIndices[label,indices]},
-		_, StandardForm@Row@ Flatten@ {Subscript[D, SubscriptStyle@ Format[CDerivs,NiceForm]], UpDownIndices[label,indices]}
-	];
-
-
-Format[Field[label_,Vector[\[Mu]_],indices_,CDerivs_], NiceForm]:=
-	Switch[CDerivs,
-		{}, UpDownIndices[label, Join[{Bar@\[Mu]},indices]],
-		{__}, StandardForm@ Row@ Flatten@ {Subscript[D, SubscriptStyle@ Format[#,NiceForm]]&/@ CDerivs//.{x___, Subscript[D, a_], Subscript[D, a_], y___}:> {x, D^2, y}, UpDownIndices[label, Join[{Bar@\[Mu]},indices]]},
-		_Pattern, StandardForm@ Row@ Flatten@ {Subscript[D, ToString[CDerivs]], UpDownIndices[label, Join[{Bar@\[Mu]},indices]]},
-		_, StandardForm@ Row@ Flatten@ {Subscript[D, SubscriptStyle@ Format[CDerivs,NiceForm]], UpDownIndices[label, Join[{Bar@\[Mu]},indices]]}
-	];
-
-
-Format[FieldStrength[vectorlabel_,{\[Mu]_,\[Nu]_},indices_,CDerivs_], NiceForm]:=
-	If[CDerivs=={},
-		UpDownIndices[vectorlabel, Join[Bar/@{\[Mu],\[Nu]},indices]],
-		StandardForm@ Row@ Flatten@ {Subscript[D, SubscriptStyle@ Format[#,NiceForm]]&/@ CDerivs//.{x___, Subscript[D, a_], Subscript[D, a_], y___}-> {x, D^2, y}, UpDownIndices[vectorlabel, Join[Bar/@{\[Mu],\[Nu]},indices]]}
-	];
-
-
-NiceForm/: MakeBoxes[Power[Field[args__,derivs_],n_], NiceForm]:=If[derivs==={},
-	SuperscriptBox[MakeBoxes[Field[args,derivs],NiceForm],n],
-	SuperscriptBox[
-		FormBox[
-			StyleBox[
-				RowBox[{"(",MakeBoxes[Field[args,derivs],NiceForm],")"}],
-				SpanSymmetric->False
-			],
-			StandardForm
-		],
-		n
-	]
-]
-
-
-NiceForm/: MakeBoxes[Power[FieldStrength[args__,derivs_],n_], NiceForm]:=If[derivs==={},
-	SuperscriptBox[MakeBoxes[FieldStrength[args,derivs],NiceForm],n],
-	SuperscriptBox[
-		FormBox[
-			StyleBox[
-				RowBox[{"(",MakeBoxes[FieldStrength[args,derivs],NiceForm],")"}],
-				SpanSymmetric->False
-			],
-			StandardForm
-		],
-		n
-	]
-]
-
-
-(* ::Subsection::Closed:: *)
-(*Coupling*)
-
-
-Format[Bar@ x_, NiceForm]:= OverBar@ x;
-
-
-Format[Bar[Coupling[label_,indices_,order_]], NiceForm]:=UpDownIndices[OverBar@label,Bar/@indices]
-
-
-Format[Coupling[label_,indices_,order_], NiceForm]:= UpDownIndices[label,indices];
-
-
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Clebsch Gordan coefficients*)
 
 
-Format[CG[eps[label_],indices_], NiceForm]:= UpDownIndices["\[CurlyEpsilon]", indices];
-Format[CG[Bar@eps[label_],indices_], NiceForm]:= UpDownIndices[OverBar@"\[CurlyEpsilon]", indices];
-Format[CG[del[label_]|Bar@del[label_],indices_], NiceForm]:= UpDownIndices["\[Delta]", indices];
-Format[CG[dSym[label_],indices_], NiceForm]:= UpDownIndices["d",indices];
-Format[CG[fStruct[label_],indices_], NiceForm]:= UpDownIndices["f",indices];
-Format[CG[gen[label_],indices_], NiceForm]:= UpDownIndices["T",indices];
-Format[CG[Bar@gen[label_],indices_], NiceForm]:= UpDownIndices[OverBar@"T",indices];
-Format[CG[Bar@label_,indices_], NiceForm]:=Format[CG[OverBar@label,indices], NiceForm];
-Format[CG[label_,indices_], NiceForm]:= UpDownIndices[label,indices];
+AuxForm/: MakeBoxes[CG[label_, indices_], AuxForm]:= UpDownIndices[CGLabel@ label, indices];
 
 
-(* ::Subsection::Closed:: *)
-(*Open covariant derivatives*)
+CGLabel[Bar@ _del]= "\[Delta]";
+CGLabel[Bar@ label_]:= Overline@ CGLabel@ label;
+CGLabel[_eps]= "\[CurlyEpsilon]";
+CGLabel[_del]= "\[Delta]";
+CGLabel[_dSym]= "d";
+CGLabel[_fStruct]= "f";
+CGLabel[_gen]= "T";
+CGLabel[label_]:= ToString@ label;
 
 
-Format[OpenCD[CDerivs:{Index[_,Lorentz]..}], NiceForm] := DisplayForm@ FormBox[ 
-	StyleBox[
-		RowBox@ Flatten@ List[
-			"(",
-			Table[Subscript[Overscript[D,"\[LongRightArrow]"], SubscriptStyle@ Format[ind,NiceForm]], {ind, CDerivs}]//.{x___, Subscript[Overscript[D,"\[LongRightArrow]"], a_], Subscript[Overscript[D,"\[LongRightArrow]"], a_], y___}:>{x, Overscript[D,"\[LongRightArrow]"]^2, y},
-			(*"\[Delta]\[Eta]",*)
-			")"
-		]
-		,
-		SpanSymmetric->False
-	]
-	,
-	StandardForm
-]
+(* ::Subsubsection::Closed:: *)
+(*Coupling*)
 
 
-(* ::Subsection::Closed:: *)
-(*Metric, Delta & LCTensor*)
+LabelsNiceForm[Coupling]= <||>;
 
 
-Format[Delta[ind__], NiceForm]:= UpDownIndices["\[Delta]",{ind}];
+AuxForm/: MakeBoxes[Bar@ Coupling[label_, indices_, _], AuxForm]:= 
+	UpDownIndices[Overline[label/. LabelsNiceForm[Coupling]], Bar/@indices];
 
 
-Format[Metric[\[Mu]__], NiceForm]:= UpDownIndices["g",Bar/@{\[Mu]}];
+AuxForm/: MakeBoxes[Coupling[label_, indices_, _], AuxForm]:= 
+	UpDownIndices[label/. LabelsNiceForm[Coupling], indices];
 
 
-Format[LCTensor[\[Mu]__], NiceForm]:= UpDownIndices["\[CurlyEpsilon]",Bar/@{\[Mu]}];
+(* ::Subsubsection::Closed:: *)
+(*DiracAlgebra*)
 
 
-(* ::Subsection::Closed:: *)
-(*Indices*)
+AuxForm/: MakeBoxes[Gamma5, AuxForm]:= SubscriptBox["\[Gamma]", "5"];
+AuxForm/: MakeBoxes[GammaM@ mu_, AuxForm]:= DownIndices["\[Gamma]", {mu}];
+AuxForm/: MakeBoxes[GammaM[mu_, nu__], AuxForm]:= DownIndices["\[CapitalGamma]", {mu, nu}];
 
 
-$PrintIndexLabels = False;
+AuxForm/: MakeBoxes[Proj[1], AuxForm]:= SubscriptBox["P", "R"];
+AuxForm/: MakeBoxes[Proj[-1], AuxForm]:= SubscriptBox["P", "L"];
+AuxForm/: MakeBoxes[GammaCC, AuxForm]:= "C";
 
 
-UpDownIndices[label_,indices_]:=
-	Which[
-		indices=={},
-			StandardForm[label],
-		Select[indices,Head[#]===Bar &]=={},
-			Superscript[StandardForm@label, SubscriptStyle@ Row@ Map[Format[#,NiceForm]&, Select[indices,Head[#]=!=Bar &]]],
-		Select[indices,Head[#]=!=Bar &]=={},
-			Subscript[StandardForm@label, SubscriptStyle@ Row@ Map[Format[#,NiceForm]&, #[[1]]&/@Select[indices,Head[#]===Bar &]]],
-		True, 
-			Subsuperscript[StandardForm@label, Row@ Map[Format[#,NiceForm]&,#[[1]]&/@Select[indices,Head[#]===Bar &]],Row@ Map[Format[#,NiceForm]&, Select[indices,Head[#]=!=Bar &]]]
-];
-
-
-Format[Index[label_Pattern, rep_], NiceForm] := Module[{},
-	Style[
-		If[$PrintIndexLabels,
-			(* print with rep label *)
-			Superscript[ToString@ label,Style[ToString@ rep, Small]],
-			(* print without rep label *)
-			ToString@ label				
-		],
-		10
-	]
-]
-
-
-Format[Index[label_, rep_], NiceForm]:=Module[
-	{alphabet},
-	(* Check if there is an alphabet defined for rep *)
-	Style[
-		If[MemberQ[Keys[$IndexAlphabets],rep],
-			alphabet = $IndexAlphabets[rep];
-			(* if alphabet is defined check if label is contained *)
-			If[MemberQ[Keys@ alphabet, label],
-					If[$PrintIndexLabels,
-					(* print with rep label *)
-					Superscript[alphabet@ label,Style[ToString@ rep, Small]],
-					(* print without rep label *)
-					alphabet@ label				
-				]
-				,
-				If[$PrintIndexLabels,
-					(* print with rep label *)
-					Superscript[ToString@ label,Style[ToString@ rep, Small]],
-					(* print without rep label *)
-					ToString@ label				
-				]
-			]
-			,
-			(* if no alphabet is defined use the default *)
-			If[MemberQ[Keys[$UndefinedIndexAlphabet],label],
-				If[$PrintIndexLabels,
-					(* print with rep label *)
-					Superscript[$UndefinedIndexAlphabet@ label,Style[ToString@ rep, Small]],
-					(* print without rep label *)
-					$UndefinedIndexAlphabet@ label				
-				]
-				,
-				If[$PrintIndexLabels,
-					(* print with rep label *)
-					Superscript[ToString@ label,Style[ToString@ rep, Small]],
-					(* print without rep label *)
-					ToString@ label				
-				]
-			]
-		],
-		10 (* font size for indices *)
-	]
-]
-
-
-(* ::Subsection::Closed:: *)
-(*Loops*)
-
-
-Format[\[Mu]bar2, NiceForm]:= OverBar["\[Mu]"]^2;
-Format[hbar, NiceForm]:="\[HBar]";
-Format[LF[Masses_, powers_], NiceForm]:= Subscript[LF, Sequence@@ powers]@@ Masses;
-
-
-(* ::Subsection::Closed:: *)
-(*Simplifications*)
-
-
-Format[HoldPattern@ Operator@ op__, NiceForm]:= Times@ op;
-EquivalentChoice/:MakeBoxes[EquivalentChoice@ F_List,NiceForm]:=RowBox[{"(",GridBox[{MakeBoxes[#,NiceForm]&/@F}\[Transpose]],")"}];
-Format[HcTerms[expr_], NiceForm]:= DisplayForm@RowBox[{"(",expr,"+", Style["H.c.", FontSize-> 14], ")"}]
-
-
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Evanescent operator*)
 
 
-Format[EvaOp[label_,indices_], NiceForm]:= Subsuperscript["E",Format[label,NiceForm], SubscriptStyle@ Row@ Map[Format[#,NiceForm]&, indices]];
+AuxForm/: MakeBoxes[EvaOp[class_, id_, inds_List], AuxForm]:= 
+	SubsuperscriptBox["E" <> ToString@ id, 
+		OpClassFormatting@ class,
+		SubscriptStyle2@ TemplateBox[Map[MakeBoxes[#, AuxForm]&, inds], "RowDefault"]];
 
 
-(* ::Subsection:: *)
+(* ::Subsubsection::Closed:: *)
+(*Fields*)
+
+
+LabelsNiceForm[Field]= <||>;
+
+
+(* ::Text:: *)
+(*Fields*)
+
+
+AuxForm/: MakeBoxes[Field[label_, type_, indices_, CDerivs_], AuxForm]:= Switch[type
+	,_Vector,
+		MakeFieldBox[label/. LabelsNiceForm[Field], Append[indices, First@ type], CDerivs]
+	,_ ,
+		MakeFieldBox[label/. LabelsNiceForm[Field], indices, CDerivs]
+	];
+
+
+AuxForm/: MakeBoxes[Bar@ Field[label_, type_, indices_, CDerivs_], AuxForm]:= Switch[type
+	,_Vector,
+		MakeFieldBox[Overline[label/. LabelsNiceForm[Field]], Append[Bar/@ indices, First@ type], CDerivs]
+	,_ ,
+		MakeFieldBox[Overline[label/. LabelsNiceForm[Field]], Bar/@ indices, CDerivs]
+	];
+
+
+(* ::Text:: *)
+(*Field strengths*)
+
+
+AuxForm/: MakeBoxes[FieldStrength[label_, lorInds_, indices_, CDerivs_], AuxForm]:= 
+	MakeFieldBox[label/. LabelsNiceForm[Field], Join[lorInds, indices], CDerivs];
+AuxForm/: MakeBoxes[HoldPattern@ Bar@ FieldStrength[label_, lorInds_, indices_, CDerivs_], AuxForm]:= 
+	MakeFieldBox[Overline@ ToString[label/. LabelsNiceForm[Field]], Join[lorInds, Bar/@ indices], CDerivs];
+
+
+(* ::Text:: *)
+(*Formatting functions*)
+
+
+MakeFieldBox[lab_, indices_, CDinds_]:= CDFormatting[UpDownIndices[lab, indices], CDinds];
+
+
+CDFormatting[lab_, {}]:= lab;
+CDFormatting[lab_, CDinds:{__}]:= TemplateBox[Append[Replace[CDinds//. {x___, a_, a_, y___}:> {x, 2, y}, 
+	{ 2:> SuperscriptBox["D", 2], i_:> SubscriptBox["D", MakeBoxes[i, AuxForm]]}, {1}], lab], "RowDefault"];
+CDFormatting[lab_, other_]:= TemplateBox[{SubscriptBox["D", MakeBoxes[other, AuxForm]], lab}, "RowDefault"];
+
+
+(* ::Text:: *)
+(*Powers of fields/field strengths*)
+
+
+AuxForm/: MakeBoxes[Power[f:(Field|FieldStrength)[__, derivs_], n_], AuxForm]:= If[derivs==={},
+	SuperscriptBox[MakeBoxes[f, AuxForm], n],
+	(*FormBox[..., StandardForm] ensures large parenthesis*)
+	(*StyleBox[..., SpanSymmetric-> False] ensures that the parenthesis do not reach further down that is necessary*)
+	SuperscriptBox[FormBox[StyleBox[
+			RowBox@ {"(", MakeBoxes[f, AuxForm], ")"},
+			SpanSymmetric-> False
+		], StandardForm], n]
+]
+
+
+(* ::Subsubsection::Closed:: *)
+(*FlavorSums*)
+
+
+AuxForm/: MakeBoxes[FlavorSum[ind_Index], AuxForm]:= UnderscriptBox[StyleBox["\[Sum]", 18], SubscriptStyle2@ MakeBoxes[ind, NiceForm]]
+
+
+(* ::Subsubsection::Closed:: *)
 (*Logarithms*)
 
 
-NiceForm/:MakeBoxes[Log[Times[\[Mu]bar2,Power[a_,-2]]],NiceForm]:=FormBox[
-RowBox[{
-	Log,"[",
-		FractionBox[
-			MakeBoxes[\[Mu]bar2,NiceForm],
-			MakeBoxes[Power[a,2],NiceForm]
-		],
-	"]"
-}],StandardForm]
+AuxForm/: MakeBoxes[Log[Times[\[Mu]bar2, Power[a_, -2]]], AuxForm]:= FormBox[RowBox@ {
+			Log, "[",
+				FractionBox[
+					MakeBoxes[\[Mu]bar2, AuxForm],
+					MakeBoxes[Power[a, 2], AuxForm]
+				], "]"
+	}, StandardForm];
 
 
-NiceForm/:MakeBoxes[Log[Times[Power[a_,2],Power[b_,-2]]],NiceForm]:=FormBox[
-RowBox[{
-	Log,"[",
-		FractionBox[
-			MakeBoxes[Power[a,2],NiceForm],
-			MakeBoxes[Power[b,2],NiceForm]
-		],
-	"]"
-}],StandardForm]
+AuxForm/: MakeBoxes[Log[Times[Power[a_,2],Power[b_,-2]]], AuxForm]:=FormBox[RowBox@ {
+			Log,"[",
+				FractionBox[
+					MakeBoxes[Power[a,2], AuxForm],
+					MakeBoxes[Power[b,2], AuxForm]
+				], "]"
+	}, StandardForm]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Loops*)
+
+
+AuxForm/: MakeBoxes[\[Mu]bar2, AuxForm]:= SuperscriptBox[Overline@ "\[Mu]", 2];
+AuxForm/: MakeBoxes[hbar, AuxForm]:= "\[HBar]";
+AuxForm/: MakeBoxes[LF[masses_, powers_], AuxForm]:= 
+	RowBox@{SubscriptBox["LF", RowBox@ Riffle[powers,","]], "[", Sequence@@ Riffle[(MakeBoxes[#, AuxForm]&/@ masses), ","], "]"};
+
+
+(* ::Subsubsection::Closed:: *)
+(*Metric, Delta & LCTensor*)
+
+
+AuxForm/: MakeBoxes[Delta@ ind__, AuxForm]:= DownIndices["\[Delta]", {ind}];
+
+
+AuxForm/: MakeBoxes[LCTensor@ ind__, AuxForm]:= DownIndices["\[CurlyEpsilon]", {ind}];
+
+
+AuxForm/: MakeBoxes[Metric@ ind__, AuxForm]:= DownIndices["g", {ind}];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Numbers*)
+
+
+AuxForm/: MakeBoxes[z_Complex, AuxForm]:= MakeBoxes[z, StandardForm]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Open covariant derivatives*)
+
+
+AuxForm/: MakeBoxes[OpenCD[inds:{Index[_, Lorentz]..}], AuxForm]:= FormBox[StyleBox[
+		RowBox[Flatten@ {"(", Replace[inds//. {x___, a_, a_, y___}:> {x, 2, y}, 
+	{2:> SuperscriptBox[OverscriptBox["D", "\[LongRightArrow]"], 2], i_:> SubscriptBox[OverscriptBox["D", "\[LongRightArrow]"], MakeBoxes[i, AuxForm]]}, {1}],
+	")"} ]
+	, SpanSymmetric-> False], StandardForm]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Simplifications*)
+
+
+(* ::Text:: *)
+(*Print + H.c. for HcTerms *)
+
+
+AuxForm/: MakeBoxes[HcTerms@ expr_, AuxForm]:= 
+	FormBox[RowBox[{"[", MakeBoxes[expr, AuxForm], "+", StyleBox["H.c.", FontSize-> 14], "]"}]/. 
+		RowBox@ {x___,  RowBox@ {a__}, y___}:> RowBox@ {x, a, y}, StandardForm];
+
+
+(* ::Subsection:: *)
+(*Debugging  *)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Operator*)
+
+
+(* ::Text:: *)
+(*Ignore "Operator"*)
+
+
+AuxForm/: MakeBoxes[HoldPattern@ Operator@ op__, AuxForm]:= 
+	With[{temp= Times@ op}, MakeBoxes[temp, AuxForm] ];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Atomic operators*)
+
+
+(* ::Text:: *)
+(*AtomicOp*)
+
+
+AuxForm/: MakeBoxes[AtomicOp[class_, id_, inds_List], AuxForm]:= 
+	SubsuperscriptBox["\[ScriptCapitalA]" <> ToString@ id, 
+		OpClassFormatting@ class,
+		SubscriptStyle2@ TemplateBox[Map[MakeBoxes[#, AuxForm]&, inds], "RowDefault"]];
+
+
+AuxForm/: MakeBoxes[AtomicOp[class_, id_, inds_Pattern], AuxForm]:= 
+	SubsuperscriptBox["\[ScriptCapitalA]" <> ToString@ id, OpClassFormatting@ class, SubscriptStyle2@ MakeBoxes[inds, StandardForm]];
+
+
+(* ::Text:: *)
+(*CompOp*)
+
+
+AuxForm/: MakeBoxes[CompOp[idenType_, class_, id_, inds_List], AuxForm]:= 
+	SubsuperscriptBox["\[ScriptCapitalC]" <> ToString@ id, 
+		MapAt[Prepend[$identityFormat@ idenType <> ","], OpClassFormatting@ class, 1],
+		SubscriptStyle2@ TemplateBox[Map[MakeBoxes[#, AuxForm]&, inds], "RowDefault"]];
+
+
+$identityFormat= <|Evanescent-> "ev", FourDimensional-> "4", dDimensional-> "\[ScriptD]"|>;
+
+
+(* ::Text:: *)
+(*Format the operator class*)
+
+
+OpClassFormatting@ {fields_List, 0}:= FieldListFormatting@ fields;
+OpClassFormatting@ {fields_List, devs_Integer}:= Block[{out}, 
+	out= FieldListFormatting@ fields;
+	MapAt[Prepend[If[devs > 1,
+			SuperscriptBox["\[PartialD]", ToString@ devs]
+		,
+			"\[PartialD]"
+		]], out, 1]
+];
+
+
+FieldListFormatting@ fields_List:= Block[{tally, label},
+	tally= Tally@ fields;
+	TemplateBox[Table[
+		label= If[Head@ f[[1]] === Conj, 
+			Overline@ f[[1, 1]]
+		,
+			ToString@ f[[1]]
+		];
+		If[f[[2]]> 1,
+			SuperscriptBox[label, ToString@ f[[2]]]
+		,
+			label
+		]
+	, {f, tally}], "RowDefault"]
+]

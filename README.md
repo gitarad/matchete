@@ -6,9 +6,14 @@ Matchete provides a simple and user-friendly interface for entering the Lagrangi
 
 The `Match` routine can then be applied to the UV Lagrangian to obtain the corresponding Effective Field Theory, where all heavy degrees of freedom have been integrated out, either at tree level, or at one loop.
 
-The resulting EFT Lagrangian contains a (very) large number of redundant operators. These can be removed automatically by applying the routines `GreensSimplify`, which reduces the output to an off-shell Green's basis, and `EOMSimplify`, which performs field redefinitions. The fully simplified result will then be in a (near-)basis of the corresponding EFT operator space. 
+The resulting EFT Lagrangian contains a (very) large number of redundant operators. These can be removed automatically by applying the routines `GreensSimplify`, which reduces the output to an off-shell Green's basis, and `EOMSimplify`, which performs field redefinitions. The fully simplified result will then be in a (near-)basis of the corresponding EFT operator space.
 
-**Notice:** *The current version of Matchete does not allow for an automatic application of Fierz identities, since these require a proper treatment of evanescent operators. (See [\[arXiv:2211.09144\]](https://arxiv.org/abs/2211.09144) for more details.) We plan to include this functionality in the near future.*
+
+### Release of Major update v0.3.0 (2025-05-30)
+
+The Matchete collaboration proudly announces version 0.3.0!
+
+Matchete now supports automatic evanescent reduction. It is also possible to obtain the matching condition in a particular EFT basis (e.g., the SMEFT Warsaw basis) with `MapEffectiveCouplings`. These tools should make practical matching calculations easier than ever. The distribution now includes build in documentation (w.i.p.) using the Mathematica documentation framework (which can be accessed with the \`F1\` function key). Install this latest version to experience new features and and many quality-of-life improvements.
 
 ---
 
@@ -38,10 +43,10 @@ The complete set of routines and usage examples can be found in the ancillary do
 ## Authors
 
 * **Javier Fuentes-Martín** - *Universidad de Granada*
-* **Matthias König** - *Technische Universität München*
+* **Matthias König** - *University of Mainz*
 * **Julie Pagès** - *University of California at San Diego*
 * **Anders Eller Thomsen** - *University of Bern*
-* **Felix Wilsch** - *University of Zurich*
+* **Felix Wilsch** - *RWTH Aachen University*
 
 ---
 
@@ -60,4 +65,3 @@ MATCHETE is free software under the terms of the GNU General Public License v3.0
 ## Acknowledgments
 
 We thank José Santiago for his help with the cross-checks of the vector-like lepton example using matchmakereft.
-

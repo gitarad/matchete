@@ -19,9 +19,6 @@ Package["Matchete`"]
 (*Scoping*)
 
 
-PackageImport["GroupMagic`"]
-
-
 (* ::Subsubsection::Closed:: *)
 (*Exported*)
 
@@ -29,11 +26,18 @@ PackageImport["GroupMagic`"]
 Unprotect@ NonCommutativeMultiply; (* overwrite NonCommutativeMultiply *)
 
 
+PackageExport["Bar"]
+
+
 (* ::Subsubsection::Closed:: *)
 (*Internal*)
 
 
-PackageScope["SetNonCommutative"]
+PackageScope["NonBarableQ"]
+PackageScope["SetBarable"]
+PackageScope["UnsetBarable"]
+
+
 PackageScope["CommutativeQ"]
 PackageScope["Commutative"]
 
@@ -49,7 +53,10 @@ PackageScope["CanonizeSpinorLines"]
 PackageScope["OpenSpinChainQ"]
 
 
-(* ::Section::Closed:: *)
+PackageScope["NCDot"]
+
+
+(* ::Section:: *)
 (*Usage definitions*)
 
 
@@ -60,11 +67,18 @@ PackageScope["OpenSpinChainQ"]
 NonCommutativeMultiply::usage = "NonCommutativeMultiply[a, b, ...] (alternatively a**b**...) denotes the Dirac product of spinors, Dirac matrices, etc.";
 
 
+Bar::usage   = "Bar[field] returns the bar of a fermion field or the conjugate otherwise. Bar can also be applied to conjugate indices and charges.";
+
+
 (* ::Subsubsection::Closed:: *)
 (*Internal*)
 
 
-SetNonCommutative::usage = "SetNonCommutative[obj] defines the object obj to be non-commutative, where obj can be a Sequence, List or Symbol.";
+NonBarableQ::usage  = "Specifies whether a term is trivial under bar or not.";
+SetBarable::usage   = "Function for setting complex objects.";
+UnsetBarable::usage = "Function for unsetting complex objects.";
+
+
 CommutativeQ::usage      = "CommutativeQ[obj] returns True if obj is a comutative object and false otherwise.";
 Commutative::usage       = "Commutative[obj] is an auxiliary head that can be used to treat the object obj temporarily as commutative.";
 
@@ -82,23 +96,136 @@ CanonizeSpinorLines::usage = "CanonizeSpinorLines[expr] separates out nested spi
 
 
 (* ::Section:: *)
+(*Bar*)
+
+
+(* ::Text:: *)
+(*Bar denotes complex conjugation except for on fermion lines, where they are the Bar of the Dirac algebra*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Set rules for what is trivial under a Bar *)
+
+
+(* ::Text:: *)
+(*Default is no action*)
+
+
+NonBarableQ[f_?NonBarableQ[x___]]:= And@@ NonBarableQ/@ {x};
+NonBarableQ[f_@ x___]:= False;
+NonBarableQ[_] := True; 
+NonBarableQ@ Alternatives[Pattern, Blank, BlankSequence, BlankNullSequence, Except, Hold]= False;
+
+
+(* ::Text:: *)
+(*Objects with non-trivial behavior under Bar *)
+
+
+NonBarableQ@ Alternatives[Complex, CG, Index]= False;
+NonBarableQ@ _SparseArray= False;
+
+
+NonBarableQ@ Alternatives[Coupling, DiracProduct, Field, FieldStrength,
+	NonCommutativeMultiply, Transp, EvaOp]= False;
+
+
+(* ::Subsubsection::Closed:: *)
+(*General properties of Bar*)
+
+
+Bar@ Bar@ x_:= x;
+
+
+Bar@ x_?NonBarableQ:= x;
+
+
+Bar[expr:Alternatives[_Plus, _Times, _Power, _Log, _List]]:= Bar/@expr;
+
+
+Bar@ x_SparseArray:= Conjugate@ x;
+
+
+Bar@ x_Complex:= Conjugate@ x;
+
+
+(* ::Subsubsection::Closed:: *)
+(*Action on Matchete symbols*)
+
+
+Bar[expr_NonCommutativeMultiply]:= Bar/@ Reverse@ expr;
+Bar@ x_DiracProduct:= Reverse@ x/. {Gamma5-> -Gamma5, Proj@ s_:> Proj[-s], g_GammaM:> Reverse@ g};
+
+
+Bar@ f:Field[label_, Scalar|Vector[_]|Ghost, __]/; $FieldAssociation[label, SelfConjugate]:=f;
+Bar@ f:Field[label_, Fermion, __]/; $FieldAssociation[label, SelfConjugate]:= 
+	Transp[f]**DiracProduct[GammaCC]; (* Bar for Majorana Fermions *)
+Bar@ FieldStrength[label_, lind_, ginds_, cdinds_]/; $FieldAssociation[label, SelfConjugate]:= 
+	FieldStrength[label, lind, Bar/@ ginds, cdinds];
+Bar@ c:Coupling[label_, __]/; $CouplingAssociation[label, SelfConjugate]:= c;
+Bar@ Coupling[label_, ind_List,x__]/; (Head[$CouplingAssociation[label, SelfConjugate]]===List):= Coupling[label, Permute[ind, $CouplingAssociation[label, SelfConjugate]],x];
+
+
+(*Special case of charge conjugation before Bar*)
+Transp/: Bar@ Transp@ f_:= Transp@ Bar@ f;
+
+
+LF/: Bar@ lf_LF:= lf;
+LCTensor/: Bar@ lc_LCTensor:= lc;
+
+
+Bar@ Index[x_, Lorentz]:= Index[x, Lorentz];
+
+
+(* ::Subsubsection::Closed:: *)
+(*For setting objects complex*)
+
+
+SetBarable[x_, y__]  := (SetBarable@ x; SetBarable@ y;);
+SetBarable[x_] := (NonBarableQ@ x ^= False;);
+
+
+(* ::Text:: *)
+(*And unseting them for removal*)
+
+
+UnsetBarable[x_Symbol] := (x/: NonBarableQ@ x =.);
+UnsetBarable[x:_Symbol@_] := (Evaluate@ Head@ x/: NonBarableQ@ x =.);
+
+
+(* ::Section:: *)
 (*NonCommutativeMultiply functionality*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Commutative check*)
+
+
+(* ::Text:: *)
+(*Hard-code commutative properties of objects to prevent iterative calls to all subparts: greatly improves performance *)
+
+
+CommutativeQ@ _DiracProduct= False;
+CommutativeQ@ Field[_, Fermion| Ghost, __]= False;
+
+
+CommutativeQ@ Field[_, Scalar| _Vector, __]= True;
+CommutativeQ@ _FieldStrength= True;
+CommutativeQ@ _Coupling= True;
+CommutativeQ@ _CG= True;
+CommutativeQ@ _LF= True;
 
 
 (* ::Text:: *)
 (*Default assumption is that everything is commutative*)
 
 
-CommutativeQ[x_NonCommutativeMultiply]:= (CommutativeQ[x]= ClosedSpinChainQ[x]);
-CommutativeQ[f_?CommutativeQ[x___]]:= (CommutativeQ[f[x]]= And@@ CommutativeQ/@ {x});
+(* Memoization speeds up DeriveSubstitutions by a factor of ~2 or so *)
+(* Memoization seems to have very poor performance in EOM and GreensSimplify creating 100,000s of Downvalues *)
+(*CommutativeQ[x_NonCommutativeMultiply]:= (CommutativeQ[x]= ClosedSpinChainQ[x]);
+CommutativeQ[f_?CommutativeQ[x___]]:= (CommutativeQ[f[x]]= And@@ CommutativeQ/@ {x});*)
 
-(* The above speeds up DeriveSubstitutions by a factor of ~2 or so *)
-(*CommutativeQ@ x_NonCommutativeMultiply:= ClosedSpinChainQ@ x;
-CommutativeQ[f_?CommutativeQ[x___]] := And@@ CommutativeQ/@ {x};*)
+CommutativeQ@ x_NonCommutativeMultiply:= ClosedSpinChainQ@ x;
+CommutativeQ[f_?CommutativeQ[x___]] := And@@ CommutativeQ/@ {x};
 
 CommutativeQ[f_[x___]] := False;
 CommutativeQ[_] := True; 
@@ -111,10 +238,6 @@ CommutativeQ[_] := True;
 CommutativeQ@ Alternatives[Pattern, Blank, BlankSequence, BlankNullSequence, Except, Hold] = False;
 
 
-SetNonCommutative[x_, y__]  := (SetNonCommutative@ x; SetNonCommutative@ y;);
-SetNonCommutative[x_Symbol] := (CommutativeQ@ x ^= False;);
-
-
 (* ::Text:: *)
 (*Commutative is a head that can be used to temporarily treat an object as commutative*)
 
@@ -122,7 +245,7 @@ SetNonCommutative[x_Symbol] := (CommutativeQ@ x ^= False;);
 CommutativeQ@ Commutative@ _ ^= True; 
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Properties of NonCommutativeMultiply*)
 
 
@@ -157,6 +280,13 @@ NonCommutativeMultiply[a___, b_?CommutativeQ * x_, c___]:= b * NonCommutativeMul
 NonCommutativeMultiply[a___, b_Plus, c___]:= NonCommutativeMultiply[a, #, c] & /@ b 
 
 
+(*On matrix*)
+NCDot[a_, b_]/;(Length@Dimensions@a===2 && Length@Dimensions@b===2 && (Dimensions[a][[2]])===(Dimensions[b][[1]])):=
+	Inner[NonCommutativeMultiply,a,b,Plus];
+NCDot[a_,b_,c__]:=NCDot[NCDot[a,b],c];
+NCDot[0,0]:=0;
+
+
 (* ::Subsubsection::Closed:: *)
 (*Contraction of spin chains*)
 
@@ -177,29 +307,35 @@ NonCommutativeMultiply[A: Transp@Field[_,Fermion,___] , B___/;FreeQ[List@B,Fermi
 (*No complex fermion transpose on the left*)
 NonCommutativeMultiply[A: Transp@Field[labelA_,Fermion,___]/;!$FieldAssociation[labelA][SelfConjugate], B___/;FreeQ[List@B,Fermion], C: Field[labelC_,Fermion,___]/;$FieldAssociation[labelC][SelfConjugate]]:= 
 	- Transp[C]** Transp[B] ** Transp[A] 
-(*If there must be a transpose  choose canonical ordering *)
-NonCommutativeMultiply[A:Transp@Field[labelA_,Fermion,___]/; $FieldAssociation[labelA][SelfConjugate], B___/;FreeQ[List@B,Fermion], C: Field[labelC_,Fermion,___]/;$FieldAssociation[labelC][SelfConjugate]]:= 
+(*If there must be a transpose, and no derivatices, choose canonical ordering of labels*)
+NonCommutativeMultiply[A:Transp@(Field[labelA_,Fermion,_,{}])/; $FieldAssociation[labelA][SelfConjugate], B___/;FreeQ[List@B,Fermion], C: Field[labelC_,Fermion,_,{}]/;$FieldAssociation[labelC][SelfConjugate]]:= 
 	- Transp[C]** Transp[B] ** Transp[A]  /;!OrderedQ[{labelA,labelC}] 
-NonCommutativeMultiply[A:Transp@Field[labelA_,Fermion,___]/;!$FieldAssociation[labelA][SelfConjugate], B___/;FreeQ[List@B,Fermion], C: Field[labelC_,Fermion,___]/;!$FieldAssociation[labelC][SelfConjugate]]:= 
-	- Transp[C]** Transp[B] ** Transp[A]  /;!OrderedQ[{labelA,labelC}] 
-NonCommutativeMultiply[A:Bar@Field[labelA_,Fermion,___], B___/;FreeQ[List@B,Fermion], C: Transp@Bar@Field[labelC_,Fermion,___] ]:=
+NonCommutativeMultiply[A:Transp@(Field[labelA_,Fermion,_,{}])/;!$FieldAssociation[labelA][SelfConjugate], B___/;FreeQ[List@B,Fermion], C: Field[labelC_,Fermion,_,{}]/;!$FieldAssociation[labelC][SelfConjugate]]:= 
+	- Transp[C]** Transp[B] ** Transp[A]  /;!OrderedQ[{labelA,labelC}]
+NonCommutativeMultiply[A:Bar@(Field[labelA_,Fermion,_,{}]), B___/;FreeQ[List@B,Fermion], C: Transp@Bar@(Field[labelC_,Fermion,_,{}]) ]:=
 	- Transp[C]** Transp[B] ** Transp[A]  /;!OrderedQ[{labelA,labelC}]
 
 
-(*If same field, place field with most derivative on the right*)
-NonCommutativeMultiply[A:Transp@Field[label_,Fermion,_,Lind1_], B___/;FreeQ[List@B,Fermion], C: Field[label_,Fermion,_,Lind2_]]:=
+(*If same field and same number of derivatives, place fields according to indices*)
+(*NonCommutativeMultiply[A:Bar@(Field[label_,Fermion,indA:Except[_Pattern],derA_]), B___/;FreeQ[List@B,Fermion], C: Transp@Bar@(Field[label_,Fermion,indC:Except[_Pattern],derC_]) ]/;(Length[derA]===Length[derC]):=
+	- Transp[C]** Transp[B] ** Transp[A]  /;!OrderedQ[{indA,indC}/.{Index[_,Flavor]->Nothing,Index[_Pattern,_]->Nothing}]*)
+
+
+(*Place field with most derivative on the right*)
+NonCommutativeMultiply[A:Transp@Field[_,Fermion,_,Lind1_], B___/;FreeQ[List@B,Fermion], C: Field[_,Fermion,_,Lind2_]]:=
 	- Transp[C]** Transp[B] ** Transp[A]  /;(Length[Lind1]>Length[Lind2]);
-NonCommutativeMultiply[A:Bar@Field[label_,Fermion,__,Lind1_], B___/;FreeQ[List@B,Fermion], C: Transp@Bar@Field[label_,Fermion,__,Lind2_]]:=
+NonCommutativeMultiply[A:Bar@Field[_,Fermion,_,Lind1_], B___/;FreeQ[List@B,Fermion], C: Transp@Bar@Field[_,Fermion,_,Lind2_]]:=
 	- Transp[C]** Transp[B] ** Transp[A]  /;(Length[Lind1]>Length[Lind2]);
 
 
+(*Place field with EoM head on the right*)
 NonCommutativeMultiply[EoM@ Transp[f1:Field[_, Fermion, _, {}]], d_DiracProduct, f2:Field[_, Fermion, _, {}]]:=
 	- Transp@ f2 ** Transp@ d ** EoM@ f1;
 NonCommutativeMultiply[EoM@ Bar[f1:Field[_, Fermion, _, {}]], d_DiracProduct, Transp[f2:Bar@ Field[_, Fermion, _, {}]]]:=
 	- f2 ** Transp@ d ** EoM@ Transp@ Bar@ f1;
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Utility functions*)
 
 
@@ -207,23 +343,15 @@ Commutator[x_, y_]     := x ** y - y ** x;
 AntiCommutator[x_, y_] := x ** y + y ** x;
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Non-commutative symbols used in Matchete should be declared here*)
-
-
-(* ::Text:: *)
-(*From Definitions.m*)
-
-
-SetNonCommutative[Fermion, Ghost];
 
 
 (* ::Text:: *)
 (*From DiracAlgebra.m*)
 
 
-SetNonCommutative[DiracProduct];
-SetNonCommutative[GammaM, Gamma5, GammaCC];
+CommutativeQ@ Alternatives[GammaM, Gamma5, GammaCC]= False;
 
 
 (* ::Text:: *)

@@ -19,9 +19,6 @@ Package["Matchete`"]
 (*Scoping*)
 
 
-PackageImport["GroupMagic`"]
-
-
 (* ::Subsection::Closed:: *)
 (*Exported*)
 
@@ -34,7 +31,7 @@ PackageExport["ContractedIndices"]
 PackageExport["ClosedSpinChains"]
 PackageExport["CanonicallyNormalized"]
 PackageExport["HeavyMassBasis"]
-PackageExport["FreeofHeavyTadpoles"]
+PackageExport["FreeOfHeavyTadpoles"]
 PackageExport["ChargeNeutral"]
 PackageExport["FreeOfGaugeFields"]
 PackageExport["UndefinedObject"]
@@ -76,11 +73,11 @@ PackageScope["GaugeAnomalyContribution"]
 
 
 CheckLagrangian::usage = "CheckLagrangian[Lagrangian, options] performs a series of checks on the input Lagrangian. 
-The options {Hermiticity, ContractedIndices, ClosedSpinChains, CanonicallyNormalized, HeavyMassBasis, ChargeNeutral, FreeofHeavyTadpoles, FreeOfGaugeFields, UndefinedObject, GaugeAnomalies} take values True/False and determine which of the checks are performed. 
+The options {Hermiticity, ContractedIndices, ClosedSpinChains, CanonicallyNormalized, HeavyMassBasis, ChargeNeutral, FreeOfHeavyTadpoles, FreeOfGaugeFields, UndefinedObject, GaugeAnomalies} take values True/False and determine which of the checks are performed. 
 If the option DetailedOutput->True, an association with the result of each test is returned.";
 
 
-Hermiticity::usage    = ContractedIndices::usage = ClosedSpinChains::usage = CanonicallyNormalized::usage = HeavyMassBasis::usage = UndefinedObject::usage = ChargeNeutral::usage = FreeOfGaugeFields::usage = FreeofHeavyTadpoles::usage = GaugeAnomalies::usage = "Option for the CheckLagrangian function. It takes the values True/False to determine whether the check is performed.";
+Hermiticity::usage    = ContractedIndices::usage = ClosedSpinChains::usage = CanonicallyNormalized::usage = HeavyMassBasis::usage = UndefinedObject::usage = ChargeNeutral::usage = FreeOfGaugeFields::usage = FreeOfHeavyTadpoles::usage = GaugeAnomalies::usage = "Option for the CheckLagrangian function. It takes the values True/False to determine whether the check is performed.";
 DetailedOutput::usage = "Option for the CheckLagrangian function. It takes the values True/False. An association with the result of each test is returned when set to True.";
 
 
@@ -114,7 +111,7 @@ GaugeAnomalyContribution::usage = "GaugeAnomalyContribution[field/fieldList] ret
 (*Modules*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Lagrange-like expression*)
 
 
@@ -135,11 +132,33 @@ LagrangianLikeCheck@ expr_:= Module[{temp= TermsToList@ expr},
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Hermiticity*)
 
 
-HermitianQ[expr_]:= (expr - Bar[expr] //GreensSimplify)=== 0;
+(* ::Text:: *)
+(*Applies a FullSimplify to each term in a sum, while assuming that the arguments of all Log are real positive numbers, as long as the arguments do not contain explicit complex numbers.*)
+
+
+SimplifyLogs[expr_]:=If[Head[expr]===Plus,
+	FullSimplify[#,And@@DeleteDuplicates@Cases[#,Log[arg_/;FreeQ[arg,_Complex,All]]:>(arg>0),All]]&/@ CollectOperators[expr]
+	,
+	FullSimplify[expr,And@@DeleteDuplicates@Cases[expr,Log[arg_/;FreeQ[arg,_Complex,All]]:>(arg>0),All]]
+]
+SimplifyLogs[0]=0
+
+
+(* ::Text:: *)
+(*If "manifest" -> True return 2 booleans for the Lagrangian being Hermitian, and it being manifestly Hermitian.*)
+
+
+HermitianQ[expr_,OptionsPattern[{"manifest"->False}]]:= If[OptionValue["manifest"],
+	Module[{tmp=GreensSimplify[expr - Bar[expr]]},
+		{SimplifyLogs[tmp/.lf_LF:>EvaluateLoopFunctions[lf]] === 0 , tmp === 0}
+	]
+	,
+	SimplifyLogs[GreensSimplify[expr - Bar[expr]]/.lf_LF:>EvaluateLoopFunctions[lf]] === 0
+];
 
 
 (* ::Subsection::Closed:: *)
@@ -329,7 +348,7 @@ ChargeNeutralQ[Lag_]:= Total@(Abs/@Flatten@Outer[GetCharge, TermsToList@ Lag,Key
 GaugeVectorOccurenceQ[expr_]:= !FreeQ[expr, Field[Alternatives@@(Query[Transpose]@GetGaugeGroups[])[Field],___], Infinity];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Gauge anomalies*)
 
 
@@ -387,9 +406,17 @@ GaugeAnomalyContribution[field_Symbol]:=Module[
 	mixedAnomalyFactors=Head/@#->If[Length[ind]>1,Times@@DimRep/@DeleteCases[ind,#[[1]]],1]chiralFactor ContractCGs[CG[gen[#[[1]]],{A,i,j}]CG[gen[#[[2]]],{B,j,i}]] #[[3]][[1]]&/@mixedAnomalies;
 
 	(* Contruct all possible Abelian triangles and compute the corresponding anomalies, given by U1[Charge]^3 *)
-	AbelianAnomalies=If[Length[charges]===1,
+	(*AbelianAnomalies=If[Length[charges]===1,
 		Table[{i,i,i},{i,charges}],
 		Flatten[DeleteCases[#/.{},_?NumericQ]]&/@(Expand[(Plus@@charges)^3]/.{Times->List,Plus->List,Power->Apply[List]@*ConstantArray})
+	];*)
+	AbelianAnomalies=Switch[Length[charges],
+		0,
+			{}, (* Exception for purely non-Abelian theories *)
+		1,
+			Table[{i,i,i},{i,charges}],
+		_,
+			Flatten[DeleteCases[#/.{},_?NumericQ]]&/@(Expand[(Plus@@charges)^3]/.{Times->List,Plus->List,Power->Apply[List]@*ConstantArray})
 	];
 	AbelianAnomalyFactors=Head/@#->If[Length[ind]>0,Times@@DimRep/@ind,1]chiralFactor #[[1]][[1]] #[[2]][[1]]#[[3]][[1]]&/@AbelianAnomalies;
 
@@ -416,12 +443,12 @@ GaugeAnomaliesQ[lagrangian_]:=Total@Values@GaugeAnomalyContribution@OccuringFiel
 (*Error messages*)
 
 
-CheckLagrangian::Hermiticity          = "The input Lagrangian is not hermitian.";
+CheckLagrangian::Hermiticity          = "The input Lagrangian is not hermitian. The non-Hermitian part \[ScriptCapitalL]-\[ScriptCapitalL]\[ConjugateTranspose] is `1`";
 CheckLagrangian::ContractedIndices    = "The input Lagrangian contains open indices or a mismatch of bared and not bared indices.";
 CheckLagrangian::ClosedSpinChains     = "The input Lagrangian contains open, complex, or inconsistent (using transposed spinors with no corresponding C-matrix) spin chains."
 CheckLagrangian::CanonicallyNormalized = "The input Lagrangian kinetic part is not canonically normalized."
 CheckLagrangian::HeavyMassBasis       = "The input Lagrangian is not in the mass basis for heavy fields."
-CheckLagrangian::FreeofHeavyTadpoles  = "The input Lagrangian contains heavy tadpoles that should be removed."
+CheckLagrangian::FreeOfHeavyTadpoles  = "The input Lagrangian contains heavy tadpoles that should be removed."
 CheckLagrangian::ChargeNeutral        = "The input Lagrangian is not fully neutral."
 CheckLagrangian::GaugeVectorOccurence = "The Lagrangian cannot contain gauge vector boson outside of covariant derivatives or field strength tensors."
 CheckLagrangian::UndefinedObject      = "The object `1` is undefined."
@@ -441,7 +468,7 @@ Options[CheckLagrangian]={
 		FreeOfGaugeFields-> True,
 		GaugeAnomalies-> True,
 		HeavyMassBasis-> True,
-		FreeofHeavyTadpoles->True,
+		FreeOfHeavyTadpoles-> True,
 		Hermiticity-> True, 
 		UndefinedObject-> True
 	};
@@ -474,7 +501,7 @@ CheckLagrangian[Lagrangian_,opt:OptionsPattern[]]? OptionsCheck:=CheckLagrangian
 	(*HermitianQ cannot evaluate improperly contracted spinchains*)	
 	If[OptionValue@Hermiticity && !mClosedSpinChains,
 		If[(mHermiticity = !HermitianQ[Lag]), 
-			Message[CheckLagrangian::Hermiticity]; 
+			Message[CheckLagrangian::Hermiticity,Format[(Lag - Bar[Lag] //GreensSimplify),NiceForm]]; 
 			];
 		If[OptionValue@DetailedOutput, AppendTo[DetOutput,"Hermiticity"->!mHermiticity]]
 		];
@@ -483,7 +510,7 @@ CheckLagrangian[Lagrangian_,opt:OptionsPattern[]]? OptionsCheck:=CheckLagrangian
 	If[OptionValue@ ContractedIndices,
 		UncIndices = UncontractedIndices[Lag];
 		If[ (mContractedIndices = UncIndices =!= {}), 
-			Message[CheckLagrangian::ContractedIndices]; 
+			Message[CheckLagrangian::ContractedIndices,UncIndices]; 
 			];
 		If[OptionValue@DetailedOutput, AppendTo[DetOutput,"UncontractedIndices"->UncIndices]]
 		];
@@ -504,10 +531,10 @@ CheckLagrangian[Lagrangian_,opt:OptionsPattern[]]? OptionsCheck:=CheckLagrangian
 		If[OptionValue@DetailedOutput, AppendTo[DetOutput,"HeavyMassBasis"->!mMassBasis]]
 		];
 	
-	If[OptionValue@ FreeofHeavyTadpoles,
+	If[OptionValue@ FreeOfHeavyTadpoles,
 		HeavTadpoles=HeavyTadpoles[Lag];
 		If[ (mHeavyTadpoles= HeavTadpoles =!= {}), 
-			Message[CheckLagrangian::FreeofHeavyTadpoles]; 
+			Message[CheckLagrangian::FreeOfHeavyTadpoles]; 
 			];
 		If[OptionValue@DetailedOutput, AppendTo[DetOutput,"HeavyTadpoles"->(Format[#,NiceForm]&/@HeavTadpoles)]]
 		];
@@ -530,7 +557,12 @@ CheckLagrangian[Lagrangian_,opt:OptionsPattern[]]? OptionsCheck:=CheckLagrangian
 		
 	(*check if all objects are defined*)	
 	If[OptionValue@ UndefinedObject,
-		ExtraHeads= DeleteDuplicates@DeleteCases[Flatten[{Lag}//.{Times->List,Plus->List, NonCommutativeMultiply->List, Power[a_,___]:> a, Bar[a_]:> a , Transp[a_]:> a, Log[a_]:>a, hbar->1, \[Mu]bar2->1, ev-> 1, \[Epsilon]->1, \[Pi]->1}], 
+		ExtraHeads= DeleteDuplicates@ DeleteCases[Flatten[{Lag}//.
+				{Times->List,
+				Plus->List, 
+				NonCommutativeMultiply->List, 
+				Power[a_,___]:> a, Bar[a_]:> a , Transp[a_]:> a, Log[a_]:>a, 
+				hbar->1, \[Mu]bar2->1, ev-> 1, \[Epsilon]->1, \[Pi]->1, \[ScriptD]->1}], 
 			_Field | _CG | _Coupling | _?NumberQ | _DiracProduct  | _FieldStrength | _LCTensor |  _Delta];
 		If[(mUndefinedObject)= (ExtraHeads=!={}),
 			Message[CheckLagrangian::UndefinedObject,#]& /@ ExtraHeads;

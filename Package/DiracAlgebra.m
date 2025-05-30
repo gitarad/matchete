@@ -13,10 +13,9 @@ Package["Matchete`"]
 
 (* ::Text:: *)
 (*\[Gamma] matrices are all decomposed into the standard form (see e.g. https://arxiv.org/abs/physics/0703214, eq.  4.15) *)
-(*DiracProduct[...,Gamma5,...] is interpreted as ...Subscript[\[Gamma], 5]... *)
-(*DiracProduct[...,GammaM[Index[\[Alpha],Lorentz]],...] is interpreted as ...Subscript[\[Gamma], \[Alpha]]...*)
-(*In NDR:  DiracProduct[..., GammaM[Subscript[\[Mu], 1], ...,Subscript[\[Mu], n]],...] is interpreted as  Subscript[\[CapitalGamma], n]^(Subscript[\[Mu], 1]... Subscript[\[Mu], n])=  \!\(\*SubscriptBox[\(\[Gamma]\), \([*)
-(*\*SubscriptBox[\(\[Mu]\), \(1\)]\)]\)... Subscript[\[Gamma], Subscript[\[Mu], n]]]  (full antisymmetrization with normalization factor 1/n!)*)
+(*DiracProduct[...,Gamma5,...] is interpreted as ...\[Gamma]_5... *)
+(*DiracProduct[...,GammaM[Index[\[Alpha],Lorentz]],...] is interpreted as ...\[Gamma]_\[Alpha]...*)
+(*GammaM[\[Mu]1, ..., \[Mu]n] denotes \[CapitalGamma]_n^{\[Mu]1, ..., \[Mu]n} = 1/n! (\[Gamma]_\[Mu]1 \[CenterDot] ... \[CenterDot] \[Gamma]_\[Mu]n \[PlusMinus] ... \[PlusMinus] \[Gamma]_\[Mu]n \[CenterDot] ... \[CenterDot] \[Gamma]_\[Mu]1 ), the normalized anti-symmetric sum of n gamma matrices.  *)
 
 
 (* ::Chapter:: *)
@@ -25,9 +24,6 @@ Package["Matchete`"]
 
 (* ::Section:: *)
 (*Scoping:*)
-
-
-PackageImport["GroupMagic`"]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -49,7 +45,7 @@ PackageExport["Transp"]
 PackageExport["CConj"]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Exported*)
 
 
@@ -65,7 +61,12 @@ PackageExport["Proj"]
 PackageExport["DiracTrace"]
 
 
-(* ::Subsubsection:: *)
+PackageExport["GammaReduction"]
+PackageExport["Fierz"]
+PackageExport["RefineDiracProducts"]
+
+
+(* ::Subsubsection::Closed:: *)
 (*Internal*)
 
 
@@ -77,14 +78,13 @@ PackageScope["MajoranaQ"]
 PackageScope["CumulativeSpin"]
 
 
+PackageScope["ProjExpand"]
+
+
 PackageScope["CollectGammaMatrices"]
 
 
 PackageScope["ASymGammaExpand"]
-PackageScope["ProjExpand"]
-
-
-PackageScope["RefineDiracProducts"]
 
 
 PackageScope["\[Gamma]CommuteQ"]
@@ -92,9 +92,6 @@ PackageScope["\[Gamma]CommuteQ"]
 
 PackageScope["FierzScore"]
 PackageScope["FbasisQ"]
-PackageScope["Origin"]
-PackageScope["RedundantOperator"]
-PackageScope["BasisOperator"]
 
 
 PackageScope["LC2Gamma5"]
@@ -103,19 +100,7 @@ PackageScope["LC2Delta"]
 PackageScope["SchoutenID"]
 
 
-PackageScope["EvaOp"]
-
-
-PackageScope["Evanescent"]
-PackageScope["GetEvanescentTerm"]
-PackageScope["ResetEvanescentOperators"]
-PackageScope["ExpandEvanescentOperators"]
-PackageScope["FindEvanescentOperator"]
-
-
-PackageScope["GammaReduction"]
-PackageScope["Fierz"]
-PackageScope["RemoveLCTensor"]
+PackageScope["GammaReductionInternal"]
 
 
 (* ::Section:: *)
@@ -126,8 +111,8 @@ PackageScope["RemoveLCTensor"]
 (*Input variables*)
 
 
-\[Gamma]::usage = "\[Gamma][\[Mu]] is the shortcut for a Dirac matrix with Lorentz index \[Mu]. 
-\[Gamma][5] is the shortcut for the Dirac matrix \!\(\*FormBox[SubscriptBox[\(\[Gamma]\), \(5\)],TraditionalForm]\). 
+\[Gamma]::usage = "\[Gamma][\[Mu]] is the shortcut for a Dirac matrix with Lorentz index \[Mu].
+\[Gamma][5] is the shortcut for the Dirac matrix \!\(\*FormBox[SubscriptBox[\(\[Gamma]\), \(5\)],TraditionalForm]\).
 \[Gamma][\!\(\*SubscriptBox[\(\[Mu]\), \(1\)]\),...,\!\(\*SubscriptBox[\(\[Mu]\), \(n\)]\)] is the shortcut for the anti-symmetrized product of n Dirac matrices \!\(\*SubscriptBox[\(\[Gamma]\), \([\*SubscriptBox[\(\[Mu]\), \(1,  ... , \)] \*SubscriptBox[\(\[Mu]\), \(n\)]]\)]\)";
 \[Sigma]::usage = "\[Sigma][\[Mu],\[Nu]] is the shortcut for the hermitian anti-symmetric Dirac matrix combination \[Sigma][\[Mu],\[Nu]] = \!\(\*FractionBox[\(\[ImaginaryI]\), \(2\)]\) [\[Gamma][\[Mu]],\[Gamma][\[Nu]]].";
 
@@ -165,20 +150,8 @@ The associated shortcut is PR/PL.";
 DiracTrace::usage = "DiracTrace[expr] evaluates the Dirac trace of expr.";
 
 
-EvaOp::usage                     = "EvaOp[label, (indices)] denotes the evanescent operator stored in the association $EvanescentTerms. To obtain the definition, use GetEvanescentTerm[label]."
-
-
 GammaReduction::usage            = "GammaReduction[SP1 * SP2] returns the simplification of SP1 and SP2 current after a projection of the Dirac structures to the 4D basis.";
 Fierz::usage                     = "Fierz[SP1 * SP2] returns the fierzing of the product of SP1 and SP2 by exchanging the second spinor in each closed spin chain."
-RemoveLCTensor::usage            = "Get rid of Levi-Civita tensors either by combining with a Lorentz sigma to give a \!\(\*SubscriptBox[\(\[Gamma]\), \(5\)]\) or by expanding the product of two Levi-Civita tensor to give the fully antisymmetric product of metrics."
-
-
-Evanescent::usage                = "Evanescent is an option for Fierz, GammaReduction and RemoveLCTensor. If set to True (default), it stores the evanescent operator (if generated) in an association and includes it in the result."
-GetEvanescentTerm::usage         = "GetEvanescentTerm[label] outputs the informations (Operators, Origin) about the evanescent operator given as an argument.
-									If no argument is given, it returns the full list of generated evanescent operators."
-ResetEvanescentOperators::usage  = "ResetEvanescentOperators[] resets the association containing the definition of all evanescent operators generated."
-ExpandEvanescentOperators::usage = "ExpandEvanescentOperators[expr] replaces EvaOp[label,(indices)] by the corresponding definition of the evanescent operator."
-FindEvanescentOperator::usage    = "Identifies an evanescent operator already defined and replace it with an EvaOp object."
 
 
 (* ::Subsubsection::Closed:: *)
@@ -196,11 +169,13 @@ CumulativeSpin::usage   = "Returns the cumulative count of fermion spins along a
 CollectGammaMatrices::usage = "CollectGammaMatrices[expr] collects all \[Gamma]-matrices in a DiracProduct and and moves them to the left inside of a NonCommutativeMultiply.";
 
 
-ASymGammaExpand::usage = "ASymGammaExpand[DiracProduct[...]] performs the anti-symmetric expansion of the \[Gamma]-matrices inside the DiracProduct";
 ProjExpand::usage      = "Expand the left/right handed projector into (1-/+\!\(\*SubscriptBox[\(\[Gamma]\), \(5\)]\))/2."
 
 
-RefineDiracProducts::usage = "RefineDiracProducts[expr] matches all Dirac product in an expression to the basis of completely anti-symmetrized products.";
+ASymGammaExpand::usage = "ASymGammaExpand[DiracProduct[...]] performs the anti-symmetric expansion of the \[Gamma]-matrices inside the DiracProduct";
+
+
+RefineDiracProducts::usage = "RefineDiracProducts[expr] simplifies all Dirac product and matches it into an expression to the basis of completely anti-symmetrized products.";
 
 
 \[Gamma]CommuteQ::usage = "\[Gamma]CommuteQ[obj] checks if obj commutes with gamma matrices.";
@@ -208,11 +183,6 @@ RefineDiracProducts::usage = "RefineDiracProducts[expr] matches all Dirac produc
 
 LC2Gamma5::usage= "LC2Gamma5[expr] combines \[Epsilon]^\[Mu]\[Nu]\[Rho]\[Sigma] with gamma matrices in expr to obtain Subscript[\[Gamma], 5], using the relation Subscript[\[Gamma], 5] = -I/4! \[Epsilon]^\[Mu]\[Nu]\[Rho]\[Sigma] \[Gamma][\[Mu]]**\[Gamma][\[Nu]]**\[Gamma][\[Rho]]**\[Gamma][\[Sigma]].";
 Gamma52LC::usage= "Gamma52LC[expr] decomposes Subscript[\[Gamma], 5] in expr as Subscript[\[Gamma], 5] = -I/4! \[Epsilon]^\[Mu]\[Nu]\[Rho]\[Sigma] \[Gamma][\[Mu]]**\[Gamma][\[Nu]]**\[Gamma][\[Rho]]**\[Gamma][\[Sigma]].";
-
-
-RedundantOperator::usage         = "RedundantOperator is an attribute of evanescent operators. It stores the operator that generated the evanescent structure before the 4D operation."
-BasisOperator::usage             = "BasisOperator is an attribute of evanescent operators. It stores the operator generated by RedundantOperator after applying the 4D operation."
-Origin::usage                    = "Origin is an attribute of evanescent operators. It is either Fierz, GammaReduction or LCTensor."
 
 
 (* ::Chapter:: *)
@@ -223,7 +193,7 @@ Origin::usage                    = "Origin is an attribute of evanescent operato
 (*SNDR scheme*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Convenient notation*)
 
 
@@ -270,7 +240,14 @@ DiracProduct[A___,1,B___]:=DiracProduct[A,B];
 (*Properties of antisymmetrized \[Gamma] matrices*)
 
 
+(* ::Text:: *)
+(*Anti-symmetric in the indices.*)
+
+
 GammaM@ OrderlessPatternSequence[\[Mu]_, \[Mu]_, ___]:= 0;
+
+
+GammaM[a_, b__]/; !OrderedQ@ {a, b}:= Signature@{a, b} GammaM @@ Sort@{a, b}
 
 
 (* ::Subsubsection::Closed:: *)
@@ -282,13 +259,13 @@ GammaM@ OrderlessPatternSequence[\[Mu]_, \[Mu]_, ___]:= 0;
 
 
 DiracProduct[a___, Gamma5 | Transp@Gamma5 , b___/; FreeQ[List@ b, Gamma5| Transp@Gamma5| GammaCC| Proj| Transp@Proj], Gamma5 | Transp@Gamma5 , c___]:=
-	(-1)^Length@ Flatten@ GammaM@ b * DiracProduct[a, b, c];
+	(-1)^Length@ Flatten[List@ b/. Transp-> Identity/. GammaM-> List] * DiracProduct[a, b, c];
 DiracProduct[a___, Gamma5 | Transp@Gamma5, b___/; FreeQ[List@ b, Gamma5 | Transp@Gamma5| GammaCC| Proj| Transp@Proj], p: Proj@s_ | Transp@Proj@s_ , c___]:=
-	s (-1)^Length@ Flatten@ GammaM@ b * DiracProduct[a, b, p, c];
+	s (-1)^Length@ Flatten[List@ b/. Transp-> Identity/. GammaM-> List] * DiracProduct[a, b, p, c];
 DiracProduct[a___, p: Proj@s_ | Transp@Proj@s_, b___/; FreeQ[List@ b, Gamma5 | Transp@Gamma5| GammaCC| Proj| Transp@Proj], Gamma5 | Transp@Gamma5, c___]:=
-	s (-1)^Length@ Flatten@ GammaM@ b * DiracProduct[a, p, b, c];
+	s (-1)^Length@ Flatten[List@ b/. Transp-> Identity/. GammaM-> List] * DiracProduct[a, p, b, c];
 DiracProduct[a___, g5: Gamma5 | Transp@Gamma5, b__/; FreeQ[List@ b, Gamma5 | Transp@Gamma5| GammaCC| Proj| Transp@Proj]]:=
-	(-1)^Length@ Flatten@ GammaM@ b * DiracProduct[a, b, g5];
+	(-1)^Length@ Flatten[List@ b/. Transp-> Identity/. GammaM-> List] * DiracProduct[a, b, g5];
 
 
 (* ::Text:: *)
@@ -302,17 +279,13 @@ DiracProduct[a___, Proj@ s_, b__/; FreeQ[List@ b, Gamma5| Transp@ Gamma5| GammaC
 
 
 (* ::Text:: *)
-(*Subscript[\[Gamma], \[Mu]] : Move contracted \[Gamma]-matrices together and eventually contract them.*)
+(*Subscript[\[Gamma], \[Mu]] : Contract adjacent gamma matrices with common indices.*)
 
 
 DiracProduct[a___, GammaM@ \[Mu]_Index , GammaM@\[Mu]_Index, b___]:= \[ScriptD] DiracProduct[a, b];
-DiracProduct[a___, gm: GammaM@ \[Mu]_Index, gn: GammaM@\[Nu]_Index, b___, GammaM@ \[Mu]_Index, c___]/; FreeQ[List[b, c], \[Nu]]:=
-	2 Metric[\[Mu], \[Nu]] DiracProduct[a, b, gm, c]- DiracProduct[a, gn, gm, b, gm, c];
 
 
 DiracProduct[a___, Transp@GammaM@ \[Mu]_Index, Transp@GammaM@ \[Mu]_Index, b___]:= \[ScriptD] DiracProduct[a, b];
-DiracProduct[a___, gm: Transp@GammaM@ \[Mu]_Index, gn: Transp@GammaM@\[Nu]_Index, b___, Transp@GammaM@ \[Mu]_Index, c___]/; FreeQ[List[b, c], \[Nu]]:=
-	2 Metric[\[Mu], \[Nu]] DiracProduct[a, b, gm, c]- DiracProduct[a, gn, gm, b, gm, c];
 
 
 (* ::Text:: *)
@@ -320,12 +293,12 @@ DiracProduct[a___, gm: Transp@GammaM@ \[Mu]_Index, gn: Transp@GammaM@\[Nu]_Index
 
 
 DiracProduct[a___, GammaM@ LoopMom, GammaM@ LoopMom, b___]:= Power[Prop[0], -1] DiracProduct[a, b];
-DiracProduct[a___, gL: GammaM@ LoopMom, gn: GammaM@ \[Nu]_Index, b___, GammaM@ LoopMom, c___]:= 
+DiracProduct[a___, gL: GammaM@ LoopMom, gn: GammaM@ \[Nu]_Index, b___, GammaM@ LoopMom, c___]:=
 	2 LoopMom@ \[Nu] * DiracProduct[a, b, gL, c] - DiracProduct[a, gn, gL, b, gL, c];
 
 
 DiracProduct[a___, Transp@ GammaM@ LoopMom, Transp@ GammaM@ LoopMom, b___]:= Power[Prop[0], -1] DiracProduct[a, b];
-DiracProduct[a___, gL: Transp@ GammaM@ LoopMom, gn: Transp@ GammaM@ \[Nu]_Index, b___, Transp@ GammaM@ LoopMom, c___]:= 
+DiracProduct[a___, gL: Transp@ GammaM@ LoopMom, gn: Transp@ GammaM@ \[Nu]_Index, b___, Transp@ GammaM@ LoopMom, c___]:=
 	2 LoopMom@ \[Nu] * DiracProduct[a, b, gL, c] - DiracProduct[a, gn, gL, b, gL, c];
 
 
@@ -333,43 +306,85 @@ DiracProduct[a___, gL: Transp@ GammaM@ LoopMom, gn: Transp@ GammaM@ \[Nu]_Index,
 (*4D function to remove Levi-Civita tensor*)
 
 
-(*Combine \[Epsilon]^\[Mu]\[Nu]\[Rho]\[Sigma] with tensor to obtain Subscript[\[Gamma], 5]*)
-LC2Gamma5[exp_]:=Module[{LCind, LCt,Sigmaindpos, Sigmat, Compind, sign,res},
-	If[Length[LCt=Cases[exp,_LCTensor ,Infinity]]=!=1,
-		exp,
-		LCind=List@@First@LCt;
-		Sigmat=Cases[exp, GammaM[a___]/;(Length@{a}===2), Infinity];
-		Catch[
-		(Sigmaindpos=Flatten[Position[LCind,#]&/@(List@@#)];
-		If[Length@Sigmaindpos===2,
-			Compind=Complement[Range[4],Sigmaindpos];
-			sign=Signature@Flatten@Join[Compind,Sigmaindpos];
-			Compind=LCind[[Compind]];
-			Throw[-2I* sign* exp/.{_LCTensor->1, #->Sequence[GammaM@@Compind, Gamma5] }];
-			]
-		)&/@Sigmat;
-		Throw[exp]]
-		]	
-	];
-(*Expand Subscript[\[Gamma], 5]*)
+(* ::Text:: *)
+(*Contract Levi-Civita tensor into the Dirac algebra to obtain a \[Gamma]5:*)
+(*	\[CurlyEpsilon]^{\[Mu]\[Nu]\[Rho]\[Sigma]} \[Gamma]_\[Sigma] = -i \[CapitalGamma]^{\[Mu]\[Nu]\[Rho]} \[Gamma]5*)
+(*which implies that (note anti symmetrization of the \[Alpha]i indices enclosed by [...])*)
+(*	\[CurlyEpsilon]_{\[Mu]\[Nu]\[Rho]\[Sigma]} \[CapitalGamma]^{\[Sigma] \[Alpha]1... \[Alpha]n} = -i/(n+1) \[Sum]_{k=0}^{n} (-1)^k \[CapitalGamma]^{ [\[Alpha]1... \[Alpha]k } \[CapitalGamma]_{\[Mu]\[Nu]\[Rho]} \[Gamma]5 \[CapitalGamma]^{ \[Alpha](k+1)...\[Alpha]n] }*)
+
+
+LC2Gamma5[expr_Plus]:=LC2Gamma5/@expr;
+
+
+LC2Gamma5@ expr_:= Module[
+		{gammaInds, gammaPos, gammaPositions, LCinds, LCtens, remainingInds, repInd, setk, setnk, sign, out, temp, n, k, TranspQ},
+	(*Find the indices of the LC tensor*)
+	LCtens= Cases[expr, _LCTensor, All];
+	If[Length@ LCtens =!= 1, Return@ expr; ];
+	LCinds= List@@ First@ LCtens;
+	(*Find the positions and indices of candidate gammas*)
+	gammaPositions= Position[expr, g_GammaM/; IntersectingQ[List@@ g, LCinds], All];
+	If[gammaPositions === {}, Return@ expr; ];
+	
+	(*Only the gammas with the highest number of shared indices*)
+	gammaPositions= MaximalBy[gammaPositions, Length@ Intersection[LCinds, List@@ Extract[expr, #]] &];
+	out= 1/Length[gammaPositions]* Sum[
+			gammaInds= List@@ Extract[expr, gammaPos];
+			(*Find (a) repeated index and determine the sign 
+			(note indices of LCTensor + GammaM are automatically canonized)*)
+			repInd= First@ Intersection[LCinds, gammaInds];
+			sign= - Power[-1, Total@ Position[{LCinds, gammaInds}, repInd][[;;, 2]]];
+			gammaInds= DeleteCases[gammaInds, repInd];
+			remainingInds= DeleteCases[LCinds, repInd]; 
+			n= Length@ gammaInds;
+			
+			(*Performance will likely be improved by explicit handling of situation with multiple contracted indices*)
+			(*Perform reduction*)
+			-I* sign/ (n+ 1)* Sum[
+					setnk= Complement[gammaInds, setk];
+					temp= expr;
+					TranspQ= (Head@temp[[Sequence@@ Drop[gammaPos,-1]]]===Transp);
+					If[!TranspQ, 
+						temp[[Sequence@@ gammaPos]]= Sequence[GammaM@@ setk, GammaM@@ remainingInds, Gamma5, GammaM@@ setnk], 
+						
+						temp[[Sequence@@ Drop[gammaPos,-1]]]=  Sequence[Transp@* GammaM@@ setnk, Transp@ Gamma5, Transp@* GammaM@@ remainingInds, Transp@* GammaM@@ setk]];
+					Power[-1, k]/ Binomial[n, k]* Signature@ setk* Signature@ setnk* Signature@ Join[setk, setnk]* temp
+				, {k, 0, n}, {setk, Subsets[gammaInds, {k}]}]/. _LCTensor-> 1// RefineDiracProducts// ContractMetric
+		, {gammaPos, gammaPositions}];
+		
+	(*The identities are four-dimensional so we should set \[ScriptD]-> 4*)
+	out/. \[ScriptD]-> 4// RelabelIndices
+]
+
+
+(* ::Text:: *)
+(*Write \[Gamma]5 with a Levi-Cevita tensor*)
+
+
 Gamma52LC[exp_]:=exp/.DiracProduct[dp___,Gamma5]:> -I/4! LCTensor[\[Alpha],\[Beta],\[Delta],\[Eta]]DiracProduct[dp]**\[Gamma][\[Alpha]]**\[Gamma][\[Beta]]**\[Gamma][\[Delta]]**\[Gamma][\[Eta]] //RelabelIndices ;
 
 
+(* ::Text:: *)
 (*Expand product of two Levi-Civita tensors into antisymmetric product of metric*)
+
+
 LC2Delta[exp_]:=exp/.{LCTensor[a:Sequence[_Index..]] * LCTensor[b:Sequence[_Index..]] :> - Det[Outer[Metric,List@a,List@b]]};
 
 
+(* ::Text:: *)
 (*Perform cyclic permutations of indices on the product of a Levi-Civita tensor with a metric*)
+
+
 SchoutenID[exp_]:=Module[{tempind, Tind, LCt, LCind, LMind, newLind, out},
 	If[Length[LCt=Cases[exp,_LCTensor ,Infinity]]=!=1,
-		exp, 
+		exp,
 		LCt=First@LCt;
 		LCind=List@@LCt;
 		LMind=Cases[exp,Index[_,Lorentz],Infinity];
 		LMind=Part[Select[Tally@LMind,Part[#,2]===2&],All,1];
 		LMind=Complement[LMind, LCind];
 		If[LMind==={},
-			exp, 
+			exp,
 			(*If several indices, another than First might be prefered*)
 			LMind=First@LMind;
 			out= ReleaseHold[exp/.LMind->Index[HoldForm@Unique[],tempind]];
@@ -402,25 +417,18 @@ Options@ DiracTrace= {Dimensions->\[ScriptD]};
 
 
 DiracTrace[expr_, opt:OptionsPattern[]]:= Module[
-	{
-		allterms = Expand@ expr,
-		term
-	},
-	
-	allterms = If[Head@ allterms === Plus,
-		List@@ allterms,
-		{allterms}
-	];
-	
-	(*sum over all terms in the list allterms*)
+		{allterms= TermsToList@ expr, term},
 	Sum[
-		Switch[Count[term, _DiracProduct, Infinity],
+		Switch[Count[term, DiracProduct, Infinity, Heads-> True],
 			0, 4 term,
-			1, term/. x_DiracProduct:> DiracTrace[x],
+			(*Prevent the result of the Diractrace from being inserted inside NonCommutativeMultiply,
+				which is an expensive operation.*)
+			1, term/.{NonCommutativeMultiply@ x_DiracProduct:> DiracTraceProduct@ x,
+				x_DiracProduct:> DiracTraceProduct@ x},
 			_, Message[DiracTrace::canteval]; term
 		],
 		{term, allterms}
-	] /.\[ScriptD]->OptionValue@ Dimensions 
+	]/.\[ScriptD]-> OptionValue@ Dimensions
 ];
 
 
@@ -428,7 +436,7 @@ DiracTrace[expr_, opt:OptionsPattern[]]:= Module[
 (*Error Messages*)
 
 
-DiracTrace::canteval= "Dirac trace encountered term with multiple Dirac products. No trace applied.";
+DiracTrace::canteval= "Dirac trace encountered term with multiple Dirac products. No trace is applied.";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -440,66 +448,93 @@ DiracTrace::canteval= "Dirac trace encountered term with multiple Dirac products
 
 
 ASymGammaExpand@ DiracProduct[a___, GammaM[\[Mu]___]/; Length@{\[Mu]}>1, opt___]:=Module[{permutations= Permutations@{\[Mu]}},
-	Signature@ {\[Mu]}/Length @permutations * 
-		Plus@@((Signature@ # * ASymGammaExpand@ DiracProduct[a, Sequence@@ (GammaM/@ #), opt]&)/@ permutations)// 
-	Expand];
+	Signature@ {\[Mu]}/Length @permutations *
+		Plus@@((Signature@ # * ASymGammaExpand@ DiracProduct[a, Sequence@@ (GammaM/@ #), opt]&)/@ permutations)//
+	LagrangianExpand];
 ASymGammaExpand@ x_= x;
 
 
-(* ::Text:: *)
-(*Expand all compact objects inside DiracTraces*)
-
-
-DiracTrace[DiracProduct[a___, GammaM[\[Mu]_, \[Nu]__], b___], opt:OptionsPattern[]]:= 
-	DiracTrace[ASymGammaExpand@ DiracProduct[a, GammaM[\[Mu], \[Nu]], b], opt]// Expand;
-
-
-DiracTrace[DiracProduct[a___, Proj@ s_], opt:OptionsPattern[]]:= DiracTrace[DiracProduct@ a/2+ s DiracProduct[a, Gamma5]/2, opt] ;
-
-
 (* ::Subsubsection::Closed:: *)
-(*General properties*)
+(*Dirac trace*)
 
 
 (* ::Text:: *)
-(*Basic traces*)
+(*Expand projections inside DiracTraces*)
 
 
-DiracTrace[DiracProduct[GammaM@ \[Mu]_Index, GammaM@ \[Nu]_Index], OptionsPattern[]]:= 4 Metric[\[Mu],\[Nu]];
-DiracTrace[DiracProduct[GammaM@ \[Mu]_Index, GammaM@ \[Nu]_Index, GammaM@ \[Rho]_Index, GammaM@ \[Sigma]_Index], OptionsPattern[]]:=
-	4 Metric[\[Mu],\[Nu]] Metric[\[Rho],\[Sigma]] - 4 Metric[\[Mu],\[Rho]] Metric[\[Nu],\[Sigma]] + 4 Metric[\[Mu],\[Sigma]] Metric[\[Nu],\[Rho]];
+DiracTraceProduct@ 1= 4;
 
 
-(* ::Subsubsection::Closed:: *)
-(*Semi-NDR specific properties*)
+DiracTraceProduct[DiracProduct[a___, Proj@ s_]]:=
+	DiracTraceProduct@ DiracProduct@ a/2+ s DiracTraceProduct@ DiracProduct[a, Gamma5]/2 ;
 
 
 (* ::Text:: *)
-(*Reduction of the DiracTraces*)
+(*Caching of traces*)
 
 
-DiracTrace[x_DiracProduct, opt:OptionsPattern[]]:= Module[
-	{indices, n, \[Mu]},
-	(*Reduce the traces depending on whether they include \[Gamma]5 or not.*)
-	Switch[MemberQ[List@@x, Gamma5],
-		False,
-			indices= List@@ x[[;;, 1]];
-			If[OddQ@ Length@ x, Return@ 0;];
-			Expand@ Sum[
-				(-1)^n * Metric@@ indices[[{1, n}]] DiracTrace[x[[Complement[Range@ Length@ x, {1, n}] ]], opt],
-			{n, 2, Length@ x}],
-		True, (* The results here yield evanescent contributions we will need to deal with at two-loop order *)
-			indices= List@@ x[[;;-2, 1]];
-			Which[
-				EvenQ@ Length@ x || Length@ x === 3 || Length@ x === 1, 
-					0,
-				Length@ x === 5, 
-					-4I * LCTensor@@ indices,
-				Length@ x >= 7, 
-					Sum[(-1)^(n1+n2+1) Metric@@ indices[[{n1, n2}]] DiracTrace[x[[Complement[Range@ Length@ x, {n1, n2}]]]],{n1, 1, 2},{n2,n1+1,3}] + I LCTensor@@ Join[indices[[{1,2,3}]],{Index[\[Mu],Lorentz]}] DiracTrace[\[Gamma][\[Mu]]**\[Gamma][5]**x[[Complement[Range@ Length@ x, {1, 2, 3}] ]]] 
-			]
-	]
+DiracTraceProduct@ prod:DiracProduct[___, _GammaM| Gamma5]:= Module[
+		{len=Total[Length/@ List@@ prod]},
+	If[OddQ@ len, Return@ 0];
+
+	(*Cache expressions with less than 7 open indices*)
+	If[2* Length@ DeleteDuplicates@ Cases[prod, _Index, {2}] - len < 7,
+		Return@ With[{xPats= prod/. Index[a_, Lorentz]:> Index[Pattern[#, Blank[]]&@ a, Lorentz]},
+			DiracTraceProduct@ xPats= ContractMetric@ DiracTraceEvaluate@ prod
+		];
+	];
+
+	DiracTraceEvaluate@ prod
 ];
+
+
+(* ::Text:: *)
+(*Traces w/o gamma5*)
+
+
+DiracTraceEvaluate@ prod:DiracProduct[_GammaM...]:= Module[
+		{indPos, pairCombs},
+	indPos= Flatten[Table[{m, n}, {m, Length@ prod}, {n, Length@ prod[[m]]}], 1];
+	(*If[OddQ@ Length@ indPos, Return@ 0;];*)
+
+	(*No metric with indices from the same GammaM: these indices are anti-symmetric*)
+	pairCombs= NonOverlappingPairs@ indPos;
+	If[!FreeQ[prod, GammaM[_, __]],
+		pairCombs= DeleteCases[pairCombs,
+			List@ OrderlessPatternSequence[{{a_, _}, {a_, _}}, ___]];
+	];
+
+	Sum[
+		4* Signature[Join@@ pairs]* Product[Metric@@ Extract[p]@ prod, {p, pairs}]
+	, {pairs, pairCombs}]
+]
+
+
+(* ::Text:: *)
+(*Traces w/ gamma5*)
+(*Inspired by https://inspirehep.net/literature/318268, we substitute the Gamma5 for Levi-Civita contracted with \[CapitalGamma]_4^{mu1,... mu4}, then refine the product of all remaining gammas. The Clifford algebra basis of \[CapitalGamma]_n is orthogonal in the trace. *)
+
+
+DiracTraceEvaluate@ prod:DiracProduct[_GammaM..., Gamma5]:= Module[{aSym, indPos, len, pairCombs},
+	indPos= Flatten[Table[{m, n}, {m, Length@ prod- 1}, {n, Length@ prod[[m]]}], 1];
+	len= Length@ indPos;
+	Which[(*OddQ@ len ||*) len < 4,
+		Return@ 0;
+	,len === 4,
+		Return[-4I * LCTensor@@ Extract[indPos]@ prod];
+	];
+
+	Sum[
+		aSym= Complement[indPos, set];
+		(*No metric with indices from the same GammaM: these indices are anti-symmetric*)
+		pairCombs= DeleteCases[NonOverlappingPairs@ set,
+			List@ OrderlessPatternSequence[{{a_, _}, {a_, _}}, ___]];
+		Sum[
+			-4I* Signature@ Join[Sequence@@ pairs, aSym]* Product[Metric@@ Extract[p]@ prod, {p, pairs}]*
+			LCTensor@@ Extract[aSym]@ prod
+		, {pairs, pairCombs}]
+	, {set, Subsets[indPos, {len - 4}]}]
+]
 
 
 (* ::Subsection:: *)
@@ -513,55 +548,58 @@ DiracTrace[x_DiracProduct, opt:OptionsPattern[]]:= Module[
 RefineDiracProducts@ expr_:= expr/. x_DiracProduct:> RefineDiracProducts@ x// Expand;
 
 
+(* ::Text:: *)
+(*Move contracted \[Gamma]-matrices together*)
+
+
+RefineDiracProducts[DiracProduct[a___, gm: GammaM@ \[Mu]_Index, gn: GammaM@\[Nu]_Index, b___, GammaM@ \[Mu]_Index, c___]/; FreeQ[List[b, c], \[Nu]]]:=
+	ContractMetric@ RefineDiracProducts[2 Metric[\[Mu], \[Nu]] DiracProduct[a, b, gm, c]- DiracProduct[a, gn, gm, b, gm, c]];
+
+
+RefineDiracProducts[DiracProduct[a___, gm: Transp@GammaM@ \[Mu]_Index, gn: Transp@GammaM@\[Nu]_Index, b___, Transp@GammaM@ \[Mu]_Index, c___]; FreeQ[List[b, c], \[Nu]]]:=
+	ContractMetric@RefineDiracProducts[2 Metric[\[Mu], \[Nu]] DiracProduct[a, b, gm, c]- DiracProduct[a, gn, gm, b, gm, c]];
+
+
 (* ::Subsubsection::Closed:: *)
 (*SNDR specific properties*)
 
 
 (* ::Text:: *)
-(*Anti-symmetrize all the DiracProducts inside DiracTraces. Performance can be improved with the techniques in [1905.00429], Sec 2.9.2.*)
+(*Anti-symmetrize all the DiracProducts inside DiracTraces. Performance for repeated indices may be improvable with the techniques from [1905.00429, Sec 2.9.2].*)
 
 
-RefineDiracProducts@ DiracProduct[x:OrderlessPatternSequence[GammaM[_, __], GammaM[__],___]]:=
-	RefineDiracProducts@ ASymGammaExpand@ DiracProduct[x]// Expand;
+RefineDiracProducts@ d:DiracProduct[_]:= d;
 
 
 (* ::Text:: *)
 (*Charge conjugation matrices, chiral projectors, and Subscript[\[Gamma], 5] are left  alone  *)
 
 
-RefineDiracProducts@ DiracProduct@ GammaCC:= DiracProduct@ GammaCC;
 RefineDiracProducts@ DiracProduct[GammaCC, x__]:=
 	DiracProduct@ GammaCC** RefineDiracProducts@ DiracProduct@x;
 
 
-RefineDiracProducts@ DiracProduct@ Gamma5:= DiracProduct@ Gamma5;
-RefineDiracProducts@ DiracProduct@ s_Proj:= DiracProduct@ s;
 RefineDiracProducts@ DiracProduct[x__, chiral: (Gamma5| _Proj)]:=
 	RefineDiracProducts@ DiracProduct@ x ** DiracProduct@ chiral;
 
 
 (* ::Text:: *)
-(*Order indices in antisymmetric GammaM*)
+(*Expansion of Dirac product unto basis of anti-symmetric gamma matrices with the techniques of [1905.00429, Sec 2.9.2].*)
 
 
-RefineDiracProducts[DiracProduct[GammaM[a__]]]:= Signature@{a} DiracProduct[GammaM @@ Sort@{a}];
-
-
-(* ::Text:: *)
-(*Expansion of Dirac product unto basis of anti-symmetric gamma matrices with the techniques of [1905.00429], Sec 2.9.2.*)
-
-
-RefineDiracProducts[x:DiracProduct[_GammaM,_GammaM..]](*/;Count[x,_GammaM,Infinity]>1*):= Module[{gammas, k, set, pairs, aSym, pairCombs},
-	gammas = GammaM@@ x// Flatten;
-	
-	Signature@ gammas Sum[
-		aSym= Complement[gammas, set];
-		pairCombs= DeleteDuplicatesBy[Partition[#, 2]&/@ Permutations@ set, (Sort[Sort/@ #] &)];
+RefineDiracProducts[prod:DiracProduct[_GammaM, _GammaM..]]:= Module[{aSym, indPos, pairCombs},
+	(* indPos is ordered by construction: its signature is +1 *)
+	indPos= Flatten[Table[{m, n}, {m, Length@ prod}, {n, Length@ prod[[m]]}], 1];
+	Sum[
+		aSym= Complement[indPos, set];
+		(*No metric with indices from the same GammaM: these indices are anti-symmetric*)
+		pairCombs= DeleteCases[NonOverlappingPairs@ set,
+			List@ OrderlessPatternSequence[{{a_, _}, {a_, _}}, ___]];
 		Sum[
-			Signature@ Flatten@ GammaM[pairs, aSym]Times@@ Metric@@@ pairs DiracProduct@ aSym
-		,{pairs, pairCombs}]
-	,{k, 0, Length@ gammas, 2}, {set, Subsets[gammas, {k}]}]
-
+			Signature@ Join[Sequence@@ pairs, aSym]* Product[Metric@@ Extract[p]@ prod, {p, pairs}]*
+			DiracProduct[GammaM@@ Extract[aSym]@ prod]
+		, {pairs, pairCombs}]
+	, {k, 0, Length@ indPos, 2}, {set, Subsets[indPos, {k}]}]
 ];
 
 
@@ -580,8 +618,12 @@ RefineDiracProducts@ x:DiracProduct[_Transp, ___]:= Module[{},
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Collecting and manipulating the gamma matrices*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*\[Gamma]CommuteQ*)
 
 
 (* ::Text:: *)
@@ -596,6 +638,10 @@ RefineDiracProducts@ x:DiracProduct[_Transp, ___]:= Module[{},
 \[Gamma]CommuteQ[f:Except[NonCommutativeMultiply][x___]]:=  False;
 \[Gamma]CommuteQ@ Alternatives[Pattern, _Blank, _BlankSequence, _BlankNullSequence, _Except] = False;
 \[Gamma]CommuteQ[_]:= True;
+
+
+(* ::Subsubsection::Closed:: *)
+(*Collect gamma matrices*)
 
 
 (* ::Text:: *)
@@ -614,8 +660,12 @@ CollectGammaMatrices@expr_:=expr/.{
 (*Operations*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Fermion test functions*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Type of fermions*)
 
 
 FermionL= (Bar|Transp)@Field[_,Fermion,___];
@@ -635,12 +685,12 @@ FermionQ[expr_]:=False;
 
 
 LOpenSpinChainQ@x_NonCommutativeMultiply:=LOpenSpinChainQ@ First@x
-LOpenSpinChainQ[FermionL]:=False  
+LOpenSpinChainQ[FermionL]:=False
 LOpenSpinChainQ@x_:=!\[Gamma]CommuteQ@x
 
 
 ROpenSpinChainQ@x_NonCommutativeMultiply:=ROpenSpinChainQ@ Last@x
-ROpenSpinChainQ[FermionR]:=False  
+ROpenSpinChainQ[FermionR]:=False
 ROpenSpinChainQ@x_:=!\[Gamma]CommuteQ@x
 
 
@@ -650,7 +700,7 @@ ROpenSpinChainQ@x_:=!\[Gamma]CommuteQ@x
 
 ClosedSpinChainQ@ x_NonCommutativeMultiply:= !FreeQ[x, Fermion
 	] && Nor[
-		LOpenSpinChainQ@ x, 
+		LOpenSpinChainQ@ x,
 		ROpenSpinChainQ@ x
 	] && Last@ CumulativeSpin@ x === 0;
 ClosedSpinChainQ@ _:= False;
@@ -679,14 +729,17 @@ CumulativeSpin@ op:(_NonCommutativeMultiply|_MomNCM):= Module[{temp},
 
 FermionCount@ FermionL= 1;
 FermionCount@ FermionR= -1;
-FermionCount@ SymmetrizedCD[_, expr_]:= FermionCount@ expr; 
-FermionCount@ x:(_NonCommutativeMultiply| _MomNCM| _Times):= 
+FermionCount@ x:(_NonCommutativeMultiply| _MomNCM| _Times):=
 	Plus@@ FermionCount/@ (List@@ x);
-FermionCount@ x:_Plus:= FermionCount@ First@ x; 
-FermionCount@_ = 0; 
+FermionCount@ x:_Plus:= FermionCount@ First@ x;
+FermionCount@_ = 0;
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
+(*Dirac structures*)
+
+
+(* ::Subsubsection::Closed:: *)
 (*GammaCC*)
 
 
@@ -697,7 +750,7 @@ DiracProduct[a___, g_GammaM, GammaCC, b___]:= Power[-1, Ceiling[Length@ g/2]] Di
 DiracProduct[a___, Transp@g_GammaM, GammaCC, b___]:= Power[-1, Ceiling[Length@ g/2]] DiracProduct[a, GammaCC, g, b];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Transp*)
 
 
@@ -708,7 +761,7 @@ DiracProduct[a___, Transp@g_GammaM, GammaCC, b___]:= Power[-1, Ceiling[Length@ g
 Transp@ expr_NonCommutativeMultiply:= (-1)^Floor[Count[expr, _?FermionQ]/2] Transp/@ Reverse@ expr;
 
 
-Transp@ expr_?CommutativeQ:= expr/. ncm_NonCommutativeMultiply:> Transp@ ncm; 
+Transp@ expr_?CommutativeQ:= expr/. ncm_NonCommutativeMultiply:> Transp@ ncm;
 
 
 Transp[expr:(_Plus|_Times)]:= Transp/@ expr;
@@ -724,56 +777,10 @@ Transp@ x_DiracProduct:= Transp/@ x/. y_DiracProduct:> Reverse@ y; (*Transp and 
 (*Transp with multiple arguments (can occur in NCM rules for automatically transposing spinor lines).*)
 
 
-Transp[x_, y__]:= Reverse[NonCommutativeMultiply[x, y]/. d_DiracProduct:> Transp@ d]; 
-
-
-(* ::Subsection::Closed:: *)
-(*Bar*)
-
-
-(* ::Text:: *)
-(*Bar denotes complex conjugation except for on fermion lines, where they are the Bar of the Dirac algebra*)
-
-
-GroupMagic`PackageScope`NonBarableQ@ Alternatives[Coupling, DiracProduct, Field, FieldStrength,
-	NonCommutativeMultiply, Transp]= False;
+Transp[x_, y__]:= Reverse[NonCommutativeMultiply[x, y]/. d_DiracProduct:> Transp@ d];
 
 
 (* ::Subsubsection::Closed:: *)
-(*Properties of Bar*)
-
-
-Bar[x:(_Metric| _LCTensor)]:= x; 
-
-
-Bar[expr_NonCommutativeMultiply]:= Bar/@ Reverse@ expr;
-Bar@ x_DiracProduct:= Reverse@ x/. {Gamma5-> -Gamma5, Proj@ s_:> Proj[-s], g_GammaM:> Reverse@ g};
-
-
-Bar@ f:Field[label_, Scalar|Vector[_]|Ghost, __]/; $FieldAssociation[label, SelfConjugate]:=f;
-Bar@ f:Field[label_, Fermion, __]/; $FieldAssociation[label, SelfConjugate]:= 
-	Transp[f]**DiracProduct[GammaCC]; (* Bar for Majorana Fermions *)
-Bar@ FieldStrength[label_, lind_, ginds_, cdinds_]/; $FieldAssociation[label, SelfConjugate]:= 
-	FieldStrength[label, lind, Bar/@ ginds, cdinds];
-Bar@ c:Coupling[label_, __]/; $CouplingAssociation[label, SelfConjugate]:= c;
-Bar@ Coupling[label_, ind_List,x__]/; (Head[$CouplingAssociation[label, SelfConjugate]]===List):= Coupling[label, Permute[ind, $CouplingAssociation[label, SelfConjugate]],x];
-
-
-(*Special case of charge conjugation before Bar*)
-Bar@ Transp@ f_:= Transp@ Bar@ f;
-
-
-LF/: Bar@ lf_LF:= lf;
-
-
-Bar@ x_List := Bar/@ x;
-
-
-Bar@ Index[x_, Lorentz]:= Index[x, Lorentz];
-Bar@ Index[x_, type: Alternatives@@ Keys@ GetFlavorIndices[]]:= Index[x, type];
-
-
-(* ::Subsection::Closed:: *)
 (*CConj*)
 
 
@@ -793,73 +800,11 @@ CConj[(f:Bar[Field[_,Fermion,_,_]])**DiracProduct[Proj[s_]]]:= CConj[f]**DiracPr
 CConj@_:=(Message[CConj::notfermion]; Abort[]);
 
 
-(* ::Subsection:: *)
-(*Evanescent operators*)
-
-
-(* ::Subsubsection::Closed:: *)
-(*Handle functions*)
-
-
-ResetEvanescentOperators[]:= Block[{},
-	$EvanescentTerms= <||>;
-	(* Set a counter for the naming of the operators *)
-	EvaCounter=1;
-];
-ResetEvanescentOperators[];
-
-
-ExpandEvanescentOperators[expr_]:= expr /.(EvaOp[x_,ind_]:>(($EvanescentTerms[x][RedundantOperator]-$EvanescentTerms[x][BasisOperator])/.AssociationThread[FindOpenIndices[$EvanescentTerms[x][RedundantOperator]],ind]))/.EvaOp[x_]:>(($EvanescentTerms[x][RedundantOperator]-$EvanescentTerms[x][BasisOperator]));
-GetEvanescentTerm[EvLabel___]:= $EvanescentTerms[EvLabel];
-GetEvanescentTerm[]:= $EvanescentTerms;
-
-
-FindEvanescentOperator[operator_]:= Module[{inputop,openind,indtemp, evaop, evaind, coeff=0,label=0, placeholder4coeff,selectoneop, evacoeff, opcoeff},
-	inputop=MatchOperatorPatterns[CollectOperators@Contract@operator];
-	coeff=(Catch[
-		evaop=MatchOperatorPatterns[ExpandEvanescentOperators[EvaOp[#]]];
-		If[MatchQ[Cases[evaop,_AtomicOp,All], {OrderlessPatternSequence@@(Cases[inputop,_AtomicOp,All])}],
-		(*check ordering of indices too?*)
-			label=#;
-			selectoneop=First@Cases[MatchOperatorPatterns[$EvanescentTerms[#][RedundantOperator]],_AtomicOp,All];
-			opcoeff= Coefficient[inputop/.selectoneop->placeholder4coeff,placeholder4coeff];
-			evacoeff= Coefficient[evaop/.selectoneop->placeholder4coeff,placeholder4coeff];
-			openind=FindOpenIndices@OpsToFieldForm@selectoneop;
-			Throw[opcoeff/evacoeff],
-			Throw[Nothing]]
-		]&/@ (Keys@$EvanescentTerms));
-	If[label=!=0, First@coeff*EvaOp[label, openind], 0]
-]
-
-
 (* ::Subsubsection::Closed:: *)
 (*Helper functions*)
 
 
 ProjExpand[exp_]:=exp/. DiracProduct[b___,Proj[s_]]:> (DiracProduct[b] + s  DiracProduct[b,Gamma5])/2 //Expand;
-
-
-(* ::Subsubsection::Closed:: *)
-(*Define evanescent operators*)
-
-
-DefineEvanescentOperator[inioperator_,finoperator_(*,order_*),origin_]:=Module[{evaOperator,(*evaOpList,*)label(*,looporder*), result},
-	evaOperator= inioperator-finoperator(*//ContractCGs*)(*//RefineDiracProducts//Contract*)//RelabelIndices;
-	(*evaOpList=If[(EvaLabels=Keys@$EvanescentTerms)==={},{},ExpandEvanescentOperators[EvaOp[#,Alphabet[][[;;Length[FindOpenIndices[$EvanescentTerms[#][RedundantOperator]]]]]]]&/@EvaLabels];*)
-	If[(evaOperator//RefineDiracProducts//Contract//ProjExpand)===0 , 
-		0,
-		(*check if evaOperator already exists*)
-		result=FindEvanescentOperator[evaOperator];
-		If[result=!=0,
-			result,
-			(*looporder= order; *)
-			label=EvaCounter;
-			EvaCounter+=1;
-			AppendTo[$EvanescentTerms, label-> <|RedundantOperator-> CollectOperators@Contract@RelabelIndices@inioperator , BasisOperator-> CollectOperators@Contract@RelabelIndices@finoperator, Origin-> origin (*, LoopOrder-> looporder*) |>];
-			EvaOp[label,FindOpenIndices[inioperator]]
-		   ]
-	]
-]
 
 
 (* ::Subsection:: *)
@@ -870,7 +815,7 @@ DefineEvanescentOperator[inioperator_,finoperator_(*,order_*),origin_]:=Module[{
 (*Error messages*)
 
 
-Fierz::error1= "The Fierz function can only be used on the product of two closed spin chains with standard Dirac structures with head DiracProduct (or nothing for scalar currents). ";
+Fierz::notFierzable= "The Fierz function can only be used on the product of two closed spin chains with head NonCommutativeMultiply containing Dirac structures with head DiracProduct (or nothing for scalar currents). ";
 Fierz::Order = "Fierz function only support Fierz Order {1,3,4,2} or {1,4,3,2}."
 
 
@@ -878,7 +823,7 @@ Fierz::Order = "Fierz function only support Fierz Order {1,3,4,2} or {1,4,3,2}."
 (*Property*)
 
 
-Options[Fierz]={Order->{1,4,3,2},Evanescent-> True};
+Options[Fierz]={Order->{1,4,3,2}, Evanescent-> True};
 Options[Fierz4D]={Order->{1,4,3,2}};
 
 
@@ -894,30 +839,32 @@ FieldIndices[f:_Field|Bar@_Field|Transp@_Field|Transp@Bar@_Field]:=First@Cases[{
 (*4D Fierz function*)
 
 
-Fierz4D[(SP1:NonCommutativeMultiply[field1_,G12___,field2_])*(SP2:NonCommutativeMultiply[field3_,G34___,field4_]), OptionsPattern[]]:=
+Fierz4D[(SP1:NonCommutativeMultiply[field1_,G12___,field2_]),(SP2:NonCommutativeMultiply[field3_,G34___,field4_]), opt:OptionsPattern[]]:=
+Fierz4D[SP1,SP2, opt]=
 Module[
-{Gbasis, Gbasisdual, ind1, ind2, Gcoeff, i,j, C1=1, C2=1, 
+{Gbasisup, Gbasisdown, ind1, ind2, Gcoeff, i,j, C1=1, C2=1,
 G1=G12*1, G2=G34*1, P1=1, P2=1, P3=1, P4=1, f1=field1, f2=field2, f3=field3, f4=field4, sgnO=1},
 
 	ind1={Unique[],Unique[],Unique[],Unique[]};
 	ind2={Unique[],Unique[],Unique[],Unique[]};
 
-	Gbasis[a_,b_,c_,d_]:={PL,PR,PL**\[Gamma][a],PR**\[Gamma][b],\[Sigma][c,d]/2}/.NonCommutativeMultiply[x_]:>x;
-	Gbasisdual[a_,b_,c_,d_]:={PL,PR,PR**\[Gamma][a],PL**\[Gamma][b],\[Sigma][c,d]/2}/.NonCommutativeMultiply[x_]:>x;
-	
+	Gbasisup[a_,b_,c_,d_]:={PL,PR,PR**\[Gamma][a],PL**\[Gamma][b],\[Sigma][c,d]/2}/.NonCommutativeMultiply[x_]:>x;
+	Gbasisdown[a_,b_,c_,d_]:={PL,PR,PL**\[Gamma][a],PR**\[Gamma][b],\[Sigma][c,d]/2}/.NonCommutativeMultiply[x_]:>x;
+
 	If[OptionValue@Order === {1,2,3,4}, Return[SP1*SP2]];
-	If[!MemberQ[{{1,3,4,2},{1,4,3,2},{1,2,3,4}},OptionValue@Order], Message[Fierz::order];Abort[]];
-	If[OptionValue@Order==={1,3,4,2}, 
+	If[!MemberQ[{{1,3,4,2},{1,4,3,2},{1,2,3,4}},OptionValue@Order], Message[Fierz::Order];Abort[]];
+	If[OptionValue@Order==={1,3,4,2},
 			f3=Transp@field4;
 			f4=Transp@field3;
 			sgnO=-1;
-			G2=Transp@G2;
-			If[First@G2===-1, G2=-G2; sgnO=+1;]
+			If[G2=!=1,
+				G2=Transp@G2;
+				If[First@G2===-1, G2=-G2; sgnO=+1;]];
 	];
 
-	If[!ClosedSpinChainQ@SP1 || !ClosedSpinChainQ@SP2, Message[Fierz::error1]; Abort[]];
-	If[(Head[G1]=!= DiracProduct ||  Head[G2]=!= DiracProduct ) && (G1=!=1 ||G2=!=1  ), Message[Fierz::error1]; Abort[]];
-	
+	If[!ClosedSpinChainQ@SP1 || !ClosedSpinChainQ@SP2, Message[Fierz::notFierzable]; Abort[]];
+	If[(Head[G1]=!= DiracProduct && G1=!=1) || (Head[G2]=!= DiracProduct  &&  G2=!=1), Message[Fierz::notFierzable]; Abort[]];
+
 	If[Head[f1]===Transp, G1=(-CC)**G1; f1=f1**CC];
 	If[Head[f2]===Transp, G1=G1**(-CC); f2=CC**f2];
 
@@ -937,17 +884,26 @@ G1=G12*1, G2=G34*1, P1=1, P2=1, P3=1, P4=1, f1=field1, f2=field2, f3=field3, f4=
 	G1 = G1 /._Proj->1;
 	G2 = G2 /._Proj->1;
 
+	If[!FreeQ[G1, x_GammaM/;(Length[x]===2)],
+		sgnO*=-I;
+		G1*=I;
+	];
+	If[!FreeQ[G2, x_GammaM/;(Length[x]===2)],
+		sgnO*=-I;
+		G2*=I;
+	];
+
 	Gcoeff=IdentityMatrix[5];
 	For[j=1,j<6,++j,
 		For[i=1,i<6,++i,
-			Gcoeff[[i,j]]= -(1/4) DiracTrace[(Gbasis@@ind1)[[i]]**G1**(Gbasisdual@@ind2)[[j]]**G2,Dimensions->4] //Contract;
+			Gcoeff[[i,j]]= -(1/4) DiracTrace[G1**(Gbasisdown@@ind1)[[i]]**G2**(Gbasisdown@@ind2)[[j]],Dimensions->4] //Contract;
 		]
 	];
 
 	sgnO*(Sum[
 			Gcoeff[[i,j]]
-				* (f1**P1**(Gbasisdual@@ind1)[[i]]**P4**f4) * (f3**P3**(Gbasis@@ind2)[[j]]**P2**f2)
-		,{i,1,5},{j,1,5}] //Contract //RelabelIndices //LC2Gamma5) /.GammaM[a_,b_]/;(!OrderedQ[{a,b}]):> -GammaM[b,a]
+				* (f1**P1**(Gbasisup@@ind2)[[j]]**P4**f4) * (f3**P3**(Gbasisup@@ind1)[[i]]**P2**f2)
+		,{i,1,5},{j,1,5}] //Expand//Contract //RelabelIndices //LC2Gamma5) /.GammaM[a_,b_]/;(!OrderedQ[{a,b}]):> -GammaM[b,a]
 ]
 
 
@@ -955,149 +911,211 @@ G1=G12*1, G2=G34*1, P1=1, P2=1, P3=1, P4=1, f1=field1, f2=field2, f3=field3, f4=
 (*Fierz score*)
 
 
-FbasisQ[SP1_,SP2_]:=FreeQ[SP1*SP2//.Join[{_Field->1, GammaCC->1,Proj[1]->1,Proj[-1]->1},Thread[NonCommutativeMultiply/@{DiracProduct@GammaM[x_],DiracProduct@Transp@GammaM[x_],DiracProduct@GammaM[x_, y_],
+FbasisQ[SP1_,SP2_]:=FreeQ[OperatorToNormalForm@Operator[SP1,SP2]//.Join[{_Field->1, GammaCC->1,Proj[1]->1,Proj[-1]->1},Thread[NonCommutativeMultiply/@{DiracProduct@GammaM[x_],DiracProduct@Transp@GammaM[x_],DiracProduct@GammaM[x_, y_],
 DiracProduct@Transp@GammaM[x_, y_]}->1]],NonCommutativeMultiply];
 
 
-FierzScore[op_Operator]:=FierzScore[NormalForm@op];
+FierzScore[op_Operator]:=FierzScore[OperatorToNormalForm@op];
 
 
-FierzScore[expr_/;(Count[expr,_NonCommutativeMultiply, Infinity]=!=2)]:=0;
-
-
-FierzScore[(SP1 : NonCommutativeMultiply[field1_, G12___, field2_] )*(SP2 : NonCommutativeMultiply[field3_, G34___, field4_])*rest___] :=
+FierzScore[(SP1 : NonCommutativeMultiply[field1_, G12___, field2_] ),(SP2 : NonCommutativeMultiply[field3_, G34___, field4_]),rest___] :=
  Module[
   {result = 0, fields = {field1, field2, field3, field4}, order = OptionValue@Order,
-   GaugeGroups, gind, pos, posmax},
+   GaugeGroups, gind, pos, posmax, epsrep, G1=G12*1,G2=G34*1},
+      (*Replace SU(2) epsilon by delta for counting*)
+      epsrep=Cases[List@rest, CG[eps[_] | Bar[eps[_]] ,ind_/;(Length[ind]===2)]:>ind, Infinity]/.Bar[x_]:>x;
+      fields=fields/.((#[[1]]->#[[2]])& /@epsrep);
   	(*Default rules: same fields, higher groups together*)
   	result = Plus[0,
     	    (*same labels favored*)
     		If[FieldLabel[fields[[1]]] === FieldLabel[fields[[2]]], +1 , -1],
     		If[FieldLabel[fields[[3]]] === FieldLabel[fields[[4]]], +1 , -1],
     		(*many transposed fields penalized*)
-    		If[Xor[Head[fields[[1]]] === Transp, Head[fields[[2]]] === Transp] && Xor[Head[fields[[3]]] === Transp, Head[fields[[4]]] === Transp] , -6 , .5],
-    		(*double tensor  penalized*)
-    		If[! FreeQ[G12, GammaM[a___] /; (Length[List@a] > 1)] && ! FreeQ[G34, GammaM[b___] /; (Length[List@b] > 1)], -4, 0],
+    		If[Xor[Head[fields[[1]]] === Transp, Head[fields[[2]]] === Transp] && Xor[Head[fields[[3]]] === Transp, Head[fields[[4]]] === Transp] , -6 , +.5],
+    		(*tensor currents  penalized*)
+    		If[! FreeQ[G1, GammaM[a___] /; (Length[List@a] > 1)] && ! FreeQ[G2, GammaM[b___] /; (Length[List@b] > 1)], -7, 0],
+    		(*scalar currents  preferred over vector currents*)
+    		If[FreeQ[G1, _GammaM] && FreeQ[G2, _GammaM], 0, -0.06],
     		(*Dirac structures not part of the basis penalized*)
     		If[FbasisQ[SP1, SP2], 0, -10],
+    		(*more projectors penalized*)
+    		Count[SP1*SP2,_Proj,All]*(-0.04),
     		(*contracted indices in bilinears encouraged*)
-    		Total[If[MemberQ[FieldIndices@field2,#],+0.2,0]&/@(FieldIndices@field1)],
-    		Total[If[MemberQ[FieldIndices@field4,#],+0.2,0]&/@(FieldIndices@field3)]
+    		Total[If[MemberQ[FieldIndices@ fields[[2]], #], +0.01* GroupDimension@ $Groups@ GroupFromInd@ #, 0]&/@ FieldIndices@ fields[[1]]],
+    		Total[If[MemberQ[FieldIndices@ fields[[4]], #], +0.01* GroupDimension@ $Groups@ GroupFromInd@ #, 0]&/@ FieldIndices@ fields[[3]]]
     		];
-  		
-  	(*same group in only two fields, starting from biggest group*)
+
+  	(*same group in only two fields favored, starting from biggest group*)
   	GaugeGroups = Reverse@SortBy[Keys@GetGaugeGroups[], GroupDimension@* GetGaugeGroups[#][Group] &];
   	gind = Reverse[SortBy[Select[FieldIndices@#, (MemberQ[GaugeGroups, GroupFromRep@ #[[2]]] &)], GroupDimension@* GetGaugeGroups[#[[2]]][Group] & ]] & /@ fields;
       pos = Position[gind /. Index[_, g_] :> GroupFromRep@g, #] & /@ GaugeGroups /. {} -> Nothing;
-    	If[pos =!= {},
+    	If[pos =!= {} && pos =!= Nothing,
     		posmax = First@Transpose@First@pos;
     		If[Length[posmax]=!=2 && Length@pos>1,posmax=First@Transpose[pos[[2]]]];
      		result += If[MemberQ[{{1, 2}, {3, 4}}, posmax], +1 , 0];
      	];
     	result
-    ]	
+    ]
+
+
+FierzScore[expr_]:=(*FierzScore[expr]=*)(* cached identites can worsen performance significantly if expr is very complicated *)
+Module[{NCMs,SP1,SP2, rest},
+		NCMs=Cases[RemovePower@ expr, _NonCommutativeMultiply,All];
+		If[Length@NCMs === 2,
+			{SP1,SP2}=NCMs;
+			rest=expr/._NonCommutativeMultiply->1;
+			FierzScore[SP1,SP2,rest]
+			,
+			0
+		]
+	]
 
 
 (* ::Subsubsection::Closed:: *)
 (*Fierz function*)
 
 
-Fierz[(SP1:NonCommutativeMultiply[field1_,G12___,field2_])*(SP2:NonCommutativeMultiply[field3_,G34___,field4_])*rest___, OptionsPattern[]]/;(FreeQ[rest+1,NonCommutativeMultiply]):=
+Fierz[arg_, opt:OptionsPattern[]]:=
 Module[
-{result,groupStruct,evaOperator, iniOperator },
-	iniOperator=rest*SP1*SP2//RefineDiracProducts//Contract//RelabelIndices;
-	If[Head@iniOperator===Plus, Fierz[#]&/@iniOperator,
-	result=Fierz4D[SP1*SP2,Order->OptionValue@Order];
+{rest, NCMs, SP1, SP2, result, groupStruct, fieldsinop, coeff, evaOperator, iniOperator, expr=RelabelIndices[arg,Unique->True]},
+	NCMs=Cases[RemovePower@ expr, _NonCommutativeMultiply,All];
+	If[Length@NCMs =!= 2,  Message[Fierz::notFierzable]; Abort[]];
 
-	groupStruct=Times@@Cases[{rest},_Delta|_CG,Infinity];
+	{SP1,SP2}=NCMs;
 	
-	evaOperator=If[OptionValue@Evanescent, 
-			DefineEvanescentOperator[groupStruct*(SP1*SP2),groupStruct*result,(*Exponent[rest*1,hbar]+1,*)Fierz]*rest/groupStruct,
+	rest=expr/._NonCommutativeMultiply->1;
+
+	iniOperator=rest *SP1*SP2//RefineDiracProducts//Contract//RelabelIndices;
+
+	If[Head@iniOperator===Plus, Fierz[#,opt]&/@iniOperator,
+	result=Fierz4D[SP1,SP2,Order->OptionValue@Order];
+	
+	rest=Flatten@{rest/.Times->List};
+	groupStruct=Times@@Cases[rest,_Delta|_CG];
+	fieldsinop=Times@@Cases[rest,_Field|_FieldStrength|Bar[_Field]];
+	rest=Times@@rest;
+	
+	evaOperator=If[OptionValue@Evanescent,
+			DefineEvanescentOperator[groupStruct*fieldsinop*(SP1*SP2),groupStruct*fieldsinop*result,(*Exponent[rest*1,hbar]+1,*)Fierz]*rest/groupStruct/fieldsinop,
 			0];
-	evaOperator+result*rest//Expand//ContractCGs//Contract
+	evaOperator+result*rest//ReleaseHold//RelabelIndices//ContractCGs//Contract
 	]
 ]
 
 
-(*FierzOld[(SP1:NonCommutativeMultiply[field1_,G12___,field2_])*(SP2:NonCommutativeMultiply[field3_,G34___,field4_])*rest___, OptionsPattern[]]/;(FreeQ[rest+1,NonCommutativeMultiply]):=
-Module[
-{result,groupStruct,evaOperator ,order={1,2,3,4}},
-	(*order=First@TakeLargestBy[{{1,2,3,4},{1,4,3,2},{1,3,4,2}},FierzScore[SP1*SP2,Order->#]&,1];*)
-	result=Fierz4D[SP1*SP2,Order->order];
-
-	groupStruct=Times@@Cases[Times@rest,_Delta|_CG,Infinity];
-	
-	evaOperator=If[OptionValue@Evanescent, DefineEvanescentOperator[groupStruct(SP1*SP2),groupStruct*result,Exponent[rest*1,hbar]+1,Fierz]*rest/groupStruct,0];
-	evaOperator+result*rest//Expand//ContractCGs//Contract
-]*)
-
-
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Gamma Products Reduction*)
 
 
-GammaReduction[expr_Plus, opt___]:= GammaReduction[#,opt]&/@expr;
+(* ::Subsubsection::Closed:: *)
+(*4D GammaReduction function*)
 
 
-GammaReduction[expr:Except[Plus],opt___]/;(Count[expr,_NonCommutativeMultiply,Infinity]=!=2):=expr;
+(* ::Text:: *)
+(*Projects two contracted spinor chains to the physical basis with gamma reduction. *)
 
 
 Basis4D[]:=Module[{\[Mu],\[Nu]},
 	{{PL,PL},{PR,PR},{PL,PR},{PR,PL},
 	{\[Gamma]@\[Mu]**PL,\[Gamma]@\[Mu]**PL},{\[Gamma]@\[Mu]**PR,\[Gamma]@\[Mu]**PR},{\[Gamma]@\[Mu]**PL,\[Gamma]@\[Mu]**PR},{\[Gamma]@\[Mu]**PR,\[Gamma]@\[Mu]**PL},
 	{\[Sigma][\[Mu],\[Nu]]**PL,\[Sigma][\[Mu],\[Nu]]**PL},{\[Sigma][\[Mu],\[Nu]]**PR,\[Sigma][\[Mu],\[Nu]]**PR}}
-	]
+	];
 
 
-InverseBasisTrace[]:=InverseBasisTrace[]=Simplify@Inverse@Table[
-		bi[[1]]**bj[[1]]**bi[[2]]**bj[[2]]//DiracTrace//ContractMetric
-		,{bi,Basis4D[]}, {bj,Basis4D[]}];
+InverseBasisTrace[]:= InverseBasisTrace[]= Simplify@ Inverse@ Table[
+		bi[[1]]** bj[[1]]** bi[[2]]** bj[[2]]// DiracTrace// ContractMetric
+	, {bi, Basis4D[]}, {bj, Basis4D[]}];
 
 
-GammaReduction[(SP1:NonCommutativeMultiply[field1_,G12___,field2_])*(SP2:NonCommutativeMultiply[field3_,G34___,field4_])* rest___,OptionsPattern[{Evanescent-> True}]]/;(FreeQ[rest+1,NonCommutativeMultiply]):=
-Module[{Bcoeff,basis,f1=field1,f2=field2,f3=field3,f4=field4, G1= G12*1,G2= G34*1,invbastr, result, groupStruct, evaOperator},
-(*Check if in the basis*)
-(*If[MemberQ[basis,{G1,G2}],Return[SP1 * SP2* rest]];*)
-(*If[Count[G1*G2,_GammaM,Infinity]<3 && Count[G1,_Index,Infinity]<3 && Count[G2,_Index,Infinity]<3 , Return[SP1 * SP2* rest]];
-*)
-	basis=Basis4D[];
-	invbastr=InverseBasisTrace[];
-	
+GammaReduction4D[(SP1:NonCommutativeMultiply[field1_,G12___,field2_]), 
+	(SP2:NonCommutativeMultiply[field3_,G34___,field4_])]:= GammaReduction4D[SP1, SP2]=
+Module[{Bcoeff,basis,f1=field1,f2=field2,f3=field3,f4=field4, G1= Times@ G12, G2= Times@ G34},
+
 	If[Head[f1]===Transp, G1=(-CC)**G1; f1=f1**CC];
 	If[Head[f2]===Transp, G1=G1**(-CC); f2=CC**f2];
 
 	If[Head[f4]===Transp, G2=G2**(-CC); f4=CC**f4];
 	If[Head[f3]===Transp, G2=(-CC)**G2; f3=f3**CC];
+	
+	(*Check if in the basis*)
+	If[MatchQ[{G1, G2}/. Times[_Integer, ncm_NonCommutativeMultiply]-> ncm/. 
+		NonCommutativeMultiply-> Identity, $basis4DPattern],
+		Return[SP1* SP2];
+	];
+	
+	basis=Basis4D[];
 
-	Bcoeff=invbastr . Table[
-		bj[[1]]**G1**bj[[2]]**G2//RefineDiracProducts//ContractMetric//DiracTrace
+	Bcoeff= InverseBasisTrace[] . Table[
+		DiracTrace[bj[[1]]**G1**bj[[2]]**G2]//ContractMetric
 	,{bj,basis}]//Simplify;
 
-	result= Sum[Bcoeff[[i]]*(f1**basis[[i,1]]**f2) * (f3**basis[[i,2]]**f4) , {i,1,Length@Bcoeff}];
-	groupStruct=Times@@Cases[Times@rest,_Delta|_CG,Infinity];
+	Sum[Bcoeff[[i]]*(f1**basis[[i,1]]**f2) * (f3**basis[[i,2]]**f4) , {i,1,Length@Bcoeff}]
+]
+
+
+(* ::Text:: *)
+(*Patterns used to discern basis elements of the spinor chains*)
+
+
+$basis4DPattern= Module[{\[Mu],\[Nu]},
+	Alternatives[
+		{PL, PL}, {PR, PR}, {PL, PR}, {PR, PL},
+		{\[Gamma]@ \[Mu]** PL, \[Gamma]@ \[Mu]** PL}, {\[Gamma]@ \[Mu]** PR, \[Gamma]@ \[Mu]** PR}, 
+		{\[Gamma]@ \[Mu]** PL, \[Gamma]@ \[Mu]** PR}, {\[Gamma]@ \[Mu]** PR, \[Gamma]@ \[Mu]** PL},
+		{\[Gamma][\[Mu], \[Nu]]** PL, \[Gamma][\[Mu], \[Nu]]** PL}, {\[Gamma][\[Mu], \[Nu]]** PR, \[Gamma][\[Mu], \[Nu]]** PR}
+	]/. {\[Mu]-> \[Mu]_, \[Nu]-> \[Nu]_}/. NonCommutativeMultiply-> Identity
+];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Internal GammaReduction function*)
+
+
+(* ::Text:: *)
+(*Applies gamma reduction identities to any operator with exactly to spinor-chains*)
+(*Internal version with*)
+(*OperatorForm input -> Operator Form output*)
+
+
+GammaReductionInternal[expr_, opt__]:= expr/. op_Operator:> GammaReductionInternal[op, opt];
+
+
+GammaReductionInternal[op_Operator, produceEva_? BooleanQ, fourDim_? BooleanQ]:=
+Module[{rest, NCMs, SP1, SP2, result, groupStruct, evaOperator, iniOperator},
+	NCMs= Cases[op, _NonCommutativeMultiply, All];
+	If[Length@ NCMs =!= 2, Return@ op; ];
 	
-	evaOperator=If[OptionValue@Evanescent,
-				DefineEvanescentOperator[groupStruct(SP1*SP2),groupStruct*result,(*Exponent[rest*1,hbar]+1,*)GammaReduction]*rest/groupStruct,
-				0];
-	evaOperator+result*rest//Expand//ContractCGs//Contract
-]
+	{SP1, SP2}= NCMs;
+	rest= ReleaseOperators@ op/._NonCommutativeMultiply->1;
+	
+	result= GammaReduction4D[SP1,SP2];
+	If[fourDim,
+		result= EpsExpand@ result;
+	];
+	
+	evaOperator= If[produceEva,
+			groupStruct=Times@@Cases[{rest},_Delta|_CG,Infinity];
+			DefineEvanescentOperator[groupStruct* SP1* SP2, groupStruct* result, GammaReduction]* 
+				rest/ groupStruct
+		,
+			0
+		];
+	evaOperator+ result* rest// ContractCGs// ContractDelta// Operator
+];
 
 
-(* ::Subsection::Closed:: *)
-(*Levi-Civita relations*)
+(* ::Subsubsection::Closed:: *)
+(*Public GammaReduction function*)
 
 
-RemoveLCTensor[expr,opt___]/;FreeQ[expr,_LCTensor]:=expr;
+(* ::Text:: *)
+(*Public version with *)
+(*NormalForm input -> NormalForm output*)
 
 
-RemoveLCTensor[expr_,opt___]:= NormalForm[Operator[expr]/.a_Operator:>RemoveLCTensor[a,opt]];
+Options[GammaReduction]= {FourDimensional-> False, Evanescent-> True};
 
 
-RemoveLCTensor[op_Operator,OptionsPattern[{Evanescent-> True}]]:=Module[{opexp=NormalForm@op, evaOperator, result},
-	result=LC2Delta@LC2Gamma5@opexp;
-	(*add SchoutenID?*)
-	evaOperator=If[OptionValue@Evanescent,
-				DefineEvanescentOperator[opexp,result,LCTensor],
-				0];
-	evaOperator+result//RelabelIndices//Contract	
-]
+GammaReduction[expr_, OptionsPattern[]](*? OptionsCheck*):= 
+	GammaReductionInternal[Operator@ expr, OptionValue@ Evanescent, OptionValue@ FourDimensional]// 
+	OperatorToNormalForm// ContractDelta// RelabelIndices;

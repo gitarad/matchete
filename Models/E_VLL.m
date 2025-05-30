@@ -8,40 +8,17 @@
 (*SM extension with a a vector-like lepton EE ~ (1,1,-1)*)
 
 
-(* ::Section:: *)
-(*Lagrangian*)
+ParentModel["SM"]
 
 
-MatcheteLagrangianParameters["E_VLL"] = 
-{
-	"SU3c", "gs", "G", "SU2L", "gL", "W", "U1Y", "gY", "B", "Flavor", 
-	"q", "u", "d", "l", "e", "H",
-	"Yu", "Yd", "Ye", "\[Lambda]", "\[Mu]",
-	"EE", "ME", "yE"
-};
+DefineField[EE, Fermion, Charges-> U1Y[-1], Mass-> {Heavy, ME}, NiceForm-> {"\[ScriptCapitalE]", "\!\(\*SubscriptBox[\(M\), \(\[ScriptCapitalE]\)]\)"}];
 
 
-MatcheteLagrangianAlphabets["E_VLL"] = 
-{
-	"SU3cFundAlphabet" -> {"a","b","c","d","e","f"}, "SU3cAdjAlphabet" -> {"A","B","C","D","E","F"},
-	"SU2LFundAlphabet" -> {"i","j","k","l","m","n"}, "SU2LAdjAlphabet" -> {"I","J","K","L","M","N"},
-	"FlavorAlphabet"   -> {"p","r","s","t","u","v"}
-};
+DefineCoupling[yE, EFTOrder-> 0, Indices-> Flavor];
 
 
-MatcheteLagrangian["E_VLL",ModParam_,IndAlphabet_]:= MatcheteLagrangian["E_VLL",ModParam,IndAlphabet]=
-Module[{SMLag},
-	SMLag=LoadModel["SM",ModelParameters->ModParam[[1;;21]],IndexAlphabet->IndAlphabet];
-	Hold[	
-	Module[{p,i,Lint},	
-
-		DefineField["EE", Fermion, Charges->{"U1Y"[-1]},Mass->{Heavy,"ME"}];
-		
-		DefineCoupling["yE",EFTOrder->0,Indices->{"Flavor"}];
-		 
-		Lint = -"yE"[p] Bar@"l"[i,p]**PR**"EE"[] "H"[i];
-		
-		SMLag +FreeLag["EE"] + PlusHc[Lint] //RelabelIndices
-	]
-	]/.Join[ModParam,IndAlphabet]//ReleaseHold
+Module[{p,i,Lint},	
+	Lint = -yE[p] Bar@l[i,p]**PR**EE[] H[i];
+	
+	FreeLag[EE] + PlusHc[Lint] //RelabelIndices
 ]
