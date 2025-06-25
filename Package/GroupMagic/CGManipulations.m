@@ -289,6 +289,9 @@ CG[symb_, inds: {_Symbol..}]:= Block[{indexTypes},
 ];
 
 
+CG[Bar@ symb_, inds: {_Symbol..}]:= Bar@ CG[symb, inds]
+
+
 CG::args= "CG should have 2 arguments.";
 CG[_, _, __]:= (Message[CG::args]; Abort[];) 
 
@@ -609,10 +612,10 @@ DefineCompositeCG[name_, cgs_List, indicesIn:{_List..}, OptionsPattern[]]:= Bloc
 			Message[DefineCompositeCG::unkwnCG, cg];
 			Abort[];
 		];
-	, {cg, cgs}];
+	, {cg, cgs/. Bar-> Identity}];
 	
 	(*Test index contractions*)
-	indexTypes= $CGproperties[#, Indices]&/@ cgs;
+	indexTypes= If[Head@ # === Bar, Bar/@ $CGproperties[Bar@ #, Indices], $CGproperties[#, Indices]]&/@ cgs;
 	If[Length/@ indexTypes =!= Length/@ indicesIn, 
 		Message[DefineCompositeCG::indCount]; 
 		Abort[];
@@ -638,7 +641,7 @@ DefineCompositeCG[name_, cgs_List, indicesIn:{_List..}, OptionsPattern[]]:= Bloc
 	indices= DeleteCases[indices, eleminate];
 	indexTypes= indices/. Index[_, rep_]:> rep;
 	
-	tensor= EinsteinSummation[cgs/. $CGtensors, indicesIn];
+	tensor= EinsteinSummation[cgs/. $CGtensors, indicesIn-> Cases[Tally@ Flatten@ indicesIn, {lab_, 1}-> lab]];
 	
 	DefineCG[name, indexTypes, tensor];
 	If[OptionValue@ ReplaceCGs,
@@ -1213,6 +1216,10 @@ ReplaceCGs[expr_, OptionsPattern[]]? OptionsCheck:= Module[{keys, rules},
 	];
 	expr/. rules
 ]
+
+
+(*ReplaceCGs indices on HcTerms*)
+ReplaceCGs[HcTerms[expr_], opt:OptionsPattern[]]:=HcTerms[ReplaceCGs[expr, opt]];
 
 
 (* ::Section:: *)

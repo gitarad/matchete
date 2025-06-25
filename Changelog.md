@@ -1,5 +1,9 @@
 # Matchete changelog
 
+## v0.3.1 (2024-06-25)
+- Fixed installation
+- Minor bug fixes
+
 ## v0.3.0 (2024-05-30)
 - Added option `ReductionIdentities` to `GreensSimplify` and `EOMSimplify` to perform simplifications in either $d=4$ or $d=4-2\epsilon$ space-time dimensions, including the possibility to map results to an evanescent-free version of the $\overline{\text{MS}}$ renormalization scheme.
 - Added documentation for all functions and objects in the built-in Mathematica documentation center, which can be accessed conveniently with the \`F1\` key. (w.i.p.)
