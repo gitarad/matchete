@@ -78,6 +78,7 @@ InstallMatchete[]:=Module[{yn,packageName,packageDir,MinVersion,MatcheteLink,Que
 	Print["Copying Matchete to "<>packageDir];
 
 	zipDir=FileNames["README.md",unzipDir,Infinity];
+	Echo@zipDir;
 	If[
 		BetterCopyDirectory[DirectoryName[zipDir[[1]]],packageDir]===$Failed, 
 		"The installation failed. Make sure you can access the target directory."

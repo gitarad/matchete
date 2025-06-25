@@ -76,7 +76,10 @@ VerificationTest[
 
 VerificationTest[
 	DefineCG[t@ SU2@ fund, {SU2@ adj, SU2@ fund, Bar@ SU2@ fund}, Generators[SU@ 2, {1}]];
-	DefineCG[t@ SU2@ adj, {SU2@ adj, SU2@ adj, SU2@ adj}, Generators[SU@ 2, {2}]]
+	DefineCG[t@ SU2@ adj, {SU2@ adj, SU2@ adj, SU2@ adj}, Generators[SU@ 2, {2}]];
+	DefineCG[f2, {SU2@ adj, SU2@ adj, SU2@ adj}, StructureConstants@ SU@ 2];
+	DefineCG[eps2, {SU2@ fund, SU2@ fund}, First@ 
+		InvariantTensors[SU@ 2, {{1}, {1}}, AntisymmetricIndices-> {1, 2}]];
 ,
 	Null
 ,
@@ -152,11 +155,14 @@ VerificationTest[
 (*Add composite CGs *)
 
 
-VerificationTest[
+VerificationTest[Module[{a, b, c, d, i, j, k, l},
 	DefineCompositeCG[Tr4, {t@ SU3@ fund, t@ SU3@ fund, t@ SU3@ fund, t@ SU3@ fund}, 
 		{{a, i, j}, {b, j, k}, {c, k, l}, {d, l, i}}];
 	DefineCompositeCG[t2asym, {t@ SU2@ fund, t@ SU2@ adj}, 
-		{{a, i, j}, {a, b, c}}]
+		{{a, i, j}, {a, b, c}}];
+	DefineCompositeCG[f2a2, {eps2, f2, t@ SU2@ fund}, 
+		{{l, i}, {d, b, c}, {d, j, l}}];
+	];
 ,
 	Null
 ,
@@ -168,7 +174,7 @@ VerificationTest[
 (*CG contractions*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*SU(2) contractions*)
 
 
@@ -227,7 +233,7 @@ VerificationTest[
 ]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*SU(3) contractions*)
 
 
@@ -273,7 +279,7 @@ VerificationTest[
 ]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Mixed contractions*)
 
 
@@ -304,7 +310,7 @@ VerificationTest[
 ]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*More advanced contractions*)
 
 
@@ -326,6 +332,27 @@ VerificationTest[
 		CG[del@ SU2@ adj, {c, b}] CG[t@ SU2@ fund, {a, i, j}]) //Expand
 ,
 	TestID-> "CGContractions: Contraction of 3 fundamental SU2 generators"
+]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Check composite CG*)
+
+
+(* ::Text:: *)
+(*Test that the sparse array constructed by the composite CG is correct *)
+
+
+VerificationTest[Module[{lc, gen, f, comp, contraction},
+		comp= GetCGTensor@ f2a2;
+		{lc, f, gen}= GetCGTensor/@ {eps2, f2, t@ SU2@ fund};
+		contraction= Table[Sum[lc[[l, i]]f[[d, b, c]] gen[[d, j, l]], {l,2},{d,3}],{i,2},{b,3},{c, 3}, {j, 2} ];
+		contraction- comp
+	]
+,
+	ConstantArray[0, {2, 3, 3, 2}]
+,
+	TestID-> "DefineCompositeCG: Consistency"
 ]
 
 

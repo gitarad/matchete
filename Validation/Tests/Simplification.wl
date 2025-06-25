@@ -244,6 +244,20 @@ VerificationTest[Module[{op, \[Mu], \[Nu], \[Rho], \[Sigma], \[Alpha], a},
 
 
 (* ::Text:: *)
+(*Verify that the symmetries of B-violating 4-fermion tensor operators originating from transposition of the fermion line is identified as part of the $operator initialization. *)
+
+
+VerificationTest[Module[{op, a, b, c, p, t, s, r},
+	DefineCoupling[cduu, Indices-> {Flavor, Flavor, Flavor, Flavor}];
+	op= (cduu[p, s, t, r]- cduu[p, t, s, r]) (CConj@ Bar@ d[a, p]** \[Gamma][\[Mu], \[Nu]]** e@ r)*
+		 (CConj@ Bar@ u[b, s]** \[Gamma][\[Mu], \[Nu]]** u[c, t]) eps[SU3c][a, b, c];
+	CollectOperators/@ {op, Bar@ op}
+],
+	{0, 0}
+, TestID-> "Flavor symmetries of from spinor transposition in \[CapitalDelta]B=1 operator"]
+
+
+(* ::Text:: *)
 (*Identifies symmetry in spin-chain transposition and identifies the flavor symmetry of Weinberg + dim-7 operators*)
 
 

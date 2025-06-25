@@ -95,6 +95,8 @@ PackageScope["$operators"]
 PackageScope["$compoundOperators"]
 PackageScope["HcSimplifyInternal"]
 PackageScope["CollectCoefficients"]
+PackageScope["CoefficientSimplify"]
+PackageScope["SimplifyCouplingExpression"]
 
 
 PackageScope["EOMDevs"]
@@ -112,6 +114,7 @@ PackageScope["SeparateInteractionTerm"]
 
 PackageScope["DefineEvanescentOperator"]
 PackageScope["FindEvanescentOperator"]
+PackageScope["$EvanescentTerms"]
 
 
 (* ::Section:: *)
@@ -241,6 +244,8 @@ Operator[X___** DiracProduct[A___, GammaM[mu_], Proj@ p_]** Field[f_, Fermion, i
 (* Bar@ Fermions *)
 Operator[Bar@ Field[f_, Fermion, i_, {mu_}]** DiracProduct[GammaM[mu_], A___]** X___, rest___]:=
 	Operator[EoM[Bar@ Field[f, Fermion, i, {}]]** DiracProduct[A]** X, rest];
+Operator[Bar@ Field[f_, Fermion, i_, {mu_}]** DiracProduct[GammaCC,Transp@GammaM[mu_], A___]** X___, rest___]:=
+	- Operator[EoM[Bar@ Field[f, Fermion, i, {}]]** DiracProduct[GammaCC,A]** X, rest];
 (* Transp@ Fermions *)
 Operator[Transp@ Field[f_, Fermion, i_, {mu_}]** DiracProduct[GammaCC, GammaM[mu_], A___]** X___, rest___]:=
 	- Operator[EoM[Transp@ Field[f, Fermion, i, {}]]** DiracProduct[GammaCC, A]** X, rest];
@@ -611,7 +616,14 @@ TranspDiracPattern[symb_Symbol, DiracProduct[GammaCC, g___GammaM, p___Proj]]:= M
 	If[sign === -1, Sow@ Inactive[DidMatchSwitch][1, -1][symb]];
 
 	DiracProduct[GammaCC, Sequence@@ gammas, p]
-]
+];
+TranspDiracPattern[symb_Symbol, DiracProduct[GammaCC, g:Transp[_GammaM]..., p___Proj]]:= Module[{sign, gammas},
+	gammas= Reverse@ {g};
+	sign= Times@@ Cases[gammas, Transp@ GammaM@ Verbatim[Pattern][_, ind_OrderlessPatternSequence]:> Power[-1, Floor[Length@ ind/2]]];
+	If[sign === -1, Sow@ Inactive[DidMatchSwitch][1, -1][symb]];
+
+	DiracProduct[GammaCC, Sequence@@ gammas, p]
+];
 
 
 (* ::Text:: *)
@@ -1362,7 +1374,6 @@ ConjugateCompound[reductionType_, opClass_, compID_, compProps_]:= Module[{atomi
 			FirstCase[{OperatorBar[AtomicOp[opClass, atomicID, dummies]/. AtomicToOpReplacementPattern@ opClass]/.
 				OpToAtomicReplacementPattern@ OpClassConjugate@ opClass}, AtomicOp[__, inds_]:> inds, {}, All]
 		];
-
 	(*Adjust the indices and operatorIDs used in the conjugate compound operator*)
 	$compoundOperators[reductionType, opClass, compID, ConjugateIndexPermutation]= indPermutation;
 	<|
@@ -1411,7 +1422,7 @@ SeparateOutConstants@ expr_:= Module[{consts, remainder},
 (*Collects all identical operators in an expression to the same form *)
 
 
-Options@ CollectOperators= {NormalForm-> True};
+Options@ CollectOperators= {NormalForm-> True, Simplify->True};
 
 
 CollectOperators[arg_, OptionsPattern[]]:= Block[{expr=HcExpand@BetterExpand[arg], out, consts},
@@ -1423,7 +1434,7 @@ CollectOperators[arg_, OptionsPattern[]]:= Block[{expr=HcExpand@BetterExpand[arg
 
 	out= MatchOperatorPatterns@ expr;
 
-	out= CollectCoefficients@ ExprFlavorCanonize@ out;
+	out= CollectCoefficients[ ExprFlavorCanonize@ out, Simplify->OptionValue@Simplify];
 
 	out=out/. AtomicToOpReplacementPattern[];
 
@@ -2410,7 +2421,6 @@ Options[IBPSimplify]={ReductionIdentities->dDimensional, Verbose->True};
 
 IBPSimplify[expr_, OptionsPattern[]]:= Module[
 		{class, evTerms, out, physTerms, subs, terms, treeLag, evaopt, redID},
-
 	{redID, evaopt}= Switch[OptionValue@ ReductionIdentities
 		,dDimensional,
 			{dDimensional, False}
@@ -2430,7 +2440,7 @@ IBPSimplify[expr_, OptionsPattern[]]:= Module[
 			GammaReductionInternal[RemoveLCTensorInternal[OperatorFlavorSeparate@ Operator@ expr,
 				evaopt], evaopt, redID === FourDimensional]
 		];
-
+		
 	out= MatchOperatorPatterns@ out;
 
 	(*Determine identities for each group of operator types*)
@@ -2445,8 +2455,9 @@ IBPSimplify[expr_, OptionsPattern[]]:= Module[
 			];
 			subs= ConstructHermitianSimplificationIdentities[class, redID];
 			Plus@@ terms@ class/. subs// ExprFlavorCanonize
+			
 		], {class, Keys@ terms}];
-
+		
 	If[redID === Evanescent,
 		out= out/. {hbar* _EvaOp-> 0, hbar* Bar@ _EvaOp-> 0};
 	];
@@ -2494,11 +2505,17 @@ IBPSimplify[expr_, OptionsPattern[]]:= Module[
 (*Simplification function outputting the Lagrangian either in Operator form or in the internal representation (e.g. AtomicOp) *)
 
 
-Options@ InternalSimplify= {InternalOpRepresentation-> False, ReductionIdentities->dDimensional}
+Options@ InternalSimplify= {
+	CoefficientSimplify-> True,
+	InternalOpRepresentation-> False, 
+	ReductionIdentities->dDimensional
+	}
 
 
 InternalSimplify[expr_, OptionsPattern[]]:= Module[{out},
-	out= CollectCoefficients@ IBPSimplify[ ContractDelta@ ContractCGs@ expr,ReductionIdentities->OptionValue@ReductionIdentities];
+	out= CollectCoefficients[IBPSimplify[ContractDelta@ ContractCGs@ expr,
+		ReductionIdentities-> OptionValue@ ReductionIdentities],
+		CoefficientSimplify-> OptionValue@ CoefficientSimplify];
 
 	If[OptionValue@ InternalOpRepresentation,
 		out
@@ -2529,7 +2546,7 @@ GreensSimplify[arg_,OptionsPattern[]]? OptionsCheck:= Block[{expr=BetterExpand@H
 
 	(* simplifications *)
 	LagrangianLikeCheck@ expr;
-
+	
 	expr= AtomicToNormalForm@ CollectCoefficients@ IBPSimplify[ContractDelta@ ContractCGs@ expr, ReductionIdentities->redID];
 
 	(* add back the constants *)
@@ -2602,10 +2619,13 @@ HcSimplify::nothermitian = "The Lagrangian is not hermitian. The non-Hermitian p
 (*This implementation of HcSimplify proceeds under the assumption that the Lagrangian is explicitly Hermitian after application of InternalSimplify*)
 
 
-HcSimplify[arg_]:=HcSimplifyInternal[arg, InternalOpRepresentation -> False]
+Options[HcSimplify]={Simplify->True};
 
 
-Options[HcSimplifyInternal]={InternalOpRepresentation -> False};
+HcSimplify[arg_, OptionsPattern[]]:=HcSimplifyInternal[arg, InternalOpRepresentation -> False, Simplify->OptionValue@Simplify]
+
+
+Options[HcSimplifyInternal]={InternalOpRepresentation -> False(*True*), Simplify->False};
 
 
 HcSimplifyInternal[arg_,OptionsPattern[]]:= Module[{complex, out, real, expr=arg, hermite, hermiteManifest},
@@ -2628,13 +2648,13 @@ HcSimplifyInternal[arg_,OptionsPattern[]]:= Module[{complex, out, real, expr=arg
 		{op, Times@ rest}];
 	complex= Cases[out, (Times[op:(_AtomicOp|_CompOp), rest__]|op:(_AtomicOp|_CompOp))/; !RealOpQ@ op:>
 		{op, Times@ rest}];
-
-	complex= DeleteDuplicatesBy[SortBy[complex,Count[#,_Bar,Infinity]&], (Sort@ {#, MapAt[OpClassConjugate, #, 1]}&@* First)];
+	
+	complex= DeleteDuplicatesBy[SortBy[complex,Count[#,_Bar,Infinity]&], (Sort@ {#, MapAt[OpClassConjugate, #, If[Head@# === AtomicOp,1,2]]}&@* First)];
 
 	If[TrueQ@ OptionValue[InternalOpRepresentation],
 		out= Plus@@ Times@@@ real + HcTerms[Plus@@ Times@@@ complex]
 		,
-		out= AtomicToNormalForm[Plus@@ Times@@@ real] + HcTerms[AtomicToNormalForm[Plus@@ Times@@@ complex]] //RelabelIndices
+		out= CollectOperators[AtomicToNormalForm[Plus@@ Times@@@ real], Simplify->OptionValue@Simplify] + HcTerms[CollectOperators[AtomicToNormalForm[Plus@@ Times@@@ complex],Simplify->OptionValue@Simplify]] 
 	];
 
 	out
@@ -2736,8 +2756,7 @@ FindEvanescentOperator::suscoef= "No scaling of found for evanescent operator re
 
 
 FindEvanescentOperator[opDifference_]:= Module[
-		{class, coef, inputIDs, inputInds, inputOp, evaIDs, evaInds, evaOp},
-	inputOp= InternalCollectOperators[Contract@ opDifference, InternalOpRepresentation-> True];
+		{class, coef, inputIDs, inputInds, inputOp= opDifference, evaIDs, evaInds, evaOp},
 	class= FirstCase[inputOp, AtomicOp[c_, __]:> c, {}, All];
 	If[MatchQ[$EvanescentTerms@ class, _Missing], (*If no evs of this class have been created*)
 		Return@ None;
@@ -2787,17 +2806,16 @@ FindEvanescentOperator[opDifference_]:= Module[
 
 DefineEvanescentOperator[iniOperator_, finOperator_, origin_]:= Module[
 		{basisOp, class, evaOperator, id, redundantOp, result, score},
-	evaOperator= iniOperator- finOperator// RelabelIndices;
-	If[(evaOperator// RefineDiracProducts// ContractCGs// Contract// ProjExpand) === 0,
-		Return@ 0;
-	];
-
+	(*Map to atomic operator space*)
+	{redundantOp, basisOp}= MatchOperatorPatterns/@ Contract/@ {iniOperator, finOperator};
+	evaOperator= Collect[redundantOp- basisOp, _AtomicOp];
+	(*Return immediately if the purported evanescent operator is trivially zero*)
+	If[evaOperator === 0, Return@ 0; ];
+	 
 	(*Check if evaOperator already exists*)
 	result= FindEvanescentOperator[evaOperator];
 	If[result =!= None, Return@ result; ];
 
-	(*Map to atomic operator space*)
-	{redundantOp, basisOp}= MatchOperatorPatterns/@ {iniOperator, finOperator};
 	class= FirstCase[redundantOp, AtomicOp[c_, __]:> c, {}, All];
 
 	(*Creates a sub-association in $EvanescentTerms if the class is not already pressent.*)
@@ -2913,7 +2931,7 @@ $nonTrivCouplingPattern=
 (*Main function to apply to a Lagrangian on internal form (involving AtomicOp, and CompOp)*)
 
 
-Options[CollectCoefficients] = {"ContractOverallDelta" -> True}
+Options[CollectCoefficients] = {"ContractOverallDelta" -> True, Simplify->False, CoefficientSimplify-> True}
 
 
 CollectCoefficients[expr_, OptionsPattern[]]:= Module[{out},
@@ -2926,14 +2944,19 @@ CollectCoefficients[expr_, OptionsPattern[]]:= Module[{out},
 			CanonizeCouplingContractions[Times@ coef, inds, $compoundOperators[red, class, id, Symmetries]]
 	};
 
-	out= Collect[out, {_AtomicOp|_CompOp, hbar, \[Epsilon]},
-		(*Simplify@* RelabelIndices*) (* Simplify is very slow for large expressions *)
-		Quiet[
-			Collect[RelabelIndices[#], {Power[_Coupling,_?Negative],_LF,_Log}, Simplify[#,TimeConstraint->0.1]&]
-			,
-			Simplify::time
-		]&
-	];
+	out= If[OptionValue@ CoefficientSimplify,
+			Collect[out, {_AtomicOp|_CompOp, hbar, \[Epsilon]},
+			(*Simplify@* RelabelIndices*) (* Simplify is very slow for large expressions *)
+				Quiet[
+					Collect[RelabelIndices[#], {Power[_Coupling,_?Negative],_LF,_Log}, Simplify[#,TimeConstraint->0.1]&]
+					,
+					Simplify::time
+				]& ]
+		,	
+			Collect[out, {_AtomicOp|_CompOp, hbar, \[Epsilon]},
+					Collect[RelabelIndices[#], {Power[_Coupling,_?Negative],_LF,_Log}]&
+				]
+		];
 
 	If[OptionValue["ContractOverallDelta"],
 		(* convert output to list without expanding it -> do NOT use TermsToList here! *)
@@ -2942,7 +2965,12 @@ CollectCoefficients[expr_, OptionsPattern[]]:= Module[{out},
 		(* contract back overall deltas *)
 		out= Plus@@( ContractDeltaSingleTerm[#,"overall-only"->True]&/@ out )
 	];
-
+	
+	If[OptionValue@Simplify,
+		out= Quiet[Collect[out, {_AtomicOp|_CompOp, hbar, \[Epsilon]}, Simplify[#,TimeConstraint->1]&]
+			,Simplify::time];
+	];
+	
 	out
 ]
 
@@ -2970,7 +2998,7 @@ CanonizeCouplingContractions[coef_, opInds_List, syms_List]:= Module[
 	symmetryPermutations= GroupBy[syms, Last, Map[First]];
 	{rules, contractions}= {{}, {}};
 	While[Length@ couplingContractions> 0,
-		AppendTo[rules, CoefficientPatternWithSyms[First@ couplingContractions, opInds, symmetryPermutations]];
+		AppendTo[rules, CouplingContractionPatternWithSyms[First@ couplingContractions, opInds, symmetryPermutations]];
 		(*rules[[-1]] is now {rep. rules w/ + signature, rep. rules w/ - signature (or None)} *)
 		pos= Position[couplingContractions,
 			If[rules[[-1, 2]] === None, rules[[-1, 1, 1]], Alternatives@@ rules[[-1, ;;, 1]]] ];
@@ -2995,7 +3023,7 @@ CanonizeCouplingContractions[coef_, opInds_List, syms_List]:= Module[
 
 
 (* ::Subsubsection::Closed:: *)
-(*Construct coefficient patterns*)
+(*Construct coupling contraction patterns*)
 
 
 (* ::Text:: *)
@@ -3004,13 +3032,13 @@ CanonizeCouplingContractions[coef_, opInds_List, syms_List]:= Module[
 (*	{pattern that matches with + signature, pattern that matches with - signature/None (if not applicable)}*)
 
 
-CoefficientPatternWithSyms[coups:PseudoTimes[$nonTrivCouplingPattern..], opInds_List, syms_Association]:= Module[
+CouplingContractionPatternWithSyms[coups:PseudoTimes[$nonTrivCouplingPattern..], opInds_List, syms_Association]:= Module[
 		{openInds, perm, repInds, out, couplingRules, openInPattern, openPerms, pos, repl},
 	(*Replace repeated indicies with patterns*)
 	repInds= Cases[coups/. $DropDiagonalCouplings, Index[__], All];
 	(*If the coefficient does not fully contract the operator (non-Lagrangian), symmetries are not applicable!*)
 	If[!SubsetQ[repInds, opInds],
-		Return@ CoefficientPattern@ coups;
+		Return@ CouplingContractionPattern@ coups;
 	];
 	repInds= DeleteCases[Tally@ repInds, {i_, 1}][[;;, 1]];
 
@@ -3057,7 +3085,7 @@ CoefficientPatternWithSyms[coups:PseudoTimes[$nonTrivCouplingPattern..], opInds_
 (*Makes a replacement pattern corresponding to a given combination of the couplings. *)
 
 
-CoefficientPattern[coups:PseudoTimes[$nonTrivCouplingPattern..]]:= Module[
+CouplingContractionPattern[coups:PseudoTimes[$nonTrivCouplingPattern..]]:= Module[
 		{indices, out, couplingRules},
 	(*Replace repeated indicies with patterns*)
 	indices= DeleteCases[Tally@ Cases[coups, Index[__], All], {i_, 1}][[;;, 1]];
@@ -3146,10 +3174,10 @@ CouplingPattern@ Bar@Delta[indsPat__]:= {Bar@ Delta@ indsPat, 1};
 
 
 (* ::Text:: *)
-(*Collect couplings in expression*)
+(*Collect like coupling contractions in a *)
 
 
-IdentifyCouplings@ coef_:= Module[{out= PseudoTimes@ Expand@ coef, couplingContractions, pats= {}},
+SimplifyCouplingExpression@ expr_:= Module[{out= PseudoTimes@ Expand@ expr, couplingContractions, pats= {}},
 	(*If only one term, nothing to collect*)
 	If[Head@ out =!= Plus, Return@ ReleasePseudoTimes@ out];
 	(*All non-trivial coupling contractions*)
@@ -3160,7 +3188,7 @@ IdentifyCouplings@ coef_:= Module[{out= PseudoTimes@ Expand@ coef, couplingContr
 	(*Construct patterns*)
 	(*Optimization may be required*)
 	While[Length@ couplingContractions> 0,
-		AppendTo[pats, CoefficientPattern@ First@ couplingContractions];
+		AppendTo[pats, First@ CouplingContractionPattern@ First@ couplingContractions];
 		couplingContractions= DeleteCases[couplingContractions, pats[[-1, 1]]];
 	];
 	(*Remove everything but the coupling patterns from PseudoTimes*)

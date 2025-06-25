@@ -184,13 +184,6 @@ GetMinOrder[L_]:=Min[OperatorDimension/@(List@@(Expand@(L+Nothing)))]
 
 
 (* ::Subsubsection::Closed:: *)
-(*Shorthand for collecting by operators (without simplification)*)
-
-
-CBOp[ex_]:=Collect[ex,_Operator]
-
-
-(* ::Subsubsection::Closed:: *)
 (*Expanding out the covariant derivatives*)
 
 
@@ -964,19 +957,17 @@ EOMSimplify::HeavyFieldEOM = "The Lagrangian contains redundant operators of fie
 
 Options[EOMSimplify] = {
 		DummyCoefficients -> False,
-		EFTOrder->All,
+		EFTOrder -> All,
 		EffectiveCouplingSymbol -> "C",
 		ReductionIdentities->EvanescenceFree,
-		Verbose -> True,
-		"New" -> True
+		Verbose -> True
 	};
 Options[EoMSimplificationStep] = {EFTOrder -> Automatic};
 
 
-EOMSimplify[Lagrangian_, OptionsPattern[]] (*? OptionsCheck*):=Module[{out,maxOrder,operatorList,L3,L4,La,L,consts,redID=OptionValue@ReductionIdentities,redIDIntermediate},
-	$MonitorString1="Preparing field redefinitions...";
-	$MonitorString2="Determining order of input Lagrangian...";
-	$auxTime=AbsoluteTime[];
+EOMSimplify[Lagrangian_, OptionsPattern[]] ? OptionsCheck:=Module[
+		{out, maxOrder, operatorDims, L3, L4, La, L, consts,
+			redID= OptionValue@ ReductionIdentities, redIDIntermediate},
 
 	If[redID === EvanescenceFree,
 		AddToBibliography["EvanescentTreatment", "Simplified expression to evanescent-free scheme (with EOMSimplify)"]
@@ -994,10 +985,10 @@ EOMSimplify[Lagrangian_, OptionsPattern[]] (*? OptionsCheck*):=Module[{out,maxOr
 
 	If[EOMInvalidQ[L],Message[EOMSimplify::InvalidLagrangian]; Return[L]];
 
-	operatorList=OperatorDimension/@TermsToList[L];
+	operatorDims= OperatorDimension/@ TermsToList@ L// DeleteDuplicates;
 
-	If[Head@OptionValue[EFTOrder]===Integer, maxOrder = OptionValue@EFTOrder, maxOrder=Max[operatorList]];
-	If[Min[operatorList]<4,
+	If[Head@OptionValue[EFTOrder]===Integer, maxOrder = OptionValue@EFTOrder, maxOrder=Max[operatorDims]];
+	If[Min[operatorDims]<4,
 		(* there are superleading terms in the Lagrangian, redefine them *)
 		OptionalMonitor[OptionValue@Verbose,
 			La = SeriesEFT[SubstituteCoefficients[InternalSimplify[L], EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol]], EFTOrder -> maxOrder];
@@ -1018,13 +1009,7 @@ EOMSimplify[Lagrangian_, OptionsPattern[]] (*? OptionsCheck*):=Module[{out,maxOr
 	];
 
 	If[ContainsHeavyEOMQ[La], Message[EOMSimplify::HeavyFieldEOM]];
-	If[OptionValue@ "New",
-		out= PerformSystematicFieldRedefs[La, maxOrder, OptionValue@ Verbose];
-	,
-		out = OptionalMonitor[OptionValue@Verbose,FixedPoint[EoMSimplificationStep[#,EFTOrder->maxOrder]&, La],$MonitorString1<>"\n"<>$MonitorString2];
-	];
-	$MonitorString1="";
-	$MonitorString2="";
+	out= PerformSystematicFieldRedefs[La, maxOrder, OptionValue@ Verbose];
 
 	If[OptionValue@DummyCoefficients === True,
 		OptionalMonitor[OptionValue@Verbose,
@@ -1046,41 +1031,6 @@ EOMSimplify[Lagrangian_, OptionsPattern[]] (*? OptionsCheck*):=Module[{out,maxOr
 ]
 
 
-(* ::Subsubsection::Closed:: *)
-(*Individual step of the main module*)
-
-
-(* debug flag that shows the intermediate Lagrangians *)
-$EOMSimplifyEchoIntermediateLagrangians = False;
-
-
-EoMSimplificationStep[L_,OptionsPattern[]]:=Module[{task, fields,order,temp,maxorder},
-	$MonitorString1="Determining redundant operators...";
-	$MonitorString2="";
-	maxorder=OptionValue[EFTOrder];
-	(* look at all fields that are involved in redundant operators *)
-	task=GatherBy[FieldsToShift[L],Last];
-	(* if nothing to simplify -> break out *)
-	If[Length[task]==0, Return[L]];
-
-	(* the task list is sorted by mass dimension -> start at the lowest order *)
-	task=Transpose@First@task;
-	fields=First@task;
-	order=First@Last@task;
-	$MonitorString1="Field redefinitions needed for "<> ToString@fields<> " at dimension "<> ToString@order<>".";
-	(* call ReduceField with the current list of fields *)
-	temp=ReduceField[L,fields, ShiftOrder-> order,ResultOrder->maxorder];
-
-	(*LCurrent=temp;*)
-	$MonitorString2="Simplifying Lagrangian...";
-	temp = InternalSimplify @ temp;
-
-	If[TrueQ[$EOMSimplifyEchoIntermediateLagrangians], Echo[Iconize@temp,"Intermediate Lagrangian result"]];
-
-	Return[ temp ]
-]
-
-
 (* ::Subsection:: *)
 (*New simplification *)
 
@@ -1093,17 +1043,18 @@ EoMSimplificationStep[L_,OptionsPattern[]]:=Module[{task, fields,order,temp,maxo
 (*Performs all field redefinitions to remove all EOM terms from the Lagrangian *)
 
 
-PerformSystematicFieldRedefs[lag_, maxOrder_, verbose_? BooleanQ] := Module[{devs, gaugeNormalizations, kinMix, ord, out},
+PerformSystematicFieldRedefs[lag_, maxOrder_, verbose_? BooleanQ] := Module[
+		{devs, gaugeNormalizations, kinMix, eftOrd, out= lag},
 	OptionalMonitor[verbose,
 		out= RenormalizeMatterFields@ lag;
 		(*The gauge field normalization is compensated for in future shifts of the gauge fields*)
 		{gaugeNormalizations, kinMix}= GaugeFieldNormalization[out, maxOrder];
 	, "Renormalizing fields \[Ellipsis]"];
-	OptionalMonitor[verbose, 
+	OptionalMonitor[verbose,
 		Do[
-			out= ShiftLagrangian[out, gaugeNormalizations, kinMix, devs, ord, maxOrder];
-		, {ord, 5, maxOrder}, {devs, Reverse@ Range[ord- 2]}];
-	, StringForm["Redefining fields at dimension `1` with `2` derivatives \[Ellipsis]", ord, devs]];
+			out= ShiftLagrangian[out, gaugeNormalizations, kinMix, devs, eftOrd, maxOrder];
+		, {eftOrd, 5, maxOrder}, {devs, Reverse@ Range[eftOrd- 2]}];
+	, StringForm["Redefining fields at dimension `1` with `2` derivatives \[Ellipsis]", eftOrd, devs]];
 	out
 ]
 
@@ -1119,12 +1070,12 @@ $emptyKinMix= <|FieldMap-> <||>, Fields-> {}, Zinv-> {{}}|>;
 (*Renormalizes the kinetic terms for the matter fields. *)
 
 
-RenormalizeMatterFields@ lag_:= Module[{fields, jacobianShift, out, replacementRules, terms},
+RenormalizeMatterFields[lag_]:= Module[{fields, jacobianShift, out, replacementRules, terms},
 	terms= SelectOperatorDevsAndDim[lag, _? Positive, 4];
 	(* all fields appearing in the input Lagrangian *)
 	fields= DeleteDuplicates@ Cases[terms, Field[lab_, __]-> lab, Infinity];
 	(* the free Lagrangian of all of these fields - so we get non-standard kinetic terms *)
-	terms= terms- InternalSimplify[FreeLag@@ fields]// BetterExpand;
+	terms= hbar Coefficient[terms, hbar]// BetterExpand;
 
 	(*Determine shifts*)
 	fields= DeleteDuplicates@ Cases[terms, EoM@ Alternatives[
@@ -1135,8 +1086,8 @@ RenormalizeMatterFields@ lag_:= Module[{fields, jacobianShift, out, replacementR
 	(*TODO: implement check that the shifts are equal to \[Delta] at leading order (Z= 1 + O(hbar)) *)
 
 	(* insert the field expansion, return to NormalForm since we're inserting fields into EoM objects as well *)
-	out= BetterExpand@ OperatorToNormalForm @ lag/. Field[f_/; MemberQ[fields, f], args__]:>
-			Field[f, args]+ hbar Field[{f, 0, 1}, args];
+	out= OperatorToNormalForm @ lag/. Field[f_/; MemberQ[fields, f], args__]:>
+			Field[f, args]+ hbar Field[{f, 0, 1}, args]// LagrangianExpand;
 
 	(* we need to prepare the Lagrangian: powers need to be removed but we cannot use operators, because we need EoM-type objects to stay unchanged *)
 	out= (RelabelIndices[out, Unique-> True])/.
@@ -1145,7 +1096,7 @@ RenormalizeMatterFields@ lag_:= Module[{fields, jacobianShift, out, replacementR
 
 	(* plug in the rule, reactivate the powers and IBPSimplify *)
 	(* Might be better to simplify elsewhere *)
-	InternalSimplify[Activate[out/. replacementRules]+ jacobianShift]
+	InternalSimplify[Activate[out/. replacementRules]+ jacobianShift, CoefficientSimplify-> False]
 	(*Collect[Operator@ Activate[out/. replacementRules], _Operator]*)
 ]
 
@@ -1166,15 +1117,15 @@ GaugeFieldNormalization[lag_, ord_]:= Module[
 	fields= Intersection[DeleteDuplicates@ Cases[terms, FieldStrength[lab_, __]-> lab, Infinity],
 		List@@ Query[All, Key@ Field]@ $GaugeGroups];
 	If[Length@ fields === 0, Return@ {<||>, $emptyKinMix}; ];
-	
-	abelianFields= Intersection[fields, 
+
+	abelianFields= Intersection[fields,
 		List@@ Query[Key/@ GetGaugeGroupByProperty[Group-> U1], Key@ Field]@ $GaugeGroups];
-	
+
 	(*Check if there might be kinetic mixing*)
-	kinMix= If[Length@ abelianFields > 1, 
+	kinMix= If[Length@ abelianFields > 1,
 			fields= Complement[fields, abelianFields];
 			z= Table[
-					If[f1 =!= f2, 1 / 2, 1]* GetOperatorCoefficient[terms, 
+					If[f1 =!= f2, 1 / 2, 1]* GetOperatorCoefficient[terms,
 						-1/4 FS[f1, mu1, mu2]FS[f2, mu1, mu2]]
 				, {f1, abelianFields}, {f2, abelianFields}];
 			{z, z1}= Transpose[CoefficientList[z, hbar, 2], {2, 3, 1}];
@@ -1193,7 +1144,7 @@ GaugeFieldNormalization[lag_, ord_]:= Module[
 		,
 			$emptyKinMix
 		];
-	
+
 	(*Non-mixing fields*)
 	(*Read-off the normalization of the kinetic terms*)
 	gaugeNormalizations= Association@@ Table[
@@ -1231,7 +1182,7 @@ ShiftLagrangian[lag_, gaugeNormalization_, kinMix_, devs_Integer, dim_Integer, m
 
 	(* Insert the field expansion, return to NormalForm since we're inserting fields into EoM objects as well *)
 	(* Shift all kinetic-mixed fields if at least one appears with an EOM *)
-	If[ContainsAny[fields, kinMix@ Fields], fields= Union[fields, kinMix@ Fields]]; 
+	If[ContainsAny[fields, kinMix@ Fields], fields= Union[fields, kinMix@ Fields]];
 	{termsToShift, termsToKeep}= SplitLagByDims[lag, maxOrder- shiftOrd];
 	termsToShift= DummyShiftTerms[termsToShift, fields, shiftOrd, maxOrder];
 
@@ -1241,9 +1192,10 @@ ShiftLagrangian[lag_, gaugeNormalization_, kinMix_, devs_Integer, dim_Integer, m
 		Inactive[Times]@@ ConstantArray[f, k];
 
 	(* Plug in the rule, reactivate the powers and IBPSimplify *)
-	termsToShift= InternalSimplify[Activate[termsToShift/. replacementRules]+ jacobianShift];
+	termsToShift= InternalSimplify[Activate[termsToShift/. replacementRules]+ jacobianShift,
+		CoefficientSimplify-> False];
 
-	termsToShift + termsToKeep//BetterExpand
+	termsToShift + termsToKeep
 ]
 
 
@@ -1256,15 +1208,15 @@ DetermineShifts::notimpl = "Shift has not been implemented for type `1`";
 
 DetermineShifts[lagTerms_, fields_, gaugeNormalization_, kinMix_]:= Module[
 		{jacobianShift= 0, real, replacementRules, type, mixedFields, unmixedFields, temp},
-	
-	mixedFields= Intersection[fields, kinMix@ Fields];	
+
+	mixedFields= Intersection[fields, kinMix@ Fields];
 	unmixedFields= Complement[fields, mixedFields];
 
 	replacementRules= Join@@ Table[
 			{real, type}= Lookup[GetFields@ f, {SelfConjugate, Type}];
 			Switch[type
 			,Scalar, ScalarShift[lagTerms, f, real]
-			,Fermion, 
+			,Fermion,
 				(*format: {field replacement rule, jacobian shift (from chiral fermions)}*)
 				temp= FermionShift[lagTerms, f, real];
 				jacobianShift+= Last@ temp;
@@ -1273,11 +1225,11 @@ DetermineShifts[lagTerms_, fields_, gaugeNormalization_, kinMix_]:= Module[
 				VectorShift[lagTerms, f, gaugeNormalization@ f, real]
 			]
 		, {f, unmixedFields}];
-	
-	If[Length@ mixedFields > 0, 
+
+	If[Length@ mixedFields > 0,
 		replacementRules= Join[replacementRules, KinMixingShift[lagTerms, mixedFields, kinMix]];
 	];
-	
+
 	{replacementRules, jacobianShift}
 ]
 
@@ -1466,7 +1418,7 @@ KinMixingShift[lagTerms_, eomFields_List, kinMix_Association]:= Module[
 			fShift* UnitVector[Length@ kinMix@ Fields, kinMix[FieldMap, f] ]
 		, {f, eomFields}];
 	fieldShifts= -kinMix@ Zinv . fieldShifts;
-	
+
 	rules= Flatten@ Table[
 		fieldPattern= First@ Cases[{f[Sequence@@ pInds]},
 			Field[lab_, type_, is_, {}]:> Field[{lab, _, n}, type, is, devPat_], Infinity];

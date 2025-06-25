@@ -19,7 +19,7 @@ Package["Matchete`"]
 (*Scoping*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Exported*)
 
 
@@ -39,7 +39,7 @@ PackageExport["GaugeAnomalies"]
 PackageExport["DetailedOutput"]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Internal*)
 
 
@@ -68,7 +68,7 @@ PackageScope["GaugeAnomalyContribution"]
 (*Usage messages*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Exported*)
 
 
@@ -81,7 +81,7 @@ Hermiticity::usage    = ContractedIndices::usage = ClosedSpinChains::usage = Can
 DetailedOutput::usage = "Option for the CheckLagrangian function. It takes the values True/False. An association with the result of each test is returned when set to True.";
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Internal*)
 
 
@@ -111,7 +111,7 @@ GaugeAnomalyContribution::usage = "GaugeAnomalyContribution[field/fieldList] ret
 (*Modules*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Lagrange-like expression*)
 
 
@@ -161,7 +161,7 @@ HermitianQ[expr_,OptionsPattern[{"manifest"->False}]]:= If[OptionValue["manifest
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Contracted indices*)
 
 
@@ -178,7 +178,7 @@ UncontractedIndices[Lag_]:= Module[{indOpen=Flatten[FindOpenIndices/@ TermsToLis
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Open spin chains*)
 
 
@@ -202,7 +202,7 @@ InconsistentSpinChains@ expr_:= Cases[{expr},
 	, Infinity]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Canonically normalized kinetic term*)
 
 
@@ -289,7 +289,7 @@ HeavyMassBasisQ[Lag_]:=Module[{terms,coupling,fields,indicestypes},
 ];*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Heavy tadpoles*)
 
 
@@ -305,7 +305,7 @@ HeavyTadpoles[Lag_]:=Module[{tadterms, massterms=IsolateMassTerms[Lag,Heavy->Tru
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Charge Neutral*)
 
 
@@ -314,6 +314,7 @@ HeavyTadpoles[Lag_]:=Module[{tadterms, massterms=IsolateMassTerms[Lag,Heavy->Tru
 
 
 GetCharge::ChargeNeutral = "The term `1` is not invariant under `2` gauge group."
+GetCharge::Symbols = "The term `1` is not invariant under `2` gauge group."
 
 
 (* ::Subsubsection::Closed:: *)
@@ -335,13 +336,13 @@ GetCharge[term:Except[_Symbol|_Field|_Bar|_Power|_List],Agroup_,OptionsPattern[{
 
 
 (* ::Subsubsection::Closed:: *)
-(*ChargeNeutralQ*)
+(*TotalCharge*)
 
 
-ChargeNeutralQ[Lag_]:= Total@(Abs/@Flatten@Outer[GetCharge, TermsToList@ Lag,Keys@Select[$GaugeGroups,#[Abelian] === True&],{ChargeNeutral->True}]) == 0
+TotalCharge[Lag_]:= Total@(Abs/@Flatten@Outer[GetCharge, TermsToList@ Lag,Keys@Select[$GaugeGroups,#[Abelian] === True&],{ChargeNeutral->True}]);
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Isolated gauge field*)
 
 
@@ -483,7 +484,7 @@ Options[CheckLagrangian]={
 
 
 CheckLagrangian[Lagrangian_,opt:OptionsPattern[]]? OptionsCheck:=CheckLagrangian[Lagrangian,opt]=
-	Module[{Lag=RelabelIndices@HcExpand@Lagrangian,DetOutput=<||>,OSpinChains,HeavTadpoles,UncIndices,ExtraHeads, mHermiticity=False,mContractedIndices=False,mClosedSpinChains=False, mCanonicallyNormalized=False,mMassBasis=False,mHeavyTadpoles=False,mChargeNeutral=False,mFreeOfGaugeFields=False,mUndefinedObject=False,mGaugeAnomalies=False},
+	Module[{Lag=RelabelIndices@HcExpand@Lagrangian,DetOutput=<||>,OSpinChains,HeavTadpoles,TotCharge,UncIndices,ExtraHeads, mHermiticity=False,mContractedIndices=False,mClosedSpinChains=False, mCanonicallyNormalized=False,mMassBasis=False,mHeavyTadpoles=False,mChargeNeutral=False,mFreeOfGaugeFields=False,mUndefinedObject=False,mGaugeAnomalies=False},
 	(*Checks that Lag is a series of terms with fields or FS tensors*)
 	
 	LagrangianLikeCheck@ Lag;
@@ -541,10 +542,11 @@ CheckLagrangian[Lagrangian_,opt:OptionsPattern[]]? OptionsCheck:=CheckLagrangian
 		
 	(*check if L is neutral under all charges*) 
 	If[OptionValue@ ChargeNeutral,
-		If[ (mChargeNeutral = !ChargeNeutralQ[Lag]) , 
+		TotCharge=TotalCharge[Lag];
+		If[ (mChargeNeutral= ((TotCharge=!=0) && FreeQ[TotCharge,_Symbol])) , 
 			Message[CheckLagrangian::ChargeNeutral]; 
 			];
-		If[OptionValue@DetailedOutput, AppendTo[DetOutput,"ChargeNeutral"->!mChargeNeutral]]
+		If[OptionValue@DetailedOutput, AppendTo[DetOutput,"Charges"->TotCharge]]
 		];
 		
 	(*check if gauge fields occur outside of field strength*)

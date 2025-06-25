@@ -375,6 +375,7 @@ fieldIndQ= MemberQ[Keys@ $FlavorIndices, #] || MemberQ[
 
 
 ChargeQ@ symb_Symbol[_Integer | _Rational | _Symbol]:= MemberQ[GetGaugeGroupByProperty[Group-> U1], symb];
+ChargeQ@ symb_Symbol[a_Times | a_Plus]:= And@@(ChargeQ@symb[#]&/@(List@@a));
 ChargeQ@ _= False;
 
 
@@ -2016,14 +2017,15 @@ Options@ ExecuteModelDefinition= {
 
 
 ExecuteModelDefinition[file_String, OptionsPattern[]]:= Module[
-		{change, changedPars, childLag, defaultParams, lag, modelDef, modelOpts, modelLocalVars, n, overlap, 
+		{change, changedPars, childLag, defaultParams, lag, modelDef, modelDir, modelOpts, modelLocalVars, n, overlap, 
 		parameterSubs, symb},
+	modelDir= DirectoryName@ file;
 
 	(*Load held Model definition*)
 	modelDef= ReadList[file, Hold[Expression]];
 	modelDef= DeleteCases[modelDef, Hold@ Null];
 
-	modelDef= ReadParentModels@ modelDef;
+	modelDef= ReadParentModels[modelDef, modelDir];
 	
 	(*Determine which are the local variables in the model file(s)*)
 	modelLocalVars= Join@@ Cases[modelDef, HoldPattern@ (Module|Block)[pars_List, _]:> pars, All]// DeleteDuplicates;
@@ -2159,7 +2161,7 @@ Options@ ParentModel= {
 };
 
 
-ReadParentModels@ modelDef_List:= Module[
+ReadParentModels[modelDef_List, modelDir_String]:= Module[
 		{childDef, parentDef, parentFile, parentOps, parentPath, useParentLag= True},
 	If[FreeQ[modelDef, _ParentModel],
 		Return@ {modelDef};
@@ -2198,9 +2200,12 @@ ReadParentModels@ modelDef_List:= Module[
 	, {opt, parentOps}];
 
 	(*Read parent model definitions*)
-	parentPath= CheckAbort[DetermineModelPath[parentFile, False],
-			Message[LoadModel::findparent, parentFile];
-			Abort[];
+	(*Also check for model path with the directory of the child model*)
+	parentPath= CheckAbort[DetermineModelPath[FileNameJoin@{modelDir, parentFile}, False],
+			CheckAbort[DetermineModelPath[parentFile, False],
+				Message[LoadModel::findparent, parentFile];
+				Abort[];
+			]
 		];
 	
 	parentDef= ReadList[parentPath, Hold[Expression]];
