@@ -171,7 +171,7 @@ AuxForm/: FormBox[expr_, AuxForm]:= expr;
 
 
 SubscriptStyle2@ x_:= StyleBox[x, FontSize-> 10];
-
+SubscriptStyle@ x_:= Style[x, FontSize-> 12];
 
 Overline@ label_:= OverscriptBox[If[Head@ label === String, label, ToString@ label], StyleBox["_", FontWeight-> Bold]]
 
@@ -1145,29 +1145,29 @@ MakeFieldBox[lab_, indices_, CDinds_]:= CDFormatting[UpDownIndices[lab, indices]
         }
     ];*)
 	
-Format[Field[label_, Graviton[\[Mu]_, \[Nu]_], indices_, CDerivs_], NiceForm] :=
+Format[Field[label_, Graviton[\[Mu]_, \[Nu]_], indices_, CDerivs_], AuxForm] :=
     Module[{formattedCDerivs},
         formattedCDerivs = CDerivs /. {x___, Subscript[D, a_], Subscript[D, a_], y___} :> {x, Superscript[D, 2], y};
         Switch[formattedCDerivs,
             {}, 
-            UpDownIndices[label, Join[Bar /@ {\[Mu], \[Nu]}, indices]],
+            DisplayForm@UpDownIndices[label, Join[Bar /@ {\[Mu], \[Nu]}, indices]],
             {__}, 
-            StandardForm@Row@Flatten@{
-                Subscript[D, SubscriptStyle@Format[#, NiceForm]] & /@ formattedCDerivs,
+            DisplayForm@Row@Flatten@{
+                Subscript[D, SubscriptStyle@Format[#, AuxForm]] & /@ formattedCDerivs,
                 UpDownIndices[label, Join[Bar /@ {\[Mu], \[Nu]}, indices]]
             },
             _, 
-            StandardForm@Row@Flatten@{
-                Subscript[D, SubscriptStyle@Format[formattedCDerivs, NiceForm]], 
+            DisplayForm@Row@Flatten@{
+                Subscript[D, SubscriptStyle@Format[formattedCDerivs, AuxForm]], 
                 UpDownIndices[label, Join[Bar /@ {\[Mu], \[Nu]}, indices]]
             }
         ]
     ];
 
 (* Adjust Power Formatting *)
-NiceForm /: MakeBoxes[Power[Field[label_, Graviton[{\[Mu]_, \[Nu]_}], indices_, CDerivs_], n_], NiceForm] :=
+AuxForm /: MakeBoxes[Power[Field[label_, Graviton[{\[Mu]_, \[Nu]_}], indices_, CDerivs_], n_], AuxForm] :=
     SuperscriptBox[
-        MakeBoxes[Field[label, Graviton[{\[Mu], \[Nu]}], indices, CDerivs], NiceForm],
+        MakeBoxes[Field[label, Graviton[{\[Mu], \[Nu]}], indices, CDerivs], AuxForm],
         n
     ];
 CDFormatting[lab_, {}]:= lab;

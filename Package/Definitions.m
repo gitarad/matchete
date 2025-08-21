@@ -567,8 +567,8 @@ DefineField[fieldLabel,type,opts]=Module[
 	If[type===Vector, PrependTo[fieldInds,Lorentz]];
 
 	(*In case of Gravitons, add Lorentz twice to indices list *)
-	If[type===Graviton, PrependTo[ind,Lorentz]];
-	If[type===Graviton, PrependTo[ind,Lorentz]];
+	If[type===Graviton, PrependTo[fieldInds,Lorentz]];
+	If[type===Graviton, PrependTo[fieldInds,Lorentz]];
 
 	(* Create the usage message for the new field *)
 	If[Length[fieldInds]=== 0,
@@ -1814,12 +1814,12 @@ FreeLag[field_Symbol]:= Module[
 		Vector,
 			(*Gauge fields are normalized with their couplings*)
 			normalization= First[Query[Select[#@ Field === field&], Key@ Coupling]@ $GaugeGroups, 1&][]^-2;
-			(-1/2 normalization* Bar[FS[field,\[Mu],\[Nu],indK]]**FS[field,\[Mu],\[Nu],indK] + m Bar[field[\[Mu],ind1]]**field[\[Mu],ind2])
+			(-1/2 normalization* Bar[FS[field,\[Mu],\[Nu],indK]]**FS[field,\[Mu],\[Nu],indK] + m Bar[field[\[Mu],ind1]]**field[\[Mu],ind2]),
 		Graviton,
 			(CD[\[Mu], field[\[Alpha], \[Nu] ,indK]] * CD[\[Mu], field[\[Alpha], \[Nu] ,indK]]- CD[\[Alpha], field[\[Mu], \[Mu], indK]]*CD[\[Alpha], field[\[Nu], \[Nu], indK]]
 			+2CD[\[Nu], field[\[Mu], \[Mu], indK]]*CD[\[Alpha], field[\[Nu], \[Alpha], indK]] - 2CD[\[Alpha], field[\[Mu], \[Nu], indK]]*CD[\[Nu], field[\[Mu], \[Alpha], indK]]
-			+ m^2*field[\[Mu], \[Mu], ind1]*field[\[Nu], \[Nu], ind2]
-			- m^2*field[\[Mu], \[Nu], ind1]*field[\[Mu], \[Nu], ind2]
+			+ m*field[\[Mu], \[Mu], ind1]*field[\[Nu], \[Nu], ind2]
+			- m*field[\[Mu], \[Nu], ind1]*field[\[Mu], \[Nu], ind2]
 			)
 	]//Contract//RelabelIndices
 ]
