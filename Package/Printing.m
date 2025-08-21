@@ -1122,7 +1122,54 @@ AuxForm/: MakeBoxes[HoldPattern@ Bar@ FieldStrength[label_, lorInds_, indices_, 
 
 MakeFieldBox[lab_, indices_, CDinds_]:= CDFormatting[UpDownIndices[lab, indices], CDinds];
 
+	
+(*Format[Field[label_, Graviton[\[Mu]_, \[Nu]_], indices_, CDerivs_], NiceForm] := 
+    Switch[CDerivs,
+        {}, 
+        UpDownIndices[label, Join[Bar /@ {\[Mu], \[Nu]}, indices]],
+        {__}, 
+        StandardForm@Row@Flatten@{
+            Subscript[D, SubscriptStyle@Format[#, NiceForm]] & /@ CDerivs // 
+                {x___, Subscript[D, a_], Subscript[D, a_], y___} :> {x, D^2, y},
+            UpDownIndices[label, Join[Bar /@ {\[Mu], \[Nu]}, indices]]
+        },
+        _Pattern, 
+        StandardForm@Row@Flatten@{
+            Subscript[D, ToString[CDerivs]], 
+            UpDownIndices[label, Join[Bar /@ {\[Mu], \[Nu]}, indices]]
+        },
+        _, 
+        StandardForm@Row@Flatten@{
+            Subscript[D, SubscriptStyle@Format[CDerivs, NiceForm]], 
+            UpDownIndices[label, Join[Bar /@ {\[Mu], \[Nu]}, indices]]
+        }
+    ];*)
+	
+Format[Field[label_, Graviton[\[Mu]_, \[Nu]_], indices_, CDerivs_], NiceForm] :=
+    Module[{formattedCDerivs},
+        formattedCDerivs = CDerivs /. {x___, Subscript[D, a_], Subscript[D, a_], y___} :> {x, Superscript[D, 2], y};
+        Switch[formattedCDerivs,
+            {}, 
+            UpDownIndices[label, Join[Bar /@ {\[Mu], \[Nu]}, indices]],
+            {__}, 
+            StandardForm@Row@Flatten@{
+                Subscript[D, SubscriptStyle@Format[#, NiceForm]] & /@ formattedCDerivs,
+                UpDownIndices[label, Join[Bar /@ {\[Mu], \[Nu]}, indices]]
+            },
+            _, 
+            StandardForm@Row@Flatten@{
+                Subscript[D, SubscriptStyle@Format[formattedCDerivs, NiceForm]], 
+                UpDownIndices[label, Join[Bar /@ {\[Mu], \[Nu]}, indices]]
+            }
+        ]
+    ];
 
+(* Adjust Power Formatting *)
+NiceForm /: MakeBoxes[Power[Field[label_, Graviton[{\[Mu]_, \[Nu]_}], indices_, CDerivs_], n_], NiceForm] :=
+    SuperscriptBox[
+        MakeBoxes[Field[label, Graviton[{\[Mu], \[Nu]}], indices, CDerivs], NiceForm],
+        n
+    ];
 CDFormatting[lab_, {}]:= lab;
 CDFormatting[lab_, CDinds:{__}]:= TemplateBox[Append[Replace[CDinds//. {x___, a_, a_, y___}:> {x, 2, y}, 
 	{ 2:> SuperscriptBox["D", 2], i_:> SubscriptBox["D", MakeBoxes[i, AuxForm]]}, {1}], lab], "RowDefault"];

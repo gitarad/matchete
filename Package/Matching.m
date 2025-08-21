@@ -50,6 +50,8 @@ PackageScope["lVector"]
 PackageScope["hGhost"]
 PackageScope["lGhost"]
 PackageScope["fieldFormat"]
+PackageScope["hGraviton"]
+PackageScope["lGraviton"]
 
 
 PackageScope["OperatorDimension"]
@@ -204,7 +206,7 @@ OperatorDimension[op_]:=Module[
 ]
 
 
-TypeDim[Scalar|Vector[_]|Ghost]:=1;
+TypeDim[Scalar|Vector[_]|Ghost|Graviton[__]]:=1;
 TypeDim[Fermion]:=3/2;
 
 
@@ -301,7 +303,9 @@ $FieldTypes= <|
 	hVector-> <|Type-> Vector, Heavy-> True|>,
 	lVector-> <|Type-> Vector, Heavy-> False|>,
 	hGhost-> <|Type-> Ghost, Heavy-> True|>,
-	lGhost-> <|Type-> Ghost, Heavy-> False|>
+	lGhost-> <|Type-> Ghost, Heavy-> False|>,
+	hGraviton-> <|Type-> Graviton, Heavy-> True|>,
+	lGraviton-> <|Type-> Graviton, Heavy-> False|>
 |>;
 
 
@@ -367,6 +371,7 @@ SetSubstitutions[lag_, OptionsPattern[]] := Module[
 	(*Subtract kinetic terms that go into propagators*)
 	effLag= lag-KinOpLagrangian@@ allFieldLabels;
 	
+	(*Print[NiceForm[KinOpLagrangian@@ allFieldLabels]];*)
 	(*Add gauge-fixing terms for all light vectors*)
 	gfTerms=Sum[
 			tmp= First@ lVec@i;
@@ -466,7 +471,6 @@ SetSubstitutions[lag_, OptionsPattern[]] := Module[
 	,
 	{fieldType1, Keys@ $XFieldDofs}, {fieldType2, Keys@ $XFieldDofs}
 	];
-
 	(*Test if the X terms are consistent with the EFT expansion*)
 	tmp= First@ Normal@ MinimalBy[$XOrders, Min];
 	If[Min@ tmp[[2]] === 0, 
@@ -489,7 +493,7 @@ SetSubstitutions[lag_, OptionsPattern[]] := Module[
 			{f, DeleteDuplicates[$XFieldDofs[fieldType]/. Conj[x_]->x]}
 			]
 		,
-		{fieldType,{hScalar, hFermion, hVector, hGhost}} (*NB: Loop only over heavy DoFs*)
+		{fieldType,{hScalar, hFermion, hVector, hGhost, hGraviton}} (*NB: Loop only over heavy DoFs*)
 		];
 		
 (* Determine gauge coupling substitutions *)
@@ -542,7 +546,7 @@ FieldDoFs[fields_List]:= (#->FieldDoFs[#])&/@ fields;
 FieldDoFs[Conj@ f_Symbol]:= FieldDoFs[f, True];
 FieldDoFs[f_Symbol]:= FieldDoFs[f, False];
 FieldDoFs[f_Symbol, conj_]:= Block[{props= GetFields[f], inds, i},
-	inds= Sequence@@ ConstantArray[i, Length@ props@ Indices + If[GetFields[f, Type]=== Vector, 1, 0]];
+	inds= Sequence@@ ConstantArray[i, Length@ props@ Indices + If[GetFields[f, Type]=== Vector, 1, 0] + If[GetFields[f, Type]=== Graviton, 2, 0]];
 	ReplacePart[Switch[{props@ Type, conj}
 		,{Fermion, False},
 			Function[i, Evaluate@ f@ inds]
@@ -948,15 +952,15 @@ ListPowerTypeTraces[order_Integer, lightOnly_:False]:= Module[{possibilities, se
 	possibilities= Flatten[Last@ Reap[
 		(*Determines whether to only consider light traces or traces with at least one heavy field*)
 		If[lightOnly,
-			seed= Sow@ {{lScalar}, {lFermion}, {lVector}};
+			seed= Sow@ {{lScalar}, {lFermion}, {lVector}, {lGraviton}};
 			While[(Length@ seed> 0),
-				temp= Flatten/@ Tuples[{seed, {lScalar, lFermion, lVector}}];
+				temp= Flatten/@ Tuples[{seed, {lScalar, lFermion, lVector, lGraviton}}];
 				seed= Sow@ Select[temp, Total@ BlockMap[Xords, #, 2, 1] < order&];
 			];
 		,
-			seed= Sow@ {{hScalar}, {hFermion}, {hVector}, {hGhost}};
+			seed= Sow@ {{hScalar}, {hFermion}, {hVector}, {hGhost}, {hGraviton}};
 			While[(Length@ seed> 0),
-				temp= Flatten/@ Tuples[{seed, {hScalar, lScalar, hFermion, lFermion, hVector, lVector, hGhost, lGhost}}];
+				temp= Flatten/@ Tuples[{seed, {hScalar, lScalar, hFermion, lFermion, hVector, lVector, hGhost, lGhost, hGraviton, lGraviton}}];
 				seed= Sow@ Select[temp, Total@ BlockMap[Xords, #, 2, 1] < order&];
 			];
 		];
@@ -991,7 +995,7 @@ LoopMatch[opt:OptionsPattern[]]? OptionsCheck:= Module[
 		{field, fields, out, logTraces, powerTraces, i=0, myTraces},
 	
 	(* determine log and power traces *)
-	logTraces = {hScalar, hFermion, hVector, hGhost};
+	logTraces = {hScalar, hFermion, hVector, hGraviton, hGhost};
 	powerTraces = ListPowerTypeTraces[OptionValue@ EFTOrder];
 	
 	(* reduce to manually selected traces if applicable *)
@@ -1034,7 +1038,7 @@ LoopMatch[opt:OptionsPattern[]]? OptionsCheck:= Module[
 ];
 
 
-fieldFormat= {hScalar-> "\[CapitalPhi]", lScalar-> "\[Phi]", hFermion-> "\[CapitalPsi]", lFermion-> "\[Psi]", hVector-> "V", lVector-> "A", lGhost-> "cA", hGhost-> "cV"};
+fieldFormat= {hScalar-> "\[CapitalPhi]", lScalar-> "\[Phi]", hFermion-> "\[CapitalPsi]", lFermion-> "\[Psi]", hVector-> "V", lVector-> "A", lGhost-> "cA", hGhost-> "cV", hGraviton->"H", lGraviton->"h"};
 fieldFormatReverse= {"\[CapitalPhi]"-> hScalar, "\[Phi]"-> lScalar, "\[CapitalPsi]"-> hFermion, "\[Psi]"-> lFermion, "V"-> hVector, "A"-> lVector, "cA"-> lGhost, "cV"-> hGhost};
 
 
@@ -1099,6 +1103,8 @@ FieldType[f_]:= Switch[Lookup[GetFields[f], {Type, Heavy}]
 	,{Vector, False}, lVector
 	,{Ghost, True}, hGhost
 	,{Ghost, False}, lGhost
+	,{Graviton, True}, hGraviton
+	,{Graviton, False}, lGraviton
 ];
 
 

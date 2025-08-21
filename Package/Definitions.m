@@ -35,6 +35,7 @@ PackageExport["Scalar"]
 PackageExport["Fermion"]
 PackageExport["Vector"]
 PackageExport["Ghost"]
+PackageExport["Graviton"]
 
 
 PackageExport["Indices"]
@@ -118,6 +119,7 @@ PackageExport["PlusHc"]
 
 
 PackageExport["FreeLag"]
+PackageExport["KinOpLagrangian"]
 PackageExport["LoadModel"]
 PackageExport["ParentModel"]
 PackageExport["ParameterDefault"]
@@ -177,6 +179,7 @@ Scalar::usage  =    "Field[\[Phi],Scalar,{indices},{CDerivs}] denotes a scalar f
 Vector::usage  =    "Field[A,Vector[Index[\[Mu],Lorentz]],{indices},{CDerivs}] denotes a vector field \!\(\*SubscriptBox[\(A\), \(\[Mu]\)]\).";
 Fermion::usage =    "Field[\[Psi],Fermion,{indices},{CDerivs}] denotes a fermion field \[Psi].";
 Ghost::usage   =    "Field[c,Ghost,{indices},{CDerivs}] denotes a ghost field c.";
+Graviton::usage =   "Field[g,Graviton,{indices},{CDerivs}] denots a massless graviton field g"
 
 
 Indices::usage       = "Indices is an option for the routine DefineField that specifies a list of representations under which the field transforms. By default, Indices is an empty list {}.";
@@ -415,7 +418,7 @@ DefineField[fieldLabel,type,opts]=Module[
 	];
 
 	(*Check that 'type' is valid.*)
-	If[!MatchQ[type,Scalar|Vector|Fermion|Ghost],
+	If[!MatchQ[type,Scalar|Vector|Fermion|Ghost|Graviton],
 		Message[DefineField::FieldType,type];
 		Abort[]
 	];
@@ -487,7 +490,7 @@ DefineField[fieldLabel,type,opts]=Module[
 			Append[massInfo, {}]
 		,{_, _, _},
 			(*Do not allow light scalar and vector masses with flavor indices*)
-			If[First@ massInfo === Light && MemberQ[{Scalar, Vector}, type] && Last@ massInfo =!= {},
+			If[First@ massInfo === Light && MemberQ[{Scalar, Vector,Graviton}, type] && Last@ massInfo =!= {},
 				Message[DefineField::LightIndices];
 				Abort[];
 			];
@@ -563,6 +566,10 @@ DefineField[fieldLabel,type,opts]=Module[
 	(*In case of vectors, add Lorentz to indices list *)
 	If[type===Vector, PrependTo[fieldInds,Lorentz]];
 
+	(*In case of Gravitons, add Lorentz twice to indices list *)
+	If[type===Graviton, PrependTo[ind,Lorentz]];
+	If[type===Graviton, PrependTo[ind,Lorentz]];
+
 	(* Create the usage message for the new field *)
 	If[Length[fieldInds]=== 0,
 	fieldLabel::usage=ToString[fieldLabel]<>"[]: Gives a " <> ToString[type] <> " field with label "<>ToString[fieldLabel]<>".";
@@ -593,6 +600,16 @@ DefineField[fieldLabel,type,opts]=Module[
 			inputInd = Drop[inputInd,1];
 			i = Drop[i,1];
 		];
+		
+		(*Extract Lorentz index for Gravitons*)
+		If[t===Graviton,
+			t   = Graviton[
+			Index[Quiet[First@inputInd,First::normal],Lorentz], 
+			Index[Quiet[First@Rest[inputInd],First::normal],Lorentz]];
+			
+			inputInd = Drop[inputInd,2];
+			i = Drop[i,2];
+		];
 
 		If[OptionValue@Chiral===False,
 			Field[l, t, Thread@Index[inputInd,i], {}],
@@ -617,7 +634,8 @@ DefineField[fieldLabel,type,opts]=Module[
 			FieldStrength[fieldLabel, {Index[\[Mu],Lorentz], Index[\[Nu],Lorentz]}, Thread@Index[inputInd, i], {}]
 		]
 	];
-
+	
+	
 	(*Setup of Conj (used to clasify operator types)*)
 	If[OptionValue@ SelfConjugate,
 		Conj@ fieldLabel= fieldLabel
@@ -1287,6 +1305,7 @@ FieldStrength[_, _, {Bar@ a_, a_}, __]:= 0;
 
 (* Order the Lorentz indices canonically *)
 FieldStrength[label_, {\[Mu]_,\[Nu]_}, rest___] := -FieldStrength[label, {\[Nu],\[Mu]}, rest] /; !OrderedQ[{\[Mu],\[Nu]}]
+Graviton[\[Mu]_,\[Nu]_] := Graviton[\[Nu],\[Mu]] /; !OrderedQ[{\[Mu],\[Nu]}]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1747,7 +1766,7 @@ FreeLag::UndefinedField = "The field '`1`' has not been defined.";
 
 
 FreeLag[field_Symbol]:= Module[
-	{fieldType, isChiralFermion, massInd, normalization, fieldInd, indK, ind1, ind2, indM, m, i, j, a, \[Mu], \[Nu]},
+	{fieldType, isChiralFermion, massInd, normalization, fieldInd, indK, ind1, ind2, indM, m, i, j, a, \[Mu], \[Nu], \[Alpha]},
 
 	(* Check if the field has been defined *)
 	If[!KeyExistsQ[$FieldAssociation, field], Message[FreeLag::UndefinedField, field]; Abort[]];
@@ -1796,6 +1815,12 @@ FreeLag[field_Symbol]:= Module[
 			(*Gauge fields are normalized with their couplings*)
 			normalization= First[Query[Select[#@ Field === field&], Key@ Coupling]@ $GaugeGroups, 1&][]^-2;
 			(-1/2 normalization* Bar[FS[field,\[Mu],\[Nu],indK]]**FS[field,\[Mu],\[Nu],indK] + m Bar[field[\[Mu],ind1]]**field[\[Mu],ind2])
+		Graviton,
+			(CD[\[Mu], field[\[Alpha], \[Nu] ,indK]] * CD[\[Mu], field[\[Alpha], \[Nu] ,indK]]- CD[\[Alpha], field[\[Mu], \[Mu], indK]]*CD[\[Alpha], field[\[Nu], \[Nu], indK]]
+			+2CD[\[Nu], field[\[Mu], \[Mu], indK]]*CD[\[Alpha], field[\[Nu], \[Alpha], indK]] - 2CD[\[Alpha], field[\[Mu], \[Nu], indK]]*CD[\[Nu], field[\[Mu], \[Alpha], indK]]
+			+ m^2*field[\[Mu], \[Mu], ind1]*field[\[Nu], \[Nu], ind2]
+			- m^2*field[\[Mu], \[Nu], ind1]*field[\[Mu], \[Nu], ind2]
+			)
 	]//Contract//RelabelIndices
 ]
 
@@ -1817,7 +1842,7 @@ KinOpLagrangian[field_, fields__]:= Plus@@ KinOpLagrangian/@ {field, fields};
 
 KinOpLagrangian[]= 0;
 KinOpLagrangian[field_Symbol]:=Module[
-		{FieldType, MassInd, FieldInd, indK, ind1, ind2, indM, m, i, j, a, \[Mu], \[Nu],fluctuation},
+		{FieldType, MassInd, FieldInd, indK, ind1, ind2, indM, m, i, j, a, \[Mu], \[Nu],  \[Alpha], fluctuation},
 	FieldInd= GetFields[field, Indices];
 	FieldType= GetFields[field, Type];
 
@@ -1849,6 +1874,11 @@ KinOpLagrangian[field_Symbol]:=Module[
 			,
 				-Bar@ BackgroundCD[\[Mu], field[\[Nu], indK]]** BackgroundCD[\[Mu], field[\[Nu], indK]] + m^2 Bar[field[\[Mu],ind1]]**field[\[Mu],ind2]
 			]
+		,Graviton,
+			BackgroundCD[\[Mu], field[\[Alpha], \[Nu] ,indK]] ** BackgroundCD[\[Mu], field[\[Alpha], \[Nu] ,indK]]- BackgroundCD[\[Alpha], field[\[Mu], \[Mu], indK]]**BackgroundCD[\[Alpha], field[\[Nu], \[Nu], indK]]
+			+2BackgroundCD[\[Nu], field[\[Mu], \[Mu], indK]]**BackgroundCD[\[Alpha], field[\[Nu], \[Alpha], indK]] - 2BackgroundCD[\[Alpha], field[\[Mu], \[Nu], indK]]**BackgroundCD[\[Nu], field[\[Mu], \[Alpha], indK]]
+			+ m^2(field[\[Mu], \[Mu], ind1]**field[\[Nu], \[Nu], ind2]
+			- field[\[Mu], \[Nu], ind1]**field[\[Mu], \[Nu], ind2])
 	]//Expand//RelabelIndices
 ];
 

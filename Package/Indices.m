@@ -421,6 +421,8 @@ RelabelIndices[expression:Except[_Plus], OptionsPattern[]]:=Block[
 		unique = OptionValue[Unique]
 	},
 	(* by default expand expression first *)
+	
+	
 	If[OptionValue[Expand],
 		expr = LagrangianExpand[expr]
 	];

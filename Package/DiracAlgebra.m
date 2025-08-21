@@ -781,6 +781,7 @@ Transp[x_, y__]:= Reverse[NonCommutativeMultiply[x, y]/. d_DiracProduct:> Transp
 
 
 (* ::Subsubsection::Closed:: *)
+Bar@ f:Field[label_, Scalar|Vector[_]|Graviton[_,_]|Ghost, __]/; $FieldAssociation[label, SelfConjugate]:=f;
 (*CConj*)
 
 

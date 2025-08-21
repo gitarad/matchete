@@ -169,12 +169,14 @@ UncontractedIndices@ 0= {};
 
 
 UncontractedIndices[Lag_]:= Module[{indOpen=Flatten[FindOpenIndices/@ TermsToList@ Lag], indDummyBar},
+
 	If[indOpen=!={}, Return[indOpen]];
 	indDummyBar=Flatten[Complement[Bar/@FindDummyIndices[#],
-			Flatten[(List@@#)//.{Power[x_,n_]/;Element[n,NonNegativeIntegers]:>ConstantArray[x,n],FieldStrength[_,ind_,indG_,indL_]:>Flatten@Join[ind,indG,indL], _?NumericQ->Nothing,_Proj->Nothing,NonCommutativeMultiply->List,DiracProduct->List,GammaM[ind__]:>List@ind,Field[_,Vector[indV_],ind_,indL_]:>Join[List@indV,ind,indL],Field[_,_,ind_,indL_]:>Join[ind,indL], Coupling[_,ind_,_]:>ind, CG[_,ind_]:>ind}]] 
+			Flatten[(List@@#)//.{Power[x_,n_]/;Element[n,NonNegativeIntegers]:>ConstantArray[x,n],FieldStrength[_,ind_,indG_,indL_]:>Flatten@Join[ind,indG,indL], _?NumericQ->Nothing,_Proj->Nothing,NonCommutativeMultiply->List,DiracProduct->List,GammaM[ind__]:>List@ind,Field[_,Vector[indV_],ind_,indL_]:>Join[List@indV,ind,indL],Field[_,Graviton[indV1_, indV2_], ind_, indL_]:>Flatten@Join[List@indV1,List@indV2, ind,indL],Field[_,_,ind_,indL_]:>Join[ind,indL], Coupling[_,ind_,_]:>ind, CG[_,ind_]:>ind}]] 
 		& /@TermsToList@ Lag];
 	If[indDummyBar=!={}, Return[Bar/@indDummyBar]];
 	{}
+	
 ]
 
 
