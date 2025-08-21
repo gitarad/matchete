@@ -46,6 +46,8 @@ PackageScope["WilsonLine"]
 PackageScope["WilsonTerm"]
 PackageScope["GenericIndex"]
 PackageScope["XOrders"]
+PackageScope["PropGravitonExpand"]
+PackageScope["PropBosonExpand"]
 
 
 PackageScope["Fields"]
@@ -88,14 +90,13 @@ PowerTypeSTr[propTypes_List, eftOrder_, OptionsPattern[]]:= Module[
 		{maxEFTOrd, maxPropExpansionOrder, propOrder, result, genexp, insertions, preFactor},
 	(* propTypes: list of propagator types as obtained by ListPowerTypeTraces. *)
 	preFactor= -I hbar/ 2 Switch[First@ propTypes,
-			hScalar| hVector| lScalar| lVector, 1,
+			hScalar| hVector| lScalar| lVector| hGraviton| lGraviton, 1,
 			hFermion| hGhost| lFermion| lGhost, - 1
 		];
 	maxEFTOrd= (eftOrder/. List-> Identity);
 	
 	(* Determine maximal expansion order for propagators: MaxPropExpansionOrder. *)
 	maxPropExpansionOrder = maxEFTOrd - Total[Partition[propTypes, 2, 1, 1]/. $XOrdMin];
-	
 	(* Expand and evaluate STr *)
 	(*Sum exclusively over all possible propagator expansion orders*)
 	result = Sum[
@@ -174,6 +175,8 @@ PropExpand[fType_, mass_, ord_, OptionsPattern[]]:= Switch[$FieldTypes[fType, Ty
 		PropFermionExpand[mass, ord]
 	,Vector,
 		-PropBosonExpand[mass, ord]
+	,Graviton,
+		PropGravitonExpand[mass,ord]
 	,_,
 		PropBosonExpand[mass, ord]
 ]
@@ -207,7 +210,47 @@ PropBosonExpand[mass_, ord_]:= Module[{indices, m, set, singleCDs,  pairCDs},
 ]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
+(*Expansion of graviton propagator*)
+
+
+(* ::Text:: *)
+(*The expansion is the n'th EFT order term of Pabcd/[(k+ P)^2 - M^2] = Pabcd/[k^2 - M^2] \sum_{n=0} ( -1)^n ( [2 k.P + P^2] / [k^2 - M^2] )^n , where Pabcd is the mass dependent numerator.*)
+
+
+PropGravitonExpand[mass_, ord_]:= Module[{c,m,x,P,ind1,ind2,ind3,ind4},
+	P[mu_,nu_]:=Metric[mu,nu]-LoopMom[Index[mu,Lorentz]]LoopMom[Index[nu,Lorentz]]/mass^2/.{LoopMom[Index[aa_,Lorentz]]:>LoopMom[Index[aa,Lorentz]]+I*c*OpenCD@{aa}};
+	x = CoefficientList[Collect[1/2(P[ind1,ind3]P[ind2,ind4]+P[ind1,ind4]P[ind2,ind3])-1/3P[ind1,ind2]P[ind3,ind4],c],c];
+	If[mass===0,FuncNCM[1/2*(Metric[ind1,ind3]Metric[ind2,ind4]+Metric[ind1,ind4]Metric[ind2,ind3]-Metric[ind1,ind2]Metric[ind3,ind4]),PropGravitonExpandHelper[mass, ord]],
+	Sum[FuncNCM[x[m],PropGravitonExpandHelper[mass, ord-m+1]],{m,1,5}]]
+	]
+
+
+PropGravitonExpandHelper[mass_, -4]:= 0;
+PropGravitonExpandHelper[mass_, -3]:= 0;
+PropGravitonExpandHelper[mass_, -2]:= 0;
+PropGravitonExpandHelper[mass_, -1]:= 0;
+PropGravitonExpandHelper[mass_, 0]:= Prop@ mass;
+PropGravitonExpandHelper[mass_, ord_]:= Module[{indices, m, set, singleCDs,  pairCDs},
+	indices= Index[#, Lorentz]&/@ Table[Unique@ "mu", {m, ord}]; 
+	
+	(*Sum over the number of D^2 insertions*)
+	Power[-I, ord] Sum[
+		Power[-1, m]* Power[2, ord- 2m]* Power[Prop@ mass, ord+ 1- m]*
+		 Times@@ LoopMom/@ indices[[;;-2 m-1]]* 
+		(*Sum the ways to position the D^2 insertions*)
+		Sum[
+			singleCDs= OpenCD/@ List/@ indices[[;;-2 m-1]];
+			pairCDs= FuncNCM@@ OpenCD/@ {{#}, {#}} &/@  indices[[-2m;; -m-1]];
+			pairCDs= FuncNCM@@@ VariableLengthPartition[pairCDs, set];
+			(*interweave the list of D_mu's and D^2's*)
+			FuncNCM@@ Riffle[pairCDs, singleCDs]
+		, {set, IntegerSets[m, 1+ord- 2m]}]
+	, {m, 0, Floor[ord/2]}]
+]
+
+
+(* ::Subsubsection::Closed:: *)
 (*Expansion of fermion propagator*)
 
 
@@ -335,7 +378,7 @@ LogTypeSTr[propType_, {eftOrder_}, OptionsPattern[]]:= Module[
 		{result, genexp, insertions, preFactor},
 	
 	preFactor= I hbar/ 2 Switch[propType,
-			hScalar| hVector, 1,
+			hScalar| hVector | hGraviton, 1,
 			hFermion| hGhost, - 1
 		];
 	
@@ -387,6 +430,8 @@ PropLogExpand[fType_, mass_, ord_, OptionsPattern[]]:= Switch[$FieldTypes[fType,
 		LogFermionExpand[mass, ord]
 	,Vector,
 		-LogBosonExpand[mass, ord]
+	,Graviton,
+		-LogBosonExpand[mass,ord]
 	,_,
 		LogBosonExpand[mass, ord]
 ]
@@ -418,6 +463,8 @@ LogBosonExpand[mass_, ord_]:= Module[{indices, m, set, singleCDs,  pairCDs},
 		, {set, IntegerSets[m, 1+ ord- 2m]}]
 	, {m, 0, Floor[ord/2]}]
 ]
+
+(*LogGravExpand needs to be added here*)
 
 
 (* ::Subsubsection:: *)
@@ -590,7 +637,9 @@ WilsonTermExpand[field_, {ind1_, ind2_}, devInds_List]:= Module[
 		{conj, devSet, fieldCharges, fsSum, indices, fieldLabel, flavorIndices, 
 		gaugeIndSet, gaugeIndices, flavorDeltas, fieldStrengthFactor, lorentz},
 	fieldLabel= If[(conj= MatchQ[field, _Conj]), First@ field, field];
-	lorentz= If[$FieldAssociation[fieldLabel, Type] === Vector, Metric[ind1, ind2], 1]; 
+	lorentz= If[$FieldAssociation[fieldLabel, Type] === Vector, Metric[ind1, ind2], 
+	If[$FieldAssociation[fieldLabel, Type] === Graviton, Metric[ind1, ind2],
+	1]]; 
 	indices= If[conj, Bar, Identity]@ Map[{Index[ind1, #1], Bar@ Index[ind2, #1]} &, 
 		GetFields[fieldLabel, Indices]];
 	
@@ -732,7 +781,7 @@ GaugeIndexSet[originalSet_, multiples_Integer]:= Block[{lab, out},
 (*Masses of light field types vanish*)
 
 
-Mop[lScalar|lFermion|lVector|lGhost, __]:= 0;
+Mop[lScalar|lFermion|lVector|lGhost|lGraviton, __]:= 0;
 
 
 (* ::Text:: *)
@@ -747,7 +796,7 @@ Mterm[Conj@ lab_, i_]:= Mterm[lab, i];
 
 
 (* ::Text:: *)
-(*Partition a list into lists of variabel length  *)
+(*Partition a list into lists of variable length  *)
 
 
 VariableLengthPartition[list_, lengths_]:= 

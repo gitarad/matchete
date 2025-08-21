@@ -1422,7 +1422,7 @@ General::fields= "`1` is not a valid list of matter fields. A list of matter fie
 
 
 MatterFieldListCheck@ fields_:= Block[{matterFields},
-	matterFields= Keys@ Query[Select[(MatchQ[#[Type], Scalar|Fermion|Vector]&)]]@ $FieldAssociation;
+	matterFields= Keys@ Query[Select[(MatchQ[#[Type], Scalar|Fermion|Vector|Graviton]&)]]@ $FieldAssociation;
 	If[!MatchQ[fields, f_List /; SubsetQ[matterFields, f/. Conj-> Identity]],
 		Message[General::fields, fields];
 		Abort[];
@@ -2035,6 +2035,7 @@ GreensSimplify[arg_,opt:OptionsPattern[{Basis4D->False}]]:= Block[{expr=BetterEx
 	
 	(* simplifications *)
 	LagrangianLikeCheck@ expr;
+
 	expr= OpsToFieldForm@ CollectCoefficientsWithSyms@ IBPSimplify[ ContractDelta@ ContractCGs@ expr,opt];
 
 	(* add back the constants *)

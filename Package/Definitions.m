@@ -38,6 +38,7 @@ PackageExport["Scalar"]
 PackageExport["Fermion"]
 PackageExport["Vector"]
 PackageExport["Ghost"]
+PackageExport["Graviton"]
 
 
 PackageExport["Indices"]
@@ -122,6 +123,7 @@ PackageExport["PlusHc"]
 
 
 PackageExport["FreeLag"]
+PackageExport["KinOpLagrangian"]
 PackageExport["LoadModel"]
 PackageExport["GetModels"]
 PackageExport["ModelParameters"]
@@ -178,6 +180,7 @@ Scalar::usage  =    "Field[\[Phi],Scalar,{indices},{CDerivs}] denotes a scalar f
 Vector::usage  =    "Field[A,Vector[Index[\[Mu],Lorentz]],{indices},{CDerivs}] denotes a vector field \!\(\*SubscriptBox[\(A\), \(\[Mu]\)]\).";
 Fermion::usage =    "Field[\[Psi],Fermion,{indices},{CDerivs}] denotes a fermion field \[Psi].";
 Ghost::usage   =    "Field[c,Ghost,{indices},{CDerivs}] denotes a ghost field c.";
+Graviton::usage =   "Field[g,Graviton,{indices},{CDerivs}] denots a massless graviton field g"
 
 
 Indices::usage       = "Indices is an option for the routine DefineField that specifies a list of representations under which the field transforms. By default, Indices is an empty list {}.";
@@ -366,7 +369,7 @@ DefineField[label,type,opts]=Module[
 	];
 
 	(*Check that 'type' is valid.*)
-	If[!MatchQ[type,Scalar|Vector|Fermion|Ghost],
+	If[!MatchQ[type,Scalar|Vector|Fermion|Ghost|Graviton],
 		Message[DefineField::FieldType,type];
 		Abort[]
 	];
@@ -424,7 +427,7 @@ DefineField[label,type,opts]=Module[
 			scale = First[s];,
 		{Heavy|Light,_,_},
 			(*Do not allow light scalar and vector masses with flavor indices*)
-			If[First@s===Light && MemberQ[{Scalar,Vector},type] && Last@s=!={},
+			If[First@s===Light && MemberQ[{Scalar,Vector, Graviton},type] && Last@s=!={},
 				Message[DefineField::LightIndices];
 				Abort[]
 			];
@@ -456,6 +459,10 @@ DefineField[label,type,opts]=Module[
 	(*In case of vectors, add Lorentz to indices list *)
 	If[type===Vector, PrependTo[ind,Lorentz]];
 
+	(*In case of Gravitons, add Lorentz twice to indices list *)
+	If[type===Graviton, PrependTo[ind,Lorentz]];
+	If[type===Graviton, PrependTo[ind,Lorentz]];
+
 	(* Create the usage message for the new field *)
 	If[Length[ind]== 0,
 	label::usage=ToString[label]<>"[]: Gives a " <> ToString[type] <> " field with label "<>ToString[label]<>".";
@@ -486,6 +493,16 @@ DefineField[label,type,opts]=Module[
 			inputInd = Drop[inputInd,1];
 			i = Drop[i,1];
 		];
+		
+		(*Extract Lorentz index for Gravitons*)
+		If[t===Graviton,
+			t   = Graviton[
+			Index[Quiet[First@inputInd,First::normal],Lorentz], 
+			Index[Quiet[First@Rest[inputInd],First::normal],Lorentz]];
+			
+			inputInd = Drop[inputInd,2];
+			i = Drop[i,2];
+		];
 
 		If[OptionValue@Chiral===False,
 			Field[l, t, Thread@Index[inputInd,i], {}],
@@ -510,7 +527,8 @@ DefineField[label,type,opts]=Module[
 			FieldStrength[label, {Index[\[Mu],Lorentz], Index[\[Nu],Lorentz]}, Thread@Index[inputInd, i], {}]
 		]
 	];
-
+	
+	
 	(*Setup of Conj (used to clasify operator types)*)
 	If[OptionValue@ SelfConjugate,
 		Conj@ label= label
@@ -1132,6 +1150,7 @@ FieldStrength[_, _, {Bar@ a_, a_}, __]:= 0;
 
 (* Order the Lorentz indices canonically *)
 FieldStrength[label_, {\[Mu]_,\[Nu]_}, rest___] := -FieldStrength[label, {\[Nu],\[Mu]}, rest] /; !OrderedQ[{\[Mu],\[Nu]}]
+Graviton[\[Mu]_,\[Nu]_] := Graviton[\[Nu],\[Mu]] /; !OrderedQ[{\[Mu],\[Nu]}]
 
 
 (* ::Subsection::Closed:: *)
@@ -1476,7 +1495,7 @@ FreeLag::UndefinedField = "The field '`1`' has not been defined.";
 
 
 FreeLag[field_Symbol]:=Module[
-	{FieldType,MassInd,FieldInd,indK,ind1,ind2,indM,m,i,j,a,\[Mu],\[Nu]},
+	{FieldType,MassInd,FieldInd,indK,ind1,ind2,indM,m,i,j,a,\[Mu],\[Nu], \[Alpha]},
 
 	(* Check if the field has been defined *)
 	If[!KeyExistsQ[$FieldAssociation,field],Message[FreeLag::UndefinedField,field];Abort[]];
@@ -1506,15 +1525,21 @@ FreeLag[field_Symbol]:=Module[
 
 	If[$FieldAssociation[field][SelfConjugate]==True,1/2,1]Switch[FieldType,
 		Scalar|Ghost,
-			(Bar[CD[\[Mu],field[indK]]]**CD[\[Mu],field[indK]] - m^2 Bar[field[ind1]]**field[ind2]),
+			(Bar[CD[\[Mu],field[indK]]]*CD[\[Mu],field[indK]] - m^2 Bar[field[ind1]]*field[ind2]),
 		Fermion,
 			If[$FieldAssociation[field][Chiral]===False,
-				(I Bar[field[indK]]**\[Gamma][\[Mu]]**CD[\[Mu],field[indK]] - PlusHc[m/2 Bar[field[ind1]]**field[ind2]])
+				(I Bar[field[indK]]\[Gamma][\[Mu]]*CD[\[Mu],field[indK]] - PlusHc[m/2 Bar[field[ind1]]*field[ind2]])
 				,
-				(I Bar[field[indK]]**\[Gamma][\[Mu]]**CD[\[Mu],field[indK]] - PlusHc[m/4 (Bar[CConj[field[ind1]]]**field[ind2]+Bar[field[ind1]]**CConj[field[ind2]])])
+				(I Bar[field[indK]]\[Gamma][\[Mu]]*CD[\[Mu],field[indK]] - PlusHc[m/4 (Bar[CConj[field[ind1]]]field[ind2]+Bar[field[ind1]]*CConj[field[ind2]])])
 			],
 		Vector,
-			(-1/2 Bar[FS[field,\[Mu],\[Nu],indK]]**FS[field,\[Mu],\[Nu],indK] + m^2 Bar[field[\[Mu],ind1]]**field[\[Mu],ind2])
+			(-1/2 Bar[FS[field,\[Mu],\[Nu],indK]]*FS[field,\[Mu],\[Nu],indK] + m^2 Bar[field[\[Mu],ind1]]*field[\[Mu],ind2]),
+		Graviton,
+			(CD[\[Mu], field[\[Alpha], \[Nu] ,indK]] * CD[\[Mu], field[\[Alpha], \[Nu] ,indK]]- CD[\[Alpha], field[\[Mu], \[Mu], indK]]*CD[\[Alpha], field[\[Nu], \[Nu], indK]]
+			+2CD[\[Nu], field[\[Mu], \[Mu], indK]]*CD[\[Alpha], field[\[Nu], \[Alpha], indK]] - 2CD[\[Alpha], field[\[Mu], \[Nu], indK]]*CD[\[Nu], field[\[Mu], \[Alpha], indK]]
+			+ m^2*field[\[Mu], \[Mu], ind1]*field[\[Nu], \[Nu], ind2]
+			- m^2*field[\[Mu], \[Nu], ind1]*field[\[Mu], \[Nu], ind2]
+			)
 	]//Expand//RelabelIndices
 ]
 
@@ -1536,7 +1561,7 @@ KinOpLagrangian[field_, fields__]:= Plus@@ KinOpLagrangian/@ {field, fields};
 
 KinOpLagrangian[]= 0;
 KinOpLagrangian[field_Symbol]:=Module[
-		{FieldType, MassInd, FieldInd, indK, ind1, ind2, indM, m, i, j, a, \[Mu], \[Nu],fluctuation},
+		{FieldType, MassInd, FieldInd, indK, ind1, ind2, indM, m, i, j, a, \[Mu], \[Nu],  \[Alpha], fluctuation},
 	FieldInd= GetFields[field, Indices];
 	FieldType= GetFields[field, Type];
 
@@ -1564,6 +1589,11 @@ KinOpLagrangian[field_Symbol]:=Module[
 			]
 		,Vector,
 			-Bar@ BackgroundCD[\[Mu], field[\[Nu], indK]]** BackgroundCD[\[Mu], field[\[Nu], indK]] + m^2 Bar[field[\[Mu],ind1]]**field[\[Mu],ind2]
+		,Graviton,
+			BackgroundCD[\[Mu], field[\[Alpha], \[Nu] ,indK]] ** BackgroundCD[\[Mu], field[\[Alpha], \[Nu] ,indK]]- BackgroundCD[\[Alpha], field[\[Mu], \[Mu], indK]]**BackgroundCD[\[Alpha], field[\[Nu], \[Nu], indK]]
+			+2BackgroundCD[\[Nu], field[\[Mu], \[Mu], indK]]**BackgroundCD[\[Alpha], field[\[Nu], \[Alpha], indK]] - 2BackgroundCD[\[Alpha], field[\[Mu], \[Nu], indK]]**BackgroundCD[\[Nu], field[\[Mu], \[Alpha], indK]]
+			+ m^2(field[\[Mu], \[Mu], ind1]**field[\[Nu], \[Nu], ind2]
+			- field[\[Mu], \[Nu], ind1]**field[\[Mu], \[Nu], ind2])
 	]//Expand//RelabelIndices
 ];
 

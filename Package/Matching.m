@@ -52,6 +52,8 @@ PackageScope["hVector"]
 PackageScope["lVector"]
 PackageScope["hGhost"]
 PackageScope["lGhost"]
+PackageScope["hGraviton"]
+PackageScope["lGraviton"]
 
 
 PackageScope["ValidateCurrentVersion"]
@@ -192,7 +194,7 @@ OperatorDimension[op_]:=Module[
 ]
 
 
-TypeDim[Scalar|Vector[_]|Ghost]:=1;
+TypeDim[Scalar|Vector[_]|Ghost|Graviton[__]]:=1;
 TypeDim[Fermion]:=3/2;
 
 
@@ -290,7 +292,9 @@ $FieldTypes= <|
 	hVector-> <|Type-> Vector, Heavy-> True|>,
 	lVector-> <|Type-> Vector, Heavy-> False|>,
 	hGhost-> <|Type-> Ghost, Heavy-> True|>,
-	lGhost-> <|Type-> Ghost, Heavy-> False|>
+	lGhost-> <|Type-> Ghost, Heavy-> False|>,
+	hGraviton-> <|Type-> Graviton, Heavy-> True|>,
+	lGraviton-> <|Type-> Graviton, Heavy-> False|>
 |>;
 
 
@@ -335,6 +339,7 @@ DeriveSubstitutions[lag_, OptionsPattern[]] := Module[
 (* Prepare the Lagrangian *)
 	(*Subtract kinetic terms that go into propagators*)
 	effLag=lag-KinOpLagrangian@@ allFieldLabels;
+	(*Print[NiceForm[KinOpLagrangian@@ allFieldLabels]];*)
 	(*Add gauge-fixing terms for all light vectors*)
 	gfTerms=Sum[
 			GaugeFixing@GreensSimplify[
@@ -382,7 +387,6 @@ DeriveSubstitutions[lag_, OptionsPattern[]] := Module[
 	,
 	{fieldType1,Keys@fields},{fieldType2,Keys@fields}
 	];
-
 (* Determine Mass substitutions *)
 	mSubs= Flatten@ Table[
 			Table[
@@ -397,9 +401,8 @@ DeriveSubstitutions[lag_, OptionsPattern[]] := Module[
 			{f,DeleteDuplicates[fields[fieldType]/.Conj[x_]->x]}
 			]
 		,
-		{fieldType,{hScalar, hFermion, hVector, hGhost}} (*NB: Loop only over heavy DoFs*)
+		{fieldType,{hScalar, hFermion, hVector, hGhost, hGraviton}} (*NB: Loop only over heavy DoFs*)
 		];
-
 	{fields,XOrders,XOrdMin,xSubs,mSubs}
 ]
 
@@ -447,7 +450,7 @@ FieldDoFs[fields_List]:= (#->FieldDoFs[#])&/@ fields;
 FieldDoFs[Conj@ f_Symbol]:= FieldDoFs[f, True];
 FieldDoFs[f_Symbol]:= FieldDoFs[f, False];
 FieldDoFs[f_Symbol, conj_]:= Block[{props= GetFields[f], inds, i},
-	inds= Sequence@@ ConstantArray[i, Length@ props@ Indices + If[GetFields[f, Type]=== Vector, 1, 0]];
+	inds= Sequence@@ ConstantArray[i, Length@ props@ Indices + If[GetFields[f, Type]=== Vector, 1, 0] + If[GetFields[f, Type]=== Graviton, 2, 0]];
 	ReplacePart[Switch[{props@ Type, conj}
 		,{Fermion, False},
 			Function[i, Evaluate@ f@ inds]
@@ -601,6 +604,7 @@ Determine$currentFieldAssociation[lagrangian_, OptionsPattern[]]:=Module[
 Options@ DetermineFieldProperties= {"Renormalization"->False};
 
 
+(*Need to add something here to make heavy gravitons work just because their mass term is slightly annoying*)
 DetermineFieldProperties[l_, massterm_, OptionsPattern[]]:=Module[
 	{
 		defProps = GetFields[l],
@@ -808,15 +812,15 @@ ListPowerTypeTraces[order_Integer, lightOnly_:False]:= Module[{possibilities, se
 	possibilities= Flatten[Last@ Reap[
 		(*Determines whether to only consider light traces or traces with at least one heavy field*)
 		If[lightOnly,
-			seed= Sow@ {{lScalar}, {lFermion}, {lVector}};
+			seed= Sow@ {{lScalar}, {lFermion}, {lVector}, {lGraviton}};
 			While[(Length@ seed> 0),
-				temp= Flatten/@ Tuples[{seed, {lScalar, lFermion, lVector}}];
+				temp= Flatten/@ Tuples[{seed, {lScalar, lFermion, lVector, lGraviton}}];
 				seed= Sow@ DeleteCases[temp, _? (Total[Min/@ BlockMap[Xords, #, 2, 1]]>= order&), {1}];
 			];
 		,
-			seed= Sow@ {{hScalar}, {hFermion}, {hVector}, {hGhost}};
+			seed= Sow@ {{hScalar}, {hFermion}, {hVector}, {hGhost}, {hGraviton}};
 			While[(Length@ seed> 0),
-				temp= Flatten/@ Tuples[{seed, {hScalar, lScalar, hFermion, lFermion, hVector, lVector, hGhost, lGhost}}];
+				temp= Flatten/@ Tuples[{seed, {hScalar, lScalar, hFermion, lFermion, hVector, lVector, hGhost, lGhost, hGraviton, lGraviton}}];
 				seed= Sow@ DeleteCases[temp, _? (Total[Min/@ BlockMap[Xords, #, 2, 1]]>= order&), {1}];
 			];
 		];
@@ -859,7 +863,7 @@ LoopMatch[opt:OptionsPattern[]]? OptionsCheck:= Module[
 				,
 					0
 				]
-			, {field, {hScalar, hFermion, hVector, hGhost}}]
+			, {field, {hScalar, hFermion, hVector, hGraviton, hGhost}}]
 		, StringForm["Evaluating log-type supertrace: `1`", field/. fieldFormat] ];
 
 	powerTraces= ListPowerTypeTraces[OptionValue@ EFTOrder];
@@ -877,7 +881,7 @@ LoopMatch[opt:OptionsPattern[]]? OptionsCheck:= Module[
 ];
 
 
-fieldFormat= {hScalar-> "\[CapitalPhi]", lScalar-> "\[Phi]", hFermion-> "\[CapitalPsi]", lFermion-> "\[Psi]", hVector-> "V", lVector-> "A", lGhost-> "cA", hGhost-> "cV"};
+fieldFormat= {hScalar-> "\[CapitalPhi]", lScalar-> "\[Phi]", hFermion-> "\[CapitalPsi]", lFermion-> "\[Psi]", hVector-> "V", lVector-> "A", lGhost-> "cA", hGhost-> "cV", hGraviton->"H", lGraviton->"h"};
 
 
 (* ::Subsection::Closed:: *)
@@ -941,6 +945,8 @@ FieldType[f_]:= Switch[Lookup[GetFields[f], {Type, Heavy}]
 	,{Vector, False}, lVector
 	,{Ghost, True}, hGhost
 	,{Ghost, False}, lGhost
+	,{Graviton, True}, hGraviton
+	,{Graviton, False}, lGraviton
 ];
 
 

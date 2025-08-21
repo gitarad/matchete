@@ -750,7 +750,7 @@ Bar[expr_NonCommutativeMultiply]:= Bar/@ Reverse@ expr;
 Bar@ x_DiracProduct:= Reverse@ x/. {Gamma5-> -Gamma5, Proj@ s_:> Proj[-s], g_GammaM:> Reverse@ g};
 
 
-Bar@ f:Field[label_, Scalar|Vector[_]|Ghost, __]/; $FieldAssociation[label, SelfConjugate]:=f;
+Bar@ f:Field[label_, Scalar|Vector[_]|Graviton[_,_]|Ghost, __]/; $FieldAssociation[label, SelfConjugate]:=f;
 Bar@ f:Field[label_, Fermion, __]/; $FieldAssociation[label, SelfConjugate]:= 
 	Transp[f]**DiracProduct[GammaCC]; (* Bar for Majorana Fermions *)
 Bar@ FieldStrength[label_, lind_, ginds_, cdinds_]/; $FieldAssociation[label, SelfConjugate]:= 

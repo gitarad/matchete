@@ -752,7 +752,13 @@ FuncD[Field[label_,type1_,index1_,derivs1_], Field[label_,type2_,index2_,derivs2
 			(*ghosts*)   (*to be crosschecked*)
 			{Ghost,Ghost},
 				result *= 1,
-			(*other*)
+			(*Graviton*)
+			{Graviton[Index[_,Lorentz], Index[_, Lorentz]],Graviton[Index[_,Lorentz], Index[_, Lorentz]]},
+				If[type1===type2,
+					Message[FuncD::repeatedindices, First@type1, First@type2]; Abort[],
+					result *= Metric[First@type1, First@type2] * Metric[Last@type1, Last@type2]
+				],
+			(*Other*)
 			{_,_},
 				Message[FuncD::invalidtype, type1, type2];
 				Abort[]
@@ -1107,7 +1113,7 @@ FluctuationOperator[lag_, field1_, field2_, OptionsPattern[]] := Module[
 	(*Remove projection operators from functional derivative field (chiral fields always have explicit projectors in the Lagrangian).*)
 	{f1, f2}= {field1, field2}/. {DiracProduct[a___, (Transp@ _Proj| _Proj)]:> DiracProduct@ a}/.
 		NonCommutativeMultiply@ x_-> x;
-
+	
 	Do[
 		If[! MatchQ[f, fdPattern],
 			Message[FluctuationOperator::invldField, f];
@@ -1125,12 +1131,12 @@ FluctuationOperator[lag_, field1_, field2_, OptionsPattern[]] := Module[
 		sign= 1,
 		sign= -1
 	];
-
+	
 	(* apply functional derivatives *)
 	xTerm= sign * VarD[lagrangian,f1,f2, EFTOrder->OptionValue[EFTOrder]];
 
 	xTerm= SortNCProduct[xTerm]/.NCProduct->NonCommutativeMultiply;
-
+	(*Print["Xterm: ", NiceForm[FullSimplify[xTerm]]];*)
 	Return[xTerm]
 ]
 

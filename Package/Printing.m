@@ -878,6 +878,55 @@ Format[Field[label_,Vector[\[Mu]_],indices_,CDerivs_], NiceForm]:=
 		_Pattern, StandardForm@ Row@ Flatten@ {Subscript[D, ToString[CDerivs]], UpDownIndices[label, Join[{Bar@\[Mu]},indices]]},
 		_, StandardForm@ Row@ Flatten@ {Subscript[D, SubscriptStyle@ Format[CDerivs,NiceForm]], UpDownIndices[label, Join[{Bar@\[Mu]},indices]]}
 	];
+	
+(*Format[Field[label_, Graviton[\[Mu]_, \[Nu]_], indices_, CDerivs_], NiceForm] := 
+    Switch[CDerivs,
+        {}, 
+        UpDownIndices[label, Join[Bar /@ {\[Mu], \[Nu]}, indices]],
+        {__}, 
+        StandardForm@Row@Flatten@{
+            Subscript[D, SubscriptStyle@Format[#, NiceForm]] & /@ CDerivs // 
+                {x___, Subscript[D, a_], Subscript[D, a_], y___} :> {x, D^2, y},
+            UpDownIndices[label, Join[Bar /@ {\[Mu], \[Nu]}, indices]]
+        },
+        _Pattern, 
+        StandardForm@Row@Flatten@{
+            Subscript[D, ToString[CDerivs]], 
+            UpDownIndices[label, Join[Bar /@ {\[Mu], \[Nu]}, indices]]
+        },
+        _, 
+        StandardForm@Row@Flatten@{
+            Subscript[D, SubscriptStyle@Format[CDerivs, NiceForm]], 
+            UpDownIndices[label, Join[Bar /@ {\[Mu], \[Nu]}, indices]]
+        }
+    ];*)
+	
+Format[Field[label_, Graviton[\[Mu]_, \[Nu]_], indices_, CDerivs_], NiceForm] :=
+    Module[{formattedCDerivs},
+        formattedCDerivs = CDerivs /. {x___, Subscript[D, a_], Subscript[D, a_], y___} :> {x, Superscript[D, 2], y};
+        Switch[formattedCDerivs,
+            {}, 
+            UpDownIndices[label, Join[Bar /@ {\[Mu], \[Nu]}, indices]],
+            {__}, 
+            StandardForm@Row@Flatten@{
+                Subscript[D, SubscriptStyle@Format[#, NiceForm]] & /@ formattedCDerivs,
+                UpDownIndices[label, Join[Bar /@ {\[Mu], \[Nu]}, indices]]
+            },
+            _, 
+            StandardForm@Row@Flatten@{
+                Subscript[D, SubscriptStyle@Format[formattedCDerivs, NiceForm]], 
+                UpDownIndices[label, Join[Bar /@ {\[Mu], \[Nu]}, indices]]
+            }
+        ]
+    ];
+
+(* Adjust Power Formatting *)
+NiceForm /: MakeBoxes[Power[Field[label_, Graviton[{\[Mu]_, \[Nu]_}], indices_, CDerivs_], n_], NiceForm] :=
+    SuperscriptBox[
+        MakeBoxes[Field[label, Graviton[{\[Mu], \[Nu]}], indices, CDerivs], NiceForm],
+        n
+    ];
+
 
 
 Format[FieldStrength[vectorlabel_,{\[Mu]_,\[Nu]_},indices_,CDerivs_], NiceForm]:=
