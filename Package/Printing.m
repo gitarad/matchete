@@ -50,7 +50,7 @@ NiceForm::usage          = "NiceForm[expr] prints the expression expr in a human
 $PrintIndexLabels::usage = "$PrintIndexLabels=True|False determines whether to print the representation of indices as subscripts. It is set to False by default.";
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Internal*)
 
 
@@ -1079,7 +1079,7 @@ AuxForm/: MakeBoxes[EvaOp[class_, id_, inds_List], AuxForm]:=
 		SubscriptStyle2@ TemplateBox[Map[MakeBoxes[#, AuxForm]&, inds], "RowDefault"]];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Fields*)
 
 
@@ -1171,8 +1171,23 @@ AuxForm /: MakeBoxes[Power[Field[label_, Graviton[{\[Mu]_, \[Nu]_}], indices_, C
         n
     ];
 CDFormatting[lab_, {}]:= lab;
-CDFormatting[lab_, CDinds:{__}]:= TemplateBox[Append[Replace[CDinds//. {x___, a_, a_, y___}:> {x, 2, y}, 
-	{ 2:> SuperscriptBox["D", 2], i_:> SubscriptBox["D", MakeBoxes[i, AuxForm]]}, {1}], lab], "RowDefault"];
+CDFormatting[lab_, CDinds:{__}] := Module[{inds = CDinds, pairs = 0, singles = {}, i = 1},
+  (* count adjacent-equal pairs, keep non-paired indices *)
+  While[i <= Length[inds],
+    If[i < Length[inds] && inds[[i]] === inds[[i + 1]],
+      pairs++; i += 2,
+      AppendTo[singles, inds[[i]]]; i++
+    ]
+  ];
+  TemplateBox[
+    Join[
+      If[pairs > 0, {SuperscriptBox["D", ToString[2*pairs]]}, {}],
+      (SubscriptBox["D", MakeBoxes[#, AuxForm]] & /@ singles),
+      {lab}
+    ],
+    "RowDefault"
+  ]
+];
 CDFormatting[lab_, other_]:= TemplateBox[{SubscriptBox["D", MakeBoxes[other, AuxForm]], lab}, "RowDefault"];
 
 

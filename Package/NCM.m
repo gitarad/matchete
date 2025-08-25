@@ -103,7 +103,7 @@ CanonizeSpinorLines::usage = "CanonizeSpinorLines[expr] separates out nested spi
 (*Bar denotes complex conjugation except for on fermion lines, where they are the Bar of the Dirac algebra*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Set rules for what is trivial under a Bar *)
 
 
@@ -129,7 +129,7 @@ NonBarableQ@ Alternatives[Coupling, DiracProduct, Field, FieldStrength,
 	NonCommutativeMultiply, Transp, EvaOp]= False;
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*General properties of Bar*)
 
 
@@ -148,7 +148,7 @@ Bar@ x_SparseArray:= Conjugate@ x;
 Bar@ x_Complex:= Conjugate@ x;
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Action on Matchete symbols*)
 
 
@@ -156,7 +156,7 @@ Bar[expr_NonCommutativeMultiply]:= Bar/@ Reverse@ expr;
 Bar@ x_DiracProduct:= Reverse@ x/. {Gamma5-> -Gamma5, Proj@ s_:> Proj[-s], g_GammaM:> Reverse@ g};
 
 
-Bar@ f:Field[label_, Scalar|Vector[_]|Ghost, __]/; $FieldAssociation[label, SelfConjugate]:=f;
+Bar@ f:Field[label_, Scalar|Vector[_]|Graviton[__]|Ghost, __]/; $FieldAssociation[label, SelfConjugate]:=f;
 Bar@ f:Field[label_, Fermion, __]/; $FieldAssociation[label, SelfConjugate]:= 
 	Transp[f]**DiracProduct[GammaCC]; (* Bar for Majorana Fermions *)
 Bar@ FieldStrength[label_, lind_, ginds_, cdinds_]/; $FieldAssociation[label, SelfConjugate]:= 
@@ -208,7 +208,7 @@ CommutativeQ@ _DiracProduct= False;
 CommutativeQ@ Field[_, Fermion| Ghost, __]= False;
 
 
-CommutativeQ@ Field[_, Scalar| _Vector, __]= True;
+CommutativeQ@ Field[_, Scalar| _Vector| _Tensor, __]= True;
 CommutativeQ@ _FieldStrength= True;
 CommutativeQ@ _Coupling= True;
 CommutativeQ@ _CG= True;

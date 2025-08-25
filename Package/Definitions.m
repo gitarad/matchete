@@ -387,7 +387,7 @@ OptionMessage[Indices, DefineField, val_]:= Message[General::optexpectsval, Indi
 OptionMessage[Mass, DefineField, val_]:= Message[General::optexpectsval, Mass, DefineField, val, "value Heavy, Light, 0, {Light,0}, {Heavy,MassLabel}, {Light,MassLabel}, {Heavy,MassLabel,{FlavorIndex, \[Ellipsis]}} or {Light,MassLabel,{FlavorIndex, \[Ellipsis]}}, with FlavorIndex among the flavor indices of the field, "];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*DefineField*)
 
 
@@ -1758,7 +1758,7 @@ GetAllValues[var_]:=Do[
 PlusHc[x_]:=x+Bar@x
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Free Lagrangian*)
 
 
@@ -1816,10 +1816,10 @@ FreeLag[field_Symbol]:= Module[
 			normalization= First[Query[Select[#@ Field === field&], Key@ Coupling]@ $GaugeGroups, 1&][]^-2;
 			(-1/2 normalization* Bar[FS[field,\[Mu],\[Nu],indK]]**FS[field,\[Mu],\[Nu],indK] + m Bar[field[\[Mu],ind1]]**field[\[Mu],ind2]),
 		Graviton,
-			(CD[\[Mu], field[\[Alpha], \[Nu] ,indK]] * CD[\[Mu], field[\[Alpha], \[Nu] ,indK]]- CD[\[Alpha], field[\[Mu], \[Mu], indK]]*CD[\[Alpha], field[\[Nu], \[Nu], indK]]
-			+2CD[\[Nu], field[\[Mu], \[Mu], indK]]*CD[\[Alpha], field[\[Nu], \[Alpha], indK]] - 2CD[\[Alpha], field[\[Mu], \[Nu], indK]]*CD[\[Nu], field[\[Mu], \[Alpha], indK]]
-			+ m*field[\[Mu], \[Mu], ind1]*field[\[Nu], \[Nu], ind2]
-			- m*field[\[Mu], \[Nu], ind1]*field[\[Mu], \[Nu], ind2]
+			(CD[\[Mu], field[\[Alpha], \[Nu] ,indK]] ** CD[\[Mu], field[\[Alpha], \[Nu] ,indK]]- CD[\[Alpha], field[\[Mu], \[Mu], indK]]**CD[\[Alpha], field[\[Nu], \[Nu], indK]]
+			+2CD[\[Nu], field[\[Mu], \[Mu], indK]]**CD[\[Alpha], field[\[Nu], \[Alpha], indK]] - 2CD[\[Alpha], field[\[Mu], \[Nu], indK]]**CD[\[Nu], field[\[Mu], \[Alpha], indK]]
+			+ m*field[\[Mu], \[Mu], ind1]**field[\[Nu], \[Nu], ind2]
+			- m*field[\[Mu], \[Nu], ind1]**field[\[Mu], \[Nu], ind2]
 			)
 	]//Contract//RelabelIndices
 ]

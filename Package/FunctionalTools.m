@@ -19,7 +19,7 @@ Package["Matchete`"]
 (*Scoping*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Exported*)
 
 
@@ -73,7 +73,7 @@ PackageScope["BackgroundFS"]
 (*Usage messages*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Exported*)
 
 
@@ -686,7 +686,7 @@ FuncD[Field[label1_,__], f:Field[label2_,__], OptionsPattern[]] := 0 /; (label1=
 FuncD[Bar@Field[label1_,__], Bar[f:Field[label2_,__]], OptionsPattern[]] := 0 /; (label1=!=label2)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Non-vanishing derivatives*)
 
 
@@ -749,13 +749,13 @@ FuncD[Field[label_,type1_,index1_,derivs1_], Field[label_,type2_,index2_,derivs2
 				result *= 1,
 			(*Graviton*)
 			{Graviton[Index[_,Lorentz], Index[_, Lorentz]],Graviton[Index[_,Lorentz], Index[_, Lorentz]]},
-				If[type1===type2,
+				If[IntersectingQ[type1,type2],
 					Message[FuncD::repeatedindices, First@type1, First@type2]; Abort[],
 					result *= Metric[First@type1, First@type2] * Metric[Last@type1, Last@type2]
 				],
 			(*Other*)
 			{_,_},
-				Message[FuncD::invalidtype, type1, type2];
+				Message[FuncD::invalidtype, Intersection[type1,type2]];
 				Abort[]
 		];
 
