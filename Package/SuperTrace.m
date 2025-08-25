@@ -261,7 +261,7 @@ PropBosonExpand[mass_, ord_]:= Module[{indices, m, set, singleCDs,  pairCDs},
 ]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Expansion of graviton propagator*)
 
 
@@ -270,7 +270,7 @@ PropBosonExpand[mass_, ord_]:= Module[{indices, m, set, singleCDs,  pairCDs},
 
 
 PropGravitonExpand[mass_, ord_]:= Module[{c,m,x,P,ind1,ind2,ind3,ind4},
-	P[mu_,nu_]:=Metric[mu,nu]-LoopMom[Index[mu,Lorentz]]LoopMom[Index[nu,Lorentz]]/mass^2/.{LoopMom[Index[aa_,Lorentz]]:>LoopMom[Index[aa,Lorentz]]+I*c*OpenCD@{aa}};
+	P[mu_,nu_]:=Metric[mu,nu]-LoopMom[Index[mu,Lorentz]]LoopMom[Index[nu,Lorentz]]/If[mass===0,1,mass^2]/.{LoopMom[Index[aa_,Lorentz]]:>LoopMom[Index[aa,Lorentz]]+I*c*OpenCD@{aa}};
 	x = CoefficientList[Collect[1/2(P[ind1,ind3]P[ind2,ind4]+P[ind1,ind4]P[ind2,ind3])-1/3P[ind1,ind2]P[ind3,ind4],c],c];
 	If[mass===0,FuncNCM[1/2*(Metric[ind1,ind3]Metric[ind2,ind4]+Metric[ind1,ind4]Metric[ind2,ind3]-Metric[ind1,ind2]Metric[ind3,ind4]),PropGravitonExpandHelper[mass, ord]],
 	Sum[FuncNCM[x[m],PropGravitonExpandHelper[mass, ord-m+1]],{m,1,5}]]
@@ -720,6 +720,8 @@ LogBosonExpand[mass_, ord_]:= Module[{indices, m, set, singleCDs,  pairCDs},
 ]
 
 (*LogGravExpand needs to be added here*)
+
+
 
 (* ::Subsubsection::Closed:: *)
 (*Expansion of fermion log*)
