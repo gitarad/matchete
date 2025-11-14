@@ -19,14 +19,14 @@ Package["Matchete`"]
 (*Scoping*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Exported*)
 
 
 PackageExport["CD"]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Internal*)
 
 
@@ -45,14 +45,14 @@ PackageScope["SeparateGeneratorsFromFS"]
 (*Usage messages*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Exported*)
 
 
 CD::usage     = "CD[ind,expr] returns the covariant derivative(s) of a given expression expr. The argument ind can either be a single Lorentz index or a list of Lorentz indices.";
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Internal*)
 
 
@@ -75,14 +75,14 @@ SeparateGeneratorsFromFS::usage = "Matchete uses implicit contraction of FS with
 (*Covariant derivative definition and rules*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Error messages*)
 
 
 CD::indices = "The index or indices '`1`' are invalid. These must be either a symbol or a list of symbols.";
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*CD definition*)
 
 
@@ -108,7 +108,7 @@ CD[ind_, expr_]:= Module[{},
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*CD Test function*)
 
 
@@ -125,7 +125,7 @@ DZeroQ[OpenCD]= False;
 DZeroQ[WilsonTerm]= False;
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Applying covariant derivative to an expression*)
 
 
@@ -137,7 +137,7 @@ TakeDev[{}, expr_]:= expr;
 TakeDev[{\[Mu]_, \[Nu]__}, expr_]:= TakeDev[{\[Mu]}, TakeDev[{\[Nu]}, expr]];
 TakeDev[\[Mu]_, _?DZeroQ]= 0;
 TakeDev[\[Mu]_, expr:Alternatives[_Plus, _List]]:= TakeDev[\[Mu], #]&/@ expr;
-TakeDev[\[Mu]_, expr:Alternatives[_Times, _NonCommutativeMultiply, _NCProduct, _FuncNCM]]:=
+TakeDev[\[Mu]_, expr:Alternatives[_Times, _NCM, _NCProduct, _FuncNCM]]:=
 	Module[{n}, Sum[MapAt[TakeDev[\[Mu], #]&, expr, n], {n, Length@expr}] ];
 TakeDev[{\[Mu]_}, Power[expr_, n_]]:= n TakeDev[{\[Mu]}, expr] Power[expr, n-1];
 
@@ -161,7 +161,7 @@ TakeDev[\[Mu]_, WilsonTerm[a__, \[Nu]_]]:= WilsonTerm[a, Join[\[Mu], \[Nu]]];
 TakeDev[\[Mu]_List,OpenCD[\[Nu]_List]]:= OpenCD[Join[\[Mu],\[Nu]]];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Canonize derivatives *)
 
 
@@ -229,7 +229,7 @@ CommuteCDs[FieldStrength[lab_, linds_, inds_, devs_], n_]:= Module[{},
  ]; 
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Separating generators from FS*)
 
 

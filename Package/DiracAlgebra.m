@@ -166,7 +166,7 @@ MajoranaQ::usage        = "FermionQ[expr] returns True if a expr is a Majorana f
 CumulativeSpin::usage   = "Returns the cumulative count of fermion spins along a NCM product. Counts +1 for R-open fermions and -1 for L-open.";
 
 
-CollectGammaMatrices::usage = "CollectGammaMatrices[expr] collects all \[Gamma]-matrices in a DiracProduct and and moves them to the left inside of a NonCommutativeMultiply.";
+CollectGammaMatrices::usage = "CollectGammaMatrices[expr] collects all \[Gamma]-matrices in a DiracProduct and and moves them to the left inside of a NCM.";
 
 
 ProjExpand::usage      = "Expand the left/right handed projector into (1-/+\!\(\*SubscriptBox[\(\[Gamma]\), \(5\)]\))/2."
@@ -181,8 +181,8 @@ RefineDiracProducts::usage = "RefineDiracProducts[expr] simplifies all Dirac pro
 \[Gamma]CommuteQ::usage = "\[Gamma]CommuteQ[obj] checks if obj commutes with gamma matrices.";
 
 
-LC2Gamma5::usage= "LC2Gamma5[expr] combines \[Epsilon]^\[Mu]\[Nu]\[Rho]\[Sigma] with gamma matrices in expr to obtain Subscript[\[Gamma], 5], using the relation Subscript[\[Gamma], 5] = -I/4! \[Epsilon]^\[Mu]\[Nu]\[Rho]\[Sigma] \[Gamma][\[Mu]]**\[Gamma][\[Nu]]**\[Gamma][\[Rho]]**\[Gamma][\[Sigma]].";
-Gamma52LC::usage= "Gamma52LC[expr] decomposes Subscript[\[Gamma], 5] in expr as Subscript[\[Gamma], 5] = -I/4! \[Epsilon]^\[Mu]\[Nu]\[Rho]\[Sigma] \[Gamma][\[Mu]]**\[Gamma][\[Nu]]**\[Gamma][\[Rho]]**\[Gamma][\[Sigma]].";
+LC2Gamma5::usage= "LC2Gamma5[expr] combines \[Epsilon]^\[Mu]\[Nu]\[Rho]\[Sigma] with gamma matrices in expr to obtain Subscript[\[Gamma], 5], using the relation Subscript[\[Gamma], 5] = -I/4! \[Epsilon]^\[Mu]\[Nu]\[Rho]\[Sigma] \[Gamma][\[Mu]]\[CenterDot] \[Gamma][\[Nu]]\[CenterDot] \[Gamma][\[Rho]]\[CenterDot] \[Gamma][\[Sigma]].";
+Gamma52LC::usage= "Gamma52LC[expr] decomposes Subscript[\[Gamma], 5] in expr as Subscript[\[Gamma], 5] = -I/4! \[Epsilon]^\[Mu]\[Nu]\[Rho]\[Sigma] \[Gamma][\[Mu]]\[CenterDot] \[Gamma][\[Nu]]\[CenterDot] \[Gamma][\[Rho]]\[CenterDot] \[Gamma][\[Sigma]].";
 
 
 (* ::Chapter:: *)
@@ -219,8 +219,8 @@ CC = DiracProduct@ GammaCC;
 (*General properties*)
 
 
-DiracProduct/: NonCommutativeMultiply[a___, x_DiracProduct, y_DiracProduct, b___]:=
-	NonCommutativeMultiply[a, Join[x, y], b];
+DiracProduct/: NCM[a___, x_DiracProduct, y_DiracProduct, b___]:=
+	NCM[a, Join[x, y], b];
 
 
 DiracProduct/: MomNCM[a___, x_DiracProduct, y_DiracProduct, b___]:=
@@ -325,33 +325,33 @@ LC2Gamma5@ expr_:= Module[
 	(*Find the positions and indices of candidate gammas*)
 	gammaPositions= Position[expr, g_GammaM/; IntersectingQ[List@@ g, LCinds], All];
 	If[gammaPositions === {}, Return@ expr; ];
-	
+
 	(*Only the gammas with the highest number of shared indices*)
 	gammaPositions= MaximalBy[gammaPositions, Length@ Intersection[LCinds, List@@ Extract[expr, #]] &];
 	out= 1/Length[gammaPositions]* Sum[
 			gammaInds= List@@ Extract[expr, gammaPos];
-			(*Find (a) repeated index and determine the sign 
+			(*Find (a) repeated index and determine the sign
 			(note indices of LCTensor + GammaM are automatically canonized)*)
 			repInd= First@ Intersection[LCinds, gammaInds];
 			sign= - Power[-1, Total@ Position[{LCinds, gammaInds}, repInd][[;;, 2]]];
 			gammaInds= DeleteCases[gammaInds, repInd];
-			remainingInds= DeleteCases[LCinds, repInd]; 
+			remainingInds= DeleteCases[LCinds, repInd];
 			n= Length@ gammaInds;
-			
+
 			(*Performance will likely be improved by explicit handling of situation with multiple contracted indices*)
 			(*Perform reduction*)
 			-I* sign/ (n+ 1)* Sum[
 					setnk= Complement[gammaInds, setk];
 					temp= expr;
 					TranspQ= (Head@temp[[Sequence@@ Drop[gammaPos,-1]]]===Transp);
-					If[!TranspQ, 
-						temp[[Sequence@@ gammaPos]]= Sequence[GammaM@@ setk, GammaM@@ remainingInds, Gamma5, GammaM@@ setnk], 
-						
+					If[!TranspQ,
+						temp[[Sequence@@ gammaPos]]= Sequence[GammaM@@ setk, GammaM@@ remainingInds, Gamma5, GammaM@@ setnk],
+
 						temp[[Sequence@@ Drop[gammaPos,-1]]]=  Sequence[Transp@* GammaM@@ setnk, Transp@ Gamma5, Transp@* GammaM@@ remainingInds, Transp@* GammaM@@ setk]];
 					Power[-1, k]/ Binomial[n, k]* Signature@ setk* Signature@ setnk* Signature@ Join[setk, setnk]* temp
 				, {k, 0, n}, {setk, Subsets[gammaInds, {k}]}]/. _LCTensor-> 1// RefineDiracProducts// ContractMetric
 		, {gammaPos, gammaPositions}];
-		
+
 	(*The identities are four-dimensional so we should set \[ScriptD]-> 4*)
 	out/. \[ScriptD]-> 4// RelabelIndices
 ]
@@ -361,7 +361,7 @@ LC2Gamma5@ expr_:= Module[
 (*Write \[Gamma]5 with a Levi-Cevita tensor*)
 
 
-Gamma52LC[exp_]:=exp/.DiracProduct[dp___,Gamma5]:> -I/4! LCTensor[\[Alpha],\[Beta],\[Delta],\[Eta]]DiracProduct[dp]**\[Gamma][\[Alpha]]**\[Gamma][\[Beta]]**\[Gamma][\[Delta]]**\[Gamma][\[Eta]] //RelabelIndices ;
+Gamma52LC[exp_]:=exp/.DiracProduct[dp___,Gamma5]:> -I/4! LCTensor[\[Alpha],\[Beta],\[Delta],\[Eta]]DiracProduct[dp]\[CenterDot] \[Gamma][\[Alpha]]\[CenterDot] \[Gamma][\[Beta]]\[CenterDot] \[Gamma][\[Delta]]\[CenterDot] \[Gamma][\[Eta]] //RelabelIndices ;
 
 
 (* ::Text:: *)
@@ -421,9 +421,9 @@ DiracTrace[expr_, opt:OptionsPattern[]]:= Module[
 	Sum[
 		Switch[Count[term, DiracProduct, Infinity, Heads-> True],
 			0, 4 term,
-			(*Prevent the result of the Diractrace from being inserted inside NonCommutativeMultiply,
+			(*Prevent the result of the Diractrace from being inserted inside NCM,
 				which is an expensive operation.*)
-			1, term/.{NonCommutativeMultiply@ x_DiracProduct:> DiracTraceProduct@ x,
+			1, term/.{NCM@ x_DiracProduct:> DiracTraceProduct@ x,
 				x_DiracProduct:> DiracTraceProduct@ x},
 			_, Message[DiracTrace::canteval]; term
 		],
@@ -576,11 +576,11 @@ RefineDiracProducts@ d:DiracProduct[_]:= d;
 
 
 RefineDiracProducts@ DiracProduct[GammaCC, x__]:=
-	DiracProduct@ GammaCC** RefineDiracProducts@ DiracProduct@x;
+	DiracProduct@ GammaCC\[CenterDot] RefineDiracProducts@ DiracProduct@x;
 
 
 RefineDiracProducts@ DiracProduct[x__, chiral: (Gamma5| _Proj)]:=
-	RefineDiracProducts@ DiracProduct@ x ** DiracProduct@ chiral;
+	RefineDiracProducts@ DiracProduct@ x \[CenterDot] DiracProduct@ chiral;
 
 
 (* ::Text:: *)
@@ -633,9 +633,9 @@ RefineDiracProducts@ x:DiracProduct[_Transp, ___]:= Module[{},
 \[Gamma]CommuteQ[Xop| DiracProduct| MomNCM]= False;
 \[Gamma]CommuteQ@ Field[_, Fermion, ___]= False;
 \[Gamma]CommuteQ@ TransposeThisSpinChain= False;
-\[Gamma]CommuteQ@x_NonCommutativeMultiply:=Nor[LOpenSpinChainQ@x, ROpenSpinChainQ@x];
+\[Gamma]CommuteQ@x_NCM:=Nor[LOpenSpinChainQ@x, ROpenSpinChainQ@x];
 \[Gamma]CommuteQ[f_?\[Gamma]CommuteQ[x___]]:=And@@ \[Gamma]CommuteQ/@ {x};
-\[Gamma]CommuteQ[f:Except[NonCommutativeMultiply][x___]]:=  False;
+\[Gamma]CommuteQ[f:Except[NCM][x___]]:=  False;
 \[Gamma]CommuteQ@ Alternatives[Pattern, _Blank, _BlankSequence, _BlankNullSequence, _Except] = False;
 \[Gamma]CommuteQ[_]:= True;
 
@@ -684,12 +684,12 @@ FermionQ[expr_]:=False;
 (*L/R OpenSpinChainQ*)
 
 
-LOpenSpinChainQ@x_NonCommutativeMultiply:=LOpenSpinChainQ@ First@x
+LOpenSpinChainQ@x_NCM:=LOpenSpinChainQ@ First@x
 LOpenSpinChainQ[FermionL]:=False
 LOpenSpinChainQ@x_:=!\[Gamma]CommuteQ@x
 
 
-ROpenSpinChainQ@x_NonCommutativeMultiply:=ROpenSpinChainQ@ Last@x
+ROpenSpinChainQ@x_NCM:=ROpenSpinChainQ@ Last@x
 ROpenSpinChainQ[FermionR]:=False
 ROpenSpinChainQ@x_:=!\[Gamma]CommuteQ@x
 
@@ -698,7 +698,7 @@ ROpenSpinChainQ@x_:=!\[Gamma]CommuteQ@x
 (*ClosedSpinChainQ*)
 
 
-ClosedSpinChainQ@ x_NonCommutativeMultiply:= !FreeQ[x, Fermion
+ClosedSpinChainQ@ x_NCM:= !FreeQ[x, Fermion
 	] && Nor[
 		LOpenSpinChainQ@ x,
 		ROpenSpinChainQ@ x
@@ -721,7 +721,7 @@ MajoranaQ@x_:=!FreeQ[x, Field[label_,Fermion,___]/;$FieldAssociation[label][Self
 (*Returns the cumulative count of fermion spins along an NCM product. Counts +1 for R-open fermions and -1 for L-open.*)
 
 
-CumulativeSpin@ op:(_NonCommutativeMultiply|_MomNCM):= Module[{temp},
+CumulativeSpin@ op:(_NCM|_MomNCM):= Module[{temp},
 	temp= FermionCount/@ (List@@ op);
 	FoldList[Plus, temp]
 ];
@@ -729,7 +729,7 @@ CumulativeSpin@ op:(_NonCommutativeMultiply|_MomNCM):= Module[{temp},
 
 FermionCount@ FermionL= 1;
 FermionCount@ FermionR= -1;
-FermionCount@ x:(_NonCommutativeMultiply| _MomNCM| _Times):=
+FermionCount@ x:(_NCM| _MomNCM| _Times):=
 	Plus@@ FermionCount/@ (List@@ x);
 FermionCount@ x:_Plus:= FermionCount@ First@ x;
 FermionCount@_ = 0;
@@ -758,10 +758,10 @@ DiracProduct[a___, Transp@g_GammaM, GammaCC, b___]:= Power[-1, Ceiling[Length@ g
 (*Transp should work on closed NCM lines for convenience, although they are commutative*)
 
 
-Transp@ expr_NonCommutativeMultiply:= (-1)^Floor[Count[expr, _?FermionQ]/2] Transp/@ Reverse@ expr;
+Transp@ expr_NCM:= (-1)^Floor[Count[expr, _?FermionQ]/2] Transp/@ Reverse@ expr;
 
 
-Transp@ expr_?CommutativeQ:= expr/. ncm_NonCommutativeMultiply:> Transp@ ncm;
+Transp@ expr_?CommutativeQ:= expr/. ncm_NCM:> Transp@ ncm;
 
 
 Transp[expr:(_Plus|_Times)]:= Transp/@ expr;
@@ -777,7 +777,7 @@ Transp@ x_DiracProduct:= Transp/@ x/. y_DiracProduct:> Reverse@ y; (*Transp and 
 (*Transp with multiple arguments (can occur in NCM rules for automatically transposing spinor lines).*)
 
 
-Transp[x_, y__]:= Reverse[NonCommutativeMultiply[x, y]/. d_DiracProduct:> Transp@ d];
+Transp[x_, y__]:= Reverse[NCM[x, y]/. d_DiracProduct:> Transp@ d];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -793,10 +793,10 @@ CConj::notfermion= "CConj is only supposed to act on a fermion field."
 
 CConj@f:Field[label_,Fermion,_,_]/;$FieldAssociation[label][SelfConjugate]:= f;
 CConj@f:Bar[Field[label_,Fermion,_,_]]/;$FieldAssociation[label][SelfConjugate]:= f;
-CConj@f:Bar[Field[_,Fermion,_,_]]:= Transp@Bar@f ** DiracProduct@GammaCC;
-CConj@f:Field[_,Fermion,_,_]:= DiracProduct@ GammaCC ** Transp@Bar@f;
-CConj[DiracProduct[Proj[s_]]**(f:Field[_,Fermion,_,_])]:= DiracProduct[Proj[-s]]**CConj[f];
-CConj[(f:Bar[Field[_,Fermion,_,_]])**DiracProduct[Proj[s_]]]:= CConj[f]**DiracProduct[Proj[-s]];
+CConj@f:Bar[Field[_,Fermion,_,_]]:= Transp@Bar@f \[CenterDot] DiracProduct@GammaCC;
+CConj@f:Field[_,Fermion,_,_]:= DiracProduct@ GammaCC \[CenterDot] Transp@Bar@f;
+CConj[DiracProduct[Proj[s_]]\[CenterDot] (f:Field[_,Fermion,_,_])]:= DiracProduct[Proj[-s]]\[CenterDot] CConj[f];
+CConj[(f:Bar[Field[_,Fermion,_,_]])\[CenterDot] DiracProduct[Proj[s_]]]:= CConj[f]\[CenterDot] DiracProduct[Proj[-s]];
 CConj@_:=(Message[CConj::notfermion]; Abort[]);
 
 
@@ -815,7 +815,7 @@ ProjExpand[exp_]:=exp/. DiracProduct[b___,Proj[s_]]:> (DiracProduct[b] + s  Dira
 (*Error messages*)
 
 
-Fierz::notFierzable= "The Fierz function can only be used on the product of two closed spin chains with head NonCommutativeMultiply containing Dirac structures with head DiracProduct (or nothing for scalar currents). ";
+Fierz::notFierzable= "The Fierz function can only be used on the product of two closed spin chains with head NCM containing Dirac structures with head DiracProduct (or nothing for scalar currents). ";
 Fierz::Order = "Fierz function only support Fierz Order {1,3,4,2} or {1,4,3,2}."
 
 
@@ -839,7 +839,7 @@ FieldIndices[f:_Field|Bar@_Field|Transp@_Field|Transp@Bar@_Field]:=First@Cases[{
 (*4D Fierz function*)
 
 
-Fierz4D[(SP1:NonCommutativeMultiply[field1_,G12___,field2_]),(SP2:NonCommutativeMultiply[field3_,G34___,field4_]), opt:OptionsPattern[]]:=
+Fierz4D[(SP1:NCM[field1_,G12___,field2_]),(SP2:NCM[field3_,G34___,field4_]), opt:OptionsPattern[]]:=
 Fierz4D[SP1,SP2, opt]=
 Module[
 {Gbasisup, Gbasisdown, ind1, ind2, Gcoeff, i,j, C1=1, C2=1,
@@ -848,8 +848,8 @@ G1=G12*1, G2=G34*1, P1=1, P2=1, P3=1, P4=1, f1=field1, f2=field2, f3=field3, f4=
 	ind1={Unique[],Unique[],Unique[],Unique[]};
 	ind2={Unique[],Unique[],Unique[],Unique[]};
 
-	Gbasisup[a_,b_,c_,d_]:={PL,PR,PR**\[Gamma][a],PL**\[Gamma][b],\[Sigma][c,d]/2}/.NonCommutativeMultiply[x_]:>x;
-	Gbasisdown[a_,b_,c_,d_]:={PL,PR,PL**\[Gamma][a],PR**\[Gamma][b],\[Sigma][c,d]/2}/.NonCommutativeMultiply[x_]:>x;
+	Gbasisup[a_,b_,c_,d_]:={PL,PR,PR\[CenterDot] \[Gamma][a],PL\[CenterDot] \[Gamma][b],\[Sigma][c,d]/2}/.NCM[x_]:>x;
+	Gbasisdown[a_,b_,c_,d_]:={PL,PR,PL\[CenterDot] \[Gamma][a],PR\[CenterDot] \[Gamma][b],\[Sigma][c,d]/2}/.NCM[x_]:>x;
 
 	If[OptionValue@Order === {1,2,3,4}, Return[SP1*SP2]];
 	If[!MemberQ[{{1,3,4,2},{1,4,3,2},{1,2,3,4}},OptionValue@Order], Message[Fierz::Order];Abort[]];
@@ -865,11 +865,11 @@ G1=G12*1, G2=G34*1, P1=1, P2=1, P3=1, P4=1, f1=field1, f2=field2, f3=field3, f4=
 	If[!ClosedSpinChainQ@SP1 || !ClosedSpinChainQ@SP2, Message[Fierz::notFierzable]; Abort[]];
 	If[(Head[G1]=!= DiracProduct && G1=!=1) || (Head[G2]=!= DiracProduct  &&  G2=!=1), Message[Fierz::notFierzable]; Abort[]];
 
-	If[Head[f1]===Transp, G1=(-CC)**G1; f1=f1**CC];
-	If[Head[f2]===Transp, G1=G1**(-CC); f2=CC**f2];
+	If[Head[f1]===Transp, G1=(-CC)\[CenterDot] G1; f1=f1\[CenterDot] CC];
+	If[Head[f2]===Transp, G1=G1\[CenterDot] (-CC); f2=CC\[CenterDot] f2];
 
-	If[Head[f4]===Transp, G2=G2**(-CC); f4=CC**f4];
-	If[Head[f3]===Transp, G2=(-CC)**G2; f3=f3**CC];
+	If[Head[f4]===Transp, G2=G2\[CenterDot] (-CC); f4=CC\[CenterDot] f4];
+	If[Head[f3]===Transp, G2=(-CC)\[CenterDot] G2; f3=f3\[CenterDot] CC];
 
 	If[!FreeQ[G1, _Proj],
 		P1=DiracProduct@First@Cases[Transp@G1,_Proj,Infinity];
@@ -896,13 +896,13 @@ G1=G12*1, G2=G34*1, P1=1, P2=1, P3=1, P4=1, f1=field1, f2=field2, f3=field3, f4=
 	Gcoeff=IdentityMatrix[5];
 	For[j=1,j<6,++j,
 		For[i=1,i<6,++i,
-			Gcoeff[[i,j]]= -(1/4) DiracTrace[G1**(Gbasisdown@@ind1)[[i]]**G2**(Gbasisdown@@ind2)[[j]],Dimensions->4] //Contract;
+			Gcoeff[[i,j]]= -(1/4) DiracTrace[G1\[CenterDot] (Gbasisdown@@ind1)[[i]]\[CenterDot] G2\[CenterDot] (Gbasisdown@@ind2)[[j]],Dimensions->4] //Contract;
 		]
 	];
 
 	sgnO*(Sum[
 			Gcoeff[[i,j]]
-				* (f1**P1**(Gbasisup@@ind2)[[j]]**P4**f4) * (f3**P3**(Gbasisup@@ind1)[[i]]**P2**f2)
+				* (f1\[CenterDot] P1\[CenterDot] (Gbasisup@@ind2)[[j]]\[CenterDot] P4\[CenterDot] f4) * (f3\[CenterDot] P3\[CenterDot] (Gbasisup@@ind1)[[i]]\[CenterDot] P2\[CenterDot] f2)
 		,{i,1,5},{j,1,5}] //Expand//Contract //RelabelIndices //LC2Gamma5) /.GammaM[a_,b_]/;(!OrderedQ[{a,b}]):> -GammaM[b,a]
 ]
 
@@ -911,14 +911,14 @@ G1=G12*1, G2=G34*1, P1=1, P2=1, P3=1, P4=1, f1=field1, f2=field2, f3=field3, f4=
 (*Fierz score*)
 
 
-FbasisQ[SP1_,SP2_]:=FreeQ[OperatorToNormalForm@Operator[SP1,SP2]//.Join[{_Field->1, GammaCC->1,Proj[1]->1,Proj[-1]->1},Thread[NonCommutativeMultiply/@{DiracProduct@GammaM[x_],DiracProduct@Transp@GammaM[x_],DiracProduct@GammaM[x_, y_],
-DiracProduct@Transp@GammaM[x_, y_]}->1]],NonCommutativeMultiply];
+FbasisQ[SP1_,SP2_]:=FreeQ[OperatorToNormalForm@Operator[SP1,SP2]//.Join[{_Field->1, GammaCC->1,Proj[1]->1,Proj[-1]->1},Thread[NCM/@{DiracProduct@GammaM[x_],DiracProduct@Transp@GammaM[x_],DiracProduct@GammaM[x_, y_],
+DiracProduct@Transp@GammaM[x_, y_]}->1]],NCM];
 
 
 FierzScore[op_Operator]:=FierzScore[OperatorToNormalForm@op];
 
 
-FierzScore[(SP1 : NonCommutativeMultiply[field1_, G12___, field2_] ),(SP2 : NonCommutativeMultiply[field3_, G34___, field4_]),rest___] :=
+FierzScore[(SP1 : NCM[field1_, G12___, field2_] ),(SP2 : NCM[field3_, G34___, field4_]),rest___] :=
  Module[
   {result = 0, fields = {field1, field2, field3, field4}, order = OptionValue@Order,
    GaugeGroups, gind, pos, posmax, epsrep, G1=G12*1,G2=G34*1},
@@ -960,10 +960,10 @@ FierzScore[(SP1 : NonCommutativeMultiply[field1_, G12___, field2_] ),(SP2 : NonC
 
 FierzScore[expr_]:=(*FierzScore[expr]=*)(* cached identites can worsen performance significantly if expr is very complicated *)
 Module[{NCMs,SP1,SP2, rest},
-		NCMs=Cases[RemovePower@ expr, _NonCommutativeMultiply,All];
+		NCMs=Cases[RemovePower@ expr, _NCM,All];
 		If[Length@NCMs === 2,
 			{SP1,SP2}=NCMs;
-			rest=expr/._NonCommutativeMultiply->1;
+			rest=expr/._NCM->1;
 			FierzScore[SP1,SP2,rest]
 			,
 			0
@@ -978,23 +978,23 @@ Module[{NCMs,SP1,SP2, rest},
 Fierz[arg_, opt:OptionsPattern[]]:=
 Module[
 {rest, NCMs, SP1, SP2, result, groupStruct, fieldsinop, coeff, evaOperator, iniOperator, expr=RelabelIndices[arg,Unique->True]},
-	NCMs=Cases[RemovePower@ expr, _NonCommutativeMultiply,All];
+	NCMs=Cases[RemovePower@ expr, _NCM,All];
 	If[Length@NCMs =!= 2,  Message[Fierz::notFierzable]; Abort[]];
 
 	{SP1,SP2}=NCMs;
-	
-	rest=expr/._NonCommutativeMultiply->1;
+
+	rest=expr/._NCM->1;
 
 	iniOperator=rest *SP1*SP2//RefineDiracProducts//Contract//RelabelIndices;
 
 	If[Head@iniOperator===Plus, Fierz[#,opt]&/@iniOperator,
 	result=Fierz4D[SP1,SP2,Order->OptionValue@Order];
-	
+
 	rest=Flatten@{rest/.Times->List};
 	groupStruct=Times@@Cases[rest,_Delta|_CG];
 	fieldsinop=Times@@Cases[rest,_Field|_FieldStrength|Bar[_Field]];
 	rest=Times@@rest;
-	
+
 	evaOperator=If[OptionValue@Evanescent,
 			DefineEvanescentOperator[groupStruct*fieldsinop*(SP1*SP2),groupStruct*fieldsinop*result,(*Exponent[rest*1,hbar]+1,*)Fierz]*rest/groupStruct/fieldsinop,
 			0];
@@ -1017,39 +1017,39 @@ Module[
 
 Basis4D[]:=Module[{\[Mu],\[Nu]},
 	{{PL,PL},{PR,PR},{PL,PR},{PR,PL},
-	{\[Gamma]@\[Mu]**PL,\[Gamma]@\[Mu]**PL},{\[Gamma]@\[Mu]**PR,\[Gamma]@\[Mu]**PR},{\[Gamma]@\[Mu]**PL,\[Gamma]@\[Mu]**PR},{\[Gamma]@\[Mu]**PR,\[Gamma]@\[Mu]**PL},
-	{\[Sigma][\[Mu],\[Nu]]**PL,\[Sigma][\[Mu],\[Nu]]**PL},{\[Sigma][\[Mu],\[Nu]]**PR,\[Sigma][\[Mu],\[Nu]]**PR}}
+	{\[Gamma]@\[Mu]\[CenterDot] PL,\[Gamma]@\[Mu]\[CenterDot] PL},{\[Gamma]@\[Mu]\[CenterDot] PR,\[Gamma]@\[Mu]\[CenterDot] PR},{\[Gamma]@\[Mu]\[CenterDot] PL,\[Gamma]@\[Mu]\[CenterDot] PR},{\[Gamma]@\[Mu]\[CenterDot] PR,\[Gamma]@\[Mu]\[CenterDot] PL},
+	{\[Sigma][\[Mu],\[Nu]]\[CenterDot] PL,\[Sigma][\[Mu],\[Nu]]\[CenterDot] PL},{\[Sigma][\[Mu],\[Nu]]\[CenterDot] PR,\[Sigma][\[Mu],\[Nu]]\[CenterDot] PR}}
 	];
 
 
 InverseBasisTrace[]:= InverseBasisTrace[]= Simplify@ Inverse@ Table[
-		bi[[1]]** bj[[1]]** bi[[2]]** bj[[2]]// DiracTrace// ContractMetric
+		bi[[1]]\[CenterDot] bj[[1]]\[CenterDot] bi[[2]]\[CenterDot] bj[[2]]// DiracTrace// ContractMetric
 	, {bi, Basis4D[]}, {bj, Basis4D[]}];
 
 
-GammaReduction4D[(SP1:NonCommutativeMultiply[field1_,G12___,field2_]), 
-	(SP2:NonCommutativeMultiply[field3_,G34___,field4_])]:= GammaReduction4D[SP1, SP2]=
+GammaReduction4D[(SP1:NCM[field1_,G12___,field2_]),
+	(SP2:NCM[field3_,G34___,field4_])]:= GammaReduction4D[SP1, SP2]=
 Module[{Bcoeff,basis,f1=field1,f2=field2,f3=field3,f4=field4, G1= Times@ G12, G2= Times@ G34},
 
-	If[Head[f1]===Transp, G1=(-CC)**G1; f1=f1**CC];
-	If[Head[f2]===Transp, G1=G1**(-CC); f2=CC**f2];
+	If[Head[f1]===Transp, G1=(-CC)\[CenterDot] G1; f1=f1\[CenterDot] CC];
+	If[Head[f2]===Transp, G1=G1\[CenterDot] (-CC); f2=CC\[CenterDot] f2];
 
-	If[Head[f4]===Transp, G2=G2**(-CC); f4=CC**f4];
-	If[Head[f3]===Transp, G2=(-CC)**G2; f3=f3**CC];
-	
+	If[Head[f4]===Transp, G2=G2\[CenterDot] (-CC); f4=CC\[CenterDot] f4];
+	If[Head[f3]===Transp, G2=(-CC)\[CenterDot] G2; f3=f3\[CenterDot] CC];
+
 	(*Check if in the basis*)
-	If[MatchQ[{G1, G2}/. Times[_Integer, ncm_NonCommutativeMultiply]-> ncm/. 
-		NonCommutativeMultiply-> Identity, $basis4DPattern],
+	If[MatchQ[{G1, G2}/. Times[_Integer, ncm_NCM]-> ncm/.
+		NCM-> Identity, $basis4DPattern],
 		Return[SP1* SP2];
 	];
-	
+
 	basis=Basis4D[];
 
 	Bcoeff= InverseBasisTrace[] . Table[
-		DiracTrace[bj[[1]]**G1**bj[[2]]**G2]//ContractMetric
+		DiracTrace[bj[[1]]\[CenterDot] G1\[CenterDot] bj[[2]]\[CenterDot] G2]//ContractMetric
 	,{bj,basis}]//Simplify;
 
-	Sum[Bcoeff[[i]]*(f1**basis[[i,1]]**f2) * (f3**basis[[i,2]]**f4) , {i,1,Length@Bcoeff}]
+	Sum[Bcoeff[[i]]*(f1\[CenterDot] basis[[i,1]]\[CenterDot] f2) * (f3\[CenterDot] basis[[i,2]]\[CenterDot] f4) , {i,1,Length@Bcoeff}]
 ]
 
 
@@ -1060,10 +1060,10 @@ Module[{Bcoeff,basis,f1=field1,f2=field2,f3=field3,f4=field4, G1= Times@ G12, G2
 $basis4DPattern= Module[{\[Mu],\[Nu]},
 	Alternatives[
 		{PL, PL}, {PR, PR}, {PL, PR}, {PR, PL},
-		{\[Gamma]@ \[Mu]** PL, \[Gamma]@ \[Mu]** PL}, {\[Gamma]@ \[Mu]** PR, \[Gamma]@ \[Mu]** PR}, 
-		{\[Gamma]@ \[Mu]** PL, \[Gamma]@ \[Mu]** PR}, {\[Gamma]@ \[Mu]** PR, \[Gamma]@ \[Mu]** PL},
-		{\[Gamma][\[Mu], \[Nu]]** PL, \[Gamma][\[Mu], \[Nu]]** PL}, {\[Gamma][\[Mu], \[Nu]]** PR, \[Gamma][\[Mu], \[Nu]]** PR}
-	]/. {\[Mu]-> \[Mu]_, \[Nu]-> \[Nu]_}/. NonCommutativeMultiply-> Identity
+		{\[Gamma]@ \[Mu]\[CenterDot] PL, \[Gamma]@ \[Mu]\[CenterDot] PL}, {\[Gamma]@ \[Mu]\[CenterDot] PR, \[Gamma]@ \[Mu]\[CenterDot] PR},
+		{\[Gamma]@ \[Mu]\[CenterDot] PL, \[Gamma]@ \[Mu]\[CenterDot] PR}, {\[Gamma]@ \[Mu]\[CenterDot] PR, \[Gamma]@ \[Mu]\[CenterDot] PL},
+		{\[Gamma][\[Mu], \[Nu]]\[CenterDot] PL, \[Gamma][\[Mu], \[Nu]]\[CenterDot] PL}, {\[Gamma][\[Mu], \[Nu]]\[CenterDot] PR, \[Gamma][\[Mu], \[Nu]]\[CenterDot] PR}
+	]/. {\[Mu]-> \[Mu]_, \[Nu]-> \[Nu]_}/. NCM-> Identity
 ];
 
 
@@ -1072,9 +1072,8 @@ $basis4DPattern= Module[{\[Mu],\[Nu]},
 
 
 (* ::Text:: *)
-(*Applies gamma reduction identities to any operator with exactly to spinor-chains*)
-(*Internal version with*)
-(*OperatorForm input -> Operator Form output*)
+(*Applies gamma reduction identities to any operator with exactly two spinor-chains*)
+(*Internal version with OperatorForm input -> Operator Form output*)
 
 
 GammaReductionInternal[expr_, opt__]:= expr/. op_Operator:> GammaReductionInternal[op, opt];
@@ -1082,25 +1081,26 @@ GammaReductionInternal[expr_, opt__]:= expr/. op_Operator:> GammaReductionIntern
 
 GammaReductionInternal[op_Operator, produceEva_? BooleanQ, fourDim_? BooleanQ]:=
 Module[{rest, NCMs, SP1, SP2, result, groupStruct, evaOperator, iniOperator},
-	NCMs= Cases[op, _NonCommutativeMultiply, All];
+	iniOperator= op;
+
+	NCMs= Cases[iniOperator, _NCM, All];
 	If[Length@ NCMs =!= 2, Return@ op; ];
-	
 	{SP1, SP2}= NCMs;
-	rest= ReleaseOperators@ op/._NonCommutativeMultiply->1;
-	
+	rest= iniOperator/._NCM-> 1// OperatorToNormalForm;
+
 	result= GammaReduction4D[SP1,SP2];
 	If[fourDim,
 		result= EpsExpand@ result;
 	];
-	
+
 	evaOperator= If[produceEva,
 			groupStruct=Times@@Cases[{rest},_Delta|_CG,Infinity];
-			DefineEvanescentOperator[groupStruct* SP1* SP2, groupStruct* result, GammaReduction]* 
+			DefineEvanescentOperator[groupStruct* SP1* SP2, groupStruct* result, GammaReduction]*
 				rest/ groupStruct
 		,
 			0
 		];
-	evaOperator+ result* rest// ContractCGs// ContractDelta// Operator
+	evaOperator+ result* rest// ContractCGs// ContractDelta //Contract// NormalToOperatorForm
 ];
 
 
@@ -1116,6 +1116,6 @@ Module[{rest, NCMs, SP1, SP2, result, groupStruct, evaOperator, iniOperator},
 Options[GammaReduction]= {FourDimensional-> False, Evanescent-> True};
 
 
-GammaReduction[expr_, OptionsPattern[]](*? OptionsCheck*):= 
-	GammaReductionInternal[Operator@ expr, OptionValue@ Evanescent, OptionValue@ FourDimensional]// 
+GammaReduction[expr_, OptionsPattern[]](*? OptionsCheck*):=
+	GammaReductionInternal[Operator@ expr, OptionValue@ Evanescent, OptionValue@ FourDimensional]//
 	OperatorToNormalForm// ContractDelta// RelabelIndices;

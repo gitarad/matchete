@@ -26,6 +26,7 @@ Package["Matchete`"]
 PackageExport["$MatchetePath"]
 PackageExport["CheckForUpdate"]
 PackageExport["SuggestBibliography"]
+PackageExport["AddLiterature"]
 
 
 (* ::Text:: *)
@@ -90,12 +91,10 @@ PackageScope["MyPrint"]
 PackageScope["$PrintMessages"]
 
 
-PackageScope["$tally"]
-PackageScope["IncreaseTally"]
-PackageScope["AppendTally"]
-
-
 PackageScope["AddToBibliography"]
+
+
+PackageScope["CheckVersionCompatibility"]
 
 
 (* ::Section:: *)
@@ -133,6 +132,10 @@ MyPrint::usage       = "MyPrint[message,Verbose -> True/False] is a printing fun
 
 
 PrintMessages::usage  = "PrintMessages[True/False] sets whether information messages are displayed by some of the routines."
+
+
+TermsToList::usage=
+"Transform a sum of terms into a list, or convert a single term into a list."
 
 
 (* ::Chapter:: *)
@@ -175,6 +178,56 @@ CheckForUpdate[]:=Module[{importString,nrOnly,yn},
 
 UpdateMatchete[]:=Module[{},
 	Import["https://gitlab.com/matchete/matchete/-/raw/master/install.m"]
+]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Check version compatibility*)
+
+
+CheckVersionCompatibility::usage="checks that the current MAtchete version is the same or newer than the version given as argument.";
+
+
+CheckVersionCompatibility::inval="Invalid version number (`1`) given. Version numbers must follow the format \"a.b.c\", where a, b, c can each be only a sequence of integers. Cannot check whether your Matchete version is compatible with this code. I am still running the code, but watch our for problems.";
+
+
+CheckVersionCompatibility::incomp="In compatible Matchete version detected. The feature you are using requires Mathematica v`1`, whereas you are currently using v`2`. You can update to the latest version using the function: CheckForUpdate[]";
+
+
+GetVersion[]:=Import@FileNameJoin[{$MatchetePath,"version"}];
+
+
+CheckVersionCompatibility[v_String]:= Module[{currentVersion=GetVersion[],requestedVersion=v},
+	(* check that the version numbers have a valid format *)
+	If[!StringMatchQ[currentVersion,(DigitCharacter..)~~"."~~(DigitCharacter..)~~"."~~(DigitCharacter..)],
+		Message[CheckVersionCompatibility::inval,currentVersion]; Return[True]
+	];
+	If[!StringMatchQ[requestedVersion,(DigitCharacter..)~~"."~~(DigitCharacter..)~~"."~~(DigitCharacter..)],
+		Message[CheckVersionCompatibility::inval,requestedVersion]; Return[True]
+	];
+	
+	(* split version numbers and convert to integers *)
+	currentVersion= ToExpression/@StringSplit[currentVersion,"."];
+	requestedVersion= ToExpression/@StringSplit[requestedVersion,"."];
+	
+	(* compare *)
+	If[currentVersion[[1]]>requestedVersion[[1]],
+		Return[True]
+		,
+		If[currentVersion[[1]]==requestedVersion[[1]],
+			If[currentVersion[[2]]>requestedVersion[[2]],
+				Return[True]
+				,
+				If[currentVersion[[2]]==requestedVersion[[2]],
+					If[currentVersion[[3]]>=requestedVersion[[3]],
+						Return[True]
+					];
+				];
+			];
+		];
+	];
+	Message[CheckVersionCompatibility::incomp,v,GetVersion[]];
+	Return[False]
 ]
 
 
@@ -222,6 +275,7 @@ OptionTest[_, CanonicallyNormalized]         = BooleanQ;
 OptionTest[_, ChargeNeutral]                 = BooleanQ;
 OptionTest[_, Chiral]                        = MatchQ[False|LeftHanded|RightHanded];
 OptionTest[_, ClosedSpinChains]              = BooleanQ;
+OptionTest[CollectOperators, NormalForm]     = BooleanQ;
 OptionTest[_, ContractedIndices]             = BooleanQ;
 OptionTest[_, DetailedOutput]                = BooleanQ;
 OptionTest[_, DummyCoefficients]             = BooleanQ;
@@ -239,10 +293,12 @@ OptionTest[_, KeepTrivalReplacements]        = BooleanQ;
 OptionTest[_, LoopOrder]                     = MatchQ[0| 1| {1}];
 OptionTest[_, ModelParameters]               = (ListQ[#] && And@@(Head[#1]===Rule &/@#))&;
 OptionTest[_, Path]                          = BooleanQ;
+OptionTest[_, PreferInputOperators]          = BooleanQ;
 OptionTest[_, ReductionIdentities]           = MatchQ[dDimensional|Evanescent|EvanescenceFree|FourDimensional];
 OptionTest[_, Rules]                         = BooleanQ;
 OptionTest[_, SelfConjugate]                 = Or[BooleanQ[#],VectorQ[#,Positive]]&;
 OptionTest[_, Simplifications]               = MatchQ[All| None];
+OptionTest[_, Simplify]                      = BooleanQ;
 OptionTest[_, SortByEFTOrder]                = BooleanQ;
 OptionTest[_, Symmetries]                    = ListQ;
 OptionTest[_, UndefinedObject]               = BooleanQ;
@@ -272,10 +328,13 @@ OptionMessage[IndexAlphabet, func_, val_]                := Message[General::opt
 OptionMessage[KeepTrivalReplacements, func_, val_]       := Message[General::optexpectsval, Verbose, func, val, "Boolean"];
 OptionMessage[LoopOrder, func_, val_]                    := Message[General::optexpectsval, LoopOrder, func, val, "value 0, 1 or {1}"];
 OptionMessage[ModelParameters, func_, val_]              := Message[General::optexpectsval, ModelParameters, func, val, "list of replacement rules"];
-OptionMessage[Path, func_, val_]                         := Message[General::optexpectsval, Path, func, val, "Boolean"];
+OptionMessage[NormalForm, func_, val_]                   := Message[General::optexpectsval, NormalForm, func, val, "Boolean"];
+OptionMessage[Path, func_, val_]                         := Message[General::optexpectsval, Path, func, val, "String"];
+OptionMessage[PreferInputOperators, func_, val_]         := Message[General::optexpectsval, PreferInputOperators, func, val, "Boolean"];
 OptionMessage[ReductionIdentities, func_, val_]          := Message[General::optexpectsval, ReductionIdentities, func, val, "value dDimensional, Evanescent, EvanescenceFree, or FourDimensional"];
 OptionMessage[SelfConjugate, func_, val_]                := Message[General::optexpectsval, SelfConjugate, func, val, "boolean (True or False) or a list of positive integers indicating the index positions"];
 OptionMessage[Simplifications, func_, val_]              := Message[General::optexpectsval, Simplifications, func, val, "value All or None"];
+OptionMessage[Simplify, func_, val_]                     := Message[General::optexpectsval, Simplify, func, val, "Boolean"];
 OptionMessage[SortByEFTOrder, func_, val_]               := Message[General::optexpectsval, Verbose, func, val, "Boolean"];
 OptionMessage[Symmetries, func_, val_]                   := Message[General::optexpectsval, Symmetries, func, val, "a list of index symmetries"];
 OptionMessage[Verbose, Match, val_]                      := Message[General::optexpectsval, Verbose, Match, val, "Print, Monitor or None"];
@@ -383,19 +442,6 @@ MyPrint[string__,OptionsPattern[]]? OptionsCheck:=Module[{},
 
 (* ::Subsection:: *)
 (*Other*)
-
-
-(* ::Subsubsection::Closed:: *)
-(*Tally function*)
-
-
-(* ::Text:: *)
-(*Function to keep a tally. For debugging purposes*)
-
-
-$tally= <||>;
-IncreaseTally[h_, n_:1]:= If[KeyExistsQ[$tally, h], $tally[h]+= n, $tally[h]= n];
-AppendTally[h_, elem_]:= If[KeyExistsQ[$tally, h], AppendTo[$tally[h], elem], $tally[h]= {elem}];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -704,7 +750,10 @@ SelectAndDeleteCases[expr_, args__]:= {Cases[expr, args], DeleteCases[expr, args
 (*Transform a sum of terms into a list, or convert a single term into a list*)
 
 
-TermsToList@ expr_:= Module[{temp= LagrangianExpand@ expr},
+Options@ TermsToList= {Expand -> True};
+
+
+TermsToList[expr_, OptionsPattern[]]:= Module[{temp= If[OptionValue@Expand, LagrangianExpand@expr, expr]},
 	If[Head@ temp === Plus, List@@ temp, List@ temp]
 ];
 
@@ -738,7 +787,7 @@ OptionMessage["References", SuggestBibliography, val_]:=
 SuggestBibliography[OptionsPattern[]] ? OptionsCheck:= Module[{abbreviation, reasons, bib, refs},
 	(*What references should be included in the bibliography*)
 	refs= If[OptionValue@ "References" === All,
-			Keys@ MatchetePapers
+			Keys@ LiteratureList
 		,
 			Keys@ $RelevantCitations
 		];
@@ -746,7 +795,7 @@ SuggestBibliography[OptionsPattern[]] ? OptionsCheck:= Module[{abbreviation, rea
 	(*What are the reasons behind the suggestions of the individual references*)
 	If[OptionValue@ "Explanation",
 		reasons= Table[
-			abbreviation= StringReplace[MatchetePapers@ ref, 
+			abbreviation= StringReplace[LiteratureList@ ref, 
 				RegularExpression["(^.*\\s)*@article\\{(.*),(.|\\s)*"]:> "$2"];
 			abbreviation= "Reference '" <> abbreviation <> "' is suggested for the following reasons:";
 			StringJoin@@ Riffle[Prepend[$RelevantCitations@ ref, abbreviation], "\n - "]
@@ -756,7 +805,7 @@ SuggestBibliography[OptionsPattern[]] ? OptionsCheck:= Module[{abbreviation, rea
 	];
 	
 	(*Merge the references and present the result*)
-	bib= StringJoin@@ Riffle[Lookup[MatchetePapers, refs], "\n\n"];
+	bib= StringJoin@@ Riffle[Lookup[LiteratureList, refs], "\n\n"];
 	CellPrint[Cell[bib, "Output", "PageWidth"-> Infinity]];
 	Button["Copy to clipboard", CopyToClipboard@ bib]
 ];
@@ -786,7 +835,7 @@ AddToBibliography["ProofOfConcept", "Use of the core Matchete functionality"];
 
 
 (* ::Subsubsection::Closed:: *)
-(*Collection of all Matchete papers  *)
+(*Collection of all papers (Matchete and others)*)
 
 
 MatchetePapers= <|
@@ -839,6 +888,25 @@ MatchetePapers= <|
 |>;
 
 
+LiteratureList=MatchetePapers;
+
+
+(* ::Subsubsection::Closed:: *)
+(*Adding papers*)
+
+
+AddLiterature::usage="AddLiterature[name, info, bibtex] adds a paper labeled by name to the list of references used by SuggestBibliography[]. The argument info provides a description of the paper and bibtex should give the corresponding bibtex code."
+
+
+AddLiterature[name_String, info_String, bibtex_String]:=Module[
+	{entry}
+	,
+	entry = name->"%"<>info<>"\n"<>bibtex;
+	AssociateTo[LiteratureList, entry];
+	AddToBibliography[name, info]
+]
+
+
 (* ::Section:: *)
 (*DumpSave*)
 
@@ -853,7 +921,7 @@ MatchetePapers= <|
 (*SaveMatcheteSession[fileName_String, symbols_List:{}]:=Module[
 	{
 		(* For some reason averything crashes when you DumpSave GroupMagic`... *)
-		builtInDefs={"Matchete`", (*"GroupMagic`",*) Hold[Global`$MatcheteVersion], NonCommutativeMultiply, Format, NiceForm},
+		builtInDefs={"Matchete`", (*"GroupMagic`",*) Hold[Global`$MatcheteVersion], NCM, Format, NiceForm},
 		file,
 		mySymbols,
 		$DumpSave,

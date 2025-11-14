@@ -100,6 +100,11 @@ for file in "${staged_files[@]}"; do
     fi
 done
 
+if [ -d ".git/rebase-merge" ] || [ -d ".git/rebase-apply" ]; then
+    echo "Rebase in progress — skipping empty commit check."
+    exit 0
+fi
+
 if [ "x`git status -s | grep '^[A|D|M]'`" = "x" ]; then
     # If commit is empty we abort
     print_color 1 "No changes added, aborting commit!" 

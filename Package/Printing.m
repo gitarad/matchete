@@ -13,6 +13,7 @@ Package["Matchete`"]
 
 (* ::Text:: *)
 (*Nb. "ToBoxes[expr, NiceForm/StandardForm]" can be used to see how an expression is formatted in the internal Mathematica Box forms.*)
+(*Tutorial on Box structures and notation: https://www.wolfram.com/broadcast/video.php?sx=notation&c=104&v=3570 *)
 
 
 (* ::Chapter:: *)
@@ -285,14 +286,14 @@ AuxForm/: MakeBoxes[Index[label_, rep_], AuxForm]:= Block[{printLabel},
 
 
 (* ::Subsubsection::Closed:: *)
-(*NonCommutativeMultiply*)
+(*NCM*)
 
 
 (* ::Text:: *)
 (*Multiple arguments*)
 
 
-AuxForm/: MakeBoxes[x: NonCommutativeMultiply[_,__], AuxForm] := Module[
+AuxForm/: MakeBoxes[x: NCM[_,__], AuxForm] := Module[
 		{
 			product=List@@x,
 			rowBox={}
@@ -336,7 +337,7 @@ AuxForm/: MakeBoxes[x: NonCommutativeMultiply[_,__], AuxForm] := Module[
 (*Single Argument*)
 
 
-AuxForm/: MakeBoxes[NonCommutativeMultiply@ arg_, AuxForm]:= MakeBoxes[arg, AuxForm];
+AuxForm/: MakeBoxes[NCM@ arg_, AuxForm]:= MakeBoxes[arg, AuxForm];
 
 
 (* ::Subsection:: *)
@@ -566,7 +567,7 @@ GetFieldSpin[expr_]:=Flatten@Join[
 
 MaxDim[term_]:=If[FreeQ[term,Plus],
 	OperatorDimension[term],
-	Max[OperatorDimension/@(List@@BetterExpand[term])]
+	Max[OperatorDimension/@TermsToList[term]]
 ]
 
 
@@ -576,7 +577,7 @@ MaxDim[term_]:=If[FreeQ[term,Plus],
 
 MinDim[term_]:=If[FreeQ[term,Plus],
 	OperatorDimension[term],
-	Min[OperatorDimension/@(List@@BetterExpand[term])]
+	Min[OperatorDimension/@TermsToList[term]]
 ]
 
 
@@ -973,7 +974,7 @@ SortingFunctionTimes[x_] := Switch[x,
 	Power[Bar[_FieldStrength],_], 25 + AlphabeticLabelOrder[First@First@First@x],
 	Power[_FieldStrength,_], 25 + AlphabeticLabelOrder[First@First@x],
 	(* fermion spin-chains *)
-	_NonCommutativeMultiply, 26,
+	_NCM, 26,
 	(* operators *)
 	_Operator, 30,
 	_AtomicOp, 30,
@@ -1124,8 +1125,8 @@ MakeFieldBox[lab_, indices_, CDinds_]:= CDFormatting[UpDownIndices[lab, indices]
 
 
 CDFormatting[lab_, {}]:= lab;
-CDFormatting[lab_, CDinds:{__}]:= TemplateBox[Append[Replace[CDinds//. {x___, a_, a_, y___}:> {x, 2, y}, 
-	{ 2:> SuperscriptBox["D", 2], i_:> SubscriptBox["D", MakeBoxes[i, AuxForm]]}, {1}], lab], "RowDefault"];
+CDFormatting[lab_, CDinds:{__}]:= TemplateBox[Append[Replace[CDinds//. {{x___, a_, a_/;!IntegerQ[a], y___}:> {x, 2, y}, {x___, a_Integer, b_Integer, y___}:> {x, a+b, y}}, 
+	{ n_Integer:> SuperscriptBox["D", n], i_:> SubscriptBox["D", MakeBoxes[i, AuxForm]]}, {1}], lab], "RowDefault"];
 CDFormatting[lab_, other_]:= TemplateBox[{SubscriptBox["D", MakeBoxes[other, AuxForm]], lab}, "RowDefault"];
 
 

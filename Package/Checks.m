@@ -72,8 +72,8 @@ PackageScope["GaugeAnomalyContribution"]
 (*Exported*)
 
 
-CheckLagrangian::usage = "CheckLagrangian[Lagrangian, options] performs a series of checks on the input Lagrangian. 
-The options {Hermiticity, ContractedIndices, ClosedSpinChains, CanonicallyNormalized, HeavyMassBasis, ChargeNeutral, FreeOfHeavyTadpoles, FreeOfGaugeFields, UndefinedObject, GaugeAnomalies} take values True/False and determine which of the checks are performed. 
+CheckLagrangian::usage = "CheckLagrangian[Lagrangian, options] performs a series of checks on the input Lagrangian.
+The options {Hermiticity, ContractedIndices, ClosedSpinChains, CanonicallyNormalized, HeavyMassBasis, ChargeNeutral, FreeOfHeavyTadpoles, FreeOfGaugeFields, UndefinedObject, GaugeAnomalies} take values True/False and determine which of the checks are performed.
 If the option DetailedOutput->True, an association with the result of each test is returned.";
 
 
@@ -92,7 +92,7 @@ ComplexSpinChains::usage        = "ComplexSpinChains[expr] returns the list of s
 HeavyMassBasisQ::usage          = "HeavyMassBasisQ[Lag] returns True if the Lagrangian is in the heavy fields mass basis, False otherwise.";
 HeavyTadpoleQ::usage            = "HeavyTadpoleQ[operator] identifies terms with only one heavy field."
 HeavyTadpoles::usage            = "HeavyTadpoles[Lag] returns the list of heavy tadpole terms with mass dimension less than 1. "
-ChargeNeutralQ::usage           = "ChargeNeutralQ[term1 (+ term2 + ...)] returns True if the term(s) are neutral under all Abelian gauge groups defined, False otherwise.";				 
+ChargeNeutralQ::usage           = "ChargeNeutralQ[term1 (+ term2 + ...)] returns True if the term(s) are neutral under all Abelian gauge groups defined, False otherwise.";
 KineticCanonicalQ::usage        = "KineticCanonicalQ[Lag] returns True if the Lagrangian's kinetic terms are canonically normalized and diagonal, False otherwise.";
 GaugeVectorOccurenceQ::usage    = "GaugeVectorOccurenceQ[expr] returns True if the expression contains gauge vectors outside field strength tensors or covariant derivatives, False otherwise";
 GaugeSingletQ::usage            = "GaugeSingletQ[field] returns True if the field is a gauge singlet."
@@ -111,7 +111,7 @@ GaugeAnomalyContribution::usage = "GaugeAnomalyContribution[field/fieldList] ret
 (*Modules*)
 
 
-(* ::Subsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Lagrange-like expression*)
 
 
@@ -126,13 +126,13 @@ LagrangianLikeCheck@ 0:= Null;
 LagrangianLikeCheck@ expr_:= Module[{temp= TermsToList@ expr},
 	If[(Or@@ FreeQ[Field|FieldStrength]/@ temp) && temp=!={0} ,
 		Message[LagrangianLikeCheck::nofield, Format[Cases[temp,a_/;FreeQ[a,_Field|_FieldStrength,All],1],NiceForm]];
-		Abort[]; 
+		Abort[];
 	];
 	Null
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Hermiticity*)
 
 
@@ -161,7 +161,7 @@ HermitianQ[expr_,OptionsPattern[{"manifest"->False}]]:= If[OptionValue["manifest
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Contracted indices*)
 
 
@@ -171,14 +171,14 @@ UncontractedIndices@ 0= {};
 UncontractedIndices[Lag_]:= Module[{indOpen=Flatten[FindOpenIndices/@ TermsToList@ Lag], indDummyBar},
 	If[indOpen=!={}, Return[indOpen]];
 	indDummyBar=Flatten[Complement[Bar/@FindDummyIndices[#],
-			Flatten[(List@@#)//.{Power[x_,n_]/;Element[n,NonNegativeIntegers]:>ConstantArray[x,n],FieldStrength[_,ind_,indG_,indL_]:>Flatten@Join[ind,indG,indL], _?NumericQ->Nothing,_Proj->Nothing,NonCommutativeMultiply->List,DiracProduct->List,GammaM[ind__]:>List@ind,Field[_,Vector[indV_],ind_,indL_]:>Join[List@indV,ind,indL],Field[_,_,ind_,indL_]:>Join[ind,indL], Coupling[_,ind_,_]:>ind, CG[_,ind_]:>ind}]] 
+			Flatten[(List@@#)//.{Power[x_,n_]/;Element[n,NonNegativeIntegers]:>ConstantArray[x,n],FieldStrength[_,ind_,indG_,indL_]:>Flatten@Join[ind,indG,indL], _?NumericQ->Nothing,_Proj->Nothing,NCM->List,DiracProduct->List,GammaM[ind__]:>List@ind,Field[_,Vector[indV_],ind_,indL_]:>Join[List@indV,ind,indL],Field[_,_,ind_,indL_]:>Join[ind,indL], Coupling[_,ind_,_]:>ind, CG[_,ind_]:>ind}]]
 		& /@TermsToList@ Lag];
 	If[indDummyBar=!={}, Return[Bar/@indDummyBar]];
 	{}
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Open spin chains*)
 
 
@@ -186,10 +186,10 @@ UncontractedIndices[Lag_]:= Module[{indOpen=Flatten[FindOpenIndices/@ TermsToLis
 (*Identifies and returns open and complex spin chains in an expression*)
 
 
-OpenSpinChains[expr_]:= Select[Flatten@Join[Cases[{expr}, _NonCommutativeMultiply,Infinity],Cases[{{expr}/._NonCommutativeMultiply->0},Field[_,Fermion, ___] ,All]], OpenSpinChainQ@# &]
+OpenSpinChains[expr_]:= Select[Flatten@Join[Cases[{expr}, _NCM,Infinity],Cases[{{expr}/._NCM->0},Field[_,Fermion, ___] ,All]], OpenSpinChainQ@# &]
 
 
-ComplexSpinChains[expr_]:= Select[Cases[{expr}, _NonCommutativeMultiply,Infinity], Count[#,Fermion, Infinity]>2 &]
+ComplexSpinChains[expr_]:= Select[Cases[{expr}, _NCM,Infinity], Count[#,Fermion, Infinity]>2 &]
 
 
 (* ::Text:: *)
@@ -197,20 +197,25 @@ ComplexSpinChains[expr_]:= Select[Cases[{expr}, _NonCommutativeMultiply,Infinity
 
 
 InconsistentSpinChains@ expr_:= Cases[{expr},
-		NonCommutativeMultiply[Transp@ _Field, DiracProduct[Except[GammaCC], ___], ___]|
-		NonCommutativeMultiply[___, DiracProduct[Except[GammaCC], ___], Transp@ Bar@ _Field]
+		NCM[Transp@ _Field, DiracProduct[Except[GammaCC], ___], ___]|
+		NCM[___, DiracProduct[Except[GammaCC], ___], Transp@ Bar@ _Field]
 	, Infinity]
 
 
-(* ::Subsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Canonically normalized kinetic term*)
 
 
-KineticCanonicalQ[L_]:=Module[{fields, LShouldBe,LIs},
-	fields=OccuringFields[L];
-	LShouldBe=KineticTerms[Sum[FreeLag[f],{f, fields}]];
-	LIs = KineticTerms[L];
-	Return[GreensSimplify[LShouldBe -LIs] === 0]
+(* ::Text:: *)
+(*Checks if all kinetic terms (not masses!) are canonically normalized.*)
+
+
+KineticCanonicalQ[L_]:=Module[{bkgFields, fields, LShouldBe,LIs},
+	bkgFields= GetFieldsByProperty[BackgroundField-> True];
+	fields= Complement[OccurringFields@ L, bkgFields];
+	LShouldBe= KineticTerms@ Sum[FreeLag@ f, {f, fields}];
+	LIs= KineticTerms@ L/. Field[lab_, __]/; MemberQ[bkgFields, lab]-> 0;
+	GreensSimplify[LShouldBe -LIs] === 0
 ]
 
 
@@ -237,9 +242,9 @@ HeavyMassBasisQ[Lag_]:=Module[{terms,coupling,fields,indicestypes},
 	If[terms=={0},Throw[True]];
 	(*for each term...*)
 	(fields = Cases[#,_Field,Infinity];
-	(*...check if it is twice the same field*) 
+	(*...check if it is twice the same field*)
 	If[!MatchQ[fields, {Field[f_,__],Field[f_,__]}], Message[HeavyMassBasisQ::mixedfields]; Throw[False]];
-	(*...check there is at least one Coupling[...] in the coefficient*) 
+	(*...check there is at least one Coupling[...] in the coefficient*)
 	If[FreeQ[#, _Coupling, All], Message[HeavyMassBasisQ::nomasscoupling,#]; Throw[False]]
 	) & /@ terms;
 	Throw[True]]
@@ -277,7 +282,7 @@ HeavyMassBasisQ[Lag_]:=Module[{terms,coupling,fields,indicestypes},
 	If[terms=={0},Throw[True]];
 	(*for each term...*)
 	(fields = Cases[#,_Field,Infinity];
-	(*...check if it is twice the same field*) 
+	(*...check if it is twice the same field*)
 	If[!MatchQ[fields, {Field[f_,__],Field[f_,__]}],Message[HeavyMassBasisQ::mixedfields];Throw[False]];
 	coupling=Abs[#/.{_Operator:>If[GetFields[fields[[1,1]]][SelfConjugate]===True || GetFields[fields[[1,1]]][Chiral]=!=False,2,1]}]//.{Abs[x_]:>x,Power[m_,_]:>m};
 	(*...check if there is only one coupling*)
@@ -395,7 +400,7 @@ GaugeAnomalyContribution[field_Symbol]:=Module[
 	gravityAnomalies,
 	gravityAnomalyFactors
 	},
-	
+
 	If[$FieldAssociation[field][Chiral]===False||GaugeSingletQ[field]===True,Return[<||>]];
 
 	(* Contruct all possible non-Abelian triangles and compute the corresponding anomalies, given by Tr[{T[rep],T[rep]}T[rep]]*)
@@ -433,7 +438,8 @@ GaugeAnomalyContribution[field_Symbol]:=Module[
 (*Function that tests if the Lagrangian has anomalies*)
 
 
-GaugeAnomaliesQ[lagrangian_]:=Total@Values@GaugeAnomalyContribution@OccuringFields@lagrangian===0;
+GaugeAnomaliesQ[lagrangian_]:= Total@ Values@ GaugeAnomalyContribution@ 
+	Complement[OccurringFields@ lagrangian, GetFieldsByProperty[BackgroundField-> True]] === 0;
 
 
 (* ::Section:: *)
@@ -463,14 +469,14 @@ CheckLagrangian::GaugeAnomalies       = "The input Lagrangian is not gauge anoma
 Options[CheckLagrangian]={
 		CanonicallyNormalized-> True,
 		ChargeNeutral-> True,
-		ContractedIndices-> True, 
+		ContractedIndices-> True,
 		ClosedSpinChains-> True,
 		DetailedOutput-> False,
 		FreeOfGaugeFields-> True,
 		GaugeAnomalies-> True,
 		HeavyMassBasis-> True,
 		FreeOfHeavyTadpoles-> True,
-		Hermiticity-> True, 
+		Hermiticity-> True,
 		UndefinedObject-> True
 	};
 
@@ -486,102 +492,102 @@ Options[CheckLagrangian]={
 CheckLagrangian[Lagrangian_,opt:OptionsPattern[]]? OptionsCheck:=CheckLagrangian[Lagrangian,opt]=
 	Module[{Lag=RelabelIndices@HcExpand@Lagrangian,DetOutput=<||>,OSpinChains,HeavTadpoles,TotCharge,UncIndices,ExtraHeads, mHermiticity=False,mContractedIndices=False,mClosedSpinChains=False, mCanonicallyNormalized=False,mMassBasis=False,mHeavyTadpoles=False,mChargeNeutral=False,mFreeOfGaugeFields=False,mUndefinedObject=False,mGaugeAnomalies=False},
 	(*Checks that Lag is a series of terms with fields or FS tensors*)
-	
+
 	LagrangianLikeCheck@ Lag;
-	
+
 	(*check if all spin chains are closed and contain only 2 fermions*)
 	If[OptionValue@ ClosedSpinChains,
 		OSpinChains=Join[OpenSpinChains[Lag],ComplexSpinChains[Lag], InconsistentSpinChains[Lag]];
-		If[ (mClosedSpinChains = OSpinChains =!= {}) , 
+		If[ (mClosedSpinChains = OSpinChains =!= {}) ,
 			Message[CheckLagrangian::ClosedSpinChains];
 			];
 		If[OptionValue@DetailedOutput, AppendTo[DetOutput,"Open/Complex/InconsistentSpinChains"->(Format[#,NiceForm]&/@OSpinChains)]]
 		];
-	
+
 	(*check if L is hermitian *)
-	(*HermitianQ cannot evaluate improperly contracted spinchains*)	
+	(*HermitianQ cannot evaluate improperly contracted spinchains*)
 	If[OptionValue@Hermiticity && !mClosedSpinChains,
-		If[(mHermiticity = !HermitianQ[Lag]), 
-			Message[CheckLagrangian::Hermiticity,Format[(Lag - Bar[Lag] //GreensSimplify),NiceForm]]; 
+		If[(mHermiticity = !HermitianQ[Lag]),
+			Message[CheckLagrangian::Hermiticity,Format[(Lag - Bar[Lag] //GreensSimplify),NiceForm]];
 			];
 		If[OptionValue@DetailedOutput, AppendTo[DetOutput,"Hermiticity"->!mHermiticity]]
 		];
-		
-	(*check if all indices are contracted *)	
+
+	(*check if all indices are contracted *)
 	If[OptionValue@ ContractedIndices,
 		UncIndices = UncontractedIndices[Lag];
-		If[ (mContractedIndices = UncIndices =!= {}), 
-			Message[CheckLagrangian::ContractedIndices,UncIndices]; 
+		If[ (mContractedIndices = UncIndices =!= {}),
+			Message[CheckLagrangian::ContractedIndices,UncIndices];
 			];
 		If[OptionValue@DetailedOutput, AppendTo[DetOutput,"UncontractedIndices"->UncIndices]]
 		];
-		
-	(*check if kinetaic part is canonically normalized*) 
+
+	(*check if kinetaic part is canonically normalized*)
 	If[OptionValue@ CanonicallyNormalized,
-		If[ (mCanonicallyNormalized = !KineticCanonicalQ[Lag]) , 
-			Message[CheckLagrangian::CanonicallyNormalized]; 
+		If[ (mCanonicallyNormalized = !KineticCanonicalQ[Lag]) ,
+			Message[CheckLagrangian::CanonicallyNormalized];
 			];
 		If[OptionValue@DetailedOutput, AppendTo[DetOutput,"CanonicallyNormalized"->!mCanonicallyNormalized]]
 		];
-		
-	(*check if the heavy mass is diagonal*) 
+
+	(*check if the heavy mass is diagonal*)
 	If[OptionValue@ HeavyMassBasis,
-		If[ (mMassBasis= !HeavyMassBasisQ[Lag]), 
-			Message[CheckLagrangian::HeavyMassBasis]; 
+		If[ (mMassBasis= !HeavyMassBasisQ[Lag]),
+			Message[CheckLagrangian::HeavyMassBasis];
 			];
 		If[OptionValue@DetailedOutput, AppendTo[DetOutput,"HeavyMassBasis"->!mMassBasis]]
 		];
-	
+
 	If[OptionValue@ FreeOfHeavyTadpoles,
 		HeavTadpoles=HeavyTadpoles[Lag];
-		If[ (mHeavyTadpoles= HeavTadpoles =!= {}), 
-			Message[CheckLagrangian::FreeOfHeavyTadpoles]; 
+		If[ (mHeavyTadpoles= HeavTadpoles =!= {}),
+			Message[CheckLagrangian::FreeOfHeavyTadpoles];
 			];
 		If[OptionValue@DetailedOutput, AppendTo[DetOutput,"HeavyTadpoles"->(Format[#,NiceForm]&/@HeavTadpoles)]]
 		];
-		
-	(*check if L is neutral under all charges*) 
+
+	(*check if L is neutral under all charges*)
 	If[OptionValue@ ChargeNeutral,
 		TotCharge=TotalCharge[Lag];
-		If[ (mChargeNeutral= ((TotCharge=!=0) && FreeQ[TotCharge,_Symbol])) , 
-			Message[CheckLagrangian::ChargeNeutral]; 
+		If[ (mChargeNeutral= ((TotCharge=!=0) && FreeQ[TotCharge,_Symbol])) ,
+			Message[CheckLagrangian::ChargeNeutral];
 			];
 		If[OptionValue@DetailedOutput, AppendTo[DetOutput,"Charges"->TotCharge]]
 		];
-		
+
 	(*check if gauge fields occur outside of field strength*)
 	If[OptionValue@ FreeOfGaugeFields,
-		If[ (mFreeOfGaugeFields = GaugeVectorOccurenceQ[Lag]) , 
-			Message[CheckLagrangian::GaugeVectorOccurence]; 
+		If[ (mFreeOfGaugeFields = GaugeVectorOccurenceQ[Lag]) ,
+			Message[CheckLagrangian::GaugeVectorOccurence];
 			];
 		If[OptionValue@DetailedOutput, AppendTo[DetOutput,"FreeOfGaugeFields"->!mFreeOfGaugeFields]]
 		];
-		
-	(*check if all objects are defined*)	
+
+	(*check if all objects are defined*)
 	If[OptionValue@ UndefinedObject,
 		ExtraHeads= DeleteDuplicates@ DeleteCases[Flatten[{Lag}//.
 				{Times->List,
-				Plus->List, 
-				NonCommutativeMultiply->List, 
-				Power[a_,___]:> a, Bar[a_]:> a , Transp[a_]:> a, Log[a_]:>a, 
-				hbar->1, \[Mu]bar2->1, ev-> 1, \[Epsilon]->1, \[Pi]->1, \[ScriptD]->1}], 
+				Plus->List,
+				NCM->List,
+				Power[a_,___]:> a, Bar[a_]:> a , Transp[a_]:> a, Log[a_]:>a,
+				hbar->1, \[Mu]bar2->1, ev-> 1, \[Epsilon]->1, \[Pi]->1, \[ScriptD]->1}],
 			_Field | _CG | _Coupling | _?NumberQ | _DiracProduct  | _FieldStrength | _LCTensor |  _Delta];
 		If[(mUndefinedObject)= (ExtraHeads=!={}),
 			Message[CheckLagrangian::UndefinedObject,#]& /@ ExtraHeads;
 		];
 		If[OptionValue@DetailedOutput, AppendTo[DetOutput,"AllObjectsDefined"->!mUndefinedObject]]
 	];
-	
-    (*check if the Lagrangian is gauge anomaly free *)	
+
+    (*check if the Lagrangian is gauge anomaly free *)
     If[OptionValue@ GaugeAnomalies,
-		If[(mGaugeAnomalies = !GaugeAnomaliesQ@Lag), 
-			Message[CheckLagrangian::GaugeAnomalies]; 
+		If[(mGaugeAnomalies = !GaugeAnomaliesQ@Lag),
+			Message[CheckLagrangian::GaugeAnomalies];
 		];
-		If[OptionValue@DetailedOutput, 
-			AppendTo[DetOutput,"GaugeAnomalies"-> Format[Normal@GaugeAnomalyContribution@OccuringFields@Lag, NiceForm]]
+		If[OptionValue@DetailedOutput,
+			AppendTo[DetOutput,"GaugeAnomalies"-> Format[Normal@GaugeAnomalyContribution@OccurringFields@Lag, NiceForm]]
 		];
 	];
-	
+
 	(* output the test results combined, we can output more details if wanted *)
 	If[OptionValue@DetailedOutput,
 		Return[DetOutput],

@@ -233,6 +233,15 @@ VerificationTest[
 ]
 
 
+VerificationTest[
+	Bar@ eps2[i, j]t[SU2@ fund][a, k, l]t[SU2@ fund][a, i, m]// ContractCGs
+,
+	1/4 Bar@ eps2[l, m] del[SU2@ fund][k, j] + 1/4 Bar@ eps2[l, j] del[SU2@ fund][k, m]
+,
+	TestID-> "CGContractions: SU(2) conjugate epsilon and generators"
+]
+
+
 (* ::Subsubsection::Closed:: *)
 (*SU(3) contractions*)
 

@@ -8,7 +8,7 @@ Package["Matchete`"]
 
 
 (* ::Subtitle:: *)
-(*Contains the definitions of the NonCommutativeMultiply*)
+(*Contains the definitions of the NCM*)
 
 
 (* ::Chapter:: *)
@@ -23,10 +23,8 @@ Package["Matchete`"]
 (*Exported*)
 
 
-Unprotect@ NonCommutativeMultiply; (* overwrite NonCommutativeMultiply *)
-
-
 PackageExport["Bar"]
+PackageExport["NCM"]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -40,10 +38,6 @@ PackageScope["UnsetBarable"]
 
 PackageScope["CommutativeQ"]
 PackageScope["Commutative"]
-
-
-PackageScope["Commutator"]
-PackageScope["AntiCommutator"]
 
 
 PackageScope["FermionTrace"]
@@ -64,7 +58,7 @@ PackageScope["NCDot"]
 (*Exported*)
 
 
-NonCommutativeMultiply::usage = "NonCommutativeMultiply[a, b, ...] (alternatively a**b**...) denotes the Dirac product of spinors, Dirac matrices, etc.";
+NCM::usage = "NCM[a, b, ...] (alternatively a\[CenterDot] b\[CenterDot] ...) denotes the Dirac product of spinors, Dirac matrices, etc.";
 
 
 Bar::usage   = "Bar[field] returns the bar of a fermion field or the conjugate otherwise. Bar can also be applied to conjugate indices and charges.";
@@ -81,10 +75,6 @@ UnsetBarable::usage = "Function for unsetting complex objects.";
 
 CommutativeQ::usage      = "CommutativeQ[obj] returns True if obj is a comutative object and false otherwise.";
 Commutative::usage       = "Commutative[obj] is an auxiliary head that can be used to treat the object obj temporarily as commutative.";
-
-
-Commutator::usage     = "Commutator[X,Y] gives the commutator of X and Y, i.e. [X,Y]=X**Y-Y**X.";
-AntiCommutator::usage = "AntiCommutator[X,Y] gives the anti-commutator of X and Y, i.e. {X,Y}=X**Y+Y**X.";
 
 
 FermionTrace::usage        = "FermionTrace[expr] closes fermion lines in expr and performs Dirac gamma traces.";
@@ -126,7 +116,7 @@ NonBarableQ@ _SparseArray= False;
 
 
 NonBarableQ@ Alternatives[Coupling, DiracProduct, Field, FieldStrength,
-	NonCommutativeMultiply, Transp, EvaOp]= False;
+	NCM, Transp, EvaOp]= False;
 
 
 (* ::Subsubsection::Closed:: *)
@@ -152,13 +142,13 @@ Bar@ x_Complex:= Conjugate@ x;
 (*Action on Matchete symbols*)
 
 
-Bar[expr_NonCommutativeMultiply]:= Bar/@ Reverse@ expr;
+Bar[expr_NCM]:= Bar/@ Reverse@ expr;
 Bar@ x_DiracProduct:= Reverse@ x/. {Gamma5-> -Gamma5, Proj@ s_:> Proj[-s], g_GammaM:> Reverse@ g};
 
 
-Bar@ f:Field[label_, Scalar|Vector[_]|Ghost, __]/; $FieldAssociation[label, SelfConjugate]:=f;
+Bar@ f:Field[label_, Scalar|Vector[_]|Ghost|AntiGhost, __]/; $FieldAssociation[label, SelfConjugate]:=f;
 Bar@ f:Field[label_, Fermion, __]/; $FieldAssociation[label, SelfConjugate]:= 
-	Transp[f]**DiracProduct[GammaCC]; (* Bar for Majorana Fermions *)
+	Transp[f]\[CenterDot] DiracProduct[GammaCC]; (* Bar for Majorana Fermions *)
 Bar@ FieldStrength[label_, lind_, ginds_, cdinds_]/; $FieldAssociation[label, SelfConjugate]:= 
 	FieldStrength[label, lind, Bar/@ ginds, cdinds];
 Bar@ c:Coupling[label_, __]/; $CouplingAssociation[label, SelfConjugate]:= c;
@@ -205,10 +195,10 @@ UnsetBarable[x:_Symbol@_] := (Evaluate@ Head@ x/: NonBarableQ@ x =.);
 
 
 CommutativeQ@ _DiracProduct= False;
-CommutativeQ@ Field[_, Fermion| Ghost, __]= False;
+CommutativeQ@ Field[_, Fermion, __]= False;
 
 
-CommutativeQ@ Field[_, Scalar| _Vector, __]= True;
+CommutativeQ@ Field[_, Scalar| _Vector| Ghost| AntiGhost, __]= True;
 CommutativeQ@ _FieldStrength= True;
 CommutativeQ@ _Coupling= True;
 CommutativeQ@ _CG= True;
@@ -221,10 +211,10 @@ CommutativeQ@ _LF= True;
 
 (* Memoization speeds up DeriveSubstitutions by a factor of ~2 or so *)
 (* Memoization seems to have very poor performance in EOM and GreensSimplify creating 100,000s of Downvalues *)
-(*CommutativeQ[x_NonCommutativeMultiply]:= (CommutativeQ[x]= ClosedSpinChainQ[x]);
+(*CommutativeQ[x_NCM]:= (CommutativeQ[x]= ClosedSpinChainQ[x]);
 CommutativeQ[f_?CommutativeQ[x___]]:= (CommutativeQ[f[x]]= And@@ CommutativeQ/@ {x});*)
 
-CommutativeQ@ x_NonCommutativeMultiply:= ClosedSpinChainQ@ x;
+CommutativeQ@ x_NCM:= ClosedSpinChainQ@ x;
 CommutativeQ[f_?CommutativeQ[x___]] := And@@ CommutativeQ/@ {x};
 
 CommutativeQ[f_[x___]] := False;
@@ -246,14 +236,15 @@ CommutativeQ@ Commutative@ _ ^= True;
 
 
 (* ::Subsection:: *)
-(*Properties of NonCommutativeMultiply*)
+(*Properties of NCM*)
 
 
 (* ::Text:: *)
-(*Remove attributes problematic for pattern matching*)
+(*Highjack CenterDot for NCM shorthand*)
 
 
-ClearAttributes[NonCommutativeMultiply, {Flat, OneIdentity}];
+CenterDot= NCM;
+(*Protect@ CenterDot;*) (* This can cause the loading to crash! *)
 
 
 (* ::Text:: *)
@@ -268,21 +259,21 @@ ClearAttributes[NonCommutativeMultiply, {Flat, OneIdentity}];
 (*NCM contractions*)
 
 
-NonCommutativeMultiply[a___, NonCommutativeMultiply[b__], c___]:= NonCommutativeMultiply[a, b, c] /;FreeQ[List@b,Fermion]
-NonCommutativeMultiply[] = 1;
-NonCommutativeMultiply@NonCommutativeMultiply@x___:=NonCommutativeMultiply@x;
+NCM[a___, NCM[b__], c___]:= NCM[a, b, c] /;FreeQ[List@b,Fermion]
+NCM[] = 1;
+NCM@NCM@x___:=NCM@x;
 
 
 (* Extracting commuting objects *)
-NonCommutativeMultiply[a___, b_?CommutativeQ, c___]:= b * NonCommutativeMultiply[a, c];
-NonCommutativeMultiply[a___, b_?CommutativeQ * x_, c___]:= b * NonCommutativeMultiply[a, x, c];
+NCM[a___, b_?CommutativeQ, c___]:= b * NCM[a, c];
+NCM[a___, b_?CommutativeQ * x_, c___]:= b * NCM[a, x, c];
 (* Distributivity *)
-NonCommutativeMultiply[a___, b_Plus, c___]:= NonCommutativeMultiply[a, #, c] & /@ b 
+NCM[a___, b_Plus, c___]:= NCM[a, #, c] & /@ b 
 
 
 (*On matrix*)
 NCDot[a_, b_]/;(Length@Dimensions@a===2 && Length@Dimensions@b===2 && (Dimensions[a][[2]])===(Dimensions[b][[1]])):=
-	Inner[NonCommutativeMultiply,a,b,Plus];
+	Inner[NCM,a,b,Plus];
 NCDot[a_,b_,c__]:=NCDot[NCDot[a,b],c];
 NCDot[0,0]:=0;
 
@@ -291,10 +282,10 @@ NCDot[0,0]:=0;
 (*Contraction of spin chains*)
 
 
-NonCommutativeMultiply[a___, x:NonCommutativeMultiply@ b___, c___]:=
+NCM[a___, x:NCM@ b___, c___]:=
 	If[ClosedSpinChainQ@ x,
-		x NonCommutativeMultiply[a, c],
-		NonCommutativeMultiply[a, b, c]
+		x NCM[a, c],
+		NCM[a, b, c]
 	];
 
 
@@ -303,44 +294,43 @@ NonCommutativeMultiply[a___, x:NonCommutativeMultiply@ b___, c___]:=
 
 
 (*No terms with two fields transposed*)
-NonCommutativeMultiply[A: Transp@Field[_,Fermion,___] , B___/;FreeQ[List@B,Fermion] ,C: Transp@Bar@Field[_,Fermion,___]]:= - Transp[C]** Transp[B] ** Transp[A] 
+NCM[A: Transp@Field[_,Fermion,___] , B___/;FreeQ[List@B,Fermion] ,C: Transp@Bar@Field[_,Fermion,___]]:= - Transp[C]\[CenterDot] Transp[B] \[CenterDot] Transp[A] 
 (*No complex fermion transpose on the left*)
-NonCommutativeMultiply[A: Transp@Field[labelA_,Fermion,___]/;!$FieldAssociation[labelA][SelfConjugate], B___/;FreeQ[List@B,Fermion], C: Field[labelC_,Fermion,___]/;$FieldAssociation[labelC][SelfConjugate]]:= 
-	- Transp[C]** Transp[B] ** Transp[A] 
+NCM[A: Transp@Field[labelA_,Fermion,___]/;!$FieldAssociation[labelA][SelfConjugate], B___/;FreeQ[List@B,Fermion], C: Field[labelC_,Fermion,___]/;$FieldAssociation[labelC][SelfConjugate]]:= 
+	- Transp[C]\[CenterDot] Transp[B] \[CenterDot] Transp[A] 
 (*If there must be a transpose, and no derivatices, choose canonical ordering of labels*)
-NonCommutativeMultiply[A:Transp@(Field[labelA_,Fermion,_,{}])/; $FieldAssociation[labelA][SelfConjugate], B___/;FreeQ[List@B,Fermion], C: Field[labelC_,Fermion,_,{}]/;$FieldAssociation[labelC][SelfConjugate]]:= 
-	- Transp[C]** Transp[B] ** Transp[A]  /;!OrderedQ[{labelA,labelC}] 
-NonCommutativeMultiply[A:Transp@(Field[labelA_,Fermion,_,{}])/;!$FieldAssociation[labelA][SelfConjugate], B___/;FreeQ[List@B,Fermion], C: Field[labelC_,Fermion,_,{}]/;!$FieldAssociation[labelC][SelfConjugate]]:= 
-	- Transp[C]** Transp[B] ** Transp[A]  /;!OrderedQ[{labelA,labelC}]
-NonCommutativeMultiply[A:Bar@(Field[labelA_,Fermion,_,{}]), B___/;FreeQ[List@B,Fermion], C: Transp@Bar@(Field[labelC_,Fermion,_,{}]) ]:=
-	- Transp[C]** Transp[B] ** Transp[A]  /;!OrderedQ[{labelA,labelC}]
+NCM[A:Transp@(Field[labelA_,Fermion,_,{}])/; $FieldAssociation[labelA][SelfConjugate], B___/;FreeQ[List@B,Fermion], C: Field[labelC_,Fermion,_,{}]/;$FieldAssociation[labelC][SelfConjugate]]:= 
+	- Transp[C]\[CenterDot] Transp[B] \[CenterDot] Transp[A]  /;!OrderedQ[{labelA,labelC}] 
+NCM[A:Transp@(Field[labelA_,Fermion,_,{}])/;!$FieldAssociation[labelA][SelfConjugate], B___/;FreeQ[List@B,Fermion], C: Field[labelC_,Fermion,_,{}]/;!$FieldAssociation[labelC][SelfConjugate]]:= 
+	- Transp[C]\[CenterDot] Transp[B] \[CenterDot] Transp[A]  /;!OrderedQ[{labelA,labelC}]
+NCM[A:Bar@(Field[labelA_,Fermion,_,{}]), B___/;FreeQ[List@B,Fermion], C: Transp@Bar@(Field[labelC_,Fermion,_,{}]) ]:=
+	- Transp[C]\[CenterDot] Transp[B] \[CenterDot] Transp[A]  /;!OrderedQ[{labelA,labelC}]
 
 
 (*If same field and same number of derivatives, place fields according to indices*)
-(*NonCommutativeMultiply[A:Bar@(Field[label_,Fermion,indA:Except[_Pattern],derA_]), B___/;FreeQ[List@B,Fermion], C: Transp@Bar@(Field[label_,Fermion,indC:Except[_Pattern],derC_]) ]/;(Length[derA]===Length[derC]):=
-	- Transp[C]** Transp[B] ** Transp[A]  /;!OrderedQ[{indA,indC}/.{Index[_,Flavor]->Nothing,Index[_Pattern,_]->Nothing}]*)
+(*NCM[A:Bar@(Field[label_,Fermion,indA:Except[_Pattern],derA_]), B___/;FreeQ[List@B,Fermion], C: Transp@Bar@(Field[label_,Fermion,indC:Except[_Pattern],derC_]) ]/;(Length[derA]===Length[derC]):=
+	- Transp[C]\[CenterDot] Transp[B] \[CenterDot] Transp[A]  /;!OrderedQ[{indA,indC}/.{Index[_,Flavor]->Nothing,Index[_Pattern,_]->Nothing}]*)
+
+
+(*(*Place field with most derivative on the right*)
+NCM[A:Transp@Field[_,Fermion,_,Lind1_], B___/;FreeQ[List@B,Fermion], C: Field[_,Fermion,_,Lind2_]]:=
+	- Transp[C]\[CenterDot] Transp[B] \[CenterDot] Transp[A]  /;(Length[Lind1]>Length[Lind2]);
+NCM[A:Bar@Field[_,Fermion,_,Lind1_], B___/;FreeQ[List@B,Fermion], C: Transp@Bar@Field[_,Fermion,_,Lind2_]]:=
+	- Transp[C]\[CenterDot] Transp[B] \[CenterDot] Transp[A]  /;(Length[Lind1]>Length[Lind2]);*)
 
 
 (*Place field with most derivative on the right*)
-NonCommutativeMultiply[A:Transp@Field[_,Fermion,_,Lind1_], B___/;FreeQ[List@B,Fermion], C: Field[_,Fermion,_,Lind2_]]:=
-	- Transp[C]** Transp[B] ** Transp[A]  /;(Length[Lind1]>Length[Lind2]);
-NonCommutativeMultiply[A:Bar@Field[_,Fermion,_,Lind1_], B___/;FreeQ[List@B,Fermion], C: Transp@Bar@Field[_,Fermion,_,Lind2_]]:=
-	- Transp[C]** Transp[B] ** Transp[A]  /;(Length[Lind1]>Length[Lind2]);
+NCM[A:Transp@Field[labelA_,Fermion,_,Lind1_], B___/;FreeQ[List@B,Fermion], C: Field[labelC_,Fermion,_,Lind2_]]/;!($FieldAssociation[labelA][SelfConjugate]&&!$FieldAssociation[labelC][SelfConjugate]):=
+	- Transp[C]\[CenterDot] Transp[B] \[CenterDot] Transp[A]  /;(Length[Lind1]>Length[Lind2]);
+NCM[A:Bar@Field[_,Fermion,_,Lind1_], B___/;FreeQ[List@B,Fermion], C: Transp@Bar@Field[_,Fermion,_,Lind2_]]:=
+	- Transp[C]\[CenterDot] Transp[B] \[CenterDot] Transp[A]  /;(Length[Lind1]>Length[Lind2]);
 
 
 (*Place field with EoM head on the right*)
-NonCommutativeMultiply[EoM@ Transp[f1:Field[_, Fermion, _, {}]], d_DiracProduct, f2:Field[_, Fermion, _, {}]]:=
-	- Transp@ f2 ** Transp@ d ** EoM@ f1;
-NonCommutativeMultiply[EoM@ Bar[f1:Field[_, Fermion, _, {}]], d_DiracProduct, Transp[f2:Bar@ Field[_, Fermion, _, {}]]]:=
-	- f2 ** Transp@ d ** EoM@ Transp@ Bar@ f1;
-
-
-(* ::Subsection:: *)
-(*Utility functions*)
-
-
-Commutator[x_, y_]     := x ** y - y ** x;
-AntiCommutator[x_, y_] := x ** y + y ** x;
+NCM[EoM@ Transp[f1:Field[_, Fermion, _, {}]], d_DiracProduct, f2:Field[_, Fermion, _, {}]]:=
+	- Transp@ f2 \[CenterDot] Transp@ d \[CenterDot] EoM@ f1;
+NCM[EoM@ Bar[f1:Field[_, Fermion, _, {}]], d_DiracProduct, Transp[f2:Bar@ Field[_, Fermion, _, {}]]]:=
+	- f2 \[CenterDot] Transp@ d \[CenterDot] EoM@ Transp@ Bar@ f1;
 
 
 (* ::Subsection:: *)
@@ -386,15 +376,15 @@ FermionTrace::multopens = "Multiple open fermion lines encountered in one term."
 OpenSpinChainQ= Not@* ClosedSpinChainQ;
 
 
-FermionTrace@ expr_:= Module[{out= BetterExpand@ expr},	
+FermionTrace@ expr_:= Module[{out= LagrangianExpand@ expr},	
 	(*Trace terms in the sums separately*)
 	If[Head@ out === Plus, Return[FermionTrace/@ out];]; 
 	
-	Switch[Count[{out}, _NonCommutativeMultiply? OpenSpinChainQ, All]
+	Switch[Count[{out}, _NCM? OpenSpinChainQ, All]
 		,0 ,
 			4 out
 		,1 ,
-			out/. x_NonCommutativeMultiply? OpenSpinChainQ:> TraceSpin@ x// ContractMetric
+			out/. x_NCM? OpenSpinChainQ:> TraceSpin@ x// ContractMetric
 		,_ ,
 			Message[FermionTrace::multopens];
 			Abort[];
@@ -402,7 +392,7 @@ FermionTrace@ expr_:= Module[{out= BetterExpand@ expr},
 ];
 
 
-TraceSpin@ spinChain_NonCommutativeMultiply:= Module[{spinCount= CumulativeSpin@ spinChain},
+TraceSpin@ spinChain_NCM:= Module[{spinCount= CumulativeSpin@ spinChain},
 	If[Last@ spinCount =!= 0,
 		Message[FermionTrace::cantclose];
 		Abort[];	
@@ -429,7 +419,7 @@ CanonizeSpinorLines::lopens = "The Spinor line has >1 L-open spinors.";
 CanonizeSpinorLines::ropens = "The Spinor line has >1 R-open spinors.";
 
 
-CanonizeSpinorLines@ fline_NonCommutativeMultiply:= Module[
+CanonizeSpinorLines@ fline_NCM:= Module[
 		{cumSpinCount, max, min, l, r, expr},
 	cumSpinCount= CumulativeSpin@ fline;
 	min= Min@ cumSpinCount;
@@ -450,11 +440,11 @@ CanonizeSpinorLines@ fline_NonCommutativeMultiply:= Module[
 	(*If a closed spinor line appear it is separated out*)
 	{l, r}= First@ SequencePosition[cumSpinCount, {max..}, Overlaps-> False]+ {0, 1};
 	If[r <= Length@ fline,
-		Return[fline[[l;;r]] CanonizeSpinorLines[fline[[;; l-1]]** fline[[r+ 1;;]] ] ];
+		Return[fline[[l;;r]] CanonizeSpinorLines[fline[[;; l-1]]\[CenterDot] fline[[r+ 1;;]] ] ];
 	];
 
 	fline
 ];
 
 
-CanonizeSpinorLines@ expr_:= expr//. x_NonCommutativeMultiply:> CanonizeSpinorLines@ x;
+CanonizeSpinorLines@ expr_:= expr//. x_NCM:> CanonizeSpinorLines@ x;

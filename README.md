@@ -1,5 +1,7 @@
 # Matchete
 
+[![arXiv](https://img.shields.io/badge/arXiv-2212.04510-00aa00.svg)](https://arxiv.org/abs/2212.04510)
+
 Matchete is a [Mathematica](https://www.wolfram.com/mathematica/resources/) package aimed at facilitating the functional matching procedure for generic weakly coupled UV models with a mass power counting. It is the first package fully automating functional one-loop matching computations. It is built upon and superseeds the [SuperTracer](https://gitlab.com/supertracer/supertracer) package [\[arXiv:2012.08506\]](https://arxiv.org/abs/2012.08506), which is used for the evaluation of the functional supertraces.
 
 Matchete provides a simple and user-friendly interface for entering the Lagrangian of a generic UV theory. First of all, the user has to specify all the (gauge) symmetry groups and representations of the model, then all fields and couplings can be defined. Afterwards, the Lagrangian can be written very close to a pen-and-paper form.
@@ -8,12 +10,13 @@ The `Match` routine can then be applied to the UV Lagrangian to obtain the corre
 
 The resulting EFT Lagrangian contains a (very) large number of redundant operators. These can be removed automatically by applying the routines `GreensSimplify`, which reduces the output to an off-shell Green's basis, and `EOMSimplify`, which performs field redefinitions. The fully simplified result will then be in a (near-)basis of the corresponding EFT operator space.
 
+More details can be found at [matchete.gitlab.io](https://matchete.gitlab.io/) and a [model repository](https://gitlab.com/matchete/model-database) can be consulted for inspiration and convenience.
 
 ### Release of Major update v0.3.0 (2025-05-30)
 
 The Matchete collaboration proudly announces version 0.3.0!
 
-Matchete now supports automatic evanescent reduction. It is also possible to obtain the matching condition in a particular EFT basis (e.g., the SMEFT Warsaw basis) with `MapEffectiveCouplings`. These tools should make practical matching calculations easier than ever. The distribution now includes build in documentation (w.i.p.) using the Mathematica documentation framework (which can be accessed with the \`F1\` function key). Install this latest version to experience new features and and many quality-of-life improvements.
+Matchete now supports automatic evanescent reduction. It is also possible to obtain the matching condition in a particular EFT basis (e.g., the SMEFT Warsaw basis) with `MapEffectiveCouplings`. These tools should make practical matching calculations easier than ever. The distribution now includes build in documentation (w.i.p.) using the Mathematica documentation framework (which can be accessed with the \`F1\` function key). Install this latest version to experience new features and many quality-of-life improvements.
 
 ---
 
@@ -44,9 +47,13 @@ The complete set of routines and usage examples can be found in the ancillary do
 
 * **Javier Fuentes-Martín** - *Universidad de Granada*
 * **Matthias König** - *University of Mainz*
-* **Julie Pagès** - *University of California at San Diego*
+* **Julie Pagès** - *SLAC National Accelerator Laboratory*
 * **Anders Eller Thomsen** - *University of Bern*
 * **Felix Wilsch** - *RWTH Aachen University*
+
+## Contributors
+* **Lukas Born** - *University of Bern*
+* **Adrián Moreno-Sánchez** - *Universidad de Granada*
 
 ---
 

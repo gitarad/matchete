@@ -23,7 +23,6 @@ Package["Matchete`"]
 (*Exported*)
 
 
-PackageExport["SeriesEFT"]
 PackageExport["Match"]
 PackageExport["CovariantLoop"]
 
@@ -32,8 +31,9 @@ PackageExport["CovariantLoop"]
 (*Options *)
 
 
-PackageExport["EFTOrder"]
 PackageExport["LoopOrder"]
+PackageExport["Matching"]
+PackageExport["Divergence"]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -49,17 +49,12 @@ PackageScope["hVector"]
 PackageScope["lVector"]
 PackageScope["hGhost"]
 PackageScope["lGhost"]
+PackageScope["hAntiGhost"]
+PackageScope["lAntiGhost"]
 PackageScope["fieldFormat"]
 
 
-PackageScope["OperatorDimension"]
-PackageScope["TruncateOperator"]
-
-
 PackageScope["SetCurrentLagrangian"]
-
-
-PackageScope["TypeDim"]
 
 
 PackageScope["ResetAuxiliaryMatchingInformation"]
@@ -87,6 +82,7 @@ PackageScope["MatchReduce"]
 PackageScope["$currentFieldAssociation"]
 PackageScope["GetFieldsUpdated"]
 PackageScope["GetFieldsUpdatedByProperty"]
+PackageScope["OccurringFields"]
 
 
 PackageScope["IsolateMassTerms"]
@@ -116,10 +112,6 @@ PackageScope["WhichTraces"]
 (*Exported*)
 
 
-SeriesEFT::usage =
-"SeriesEFT[expr, EFTOrder -> 6] truncates the expression expr in the EFT power counting at the mass-dimension specified by the option EFTOrder (6 by default). The EFTOrder can be given as n, to return the expansion up to mass dimension n, or {n} to return exclusively the terms of order exactly n.";
-
-
 Match::usage=
 	"Match[Lag, EFTOrder -> 6, LoopOrder-> 1] returns the EFT Lagrangian resulting from integrating out the heavy fields from the Lagrangian Lag. The optional arguments EFTOrder and LoopOrder determine, respectively, the desired order in the EFT and loop expansion, with LoopOrder admitting the values 0 (tree), {1} (loop) or 1 (tree+loop).";
 
@@ -131,11 +123,14 @@ CovariantLoop::usage=
 	"CovariantLoop[Lag, {fields}] returns the value of the supertraces involving exactly the degrees of freedom specified in the field list. It takes the option EFTOrder.";
 
 
+Matching::usage= "Option value used in Matchete."
+Divergence::usage= "Option value used in Matchete."
+
+
 (* ::Subsubsection::Closed:: *)
 (*Internal*)
 
 
-OperatorDimension::usage = "OperatorDimension[op] returns the mass-dimension of the operator op.";
 IsolateMassTerms::usage="IsolateMassTerms[\[ScriptCapitalL], Heavy -> All] returns all massterms of the Lagrangian \[ScriptCapitalL]. Replacing All by True or False only returns the heavy or light mass terms respectively.";
 
 
@@ -164,123 +159,6 @@ $ValidationRun::usage= "Global flag for vor validation mode."
 $currentEFTOrder = 6;
 
 
-(* ::Subsection:: *)
-(*Dimensionality of an operator*)
-
-
-(* ::Subsubsection::Closed:: *)
-(*Operator Dimension*)
-
-
-OperatorDimension::notanop = "The term `1` is not a single operator.";
-
-
-OperatorDimension[x_Operator] := OperatorDimension[OperatorToNormalForm@x];
-OperatorDimension[c_ x_Operator] := OperatorDimension[c] + OperatorDimension[OperatorToNormalForm@x];
-
-
-OperatorDimension[0]= 100;
-OperatorDimension[expr_Plus]:= Min[OperatorDimension/@ (List@@ expr)];
-OperatorDimension[expr_List]:= Min[OperatorDimension/@ expr];
-
-
-OperatorDimension[op_]:=Module[
-	{
-		expr = RemovePower@op,
-		dim
-	},
-	(*Dimensions of all fields*)
-	dim = Plus@@ Cases[expr, Field[arg___]:>FieldDimension@Field[arg], All];
-	(*Dimensions of all FS-tensors*)
-	dim += Plus@@ Cases[expr, FieldStrength[___, devs_]:> 2 + Length@ devs, All];
-	(*Dimensions of couplings: Only EFTOrder-0 coouplings can appear in denomminator*)
-	dim += Plus@@ Cases[expr, Coupling[_,_,n_]:>n, All];
-	(*dim += Plus@@ Cases[Numerator@expr, Coupling[_,_,n_]:>n, All] - Plus@@Cases[Denominator@expr, Coupling[_,_,n_]:>n, All];*)
-	(*Dimension of open CD*)
-	dim += Plus@@ Cases[expr, OpenCD[\[Mu]_List]:> Length@ \[Mu], All];
-	(*Dimension of the IR regulator from the loop integral*)
-	(*dim += Plus@@ Cases[expr, Power[InvProp@ mIR, n_]:> 4 + 2 n, All]; *)
-	dim
-]
-
-
-TypeDim[Scalar|Vector[_]|Ghost]:=1;
-TypeDim[Fermion]:=3/2;
-
-
-TypeDim[Field[_,type_,___]] := TypeDim[type];
-
-
-(* ::Subsubsection::Closed:: *)
-(*Counting rule for IR fields*)
-
-
-FieldDimension[Field[f:Except[List[___]],type_,_,derivs_List]] :=
-	Length[derivs] + TypeDim[type] + If[GetFieldsUpdated[f, Heavy], 1, 0]; (* heavy fields have at least one suppression factor*)
-
-
-(* ::Subsubsection::Closed:: *)
-(*Counting rule for expanded UV fields*)
-
-
-(*FieldDimension[Field[{_,n_},type_,_,derivs_List]] := (n + Length[derivs] + TypeDim[type])*)
-FieldDimension[Field[{_,n_,___},type_,_,derivs_List]] := (n + Length[derivs] + TypeDim[type])
-
-
-(* ::Subsection:: *)
-(*EFT series*)
-
-
-(* ::Subsubsection::Closed:: *)
-(*Truncation functions*)
-
-
-TruncateOperator[op_, dim_]:= If[OperatorDimension[op] > dim, 0, op]
-
-
-TruncateOperatorExact[op_, dim_]:= If[OperatorDimension[op] === dim, op, 0]
-
-
-(* ::Subsubsection::Closed:: *)
-(*SeriesEFT*)
-
-
-SeriesEFT::notarationale = "The order for the EFT series expansion specified `1` is neither an integer nor a rationale.";
-
-
-Options[SeriesEFT]={EFTOrder -> 6};
-
-
-SeriesEFT[arg_,OptionsPattern[]]:=Module[
-	{
-		order = OptionValue[EFTOrder],
-		expr  = LagrangianExpand[arg],
-		result
-	},
-	Switch[order,
-		(* select terms up to the given order *)
-		_Integer | _Rational,
-			If[Head[expr]===Plus,
-				result = TruncateOperator[#,order]&/@expr
-				,
-				result = TruncateOperator[expr,order]
-			],
-		(* select terms of the exact order *)
-		{_Integer | _Rational},
-			order = First[order];
-			If[Head[expr]===Plus,
-				result = TruncateOperatorExact[#,order]&/@expr
-				,
-				result = TruncateOperatorExact[expr,order]
-			],
-		_,
-			Message[SeriesEFT::notarationale, order];
-			Abort[]
-	];
-	result
-]
-
-
 (* ::Section:: *)
 (*Extract theory information*)
 
@@ -301,7 +179,9 @@ $FieldTypes= <|
 	hVector-> <|Type-> Vector, Heavy-> True|>,
 	lVector-> <|Type-> Vector, Heavy-> False|>,
 	hGhost-> <|Type-> Ghost, Heavy-> True|>,
-	lGhost-> <|Type-> Ghost, Heavy-> False|>
+	lGhost-> <|Type-> Ghost, Heavy-> False|>,
+	hAntiGhost-> <|Type-> AntiGhost, Heavy-> True|>,
+	lAntiGhost-> <|Type-> AntiGhost, Heavy-> False|>
 |>;
 
 
@@ -345,11 +225,11 @@ Options[SetSubstitutions] = {EFTOrder -> 6, Mode -> Matching};
 SetSubstitutions[lag_, OptionsPattern[]] := Module[
 	{tmp, xTemp, terms, evaTemp, fieldDofs, Xterms,effLag,allFieldLabels, gfTerms, \[Alpha], \[Beta], i, j, iPattern,jPattern,
 		devs,allEFTorders,l1,l2,f1,f2, minXOrderByFieldType, xSubsTMP,xSubsMomTMP,RelabelI,
-		minEvaOrderByFieldType, orders, \[Lambda], nMom}
+		minEvaOrderByFieldType, orders, \[Lambda], \[Kappa], nMom, nOpen}
 	,
 	(*Reset all substitution information*)
 	ResetSubstitutionInformation[];
-	
+
 	(*Determine fields in lag sorted by classes, accounting for complex dofs as in [2012.08506, (2.33)]*)
 	$XFieldDofs= LagrangianDofs@ lag;
 
@@ -363,21 +243,8 @@ SetSubstitutions[lag_, OptionsPattern[]] := Module[
 	(*List of all field labels in lag*)
 	allFieldLabels=DeleteCases[Flatten@ Values@ $XFieldDofs, _Conj];
 
-(* Prepare the Lagrangian *)
-	(*Subtract kinetic terms that go into propagators*)
+(*Subtract kinetic terms that go into propagators*)
 	effLag= lag-KinOpLagrangian@@ allFieldLabels;
-	
-	(*Add gauge-fixing terms for all light vectors*)
-	gfTerms=Sum[
-			tmp= First@ lVec@i;
-			GaugeFixing@GreensSimplify[
-				-1/2* If[GaugeFieldQ@ tmp, GetFieldsUpdated[tmp, Coupling], 1] *
-					CD[\[Alpha], Bar@ (lVec@i/.Index[_,Lorentz]->Index[\[Alpha],Lorentz])] CD[\[Beta], lVec@i/.Index[_,Lorentz]->Index[\[Beta],Lorentz]]
-			]
-			,
-			{lVec,Values@fieldDofs@lVector}
-		];
-	effLag+= gfTerms;
 
 (*Determine X-terms*)
 	(*Iterate over field types*)
@@ -390,63 +257,85 @@ SetSubstitutions[lag_, OptionsPattern[]] := Module[
 			{l1,f1,l2,f2}=Flatten@{Keys[field1],Values[field1],Keys[field2],Values[field2]};
 			(*perform functional derivatives*)
 			xTemp=-FluctuationOperator[effLag,Bar@f1@i,f2@j,EFTOrder->OptionValue[EFTOrder]];
-			(*transform to position space: OpenCD[a]->OpenCD[a]-\[ImaginaryI]*LoopMom[a]*)
+			xTemp= xTemp/. {Field[_, Ghost, __]-> 0, Field[_, AntiGhost, __]-> 0, Field[_, _Vector, __] -> 0};
+			(*transform to momentum space: OpenCD[a]->OpenCD[a]-\[ImaginaryI]*LoopMom[a]*)
 			xTemp=Expand[
 				xTemp/.OpenCD[inds_List]:>FuncNCM@@Table[OpenCD[{\[Mu]}]-I*LoopMom[\[Mu]],{\[Mu],inds}]
 			];
 
 			(*X-terms*)
-			(*find all EFTOrder*)
+			(*Find all EFTOrder*)
 			allEFTorders=GetAllOperatorDimensions[xTemp];
 			minXOrderByFieldType= Join[minXOrderByFieldType, allEFTorders];
 			If[OptionValue@ Mode === Evanescent,
 				minEvaOrderByFieldType= Join[minEvaOrderByFieldType, GetAllOperatorDimensions@ Coefficient[xTemp, ev]];
 			];
 
-			(*write replacements rules order-by-order*)
-			(*xSubs for matching*)
+			(*Write replacements rules order-by-order*)
+			(*XSubs for matching*)
 			If[OptionValue@ Mode === Matching,
-				AppendTo[$XOrders, {l1,l2}-> allEFTorders];
-				xSubsTMP= Table[
-					Xterm[{l1,l2},{iPattern,jPattern},ord]:>
-						Evaluate@RelabelI[SeriesEFT[xTemp, EFTOrder->{ord}], Unique-> True]
+				{xSubsTMP, orders}= Reap@ Flatten@ Table[
+						terms= SeriesEFT[xTemp, EFTOrder-> {ord}]/. 
+							{lmom_LoopMom-> \[Lambda]* lmom, Prop[0]->\[Lambda]^(-2) Prop[0], o_OpenCD-> \[Lambda]* \[Kappa]* o};
+						terms= CoefficientList[terms, {\[Lambda], \[Kappa]}, (Exponent[terms, \[Lambda]]+ 1){1, 1}];
+						Table[
+							If[terms[[nMom, nOpen]] === 0, 
+								Nothing
+							,
+								(*Populate order (EFT-base order, # cov. mom. operators)*)
+								Sow@ {ord, nMom -1};
+								(*X-terms are organized as 
+									Xterm[labels, ind. patterns, base EFT order, #Momentum operators, #open CDs]*)
+								Xterm[{l1,l2}, {iPattern, jPattern}, ord, nMom- 1, nOpen- 1]:>
+									Evaluate@RelabelI[terms[[nMom, nOpen]], Unique-> True]
+							]
+						, {nMom, Length@ terms}, {nOpen, nMom}]
+					, {ord, DeleteCases[allEFTorders, n_/;n>99]} ];
+				
+				xSubsTMP= xSubsTMP/. {RelabelI[0, _]-> 0, RelabelI-> RelabelIndices};
+				If[Length@ xSubsTMP > 0,
+					AppendTo[$XOrders, {l1,l2}-> DeleteDuplicates@ First@ orders];
 				,
-				{ord, DeleteCases[allEFTorders, n_/;n>99]}
-				]/. {RelabelI[0, _]-> 0, RelabelI-> RelabelIndices}
+					AppendTo[$XOrders, {l1,l2}-> {{100, 0}}];
+				];
 			,
 				(*Xorders for the divergent calculations are ordered by *)
 				{xSubsTMP, orders}= Reap@ Flatten@ Table[
-					terms= SeriesEFT[xTemp, EFTOrder-> {ord}]/. {lmom_LoopMom :> \[Lambda]*lmom, Prop[0]->\[Lambda]^-2 Prop[0]};
-					terms= CoefficientList[terms, {\[Lambda], ev}, {Exponent[terms, \[Lambda]]+ 1, 2}];
-					Table[{
-							If[terms[[nMom, 1]] === 0,
+						terms= SeriesEFT[xTemp, EFTOrder-> {ord}]/. 
+							{lmom_LoopMom-> \[Lambda]* lmom, Prop[0]->\[Lambda]^(-2) Prop[0], o_OpenCD-> \[Lambda]* \[Kappa]* o};
+						terms= CoefficientList[terms, {\[Lambda], \[Kappa], ev}, {Exponent[terms, \[Lambda]]+ 1, Exponent[terms, \[Lambda]]+ 1, 2}];
+						Table[{
+							If[terms[[nMom, nOpen, 1]] === 0, 
 								Nothing
 							,
-								Sow@ {ord, nMom- 1, False};
-								Xterm[{l1,l2}, {iPattern, jPattern}, ord, nMom- 1, False]:>
-									Evaluate@RelabelI[terms[[nMom, 1]], Unique-> True]
+								(*Populate order (EFT-base order, # cov. mom. operators, ev. True/False)*)
+								Sow@ {ord, nMom -1, False};
+								Xterm[{l1,l2}, {iPattern, jPattern}, ord, nMom- 1, nOpen- 1, False]:>
+									Evaluate@RelabelI[terms[[nMom, nOpen, 1]], Unique-> True]
 							]
 						,
-							If[OptionValue@ Mode =!= Evanescent || terms[[nMom, 2]] === 0,
+							If[OptionValue@ Mode =!= Evanescent || terms[[nMom, nOpen, 2]] === 0, 
 								Nothing
 							,
-								Sow@ {ord, nMom- 1, True};
-								Xterm[{l1,l2}, {iPattern, jPattern}, ord, nMom- 1, True]:>
-									Evaluate@RelabelI[terms[[nMom, 2]], Unique-> True]
+								(*Populate order (EFT-base order, # cov. mom. operators, ev. True/False)*)
+								Sow@ {ord, nMom -1, True};
+								Xterm[{l1,l2}, {iPattern, jPattern}, ord, nMom- 1, nOpen- 1, True]:>
+									Evaluate@RelabelI[terms[[nMom, nOpen, 2]], Unique-> True]
 							]
-					}, {nMom, Length@ terms}]
-				, {ord, DeleteCases[allEFTorders, n_/;n>99]} ];
+							(*X-terms are organized as Xterm[labels, ind. patterns, 
+								base EFT order, #Momentum operators, #open CDs, ev.]*)
+						}, {nMom, Length@ terms}, {nOpen, nMom}]
+					, {ord, DeleteCases[allEFTorders, n_/;n>99]} ];
 				xSubsTMP= xSubsTMP/. {RelabelI[0, _]-> 0, RelabelI-> RelabelIndices};
+				
 				If[Length@ xSubsTMP > 0,
-					AppendTo[$XOrders, {l1,l2}-> First@ orders];
+					AppendTo[$XOrders, {l1,l2}-> DeleteDuplicates@ First@ orders];
 				,
-					AppendTo[$XOrders, {l1,l2}-> {{100, 100, False}}];
+					AppendTo[$XOrders, {l1,l2}-> {{100, 0, False}}];
 				]
 			];
 			$Xsubs= Join[$Xsubs, xSubsTMP];
-		,
-		{field1,fieldDofs@fieldType1},{field2,fieldDofs@fieldType2}
-		];
+		, {field1,fieldDofs@fieldType1},{field2,fieldDofs@fieldType2} ];
 
 		(*determine min. EFT order for field type*)
 		If[minXOrderByFieldType==={},
@@ -468,12 +357,11 @@ SetSubstitutions[lag_, OptionsPattern[]] := Module[
 	];
 
 	(*Test if the X terms are consistent with the EFT expansion*)
-	tmp= First@ Normal@ MinimalBy[$XOrders, Min];
-	If[Min@ tmp[[2]] === 0, 
-		Message[SetCurrentLagrangian::Xdims, tmp[[1]]];
+	tmp= MinimalBy[$XOrders, Min@ #[[;;,1]]&];
+	If[Min[First/@ First/@ tmp] <= 0,
+		Message[SetCurrentLagrangian::Xdims, First@ Keys@ tmp];
 		Abort[];
 	];
-	
 
 (* Determine Mass substitutions *)
 	$Msubs= Flatten@ Table[
@@ -489,9 +377,9 @@ SetSubstitutions[lag_, OptionsPattern[]] := Module[
 			{f, DeleteDuplicates[$XFieldDofs[fieldType]/. Conj[x_]->x]}
 			]
 		,
-		{fieldType,{hScalar, hFermion, hVector, hGhost}} (*NB: Loop only over heavy DoFs*)
+		{fieldType,{hScalar, hFermion, hVector, hGhost, hAntiGhost}} (*NB: Loop only over heavy DoFs*)
 		];
-		
+
 (* Determine gauge coupling substitutions *)
 	$Gsubs= Table[
 			GaugeCTerm@ f-> Normal@ Series[1/GetFieldsUpdated[f, Coupling], {hbar, 0, 2}]
@@ -509,7 +397,7 @@ SetSubstitutions[lag_, OptionsPattern[]] := Module[
 
 LagrangianDofs[lag_]:= LagrangianDofs[lag]= Module[{fields},
 	(*Get all fields from Lagrangian*)
-	fields= DeleteDuplicates@ Cases[lag, (Field|FieldStrength)[f_, __]:> f, Infinity];
+	fields= Complement[OccurringFields@ lag, GetFieldsByProperty[BackgroundField-> True]];
 	(*Create association by field type*)
 	fields= Association@@
 		KeyValueMap[(#1-> Intersection[GetFieldsUpdatedByProperty[#2], fields]&), $FieldTypes];
@@ -573,6 +461,13 @@ GetAllOperatorDimensions[term_]:=Module[{tmp=BetterExpand[term]},
 ]
 
 
+(* ::Text:: *)
+(*Returns a list of the labels of all fields occurring in the Lagrangian*)
+
+
+OccurringFields[L_]:= DeleteDuplicates@ Cases[L, (Field|FieldStrength)[lab_, __]-> lab, All];
+
+
 (* ::Subsection:: *)
 (*Update the current Lagrangian*)
 
@@ -607,26 +502,46 @@ SetCurrentLagrangian::Xdims= "The \"`1`\" X-term was found to have EFT-order 0. 
 
 
 SetCurrentLagrangian[lagrangian_, loopOrder_, eftOrder_, OptionsPattern[]] := Module[
-	{eftOrd, newLag, lag = HcExpand@ lagrangian}
+	{eftOrd, newLag, lag = HcExpand@ lagrangian, lagFixed, gfTerms, tmp, gVectors, gAbelian}
 	,
 	(* expand Lagrangian and write mass terms in canonical format *)
 	lag = CanonizeFermionMassTerms@ ContractCGs@ lag;
-	
+
 	If[OptionValue@ Mode === Matching,
 		lag = IntroduceEffectiveMasses@ lag;
 	];
-	
+
 	lag = RelabelIndices@ Contract@ lag;
 	
+(* Add gauge-fixing and ghost terms for all gauge vectors *)
+	gVectors= Select[DeleteDuplicates@ Cases[lag, (Field|FieldStrength)[f_, __]:> f, Infinity],GaugeFieldQ];
+	gAbelian= Select[gVectors, GetGaugeGroups[First@GetGaugeGroupByProperty[Field->#]][Abelian]&];
+
+	(* Assumes ghosts and vectors are quantum (removed in X terms) *)
+	(* WARNING: The GF terms need to be written in this very specific way or it will fail to give right X-terms*)
+	gfTerms=Sum[
+			If[MemberQ[gAbelian,gVec],
+					1/2* DetermineCouplingOfGaugeField[gVec, lag][Coupling]* Module[{\[Alpha],\[Beta]}, Bar@gVec[\[Alpha]]BackgroundCD[{\[Beta],\[Alpha]}, gVec[\[Beta]]] ]
+			,
+					1/2* DetermineCouplingOfGaugeField[gVec, lag][Coupling]* Module[{\[Alpha],\[Beta],a,b,c}, Bar@gVec[\[Alpha],a]BackgroundCD[{\[Beta],\[Alpha]}, gVec[\[Beta],a]] - I FieldGenerators[gVec, GroupFromRep@@$FieldAssociation[gVec][Indices], {a,b,c}]gVec[\[Alpha],a]gVec[\[Beta],b] BackgroundFS[gVec,\[Alpha],\[Beta],c] ]
+				+
+				Module[{gh= Symbol["Matchete`PackageScope`gh"<>ToString@gVec],ghbar= Symbol["Matchete`PackageScope`antigh"<>ToString@gVec],indK, \[Mu], a, b, c},
+					FuncNCM[CD[\[Mu],ghbar[indK]],CD[\[Mu],gh[indK]]] + I FieldGenerators[gVec, GroupFromRep@@$FieldAssociation[gVec][Indices], {a,b,c}]gVec[\[Mu],b]FuncNCM[ghbar[a],CD[\[Mu],gh[c]]]
+				]
+			]
+			,
+			{gVec,gVectors}
+		];
+	lagFixed= lag + gfTerms;
+
+				
 	If[(newLag = lag =!= $currentLagrangian),
 		If[!CheckLagrangian@ lag, Abort[]; ];
-
 		(* set the new Lagrangian *)
 		$currentLagrangian= lag;
 		$currentMode= OptionValue@ Mode;
 		(* determine its fields with their Masses *)
-
-		Determine$currentFieldAssociation[lag, Mode-> OptionValue@ Mode];
+		Determine$currentFieldAssociation[lagFixed, Mode-> OptionValue@ Mode];
 	];
 
 	eftOrd= If[Head@ eftOrder === List, First@ eftOrder, eftOrder];
@@ -637,10 +552,14 @@ SetCurrentLagrangian[lagrangian_, loopOrder_, eftOrder_, OptionsPattern[]] := Mo
 		DetermineEOMs[lag, EFTOrder-> eftOrder]; (* This internally sets $currentEOMs and $currentHeavyDims *)
 	];
 	$currentEFTOrder= eftOrder;
-
+	
 	If[(newLag || loopOrder > $currentLoopOrder) && ($currentLoopOrder= loopOrder) > 0,
 		OptionalMonitor[OptionValue@ Verbose,
-			SetSubstitutions[lag, EFTOrder-> eftOrder, Mode-> OptionValue@ Mode];
+			SetSubstitutions[
+				If[loopOrder<2, lagFixed/.hbar->0, lagFixed], (* drop loop-suppressed contributions to Xterms *)
+				EFTOrder-> eftOrder, 
+				Mode-> OptionValue@ Mode
+			];
 		, "Evaluating X-terms"];
 	];
 
@@ -673,12 +592,12 @@ Determine$currentFieldAssociation[lagrangian_, OptionsPattern[]]:=Module[
 	allLight= MatchQ[OptionValue@ Mode, Divergence| Evanescent];
 
 	(* determine fields in new Lagrangian *)
-	fieldLabels = DeleteDuplicates@ Cases[lag, (Field[l_,___] | FieldStrength[l_,___]):>l, All];
+	fieldLabels = Complement[OccurringFields@ lag, GetFieldsByProperty[BackgroundField-> True]];
 
 	(* extract all heavy mass terms *)
 	\[ScriptCapitalL]Mass = IsolateMassTerms[lag, Heavy -> True];
 	\[ScriptCapitalL]Mass = CollectOperators[\[ScriptCapitalL]Mass, NormalForm->False];
-	
+
 	(* Get all gauge kinetic terms*)
 	\[ScriptCapitalL]Gauge = SelectOperatorClass[lag, {}, 4];
 
@@ -741,7 +660,7 @@ DetermineFieldMassProperties[l_, massterm_, allLight_:False]:=Module[
 				],
 			Fermion,
 				If[defProps[SelfConjugate],
-					mass = -2*massTerm/._Operator->1 (*Majorana*) 
+					mass = -2*massTerm/._Operator->1 (*Majorana*)
 				,
 					Switch[defProps[Chiral],
 						LeftHanded | RightHanded, (*Weyl*)
@@ -795,7 +714,7 @@ DetermineCouplingOfGaugeField[fieldLab_, lag_]:= Module[{coupling2, kinOperator,
 			FS[fieldLab, mu1, mu2]^2
 		];
 	coupling2= GetOperatorCoefficient[lag, kinOperator];
-	
+
 	defProps@ Coupling= coupling2;
 	defProps
 ]
@@ -849,8 +768,8 @@ IsolateMassTerms[L_, OptionsPattern[]] := Module[{res},
 	res = Plus@@ Table[
 		If[Plus@@Cases[RemovePower@term, Field[___,aux_List] :> 1+Length[aux], All]==2,
 			Switch[OptionValue[Heavy],
-				True, If[OperatorMassDimension[term]<4, term, Nothing],
-				False, If[OperatorMassDimension[term]>=4, term, Nothing],
+				True, If[OperatorDimension[term, False]<4, term, Nothing],
+				False, If[OperatorDimension[term, False]>=4, term, Nothing],
 				All, term
 			]
 			,
@@ -862,73 +781,8 @@ IsolateMassTerms[L_, OptionsPattern[]] := Module[{res},
 ]
 
 
-(* ::Subsubsection::Closed:: *)
-(*OperatorMassDimension*)
-
-
-(* ::Text:: *)
-(*Same as OperatorDimension[...], but all/heavy fields are counted with their canonical mass dimension, i.e., w/o EFT suppression factors.*)
-
-
-OperatorMassDimension[x_Operator] := OperatorMassDimension[OperatorToNormalForm@x];
-OperatorMassDimension[c_ x_Operator] := OperatorMassDimension[c] + OperatorMassDimension[OperatorToNormalForm@x];
-
-
-OperatorMassDimension[0]= 100;
-OperatorMassDimension[expr_Plus]:= Min[OperatorMassDimension/@ (List@@ expr)];
-OperatorMassDimension[expr_List]:= Min[OperatorMassDimension/@ expr];
-
-
-OperatorMassDimension[op_]:=Module[
-	{
-		expr = RemovePower@op,
-		dim
-	},
-	(*Dimensions of all fields*)
-	dim = Plus@@ Cases[expr, Field[arg___]:>FieldDimension2@Field[arg], All];
-	(*Dimensions of all FS-tensors*)
-	dim += Plus@@ Cases[expr, FieldStrength[___, devs_]:> 2 + Length@ devs, All];
-	(*Dimensions of couplings*)
-	dim += Plus@@ Cases[Numerator@expr, Coupling[_,_,n_]:>n, All] - Plus@@Cases[Denominator@expr, Coupling[_,_,n_]:>n, All];
-	(*Dimension of the IR regulator from the loop integral*)
-	(*dim += Plus@@ Cases[expr, Power[InvProp@ mIR, n_]:> 4 + 2 n, All]; *)
-	dim
-]
-
-
-FieldDimension2[Field[f:Except[List[___]],type_,_,derivs_List]] := Length[derivs] + TypeDim[type];
-
-
 (* ::Subsection:: *)
 (*Matching routines*)
-
-
-(* ::Subsubsection::Closed:: *)
-(*Find UV fields*)
-
-
-(* ::Text:: *)
-(*Finds the UV fields in the given expression*)
-
-
-(*FindUvFields[lagrangian_]:=Module[
-	{
-		fieldAssociation = GetFieldsUpdated[],
-		uvFields
-	},
-	(* find all field labels *)
-	uvFields = DeleteDuplicates@Join[
-		Cases[lagrangian, Field[label_,___]:>label, All],
-		Cases[lagrangian, FieldStrength[label_,___]:>label, All]
-	];
-	(* select labels of all heavy fields *)
-	uvFields = If[fieldAssociation[#][Heavy]===True,#,Nothing[]]&/@uvFields;
-	(* pick the apropriate fields *)
-	uvFields = FirstCase[lagrangian,Field[#,___],Message[FindUvFields::error,#]; Abort[],All]&/@uvFields;
-	(* make the indices unique *)
-	uvFields = uvFields /. Index[_,rep_]:>Index[Unique[],rep];
-	uvFields
-]*)
 
 
 (* ::Subsubsection::Closed:: *)
@@ -954,9 +808,9 @@ ListPowerTypeTraces[order_Integer, lightOnly_:False]:= Module[{possibilities, se
 				seed= Sow@ Select[temp, Total@ BlockMap[Xords, #, 2, 1] < order&];
 			];
 		,
-			seed= Sow@ {{hScalar}, {hFermion}, {hVector}, {hGhost}};
+			seed= Sow@ {{hScalar}, {hFermion}, {hVector}, {hGhost}, {hAntiGhost}};
 			While[(Length@ seed> 0),
-				temp= Flatten/@ Tuples[{seed, {hScalar, lScalar, hFermion, lFermion, hVector, lVector, hGhost, lGhost}}];
+				temp= Flatten/@ Tuples[{seed, {hScalar, lScalar, hFermion, lFermion, hVector, lVector, hGhost, lGhost, hAntiGhost, lAntiGhost}}];
 				seed= Sow@ Select[temp, Total@ BlockMap[Xords, #, 2, 1] < order&];
 			];
 		];
@@ -966,7 +820,7 @@ ListPowerTypeTraces[order_Integer, lightOnly_:False]:= Module[{possibilities, se
 	(*Eliminates traces with order > order*)
 	possibilities= DeleteCases[possibilities,
 		_? (Total[Min/@ BlockMap[Xords, #, 2, 1]]+ Min@ Xords@ #[[{-1, 1}]] > order&), {1}];
-	
+
 	(*Delete duplicates under cyclic permutations*)
 	DeleteDuplicatesBy[possibilities, (First@ Sort@ NestList[RotateLeft, #, Length@# - 1] &)]
 ];
@@ -991,9 +845,9 @@ LoopMatch[opt:OptionsPattern[]]? OptionsCheck:= Module[
 		{field, fields, out, logTraces, powerTraces, i=0, myTraces},
 	
 	(* determine log and power traces *)
-	logTraces = {hScalar, hFermion, hVector, hGhost};
+	logTraces = {hScalar, hFermion, hVector, hGhost, hAntiGhost};
 	powerTraces = ListPowerTypeTraces[OptionValue@ EFTOrder];
-	
+
 	(* reduce to manually selected traces if applicable *)
 	If[OptionValue[WhichTraces] =!= All,
 		myTraces = OptionValue[WhichTraces]/.fieldFormatReverse;
@@ -1006,7 +860,7 @@ LoopMatch[opt:OptionsPattern[]]? OptionsCheck:= Module[
 	];
 	
 	out= OptionalMonitor[OptionValue@ Verbose,
-			
+
 			Sum[
 				(*Check if a field with non zero charges exists*)
 				If[Or[
@@ -1020,7 +874,7 @@ LoopMatch[opt:OptionsPattern[]]? OptionsCheck:= Module[
 				]
 			, {field, logTraces}]
 		, StringForm["Evaluating log-type supertrace: `1`", field/. fieldFormat] ];
-	
+
 	out+= OptionalMonitor[OptionValue@ Verbose,
 			Sum[i++;
 				Sow@ StringReplace[ToString@fields,{", " -> "-", "{" -> "", "}" -> "", "Matchete`PackageScope`" -> ""}];
@@ -1029,13 +883,13 @@ LoopMatch[opt:OptionsPattern[]]? OptionsCheck:= Module[
 			, {fields, powerTraces}]
 		, StringForm["Evaluating power-type supertrace: `1` \t (`2` / `3`)",
 			fields/. fieldFormat, i, Length@ powerTraces] ];
-
+	
 	out
 ];
 
 
-fieldFormat= {hScalar-> "\[CapitalPhi]", lScalar-> "\[Phi]", hFermion-> "\[CapitalPsi]", lFermion-> "\[Psi]", hVector-> "V", lVector-> "A", lGhost-> "cA", hGhost-> "cV"};
-fieldFormatReverse= {"\[CapitalPhi]"-> hScalar, "\[Phi]"-> lScalar, "\[CapitalPsi]"-> hFermion, "\[Psi]"-> lFermion, "V"-> hVector, "A"-> lVector, "cA"-> lGhost, "cV"-> hGhost};
+fieldFormat= {hScalar-> "\[CapitalPhi]", lScalar-> "\[Phi]", hFermion-> "\[CapitalPsi]", lFermion-> "\[Psi]", hVector-> "V", lVector-> "A", lGhost-> "cA", hGhost-> "cV", lAntiGhost-> "cbarA", hAntiGhost-> "cbarV"};
+fieldFormatReverse= {"\[CapitalPhi]"-> hScalar, "\[Phi]"-> lScalar, "\[CapitalPsi]"-> hFermion, "\[Psi]"-> lFermion, "V"-> hVector, "A"-> lVector, "cA"-> lGhost, "cV"-> hGhost,"cbarA"-> lAntiGhost, "cbarV"-> hAntiGhost};
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1046,32 +900,50 @@ fieldFormatReverse= {"\[CapitalPhi]"-> hScalar, "\[Phi]"-> lScalar, "\[CapitalPs
 (*The user function for computing specific supertrace contributions by specifying the internal fields. *)
 
 
+CovariantLoop::bkgfld= "The field(s) `1` is a non-propagating background field."
 CovariantLoop::ukwnfld= "The field(s) `1` is not part of the Lagrangian."
 CovariantLoop::noheavy= "There are no heavy fields in the loop."
 
 
 Options@ CovariantLoop= {
-		EFTOrder:> 6
+		EFTOrder-> 6,
+		Mode-> Matching
 	};
+
+
+OptionTest[CovariantLoop, Mode]= MatchQ[Matching| Divergence];
+OptionMessage[Mode, CovariantLoop, val_]:= Message[General::optexpectsval, Mode, CovariantLoop, val, "value Matching or Divergence"];
 
 
 CovariantLoop[lag_, field_Symbol, opts:OptionsPattern[]]:= CovariantLoop[lag, {field}, opts];
 
 
 CovariantLoop[lagrangian_, fields_List, opts:OptionsPattern[]]? OptionsCheck:=
-CovariantLoop[lagrangian, fields, opts]= Module[{lag=lagrangian, lagFields, n, types, dofNumbers, ord, out},
-	lagFields= LagrangianDofs@ lag;
+CovariantLoop[lagrangian, fields, opts]= Module[
+		{bkgFields, lagFields, loopMode, n, types, dofNumbers, ord, out, lag= lagrangian},
+	loopMode= OptionValue@ Mode;
+	lagFields= DeleteDuplicates@ Join[
+			Cases[lag, Bar[(Field|FieldStrength)[label_, __]]:> Conj@ label, All],
+			Cases[lag, (Field|FieldStrength)[label_, __]:> label, All]
+		];
+
 	(*Check fields*)
-	If[!SubsetQ[Join@@ List@@ lagFields, fields],
+	If[!SubsetQ[lagFields, fields],
 		Message[CovariantLoop::ukwnfld, Complement[fields, Join@@ List@@ lagFields]];
+		Abort[];
+	];
+	bkgFields= Intersection[fields, GetFieldsByProperty[BackgroundField-> True]];
+	If[Length@ bkgFields> 0,
+		Message[CovariantLoop::bkgfld, bkgFields];
 		Abort[];
 	];
 
 	(*Update Lagrangian*)
 	ord= OptionValue@ EFTOrder;
-	lag = SetCurrentLagrangian[lag, 1, If[Head@ ord === List, First @ord, ord]];
+	lag = SetCurrentLagrangian[lag, 1, If[Head@ ord === List, First @ord, ord], Mode-> loopMode];
 	(* check that there is at least one heavy field, must be done after setting the Lagrangian *)
-	If[Intersection[GetFieldsUpdatedByProperty[Heavy-> True], fields] === {},
+
+	If[loopMode === Matching && Intersection[GetFieldsUpdatedByProperty[Heavy-> True], fields] === {},
 		Message[CovariantLoop::noheavy];
 		Abort[];
 	];
@@ -1081,12 +953,12 @@ CovariantLoop[lagrangian, fields, opts]= Module[{lag=lagrangian, lagFields, n, t
 
 	(*Add log type STr*)
 	out= If[Length@ fields === 1,
-			LogTypeSTr[First@ types, ord, Fields-> fields]
+			LogTypeSTr[First@ types, ord, Fields-> fields, Mode-> loopMode]
 		,
 			0
 		];
 
-	out+ PowerTypeSTr[types, ord, Fields-> fields]//ContractCGs//MatchReduce
+	out+ PowerTypeSTr[types, ord, Fields-> fields, Mode-> loopMode]//ContractCGs//MatchReduce
 ];
 
 
@@ -1099,6 +971,8 @@ FieldType[f_]:= Switch[Lookup[GetFields[f], {Type, Heavy}]
 	,{Vector, False}, lVector
 	,{Ghost, True}, hGhost
 	,{Ghost, False}, lGhost
+	,{AntiGhost, True}, hAntiGhost
+	,{AntiGhost, False}, lAntiGhost
 ];
 
 
@@ -1124,13 +998,13 @@ Match[lag, opts] = Module[{
 		loopOrder=OptionValue@LoopOrder,
 		LagrangianEFT,
 		LagrangianEFT1,
-		heavyVectors, 
+		heavyVectors,
 		ReplaceHeavyEOMOpts = Sequence@@FilterRules[{opts},Options[ReplaceHeavyEOM]],
 		VerboseOption = (OptionValue@Verbose===Print||OptionValue@Verbose===Monitor),
 		traceResults,
 		time
 	},
-	
+
 	(*Check that no heavy vectors appear in loop-level matching*)
 	If[MatchQ[loopOrder, 1|{1}],
 		heavyVectors= MassiveVectorsInLag@ lag;
@@ -1146,7 +1020,7 @@ Match[lag, opts] = Module[{
 	lagrangian = SetCurrentLagrangian[lagrangian, If[loopOrder === {1}, 1, loopOrder],
 		If[Head@ eftOrder === List, First @eftOrder, eftOrder], Verbose-> VerboseOption];
 
-	MyPrint["Integrating out the fields: ", Sequence@@Riffle[Intersection[Matchete`PackageScope`OccuringFields[lagrangian],GetFieldsUpdatedByProperty[Heavy->True]],", "], Verbose->OptionValue@Verbose===Print];
+	MyPrint["Integrating out the fields: ", Sequence@@Riffle[Intersection[Matchete`PackageScope`OccurringFields[lagrangian],GetFieldsUpdatedByProperty[Heavy->True]],", "], Verbose->OptionValue@Verbose===Print];
 
 	LagrangianEFT= If[MatchQ[loopOrder, 0|1],
 			(*Tree-level Lagrangian*)
@@ -1163,21 +1037,25 @@ Match[lag, opts] = Module[{
 				LagrangianEFT1
 			, "Matching at 1-loop level..."]
 		, 0];
-	
+
 	LagrangianEFT= LagrangianEFT//ContractCGs//MatchReduce;
 	];
-	
+
 	(* This is only performed if the result of the matching should be saved for validation *)
 	If[$ValidationRun,
 		QuietEcho@ SaveValidationResults[traceResults, LagrangianEFT, time, lag];
 	];
-
+	
+	(* ensure that the output Lagrangian ia manifestly Hermitian *)
+	(* this might not be the case due to mass/index permutations in LF that are not recognized. *)
+	LagrangianEFT = (LagrangianEFT + Bar[LagrangianEFT])/2;
+	
 	LagrangianEFT
 ];
 
 
 (* ::Text:: *)
-(*Checks if what heavy vectors the Lagrangian*)
+(*Checks if what heavy vectors are present in the Lagrangian*)
 
 
 MassiveVectorsInLag@ lag_:= Module[{heavyVectors, lagVectors},
@@ -1214,9 +1092,9 @@ MatchReduce[expr_]:= Module[{res,summedInd},
 		HoldPattern@CG[del[_],{a_,b_}]:> Delta[a,b],
 		HoldPattern[CG[eps[x_],a:{_Index..}]CG[Bar@eps[x_],b:{_Bar..}]]:> Det[Outer[Delta,a,b]]
 	}];
-	
+
 	(* expand results to reduce auxiliary FlavorSum expressinos *)
-	res= TermsToList@ BetterExpand[res];
+	res= TermsToList@ res;
 	res= Sum[
 		If[FreeQ[term,_FlavorSum,All],
 			term
@@ -1231,7 +1109,7 @@ MatchReduce[expr_]:= Module[{res,summedInd},
 		{term,res}
 	];
 	res
-	
+
 ]
 
 
@@ -1247,12 +1125,12 @@ CanonizeFermionMassTerms[lagrangian_] := Module[
 	lag = Plus@@Table[
 		Which[
 		(* canonize Dirac masses of vectorlike fermions *)
-		MatchQ[term, aux_ * Bar@Field[l_,Fermion,___]**DiracProduct[Proj[-1]]**Field[l_,Fermion,___] /; (FreeQ[aux, _Field, All] && !(GetFields[l][SelfConjugate]) && GetFields[l][Chiral]===False)]
+		MatchQ[term, aux_ * Bar@Field[l_,Fermion,___]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[l_,Fermion,___] /; (FreeQ[aux, _Field, All] && !(GetFields[l][SelfConjugate]) && GetFields[l][Chiral]===False)]
 		,
 			(term /. {Proj[-1]->1}) - (term /. {Proj[-1]->Proj[+1]})
 		,
 		(* canonize Majorana masses *)
-		MatchQ[term, aux_ * Transp[Field[l_,Fermion,___]]**DiracProduct[GammaCC,Proj[-1]]**Field[l_,Fermion,___] /; (FreeQ[aux, _Field, All] && GetFields[l][SelfConjugate] && GetFields[l][Chiral]===False)],
+		MatchQ[term, aux_ * Transp[Field[l_,Fermion,___]]\[CenterDot] DiracProduct[GammaCC,Proj[-1]]\[CenterDot] Field[l_,Fermion,___] /; (FreeQ[aux, _Field, All] && GetFields[l][SelfConjugate] && GetFields[l][Chiral]===False)],
 			(term /. {Proj[-1]->1}) - (term /. {Proj[-1]->Proj[+1]})
 		,
 		True
