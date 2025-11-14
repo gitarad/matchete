@@ -25,24 +25,24 @@ DefineField[F, Fermion, Indices-> {SU3c@ fund, Flavor}, Charges-> {U1Y[-2]}];
 DefineCoupling[y]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Taking derivatives of expressions*)
 
 
 VerificationTest[
-	TakeDev[{}, 3 y[] S[A] CG[gen@ SU3c@ fund, {A, i ,j}] Bar@ F[i, a]** PL** F[j, a]]
+	TakeDev[{}, 3 y[] S[A] CG[gen@ SU3c@ fund, {A, i ,j}] Bar@ F[i, a]\[CenterDot] PL\[CenterDot] F[j, a]]
 ,
-	3 y[] CG[gen@ SU3c@ fund, {A, i ,j}] S[A] Bar@ F[i, a]** PL** F[j, a]
+	3 y[] CG[gen@ SU3c@ fund, {A, i ,j}] S[A] Bar@ F[i, a]\[CenterDot] PL\[CenterDot] F[j, a]
 ,
 	TestID-> "Take 0 derivatives of a compund expression"
 ]
 
 
 VerificationTest[
-	Expand@ TakeDev[{Index[\[Mu], Lorentz]}, 3 y[] S[A] CG[gen@ SU3c@ fund, {A, i ,j}] Bar@ F[i, a]** PL** F[j, a]]
+	Expand@ TakeDev[{Index[\[Mu], Lorentz]}, 3 y[] S[A] CG[gen@ SU3c@ fund, {A, i ,j}] Bar@ F[i, a]\[CenterDot] PL\[CenterDot] F[j, a]]
 ,
-	3 y[] CG[gen@ SU3c@ fund, {A, i ,j}] (CD[\[Mu], S[A]] Bar@ F[i, a]** PL** F[j, a]+ 
-		S[A] CD[\[Mu], Bar@ F[i, a]]** PL** F[j, a] + S[A] Bar@ F[i, a]** PL** CD[\[Mu], F[j, a]] )// Expand
+	3 y[] CG[gen@ SU3c@ fund, {A, i ,j}] (CD[\[Mu], S[A]] Bar@ F[i, a]\[CenterDot] PL\[CenterDot] F[j, a]+ 
+		S[A] CD[\[Mu], Bar@ F[i, a]]\[CenterDot] PL\[CenterDot] F[j, a] + S[A] Bar@ F[i, a]\[CenterDot] PL\[CenterDot] CD[\[Mu], F[j, a]] )// Expand
 ,
 	TestID-> "Take 1 derivative of a compund expression"
 ]
@@ -62,7 +62,7 @@ VerificationTest[
 (*Commute derivatives*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*GAction*)
 
 

@@ -28,50 +28,50 @@
    FieldStrength[W, {Index[d$$1, Lorentz], Index[d$$2, Lorentz]}, 
       {Index[d$$1, SU2L[adj]]}, {}]^2/(4*Coupling[gL, {}, 0]^2) + 
    I*Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, 
-       {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+       {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
      Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, 
       {Index[d$$1, Lorentz]}] - 
    Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
     Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
     Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-       {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+       {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
       {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
        Index[d$$1, Flavor]}, {}] + 
-   I*Bar[Field[e, Fermion, {Index[d$$1, Flavor]}, {}]]**
-     DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+   I*Bar[Field[e, Fermion, {Index[d$$1, Flavor]}, {}]]\[CenterDot] 
+     DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
      Field[e, Fermion, {Index[d$$1, Flavor]}, {Index[d$$1, Lorentz]}] - 
    Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
     Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
-    Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-     DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+    Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+     DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
        Index[d$$1, Flavor]}, {}] - 
    Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]*
     Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
     Bar[Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, 
-       {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$2, Flavor]}, 
+       {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$2, Flavor]}, 
       {}] + I*Bar[Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
-        Index[d$$1, Flavor]}, {}]]**DiracProduct[
-      GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[l, Fermion, 
+        Index[d$$1, Flavor]}, {}]]\[CenterDot] DiracProduct[
+      GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[l, Fermion, 
       {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, 
       {Index[d$$1, Lorentz]}] - 
    Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]*
     Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
     Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
-        Index[d$$1, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+        Index[d$$1, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
      Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, {}] + 
    I*Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
-        Index[d$$1, Flavor]}, {}]]**DiracProduct[
-      GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+        Index[d$$1, Flavor]}, {}]]\[CenterDot] DiracProduct[
+      GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
       {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
        Index[d$$1, Flavor]}, {Index[d$$1, Lorentz]}] - 
    Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
     CG[eps[SU2L], {Index[d$$2, SU2L[fund]], Index[d$$1, SU2L[fund]]}]*
     Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]*
     Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-        Index[d$$1, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+        Index[d$$1, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
      Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, {}] + 
    I*Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, 
-       {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+       {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
      Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, 
       {Index[d$$1, Lorentz]}] - 
    Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -79,7 +79,7 @@
       Bar[Index[d$$2, SU2L[fund]]]}]*Field[H, Scalar, 
      {Index[d$$2, SU2L[fund]]}, {}]*
     Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-       {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+       {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
       {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
        Index[d$$1, Flavor]}, {}], "Off-shell EFT Lagrangian" -> 
   (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -310,7 +310,7 @@
    Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
     Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
     Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-       {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+       {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
       {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
        Index[d$$1, Flavor]}, {}] + 
    hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -330,7 +330,7 @@
           Index[d$$3, Flavor]}, 0]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2])/
       Coupling[M, {}, 0]^4)*
     Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-       {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+       {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
       {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
        Index[d$$1, Flavor]}, {}] + 
    hbar*(((I/4)*Bar[Coupling[Yd, {Index[d$$3, Flavor], Index[d$$2, Flavor]}, 
@@ -346,16 +346,16 @@
     (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {Index[d$$1, Lorentz]}]]*
       Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
       Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-         {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+         {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
        Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, 
         {}] - Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
       Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-         {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+         {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
        Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, 
         {}]) + I*Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], 
-        Index[d$$2, Flavor]}, {}]]**DiracProduct[
-      GammaM[Index[d$$1, Lorentz]], Proj[1]]**Field[d, Fermion, 
+        Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+      GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] Field[d, Fermion, 
       {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
       {Index[d$$1, Lorentz]}] + 
    hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -373,7 +373,7 @@
           Index[d$$1, Flavor]}, 0]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2])/
       Coupling[M, {}, 0]^4)*
     Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-       {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+       {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
      Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}] + 
    hbar*(((I/4)*Bar[Coupling[Yd, {Index[d$$3, Flavor], Index[d$$2, Flavor]}, 
          0]]*Coupling[A, {}, 0]^2*Coupling[Yd, {Index[d$$3, Flavor], 
@@ -388,19 +388,19 @@
     (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
       Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-         {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+         {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
        Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, 
         {Index[d$$1, Lorentz]}] - 
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
       Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-         {Index[d$$1, Lorentz]}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], 
-        Proj[1]]**Field[d, Fermion, {Index[d$$1, SU3c[fund]], 
+         {Index[d$$1, Lorentz]}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], 
+        Proj[1]]\[CenterDot] Field[d, Fermion, {Index[d$$1, SU3c[fund]], 
          Index[d$$1, Flavor]}, {}]) - 
    Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
     Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
-    Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-     DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+    Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+     DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
        Index[d$$1, Flavor]}, {}] + 
    hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
     Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
@@ -418,7 +418,7 @@
         Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$4, Flavor], 
           Index[d$$3, Flavor]}, 0]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2])/
       Coupling[M, {}, 0]^4)*Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, 
-       {}]]**DiracProduct[Proj[-1]]**Field[l, Fermion, 
+       {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, 
       {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, {}] + 
    hbar*(((I/4)*Bar[Coupling[Ye, {Index[d$$3, Flavor], Index[d$$2, Flavor]}, 
          0]]*Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$3, Flavor], 
@@ -432,16 +432,16 @@
       Coupling[M, {}, 0]^4)*
     (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {Index[d$$1, Lorentz]}]]*
       Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
-      Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+      Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
        Field[e, Fermion, {Index[d$$1, Flavor]}, {}] - 
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
-      Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+      Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
        Field[e, Fermion, {Index[d$$1, Flavor]}, {}]) + 
-   I*Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-     DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+   I*Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+     DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
      Field[e, Fermion, {Index[d$$2, Flavor]}, {Index[d$$1, Lorentz]}] + 
    hbar*(((I/4)*Bar[Coupling[Ye, {Index[d$$3, Flavor], Index[d$$2, Flavor]}, 
          0]]*Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$3, Flavor], 
@@ -455,21 +455,21 @@
       Coupling[M, {}, 0]^4)*
     (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
-      Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+      Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
        Field[e, Fermion, {Index[d$$1, Flavor]}, {Index[d$$1, Lorentz]}] - 
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
-      Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {Index[d$$1, Lorentz]}]]**
-       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+      Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {Index[d$$1, Lorentz]}]]\[CenterDot] 
+       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
        Field[e, Fermion, {Index[d$$1, Flavor]}, {}]) - 
    Coupling[Ye, {Index[d$$2, Flavor], Index[d$$1, Flavor]}, 0]*
     Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
     Bar[Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$2, Flavor]}, 
-       {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+       {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
       {}] + I*Bar[Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
-        Index[d$$2, Flavor]}, {}]]**DiracProduct[
-      GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[l, Fermion, 
+        Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+      GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[l, Fermion, 
       {Index[d$$1, SU2L[fund]], Index[d$$2, Flavor]}, 
       {Index[d$$1, Lorentz]}] + 
    hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -489,7 +489,7 @@
           Index[d$$1, Flavor]}, 0]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2])/
       Coupling[M, {}, 0]^4)*
     Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-       {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+       {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
       {}] + 
    hbar*(((-1/4*I)*Bar[Coupling[Ye, {Index[d$$1, Flavor], 
           Index[d$$3, Flavor]}, 0]]*Coupling[A, {}, 0]^2*
@@ -505,12 +505,12 @@
     (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {Index[d$$1, Lorentz]}]]*
       Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
       Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-         {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+         {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
        Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, 
         {}] - Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
       Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-         {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+         {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
        Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, 
         {}]) + 
    hbar*(((I/4)*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 
@@ -526,23 +526,23 @@
     (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
       Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-         {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+         {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
        Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, 
         {Index[d$$1, Lorentz]}] - 
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
       Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-         {Index[d$$1, Lorentz]}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], 
-        Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+         {Index[d$$1, Lorentz]}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], 
+        Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
          Index[d$$1, Flavor]}, {}]) - 
    Coupling[Yd, {Index[d$$2, Flavor], Index[d$$1, Flavor]}, 0]*
     Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
     Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
-        Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+        Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
      Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}] + 
    I*Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
-        Index[d$$2, Flavor]}, {}]]**DiracProduct[
-      GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+        Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+      GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
       {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
        Index[d$$2, Flavor]}, {Index[d$$1, Lorentz]}] + 
    hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -562,13 +562,13 @@
           Index[d$$1, Flavor]}, 0]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2])/
       Coupling[M, {}, 0]^4)*
     Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-        Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+        Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
      Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}] - 
    Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
     CG[eps[SU2L], {Index[d$$2, SU2L[fund]], Index[d$$1, SU2L[fund]]}]*
     Coupling[Yu, {Index[d$$2, Flavor], Index[d$$1, Flavor]}, 0]*
     Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-        Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+        Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
      Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}] + 
    hbar*(((-1/4*I)*Coupling[A, {}, 0]^2*
        (Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 0]]*
@@ -590,15 +590,15 @@
     (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {Index[d$$1, Lorentz]}]]*
       Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
       Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, 
-           SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+           SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
        Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
          Index[d$$1, Flavor]}, {}] - 
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
       Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, 
-           SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+           SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
        Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
          Index[d$$1, Flavor]}, {}]) + 
    hbar*(((I/4)*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 
@@ -614,15 +614,15 @@
     (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {Index[d$$1, Lorentz]}]]*
       Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
       Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, 
-           SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+           SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
        Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
          Index[d$$1, Flavor]}, {}] - 
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
       Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, 
-           SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+           SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
        Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
          Index[d$$1, Flavor]}, {}]) + 
    hbar*(((I/4)*Coupling[A, {}, 0]^2*
@@ -645,15 +645,15 @@
     (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
       Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, 
-           SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+           SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
        Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
          Index[d$$1, Flavor]}, {Index[d$$1, Lorentz]}] - 
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
       Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, 
-           SU2L[fund]], Index[d$$2, Flavor]}, {Index[d$$1, Lorentz]}]]**
-       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+           SU2L[fund]], Index[d$$2, Flavor]}, {Index[d$$1, Lorentz]}]]\[CenterDot] 
+       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
        Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
          Index[d$$1, Flavor]}, {}]) + 
    hbar*(((I/4)*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 
@@ -669,15 +669,15 @@
     (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
       Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, 
-           SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+           SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
        Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
          Index[d$$1, Flavor]}, {Index[d$$1, Lorentz]}] - 
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
       Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, 
-           SU2L[fund]], Index[d$$2, Flavor]}, {Index[d$$1, Lorentz]}]]**
-       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+           SU2L[fund]], Index[d$$2, Flavor]}, {Index[d$$1, Lorentz]}]]\[CenterDot] 
+       DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
        Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
          Index[d$$1, Flavor]}, {}]) + 
    hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -698,14 +698,14 @@
           Index[d$$1, Flavor]}, 0]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2])/
       Coupling[M, {}, 0]^4)*
     Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, SU2L[fund]], 
-        Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+        Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
      Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}] - 
    Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
     CG[Bar[eps[SU2L]], {Bar[Index[d$$1, SU2L[fund]]], 
       Bar[Index[d$$2, SU2L[fund]]]}]*Field[H, Scalar, 
      {Index[d$$2, SU2L[fund]]}, {}]*
     Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-       {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+       {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
       {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
        Index[d$$1, Flavor]}, {}] + 
    hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -727,7 +727,7 @@
           Index[d$$3, Flavor]}, 0]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2])/
       Coupling[M, {}, 0]^4)*
     Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-       {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+       {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
       {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
        Index[d$$1, Flavor]}, {}] + 
    hbar*CG[Bar[eps[SU2L]], {Bar[Index[d$$1, SU2L[fund]]], 
@@ -745,7 +745,7 @@
           Index[d$$1, Flavor]}, 0]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2])/
       Coupling[M, {}, 0]^4)*
     Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-       {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+       {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
      Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}] + 
    hbar*(((-1/4*I)*Bar[Coupling[Yu, {Index[d$$3, Flavor], 
           Index[d$$2, Flavor]}, 0]]*Coupling[A, {}, 0]^2*
@@ -761,16 +761,16 @@
     (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {Index[d$$1, Lorentz]}]]*
       Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
       Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-         {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+         {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
        Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, 
         {}] - Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
       Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-         {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+         {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
        Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, 
         {}]) + I*Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
-        Index[d$$2, Flavor]}, {}]]**DiracProduct[
-      GammaM[Index[d$$1, Lorentz]], Proj[1]]**Field[u, Fermion, 
+        Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+      GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] Field[u, Fermion, 
       {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
       {Index[d$$1, Lorentz]}] + 
    hbar*(((I/4)*Bar[Coupling[Yu, {Index[d$$3, Flavor], Index[d$$2, Flavor]}, 
@@ -786,14 +786,14 @@
     (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
       Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-         {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+         {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
        Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, 
         {Index[d$$1, Lorentz]}] - 
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
       Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-         {Index[d$$1, Lorentz]}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], 
-        Proj[1]]**Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
+         {Index[d$$1, Lorentz]}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], 
+        Proj[1]]\[CenterDot] Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
          Index[d$$1, Flavor]}, {}]), "On-shell EFT Lagrangian" -> 
   Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
     Coupling[\[Mu]2, {}, 2]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}] - 
@@ -1852,27 +1852,27 @@
    Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
     Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
     Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-       {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+       {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
       {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
        Index[d$$1, Flavor]}, {}] + 
    (hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[-1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] 
       Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(4*Coupling[M, {}, 0]^2) - 
    (17*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[\[Mu]2, {}, 2]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*Coupling[M, {}, 0]^4) - 
    (hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[\[Mu]2, {}, 2]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (33*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -1880,7 +1880,7 @@
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^4*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(8*Coupling[M, {}, 0]^6) - 
    (3*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -1888,7 +1888,7 @@
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^4*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^6) + 
    (Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -1896,7 +1896,7 @@
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^4) + 
    (31*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -1905,7 +1905,7 @@
      Coupling[A, {}, 0]^2*Coupling[gL, {}, 0]^2*Field[H, Scalar, 
       {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(72*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -1914,7 +1914,7 @@
      Coupling[A, {}, 0]^2*Coupling[gL, {}, 0]^2*Field[H, Scalar, 
       {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (31*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -1923,7 +1923,7 @@
      Coupling[A, {}, 0]^2*Coupling[gY, {}, 0]^2*Field[H, Scalar, 
       {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(72*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -1932,7 +1932,7 @@
      Coupling[A, {}, 0]^2*Coupling[gY, {}, 0]^2*Field[H, Scalar, 
       {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 0]]*
@@ -1942,7 +1942,7 @@
      Coupling[A, {}, 0]^2*Coupling[Yd, {Index[d$$4, Flavor], 
        Index[d$$3, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {}]*Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[-1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] 
       Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(4*Coupling[M, {}, 0]^4) + 
    (3*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 0]]*
@@ -1952,7 +1952,7 @@
      Coupling[A, {}, 0]^2*Coupling[Yd, {Index[d$$4, Flavor], 
        Index[d$$3, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {}]*Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[-1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] 
       Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (17*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -1961,7 +1961,7 @@
      Coupling[A, {}, 0]^2*Coupling[\[Kappa], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(6*Coupling[M, {}, 0]^4) - 
    (2*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -1970,7 +1970,7 @@
      Coupling[A, {}, 0]^2*Coupling[\[Kappa], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -1978,7 +1978,7 @@
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[\[Kappa], {}, 0]^2*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {}]*Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[-1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] 
       Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(24*Coupling[M, {}, 0]^2) + 
    (29*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -1987,7 +1987,7 @@
      Coupling[A, {}, 0]^2*Coupling[\[Lambda], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -1996,7 +1996,7 @@
      Coupling[A, {}, 0]^2*Coupling[\[Lambda], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -2005,7 +2005,7 @@
      Coupling[A, {}, 0]^2*Coupling[\[Lambda]\[Phi], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -2014,7 +2014,7 @@
      Coupling[A, {}, 0]^2*Coupling[\[Lambda]\[Phi], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (4*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -2023,7 +2023,7 @@
      Coupling[A, {}, 0]^3*Coupling[\[Mu]\[Phi], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(3*Coupling[M, {}, 0]^6) + 
    (5*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -2032,7 +2032,7 @@
      Coupling[\[Kappa], {}, 0]*Coupling[\[Mu]\[Phi], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*Coupling[M, {}, 0]^4) - 
    (11*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -2041,7 +2041,7 @@
      Coupling[A, {}, 0]^2*Coupling[\[Mu]\[Phi], {}, 0]^2*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(24*Coupling[M, {}, 0]^6) - 
    (hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -2049,7 +2049,7 @@
      Coupling[A, {}, 0]^2*Coupling[\[Mu]2, {}, 2]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^4) - 
    (3*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -2058,7 +2058,7 @@
      Coupling[A, {}, 0]^4*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^6) + 
    (5*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -2067,7 +2067,7 @@
      Coupling[A, {}, 0]^2*Coupling[gL, {}, 0]^2*Field[H, Scalar, 
       {Index[d$$2, SU2L[fund]]}, {}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -2076,7 +2076,7 @@
      Coupling[A, {}, 0]^2*Coupling[gY, {}, 0]^2*Field[H, Scalar, 
       {Index[d$$2, SU2L[fund]]}, {}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*Coupling[M, {}, 0]^4) + 
    (3*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 0]]*
@@ -2087,7 +2087,7 @@
        Index[d$$3, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^4) - 
    (2*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -2097,7 +2097,7 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 + 
    (hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -2107,7 +2107,7 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -2117,7 +2117,7 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^4) + 
    (((5*I)/8)*hbar*Bar[Coupling[Yd, {Index[d$$3, Flavor], 
@@ -2126,8 +2126,8 @@
      Coupling[A, {}, 0]^2*Coupling[Yd, {Index[d$$3, Flavor], 
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[1]]**Field[d, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] Field[d, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 + 
    ((I/4)*hbar*Bar[Coupling[Yd, {Index[d$$3, Flavor], Index[d$$2, Flavor]}, 
@@ -2136,7 +2136,7 @@
      Coupling[Yd, {Index[d$$3, Flavor], Index[d$$1, Flavor]}, 0]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (((17*I)/216)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -2144,7 +2144,7 @@
      Delta[Index[d$$1, Flavor], Index[d$$2, Flavor]]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 - 
    ((I/36)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -2152,7 +2152,7 @@
      Delta[Index[d$$1, Flavor], Index[d$$2, Flavor]]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (((5*I)/8)*hbar*Bar[Coupling[Yd, {Index[d$$3, Flavor], 
@@ -2161,7 +2161,7 @@
      Coupling[Yd, {Index[d$$3, Flavor], Index[d$$1, Flavor]}, 0]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 - 
    ((I/4)*hbar*Bar[Coupling[Yd, {Index[d$$3, Flavor], Index[d$$2, Flavor]}, 
@@ -2170,7 +2170,7 @@
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (((17*I)/216)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -2178,7 +2178,7 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 + 
    ((I/36)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -2186,7 +2186,7 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) + 
    ((I/4)*hbar*Bar[Coupling[Yd, {Index[d$$3, Flavor], Index[d$$2, Flavor]}, 
@@ -2196,7 +2196,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 - 
    ((I/36)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -2205,7 +2205,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 - 
    ((I/4)*hbar*Bar[Coupling[Yd, {Index[d$$3, Flavor], Index[d$$2, Flavor]}, 
@@ -2214,7 +2214,7 @@
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 + 
    ((I/36)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -2222,11 +2222,11 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 + 
    I*Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-       {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+       {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
      Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
       {Index[d$$1, Lorentz]}] - 
    (((5*I)/4)*hbar*Bar[Coupling[Yd, {Index[d$$3, Flavor], 
@@ -2237,7 +2237,7 @@
      Coupling[A, {}, 0]^2*Coupling[Yu, {Index[d$$3, Flavor], 
        Index[d$$1, Flavor]}, 0]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 - 
    ((I/2)*hbar*Bar[Coupling[Yd, {Index[d$$3, Flavor], Index[d$$2, Flavor]}, 
@@ -2248,7 +2248,7 @@
      Coupling[A, {}, 0]^2*Coupling[Yu, {Index[d$$3, Flavor], 
        Index[d$$1, Flavor]}, 0]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) - 
    ((I/2)*hbar*Bar[Coupling[Yd, {Index[d$$3, Flavor], Index[d$$2, Flavor]}, 
@@ -2259,83 +2259,83 @@
      Coupling[A, {}, 0]^2*Coupling[Yu, {Index[d$$3, Flavor], 
        Index[d$$1, Flavor]}, 0]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 - 
    Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
     Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
-    Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-     DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+    Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+     DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
        Index[d$$1, Flavor]}, {}] + 
    (hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
-     Coupling[A, {}, 0]^2*Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Coupling[A, {}, 0]^2*Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(4*Coupling[M, {}, 0]^2) - 
    (17*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[\[Mu]2, {}, 2]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*Coupling[M, {}, 0]^4) - 
    (hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[\[Mu]2, {}, 2]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (33*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^4*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(8*Coupling[M, {}, 0]^6) - 
    (3*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^4*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^6) + 
    (Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^4) + 
    (31*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[gL, {}, 0]^2*Field[H, Scalar, 
       {Index[d$$2, SU2L[fund]]}, {}]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(72*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[gL, {}, 0]^2*Field[H, Scalar, 
       {Index[d$$2, SU2L[fund]]}, {}]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (31*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[gY, {}, 0]^2*Field[H, Scalar, 
       {Index[d$$2, SU2L[fund]]}, {}]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(72*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[gY, {}, 0]^2*Field[H, Scalar, 
       {Index[d$$2, SU2L[fund]]}, {}]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 0]]*
      Bar[Coupling[Ye, {Index[d$$4, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -2343,8 +2343,8 @@
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$4, Flavor], 
        Index[d$$3, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
-      {}]*Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+      {}]*Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(4*Coupling[M, {}, 0]^4) + 
    (3*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 0]]*
      Bar[Coupling[Ye, {Index[d$$4, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -2352,118 +2352,118 @@
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$4, Flavor], 
        Index[d$$3, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
-      {}]*Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+      {}]*Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (17*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[\[Kappa], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(6*Coupling[M, {}, 0]^4) - 
    (2*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[\[Kappa], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[\[Kappa], {}, 0]^2*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
-      {}]*Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+      {}]*Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(24*Coupling[M, {}, 0]^2) + 
    (29*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[\[Lambda], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[\[Lambda], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[\[Lambda]\[Phi], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[\[Lambda]\[Phi], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (4*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^3*Coupling[\[Mu]\[Phi], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(3*Coupling[M, {}, 0]^6) + 
    (5*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*Coupling[A, {}, 0]*
      Coupling[\[Kappa], {}, 0]*Coupling[\[Mu]\[Phi], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*Coupling[M, {}, 0]^4) - 
    (11*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[\[Mu]\[Phi], {}, 0]^2*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(24*Coupling[M, {}, 0]^6) - 
    (hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[\[Mu]2, {}, 2]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^4) - 
    (3*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^4*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^6) + 
    (5*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[gL, {}, 0]^2*Field[H, Scalar, 
       {Index[d$$2, SU2L[fund]]}, {}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[gY, {}, 0]^2*Field[H, Scalar, 
       {Index[d$$2, SU2L[fund]]}, {}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*Coupling[M, {}, 0]^4) + 
    (3*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 0]]*
      Bar[Coupling[Ye, {Index[d$$4, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -2472,8 +2472,8 @@
      Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$4, Flavor], 
        Index[d$$3, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^4) - 
    (2*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -2481,8 +2481,8 @@
      Coupling[A, {}, 0]^2*Coupling[\[Kappa], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 + 
    (hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -2490,8 +2490,8 @@
      Coupling[A, {}, 0]^2*Coupling[\[Lambda], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -2499,39 +2499,39 @@
      Coupling[A, {}, 0]^2*Coupling[\[Lambda]\[Phi], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^4) + 
    (((5*I)/8)*hbar*Bar[Coupling[Ye, {Index[d$$3, Flavor], 
         Index[d$$2, Flavor]}, 0]]*Bar[Field[H, Scalar, 
        {Index[d$$1, SU2L[fund]]}, {Index[d$$1, Lorentz]}]]*
      Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$3, Flavor], 
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
-      {}]*Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+      {}]*Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[e, Fermion, {Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 + 
    ((I/4)*hbar*Bar[Coupling[Ye, {Index[d$$3, Flavor], Index[d$$2, Flavor]}, 
        0]]*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
        {Index[d$$1, Lorentz]}]]*Coupling[A, {}, 0]^2*
      Coupling[Ye, {Index[d$$3, Flavor], Index[d$$1, Flavor]}, 0]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[e, Fermion, {Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (((17*I)/72)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
        {Index[d$$1, Lorentz]}]]*Coupling[A, {}, 0]^2*Coupling[gY, {}, 0]^2*
      Delta[Index[d$$1, Flavor], Index[d$$2, Flavor]]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[e, Fermion, {Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 - 
    ((I/12)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
        {Index[d$$1, Lorentz]}]]*Coupling[A, {}, 0]^2*Coupling[gY, {}, 0]^2*
      Delta[Index[d$$1, Flavor], Index[d$$2, Flavor]]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[e, Fermion, {Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (((5*I)/8)*hbar*Bar[Coupling[Ye, {Index[d$$3, Flavor], 
@@ -2539,28 +2539,28 @@
        {Index[d$$1, SU2L[fund]]}, {}]]*Coupling[A, {}, 0]^2*
      Coupling[Ye, {Index[d$$3, Flavor], Index[d$$1, Flavor]}, 0]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[e, Fermion, {Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 - 
    ((I/4)*hbar*Bar[Coupling[Ye, {Index[d$$3, Flavor], Index[d$$2, Flavor]}, 
        0]]*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$3, Flavor], 
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[e, Fermion, {Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (((17*I)/72)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[gY, {}, 0]^2*Delta[Index[d$$1, Flavor], 
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[e, Fermion, {Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 + 
    ((I/12)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[gY, {}, 0]^2*Delta[Index[d$$1, Flavor], 
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[e, Fermion, {Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) + 
    ((I/4)*hbar*Bar[Coupling[Ye, {Index[d$$3, Flavor], Index[d$$2, Flavor]}, 
@@ -2569,105 +2569,105 @@
      Coupling[Ye, {Index[d$$3, Flavor], Index[d$$1, Flavor]}, 0]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[e, Fermion, {Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 - 
    ((I/12)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
        {Index[d$$1, Lorentz]}]]*Coupling[A, {}, 0]^2*Coupling[gY, {}, 0]^2*
      Delta[Index[d$$1, Flavor], Index[d$$2, Flavor]]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[e, Fermion, {Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 - 
    ((I/4)*hbar*Bar[Coupling[Ye, {Index[d$$3, Flavor], Index[d$$2, Flavor]}, 
        0]]*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$3, Flavor], 
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[e, Fermion, {Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 + 
    ((I/12)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[gY, {}, 0]^2*Delta[Index[d$$1, Flavor], 
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
-     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+     Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[e, Fermion, {Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 + 
-   I*Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-     DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+   I*Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+     DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
      Field[e, Fermion, {Index[d$$2, Flavor]}, {Index[d$$1, Lorentz]}] - 
    Coupling[Ye, {Index[d$$2, Flavor], Index[d$$1, Flavor]}, 0]*
     Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
     Bar[Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$2, Flavor]}, 
-       {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+       {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
       {}] + (hbar*Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$2, Flavor], 
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Bar[Field[l, Fermion, {Index[d$$1, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[e, Fermion, {Index[d$$1, Flavor]}, {}])/
     (4*Coupling[M, {}, 0]^2) - (17*hbar*Coupling[A, {}, 0]^2*
      Coupling[Ye, {Index[d$$2, Flavor], Index[d$$1, Flavor]}, 0]*
      Coupling[\[Mu]2, {}, 2]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(12*Coupling[M, {}, 0]^4) - 
    (hbar*Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$2, Flavor], 
        Index[d$$1, Flavor]}, 0]*Coupling[\[Mu]2, {}, 2]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (hbar*Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$2, Flavor], 
        Index[d$$1, Flavor]}, 0]*Coupling[\[Mu]2, {}, 2]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(2*Coupling[M, {}, 0]^4) + 
    I*Bar[Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$2, Flavor]}, 
-       {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+       {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
      Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$2, Flavor]}, 
       {Index[d$$1, Lorentz]}] + 
    (hbar*Bar[Coupling[Yd, {Index[d$$2, Flavor], Index[d$$3, Flavor]}, 0]]*
      Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$4, Flavor], 
        Index[d$$1, Flavor]}, 0]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$2, Flavor]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$4, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(6*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Coupling[Ye, {Index[d$$2, Flavor], Index[d$$3, Flavor]}, 0]]*
      Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$4, Flavor], 
        Index[d$$1, Flavor]}, 0]*Bar[Field[e, Fermion, {Index[d$$3, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[l, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, 
        {Index[d$$1, SU2L[fund]], Index[d$$2, Flavor]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$4, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(6*Coupling[M, {}, 0]^4) - 
    (33*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^4*Coupling[Ye, {Index[d$$2, Flavor], 
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(8*Coupling[M, {}, 0]^6) - 
    (3*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^4*Coupling[Ye, {Index[d$$2, Flavor], 
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^6) + 
    (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*Coupling[A, {}, 0]^2*
      Coupling[Ye, {Index[d$$2, Flavor], Index[d$$1, Flavor]}, 0]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(2*Coupling[M, {}, 0]^4) + 
    (31*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[gL, {}, 0]^2*
@@ -2675,7 +2675,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(72*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[gL, {}, 0]^2*
@@ -2683,7 +2683,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(12*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (31*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[gY, {}, 0]^2*
@@ -2691,7 +2691,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(72*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[gY, {}, 0]^2*
@@ -2699,7 +2699,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(12*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Coupling[Ye, {Index[d$$3, Flavor], Index[d$$4, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -2708,7 +2708,7 @@
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(4*Coupling[M, {}, 0]^4) + 
    (3*hbar*Bar[Coupling[Ye, {Index[d$$3, Flavor], Index[d$$4, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -2717,7 +2717,7 @@
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (17*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$2, Flavor], 
@@ -2725,7 +2725,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(6*Coupling[M, {}, 0]^4) - 
    (2*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$2, Flavor], 
@@ -2733,14 +2733,14 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[Ye, {Index[d$$2, Flavor], Index[d$$1, Flavor]}, 0]*
      Coupling[\[Kappa], {}, 0]^2*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(24*Coupling[M, {}, 0]^2) + 
    (29*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$2, Flavor], 
@@ -2748,7 +2748,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(12*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$2, Flavor], 
@@ -2756,7 +2756,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$2, Flavor], 
@@ -2764,7 +2764,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(2*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$2, Flavor], 
@@ -2772,7 +2772,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (4*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^3*Coupling[Ye, {Index[d$$2, Flavor], 
@@ -2780,7 +2780,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(3*Coupling[M, {}, 0]^6) + 
    (5*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]*Coupling[Ye, {Index[d$$2, Flavor], 
@@ -2788,7 +2788,7 @@
      Coupling[\[Mu]\[Phi], {}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(12*Coupling[M, {}, 0]^4) - 
    (11*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$2, Flavor], 
@@ -2796,7 +2796,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(24*Coupling[M, {}, 0]^6) - 
    (3*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^4*Coupling[Ye, {Index[d$$2, Flavor], 
@@ -2804,7 +2804,7 @@
       {}]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(2*Coupling[M, {}, 0]^6) + 
    (5*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[gL, {}, 0]^2*
@@ -2813,7 +2813,7 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(12*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[gY, {}, 0]^2*
@@ -2822,7 +2822,7 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(12*Coupling[M, {}, 0]^4) + 
    (3*hbar*Bar[Coupling[Ye, {Index[d$$3, Flavor], Index[d$$4, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -2832,7 +2832,7 @@
       {}]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(2*Coupling[M, {}, 0]^4) - 
    (2*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$2, Flavor], 
@@ -2841,7 +2841,7 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/Coupling[M, {}, 0]^4 + 
    (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$2, Flavor], 
@@ -2850,7 +2850,7 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(2*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$2, Flavor], 
@@ -2859,7 +2859,7 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}])/(2*Coupling[M, {}, 0]^4) - 
    (((5*I)/8)*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], 
         Index[d$$3, Flavor]}, 0]]*Bar[Field[H, Scalar, 
@@ -2867,8 +2867,8 @@
      Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$2, Flavor], 
        Index[d$$3, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {}]*Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[l, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[l, Fermion, 
        {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 - 
    ((I/4)*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 
@@ -2877,7 +2877,7 @@
      Coupling[Ye, {Index[d$$2, Flavor], Index[d$$3, Flavor]}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (((17*I)/72)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -2885,7 +2885,7 @@
      Delta[Index[d$$1, Flavor], Index[d$$2, Flavor]]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 + 
    ((I/12)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -2893,7 +2893,7 @@
      Delta[Index[d$$1, Flavor], Index[d$$2, Flavor]]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (((5*I)/8)*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], 
@@ -2902,7 +2902,7 @@
      Coupling[Ye, {Index[d$$2, Flavor], Index[d$$3, Flavor]}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 + 
    ((I/4)*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 
@@ -2911,7 +2911,7 @@
        Index[d$$3, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (((17*I)/72)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -2919,7 +2919,7 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 - 
    ((I/12)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -2927,7 +2927,7 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) - 
    ((I/4)*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 
@@ -2937,7 +2937,7 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 + 
    ((I/12)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -2946,7 +2946,7 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 + 
    ((I/4)*hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 
@@ -2955,7 +2955,7 @@
        Index[d$$3, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 - 
    ((I/12)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -2963,7 +2963,7 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 - 
    (((17*I)/144)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -2971,7 +2971,7 @@
      Delta[Index[d$$1, Flavor], Index[d$$2, Flavor]]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 - 
    ((I/24)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -2979,7 +2979,7 @@
      Delta[Index[d$$1, Flavor], Index[d$$2, Flavor]]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (((17*I)/144)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -2987,7 +2987,7 @@
      Delta[Index[d$$1, Flavor], Index[d$$2, Flavor]]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 - 
    ((I/24)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -2995,7 +2995,7 @@
      Delta[Index[d$$1, Flavor], Index[d$$2, Flavor]]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (((17*I)/144)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3003,7 +3003,7 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 + 
    ((I/24)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3011,7 +3011,7 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (((17*I)/144)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3019,7 +3019,7 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 + 
    ((I/24)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3027,7 +3027,7 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) - 
    ((I/24)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -3036,7 +3036,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 - 
    ((I/24)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -3045,7 +3045,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 + 
    ((I/24)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3053,7 +3053,7 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 + 
    ((I/24)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3061,30 +3061,30 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 - Coupling[Yd, {Index[d$$2, Flavor], 
       Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
      {}]*Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], 
-        Index[d$$1, SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-     DiracProduct[Proj[1]]**Field[d, Fermion, {Index[d$$1, SU3c[fund]], 
+        Index[d$$1, SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+     DiracProduct[Proj[1]]\[CenterDot] Field[d, Fermion, {Index[d$$1, SU3c[fund]], 
        Index[d$$1, Flavor]}, {}] + (hbar*Coupling[A, {}, 0]^2*
      Coupling[Yd, {Index[d$$2, Flavor], Index[d$$1, Flavor]}, 0]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (4*Coupling[M, {}, 0]^2) - (17*hbar*Coupling[A, {}, 0]^2*
      Coupling[Yd, {Index[d$$2, Flavor], Index[d$$1, Flavor]}, 0]*
      Coupling[\[Mu]2, {}, 2]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (12*Coupling[M, {}, 0]^4) - (hbar*Coupling[A, {}, 0]^2*
      Coupling[Yd, {Index[d$$2, Flavor], Index[d$$1, Flavor]}, 0]*
      Coupling[\[Mu]2, {}, 2]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (2*\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (hbar*Coupling[A, {}, 0]^2*Coupling[Yd, {Index[d$$2, Flavor], 
@@ -3092,21 +3092,21 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (2*Coupling[M, {}, 0]^4) + 
    I*Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
-        Index[d$$2, Flavor]}, {}]]**DiracProduct[
-      GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+        Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+      GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
       {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
        Index[d$$2, Flavor]}, {Index[d$$1, Lorentz]}] + 
    (hbar*Bar[Coupling[Ye, {Index[d$$2, Flavor], Index[d$$3, Flavor]}, 0]]*
      Coupling[A, {}, 0]^2*Coupling[Yd, {Index[d$$4, Flavor], 
        Index[d$$1, Flavor]}, 0]*Bar[Field[e, Fermion, {Index[d$$3, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[l, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, 
        {Index[d$$1, SU2L[fund]], Index[d$$2, Flavor]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
-         Index[d$$4, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$4, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (6*Coupling[M, {}, 0]^4) + 
    (hbar*CG[eps[SU2L], {Index[d$$1, SU2L[fund]], Index[d$$2, SU2L[fund]]}]*
@@ -3114,17 +3114,17 @@
        Index[d$$1, Flavor]}, 0]*Coupling[Yu, {Index[d$$4, Flavor], 
        Index[d$$2, Flavor]}, 0]*
      Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$3, Flavor]}, 
-        {}]]**DiracProduct[Proj[1]]**Field[e, Fermion, {Index[d$$1, Flavor]}, 
+        {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] Field[e, Fermion, {Index[d$$1, Flavor]}, 
        {}]*Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], 
-         Index[d$$1, SU2L[fund]], Index[d$$4, Flavor]}, {}]]**
-      DiracProduct[Proj[1]]**Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
+         Index[d$$1, SU2L[fund]], Index[d$$4, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[1]]\[CenterDot] Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
         Index[d$$2, Flavor]}, {}])/(6*Coupling[M, {}, 0]^4) - 
    (33*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Coupling[A, {}, 0]^4*Coupling[Yd, {Index[d$$2, Flavor], 
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (8*Coupling[M, {}, 0]^6) - 
    (3*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3132,7 +3132,7 @@
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (2*\[Epsilon]*Coupling[M, {}, 0]^6) + 
    (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*Coupling[A, {}, 0]^2*
@@ -3140,7 +3140,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (2*Coupling[M, {}, 0]^4) + 
    (31*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3149,7 +3149,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (72*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3158,7 +3158,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (12*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (31*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3167,7 +3167,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (72*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3176,7 +3176,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (12*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Coupling[Yd, {Index[d$$3, Flavor], Index[d$$4, Flavor]}, 0]]*
@@ -3186,7 +3186,7 @@
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (4*Coupling[M, {}, 0]^4) + 
    (3*hbar*Bar[Coupling[Yd, {Index[d$$3, Flavor], Index[d$$4, Flavor]}, 0]]*
@@ -3196,7 +3196,7 @@
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (2*\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (17*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3205,7 +3205,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (6*Coupling[M, {}, 0]^4) - 
    (2*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3214,7 +3214,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3222,7 +3222,7 @@
      Coupling[\[Kappa], {}, 0]^2*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (24*Coupling[M, {}, 0]^2) + 
    (29*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3231,7 +3231,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (12*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3240,7 +3240,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (2*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3249,7 +3249,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (2*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3258,7 +3258,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (2*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (4*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3267,7 +3267,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (3*Coupling[M, {}, 0]^6) + 
    (5*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3276,7 +3276,7 @@
      Coupling[\[Mu]\[Phi], {}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (12*Coupling[M, {}, 0]^4) - 
    (11*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3285,7 +3285,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (24*Coupling[M, {}, 0]^6) - 
    (3*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3294,7 +3294,7 @@
       {}]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (2*Coupling[M, {}, 0]^6) + 
    (5*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3304,7 +3304,7 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (12*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3314,7 +3314,7 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (12*Coupling[M, {}, 0]^4) + 
    (3*hbar*Bar[Coupling[Yd, {Index[d$$3, Flavor], Index[d$$4, Flavor]}, 0]]*
@@ -3325,7 +3325,7 @@
       {}]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (2*Coupling[M, {}, 0]^4) - 
    (2*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3335,7 +3335,7 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 + 
    (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3345,7 +3345,7 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (2*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3355,21 +3355,21 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (2*Coupling[M, {}, 0]^4) - 
    Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
     CG[eps[SU2L], {Index[d$$2, SU2L[fund]], Index[d$$1, SU2L[fund]]}]*
     Coupling[Yu, {Index[d$$2, Flavor], Index[d$$1, Flavor]}, 0]*
     Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-        Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+        Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
      Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}] + 
    (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      CG[eps[SU2L], {Index[d$$2, SU2L[fund]], Index[d$$1, SU2L[fund]]}]*
      Coupling[A, {}, 0]^2*Coupling[Yu, {Index[d$$2, Flavor], 
        Index[d$$1, Flavor]}, 0]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (4*Coupling[M, {}, 0]^2) - 
    (17*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3377,7 +3377,7 @@
      Coupling[A, {}, 0]^2*Coupling[Yu, {Index[d$$2, Flavor], 
        Index[d$$1, Flavor]}, 0]*Coupling[\[Mu]2, {}, 2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (12*Coupling[M, {}, 0]^4) - 
    (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3385,7 +3385,7 @@
      Coupling[A, {}, 0]^2*Coupling[Yu, {Index[d$$2, Flavor], 
        Index[d$$1, Flavor]}, 0]*Coupling[\[Mu]2, {}, 2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (2*\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3394,7 +3394,7 @@
        Index[d$$1, Flavor]}, 0]*Coupling[\[Mu]2, {}, 2]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (2*Coupling[M, {}, 0]^4) - 
    (((5*I)/8)*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], 
@@ -3403,8 +3403,8 @@
      Coupling[A, {}, 0]^2*Coupling[Yd, {Index[d$$2, Flavor], 
        Index[d$$3, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {}]*Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], 
-         Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+         Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 - 
    ((I/4)*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 
@@ -3413,8 +3413,8 @@
      Coupling[Yd, {Index[d$$2, Flavor], Index[d$$3, Flavor]}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (((5*I)/8)*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], 
@@ -3423,8 +3423,8 @@
      Coupling[A, {}, 0]^2*Coupling[Yu, {Index[d$$2, Flavor], 
        Index[d$$3, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {}]*Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], 
-         Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+         Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 - 
    ((I/4)*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 
@@ -3433,8 +3433,8 @@
      Coupling[Yu, {Index[d$$2, Flavor], Index[d$$3, Flavor]}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (((17*I)/72)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -3442,8 +3442,8 @@
      Delta[Index[d$$1, Flavor], Index[d$$2, Flavor]]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 + 
    ((I/12)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -3451,8 +3451,8 @@
      Delta[Index[d$$1, Flavor], Index[d$$2, Flavor]]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (((5*I)/8)*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], 
@@ -3461,8 +3461,8 @@
      Coupling[Yd, {Index[d$$2, Flavor], Index[d$$3, Flavor]}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 + 
    ((I/4)*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 
@@ -3471,8 +3471,8 @@
        Index[d$$3, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (((5*I)/8)*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], 
@@ -3481,8 +3481,8 @@
      Coupling[Yu, {Index[d$$2, Flavor], Index[d$$3, Flavor]}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 + 
    ((I/4)*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 
@@ -3491,8 +3491,8 @@
        Index[d$$3, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (((17*I)/72)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3500,8 +3500,8 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 - 
    ((I/12)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3509,8 +3509,8 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(\[Epsilon]*Coupling[M, {}, 0]^4) - 
    ((I/4)*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 
@@ -3520,8 +3520,8 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 - 
    ((I/4)*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 
@@ -3531,8 +3531,8 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 + 
    ((I/12)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -3541,8 +3541,8 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 + 
    ((I/4)*hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 
@@ -3551,8 +3551,8 @@
        Index[d$$3, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 + 
    ((I/4)*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 
@@ -3561,8 +3561,8 @@
        Index[d$$3, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 - 
    ((I/12)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3570,8 +3570,8 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 + 
    (((5*I)/8)*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], 
@@ -3580,8 +3580,8 @@
      Coupling[A, {}, 0]^2*Coupling[Yu, {Index[d$$2, Flavor], 
        Index[d$$3, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], 
-         Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+         Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
       Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 + 
    ((I/4)*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 
@@ -3590,8 +3590,8 @@
      Coupling[Yu, {Index[d$$2, Flavor], Index[d$$3, Flavor]}, 0]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (((17*I)/144)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -3599,8 +3599,8 @@
      Delta[Index[d$$1, Flavor], Index[d$$2, Flavor]]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 - 
    ((I/24)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -3608,8 +3608,8 @@
      Delta[Index[d$$1, Flavor], Index[d$$2, Flavor]]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (((17*I)/432)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -3617,8 +3617,8 @@
      Delta[Index[d$$1, Flavor], Index[d$$2, Flavor]]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 + 
    ((I/72)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -3626,8 +3626,8 @@
      Delta[Index[d$$1, Flavor], Index[d$$2, Flavor]]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (((5*I)/8)*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], 
@@ -3636,8 +3636,8 @@
      Coupling[Yu, {Index[d$$2, Flavor], Index[d$$3, Flavor]}, 0]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 - 
    ((I/4)*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 
@@ -3646,8 +3646,8 @@
        Index[d$$3, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (((17*I)/144)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3655,8 +3655,8 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 + 
    ((I/24)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3664,8 +3664,8 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (((17*I)/432)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3673,8 +3673,8 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 - 
    ((I/72)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3682,8 +3682,8 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(\[Epsilon]*Coupling[M, {}, 0]^4) + 
    ((I/4)*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 
@@ -3693,8 +3693,8 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 - 
    ((I/24)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -3703,8 +3703,8 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 + 
    ((I/72)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -3713,8 +3713,8 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 - 
    ((I/4)*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 
@@ -3723,8 +3723,8 @@
        Index[d$$3, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 + 
    ((I/24)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3732,8 +3732,8 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 - 
    ((I/72)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3741,8 +3741,8 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[q, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 - 
    (33*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3751,8 +3751,8 @@
      Coupling[A, {}, 0]^4*Coupling[Yu, {Index[d$$2, Flavor], 
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {}]*Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], 
-         Index[d$$3, SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[1]]**Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
+         Index[d$$3, SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[1]]\[CenterDot] Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
         Index[d$$1, Flavor]}, {}])/(8*Coupling[M, {}, 0]^6) - 
    (3*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
@@ -3760,8 +3760,8 @@
      Coupling[A, {}, 0]^4*Coupling[Yu, {Index[d$$2, Flavor], 
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {}]*Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], 
-         Index[d$$3, SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[1]]**Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
+         Index[d$$3, SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[1]]\[CenterDot] Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^6) + 
    (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
@@ -3769,8 +3769,8 @@
      Coupling[A, {}, 0]^2*Coupling[Yu, {Index[d$$2, Flavor], 
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {}]*Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], 
-         Index[d$$3, SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[1]]**Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
+         Index[d$$3, SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[1]]\[CenterDot] Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^4) + 
    (31*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
@@ -3779,7 +3779,7 @@
      Coupling[Yu, {Index[d$$2, Flavor], Index[d$$1, Flavor]}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (72*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3789,7 +3789,7 @@
      Coupling[Yu, {Index[d$$2, Flavor], Index[d$$1, Flavor]}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (12*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (31*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3799,7 +3799,7 @@
      Coupling[Yu, {Index[d$$2, Flavor], Index[d$$1, Flavor]}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (72*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3809,7 +3809,7 @@
      Coupling[Yu, {Index[d$$2, Flavor], Index[d$$1, Flavor]}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (12*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Coupling[Yu, {Index[d$$3, Flavor], Index[d$$4, Flavor]}, 0]]*
@@ -3820,8 +3820,8 @@
        Index[d$$4, Flavor]}, 0]*Coupling[Yu, {Index[d$$3, Flavor], 
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {}]*Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], 
-         Index[d$$3, SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[1]]**Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
+         Index[d$$3, SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[1]]\[CenterDot] Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
         Index[d$$1, Flavor]}, {}])/(4*Coupling[M, {}, 0]^4) + 
    (3*hbar*Bar[Coupling[Yu, {Index[d$$3, Flavor], Index[d$$4, Flavor]}, 0]]*
      Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3831,8 +3831,8 @@
        Index[d$$4, Flavor]}, 0]*Coupling[Yu, {Index[d$$3, Flavor], 
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {}]*Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], 
-         Index[d$$3, SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[1]]**Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
+         Index[d$$3, SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[1]]\[CenterDot] Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (17*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
@@ -3841,7 +3841,7 @@
        Index[d$$1, Flavor]}, 0]*Coupling[\[Kappa], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (6*Coupling[M, {}, 0]^4) - 
    (2*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3851,7 +3851,7 @@
        Index[d$$1, Flavor]}, 0]*Coupling[\[Kappa], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3860,8 +3860,8 @@
      Coupling[Yu, {Index[d$$2, Flavor], Index[d$$1, Flavor]}, 0]*
      Coupling[\[Kappa], {}, 0]^2*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {}]*Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], 
-         Index[d$$3, SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[1]]**Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
+         Index[d$$3, SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[1]]\[CenterDot] Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
         Index[d$$1, Flavor]}, {}])/(24*Coupling[M, {}, 0]^2) + 
    (29*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
@@ -3870,7 +3870,7 @@
        Index[d$$1, Flavor]}, 0]*Coupling[\[Lambda], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (12*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3880,7 +3880,7 @@
        Index[d$$1, Flavor]}, 0]*Coupling[\[Lambda], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (2*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3890,7 +3890,7 @@
        Index[d$$1, Flavor]}, 0]*Coupling[\[Lambda]\[Phi], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (2*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3900,7 +3900,7 @@
        Index[d$$1, Flavor]}, 0]*Coupling[\[Lambda]\[Phi], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (2*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (4*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3910,7 +3910,7 @@
        Index[d$$1, Flavor]}, 0]*Coupling[\[Mu]\[Phi], {}, 0]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (3*Coupling[M, {}, 0]^6) + 
    (5*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3920,8 +3920,8 @@
        Index[d$$1, Flavor]}, 0]*Coupling[\[Kappa], {}, 0]*
      Coupling[\[Mu]\[Phi], {}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {}]*Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], 
-         Index[d$$3, SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-      DiracProduct[Proj[1]]**Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
+         Index[d$$3, SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[1]]\[CenterDot] Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*Coupling[M, {}, 0]^4) - 
    (11*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
      Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
@@ -3930,7 +3930,7 @@
        Index[d$$1, Flavor]}, 0]*Coupling[\[Mu]\[Phi], {}, 0]^2*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (24*Coupling[M, {}, 0]^6) - 
    (3*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3940,7 +3940,7 @@
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (2*Coupling[M, {}, 0]^6) + 
    (5*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3951,7 +3951,7 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (12*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3962,7 +3962,7 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (12*Coupling[M, {}, 0]^4) + 
    (3*hbar*Bar[Coupling[Yu, {Index[d$$3, Flavor], Index[d$$4, Flavor]}, 0]]*
@@ -3974,7 +3974,7 @@
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, 
       {}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (2*Coupling[M, {}, 0]^4) - 
    (2*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3985,7 +3985,7 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 + 
    (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -3996,7 +3996,7 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (2*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -4007,18 +4007,18 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, SU2L[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (2*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Coupling[Yd, {Index[d$$2, Flavor], Index[d$$3, Flavor]}, 0]]*
      Coupling[A, {}, 0]^2*Coupling[Yd, {Index[d$$4, Flavor], 
        Index[d$$1, Flavor]}, 0]*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$2, Flavor]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$2, SU3c[fund]], Index[d$$1, SU2L[fund]], 
-         Index[d$$4, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$4, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$2, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (6*Coupling[M, {}, 0]^4) + 
    (hbar*CG[eps[SU2L], {Index[d$$1, SU2L[fund]], Index[d$$2, SU2L[fund]]}]*
@@ -4026,10 +4026,10 @@
        Index[d$$1, Flavor]}, 0]*Coupling[Yu, {Index[d$$4, Flavor], 
        Index[d$$2, Flavor]}, 0]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
-         Index[d$$3, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$3, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}]*
      Bar[Field[q, Fermion, {Index[d$$2, SU3c[fund]], Index[d$$1, SU2L[fund]], 
-         Index[d$$4, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$4, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$2, SU3c[fund]], Index[d$$2, Flavor]}, {}])/
     (6*Coupling[M, {}, 0]^4) - 
    Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4037,7 +4037,7 @@
       Bar[Index[d$$2, SU2L[fund]]]}]*Field[H, Scalar, 
      {Index[d$$2, SU2L[fund]]}, {}]*
     Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-       {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+       {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
       {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
        Index[d$$1, Flavor]}, {}] + 
    (hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4045,7 +4045,7 @@
        Bar[Index[d$$2, SU2L[fund]]]}]*Coupling[A, {}, 0]^2*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(4*Coupling[M, {}, 0]^2) - 
    (17*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4053,7 +4053,7 @@
        Bar[Index[d$$2, SU2L[fund]]]}]*Coupling[A, {}, 0]^2*
      Coupling[\[Mu]2, {}, 2]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*Coupling[M, {}, 0]^4) - 
    (hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4061,7 +4061,7 @@
        Bar[Index[d$$2, SU2L[fund]]]}]*Coupling[A, {}, 0]^2*
      Coupling[\[Mu]2, {}, 2]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4070,7 +4070,7 @@
      Coupling[\[Mu]2, {}, 2]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^4) - 
    (33*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4080,7 +4080,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(8*Coupling[M, {}, 0]^6) - 
    (3*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4090,7 +4090,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^6) + 
    (Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4100,7 +4100,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^4) + 
    (31*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4110,7 +4110,7 @@
      Coupling[gL, {}, 0]^2*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(72*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4120,7 +4120,7 @@
      Coupling[gL, {}, 0]^2*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (31*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4130,7 +4130,7 @@
      Coupling[gY, {}, 0]^2*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(72*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4140,7 +4140,7 @@
      Coupling[gY, {}, 0]^2*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 0]]*
@@ -4152,7 +4152,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(4*Coupling[M, {}, 0]^4) + 
    (3*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 0]]*
@@ -4164,7 +4164,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (17*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4174,7 +4174,7 @@
      Coupling[\[Kappa], {}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(6*Coupling[M, {}, 0]^4) - 
    (2*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4184,7 +4184,7 @@
      Coupling[\[Kappa], {}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4194,7 +4194,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(24*Coupling[M, {}, 0]^2) + 
    (29*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4204,7 +4204,7 @@
      Coupling[\[Lambda], {}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4214,7 +4214,7 @@
      Coupling[\[Lambda], {}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4225,7 +4225,7 @@
       {Index[d$$1, SU2L[fund]]}, {}]*Field[H, Scalar, 
       {Index[d$$3, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4236,7 +4236,7 @@
       {Index[d$$1, SU2L[fund]]}, {}]*Field[H, Scalar, 
       {Index[d$$3, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (4*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4246,7 +4246,7 @@
      Coupling[\[Mu]\[Phi], {}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(3*Coupling[M, {}, 0]^6) + 
    (5*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4257,7 +4257,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*Coupling[M, {}, 0]^4) - 
    (11*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4268,7 +4268,7 @@
       {Index[d$$1, SU2L[fund]]}, {}]*Field[H, Scalar, 
       {Index[d$$3, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(24*Coupling[M, {}, 0]^6) - 
    (3*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4279,7 +4279,7 @@
      Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^6) + 
    (5*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4290,7 +4290,7 @@
      Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*Coupling[M, {}, 0]^4) + 
    (5*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4301,7 +4301,7 @@
      Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(12*Coupling[M, {}, 0]^4) + 
    (3*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 0]]*
@@ -4314,7 +4314,7 @@
      Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^4) - 
    (2*hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4325,7 +4325,7 @@
       {}]*Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/Coupling[M, {}, 0]^4 + 
    (hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4336,7 +4336,7 @@
       {}]*Field[H, Scalar, {Index[d$$3, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$2, Flavor]}, 0]]*
@@ -4347,7 +4347,7 @@
       {Index[d$$1, SU2L[fund]]}, {}]*Field[H, Scalar, 
       {Index[d$$3, SU2L[fund]]}, {}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(2*Coupling[M, {}, 0]^4) + 
    (((5*I)/4)*hbar*Bar[Coupling[Yu, {Index[d$$3, Flavor], 
@@ -4357,7 +4357,7 @@
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 + 
    ((I/2)*hbar*Bar[Coupling[Yu, {Index[d$$3, Flavor], Index[d$$2, Flavor]}, 
@@ -4367,7 +4367,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) + 
    ((I/2)*hbar*Bar[Coupling[Yu, {Index[d$$3, Flavor], Index[d$$2, Flavor]}, 
@@ -4378,7 +4378,7 @@
      Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 - 
    (((5*I)/8)*hbar*Bar[Coupling[Yu, {Index[d$$3, Flavor], 
@@ -4387,8 +4387,8 @@
      Coupling[A, {}, 0]^2*Coupling[Yu, {Index[d$$3, Flavor], 
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {}]*Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
-         Index[d$$2, Flavor]}, {}]]**DiracProduct[
-       GammaM[Index[d$$1, Lorentz]], Proj[1]]**Field[u, Fermion, 
+         Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+       GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] Field[u, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 - 
    ((I/4)*hbar*Bar[Coupling[Yu, {Index[d$$3, Flavor], Index[d$$2, Flavor]}, 
@@ -4397,7 +4397,7 @@
      Coupling[Yu, {Index[d$$3, Flavor], Index[d$$1, Flavor]}, 0]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (((17*I)/108)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -4405,7 +4405,7 @@
      Delta[Index[d$$1, Flavor], Index[d$$2, Flavor]]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 + 
    ((I/18)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -4413,7 +4413,7 @@
      Delta[Index[d$$1, Flavor], Index[d$$2, Flavor]]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) + 
    (((5*I)/8)*hbar*Bar[Coupling[Yu, {Index[d$$3, Flavor], 
@@ -4422,7 +4422,7 @@
      Coupling[Yu, {Index[d$$3, Flavor], Index[d$$1, Flavor]}, 0]*
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 + 
    ((I/4)*hbar*Bar[Coupling[Yu, {Index[d$$3, Flavor], Index[d$$2, Flavor]}, 
@@ -4431,7 +4431,7 @@
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) - 
    (((17*I)/108)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -4439,7 +4439,7 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 - 
    ((I/18)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -4447,7 +4447,7 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     (\[Epsilon]*Coupling[M, {}, 0]^4) - 
    ((I/4)*hbar*Bar[Coupling[Yu, {Index[d$$3, Flavor], Index[d$$2, Flavor]}, 
@@ -4457,7 +4457,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 + 
    ((I/18)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
@@ -4466,7 +4466,7 @@
      Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
      Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 + 
    ((I/4)*hbar*Bar[Coupling[Yu, {Index[d$$3, Flavor], Index[d$$2, Flavor]}, 
@@ -4475,7 +4475,7 @@
        Index[d$$1, Flavor]}, 0]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 - 
    ((I/18)*hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -4483,32 +4483,32 @@
       Index[d$$2, Flavor]]*Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
       {Index[d$$1, Lorentz]}]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-        {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}])/
     Coupling[M, {}, 0]^4 + 
    I*Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-       {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+       {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
      Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
       {Index[d$$1, Lorentz]}] + 
    (hbar*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 0]]*
      Bar[Coupling[Yu, {Index[d$$2, Flavor], Index[d$$4, Flavor]}, 0]]*
      CG[Bar[eps[SU2L]], {Bar[Index[d$$1, SU2L[fund]]], 
        Bar[Index[d$$2, SU2L[fund]]]}]*Coupling[A, {}, 0]^2*
-     Bar[Field[e, Fermion, {Index[d$$3, Flavor]}, {}]]**
-      DiracProduct[Proj[-1]]**Field[l, Fermion, {Index[d$$2, SU2L[fund]], 
+     Bar[Field[e, Fermion, {Index[d$$3, Flavor]}, {}]]\[CenterDot] 
+      DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, {Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$4, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$2, Flavor]}, {}])/(6*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$4, Flavor]}, 0]]*
      Coupling[A, {}, 0]^2*Coupling[Yu, {Index[d$$3, Flavor], 
        Index[d$$2, Flavor]}, 0]*
      Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
-         Index[d$$3, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+         Index[d$$3, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
       Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$2, SU3c[fund]], Index[d$$4, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$2, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}])/(6*Coupling[M, {}, 0]^4) + 
    (hbar*Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 0]]*
@@ -4516,11 +4516,11 @@
      CG[Bar[eps[SU2L]], {Bar[Index[d$$1, SU2L[fund]]], 
        Bar[Index[d$$2, SU2L[fund]]]}]*Coupling[A, {}, 0]^2*
      Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$3, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
         Index[d$$1, Flavor]}, {}]*
      Bar[Field[u, Fermion, {Index[d$$2, SU3c[fund]], Index[d$$4, Flavor]}, 
-        {}]]**DiracProduct[Proj[-1]]**Field[q, Fermion, 
+        {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[q, Fermion, 
        {Index[d$$2, SU3c[fund]], Index[d$$1, SU2L[fund]], 
         Index[d$$2, Flavor]}, {}])/(6*Coupling[M, {}, 0]^4), 
  "SuperTraces" -> 
@@ -5088,12 +5088,12 @@
           {Index[d$$1, Lorentz]}]]*Field[H, Scalar, 
          {Index[d$$1, SU2L[fund]]}, {}]*
         Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-           {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+           {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
          Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, 
           {}] - Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
         Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
         Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-           {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+           {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
          Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, 
           {}]) + hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
         {Index[d$$1, Lorentz]}]]*Bar[Field[H, Scalar, 
@@ -5109,8 +5109,8 @@
             0]]*Coupling[A, {}, 0]^2*Coupling[Yu, {Index[d$$3, Flavor], 
             Index[d$$1, Flavor]}, 0]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2])/
         Coupling[M, {}, 0]^4)*Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], 
-          Index[d$$2, Flavor]}, {}]]**DiracProduct[
-        GammaM[Index[d$$1, Lorentz]], Proj[1]]**Field[u, Fermion, 
+          Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+        GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] Field[u, Fermion, 
         {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}] + 
      hbar*(((I/4)*Bar[Coupling[Yd, {Index[d$$3, Flavor], Index[d$$2, 
              Flavor]}, 0]]*Coupling[A, {}, 0]^2*Coupling[Yd, 
@@ -5126,14 +5126,14 @@
       (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
         Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
         Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-           {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+           {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
          Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, 
           {Index[d$$1, Lorentz]}] - 
        Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
         Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
         Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-           {Index[d$$1, Lorentz]}]]**DiracProduct[
-          GammaM[Index[d$$1, Lorentz]], Proj[1]]**Field[d, Fermion, 
+           {Index[d$$1, Lorentz]}]]\[CenterDot] DiracProduct[
+          GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] Field[d, Fermion, 
           {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}]) + 
      hbar*(((I/4)*Bar[Coupling[Ye, {Index[d$$3, Flavor], Index[d$$2, 
              Flavor]}, 0]]*Coupling[A, {}, 0]^2*Coupling[Ye, 
@@ -5149,13 +5149,13 @@
       (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, 
           {Index[d$$1, Lorentz]}]]*Field[H, Scalar, 
          {Index[d$$1, SU2L[fund]]}, {}]*
-        Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
          Field[e, Fermion, {Index[d$$1, Flavor]}, {}] - 
        Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
         Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
-        Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
          Field[e, Fermion, {Index[d$$1, Flavor]}, {}]) + 
      hbar*(((I/4)*Bar[Coupling[Ye, {Index[d$$3, Flavor], Index[d$$2, 
              Flavor]}, 0]]*Coupling[A, {}, 0]^2*Coupling[Ye, 
@@ -5170,14 +5170,14 @@
         Coupling[M, {}, 0]^4)*
       (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
         Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
-        Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]**
-         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+        Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
          Field[e, Fermion, {Index[d$$1, Flavor]}, {Index[d$$1, Lorentz]}] - 
        Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
         Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
         Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, 
-           {Index[d$$1, Lorentz]}]]**DiracProduct[
-          GammaM[Index[d$$1, Lorentz]], Proj[1]]**Field[e, Fermion, 
+           {Index[d$$1, Lorentz]}]]\[CenterDot] DiracProduct[
+          GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] Field[e, Fermion, 
           {Index[d$$1, Flavor]}, {}]) + 
      hbar*(((-1/4*I)*Bar[Coupling[Ye, {Index[d$$1, Flavor], 
             Index[d$$3, Flavor]}, 0]]*Coupling[A, {}, 0]^2*
@@ -5194,12 +5194,12 @@
           {Index[d$$1, Lorentz]}]]*Field[H, Scalar, 
          {Index[d$$2, SU2L[fund]]}, {}]*
         Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-           {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+           {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
          Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, 
           {}] - Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
         Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
         Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-           {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+           {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
          Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, 
           {}]) + 
      hbar*(((I/4)*Bar[Coupling[Ye, {Index[d$$1, Flavor], Index[d$$3, 
@@ -5216,14 +5216,14 @@
       (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
         Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
         Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-           {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+           {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
          Field[l, Fermion, {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, 
           {Index[d$$1, Lorentz]}] - 
        Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
         Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
         Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, 
-           {Index[d$$1, Lorentz]}]]**DiracProduct[
-          GammaM[Index[d$$1, Lorentz]], Proj[-1]]**Field[l, Fermion, 
+           {Index[d$$1, Lorentz]}]]\[CenterDot] DiracProduct[
+          GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] Field[l, Fermion, 
           {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, {}]) + 
      hbar*(((-1/4*I)*Coupling[A, {}, 0]^2*
          (Bar[Coupling[Yd, {Index[d$$1, Flavor], Index[d$$3, Flavor]}, 0]]*
@@ -5246,15 +5246,15 @@
           {Index[d$$1, Lorentz]}]]*Field[H, Scalar, 
          {Index[d$$2, SU2L[fund]]}, {}]*
         Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, 
-             SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+             SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
          Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
            Index[d$$1, Flavor]}, {}] - 
        Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
         Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
         Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, 
-             SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+             SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
          Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
            Index[d$$1, Flavor]}, {}]) + 
      hbar*(((I/4)*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$3, 
@@ -5272,15 +5272,15 @@
           {Index[d$$1, Lorentz]}]]*Field[H, Scalar, 
          {Index[d$$1, SU2L[fund]]}, {}]*
         Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, 
-             SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+             SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
          Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
            Index[d$$1, Flavor]}, {}] - 
        Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
         Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
         Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, 
-             SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+             SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
          Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
            Index[d$$1, Flavor]}, {}]) + 
      hbar*(((I/4)*Coupling[A, {}, 0]^2*
@@ -5303,15 +5303,15 @@
       (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
         Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
         Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, 
-             SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+             SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
          Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
            Index[d$$1, Flavor]}, {Index[d$$1, Lorentz]}] - 
        Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
         Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]*
         Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, 
-             SU2L[fund]], Index[d$$2, Flavor]}, {Index[d$$1, Lorentz]}]]**
-         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+             SU2L[fund]], Index[d$$2, Flavor]}, {Index[d$$1, Lorentz]}]]\[CenterDot] 
+         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
          Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
            Index[d$$1, Flavor]}, {}]) + 
      hbar*(((I/4)*Bar[Coupling[Yu, {Index[d$$1, Flavor], Index[d$$3, 
@@ -5328,15 +5328,15 @@
       (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
         Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
         Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, 
-             SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+             SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
          Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
            Index[d$$1, Flavor]}, {Index[d$$1, Lorentz]}] - 
        Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
         Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
         Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, 
-             SU2L[fund]], Index[d$$2, Flavor]}, {Index[d$$1, Lorentz]}]]**
-         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]**
+             SU2L[fund]], Index[d$$2, Flavor]}, {Index[d$$1, Lorentz]}]]\[CenterDot] 
+         DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[-1]]\[CenterDot] 
          Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
            Index[d$$1, Flavor]}, {}]) + 
      hbar*CG[Bar[eps[SU2L]], {Bar[Index[d$$1, SU2L[fund]]], 
@@ -5353,8 +5353,8 @@
             0]]*Coupling[A, {}, 0]^2*Coupling[Yd, {Index[d$$3, Flavor], 
             Index[d$$1, Flavor]}, 0]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2])/
         Coupling[M, {}, 0]^4)*Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
-          Index[d$$2, Flavor]}, {}]]**DiracProduct[
-        GammaM[Index[d$$1, Lorentz]], Proj[1]]**Field[d, Fermion, 
+          Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[
+        GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] Field[d, Fermion, 
         {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}] + 
      hbar*(((-1/4*I)*Bar[Coupling[Yu, {Index[d$$3, Flavor], 
             Index[d$$2, Flavor]}, 0]]*Coupling[A, {}, 0]^2*
@@ -5371,12 +5371,12 @@
           {Index[d$$1, Lorentz]}]]*Field[H, Scalar, 
          {Index[d$$1, SU2L[fund]]}, {}]*
         Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-           {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+           {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
          Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, 
           {}] - Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
         Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {Index[d$$1, Lorentz]}]*
         Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-           {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+           {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
          Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, 
           {}]) + 
      hbar*(((I/4)*Bar[Coupling[Yu, {Index[d$$3, Flavor], Index[d$$2, 
@@ -5393,14 +5393,14 @@
       (Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
         Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
         Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-           {}]]**DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]**
+           {}]]\[CenterDot] DiracProduct[GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] 
          Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, 
           {Index[d$$1, Lorentz]}] - 
        Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
         Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
         Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, Flavor]}, 
-           {Index[d$$1, Lorentz]}]]**DiracProduct[
-          GammaM[Index[d$$1, Lorentz]], Proj[1]]**Field[u, Fermion, 
+           {Index[d$$1, Lorentz]}]]\[CenterDot] DiracProduct[
+          GammaM[Index[d$$1, Lorentz]], Proj[1]]\[CenterDot] Field[u, Fermion, 
           {Index[d$$1, SU3c[fund]], Index[d$$1, Flavor]}, {}]), 
    "hScalar-lScalar-lVector-lScalar" -> 
     hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -5498,7 +5498,7 @@
           Coupling[A, {}, 0]^2*Coupling[Yd, {Index[d$$4, Flavor], 
             Index[d$$3, Flavor]}, 0]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2])/
         Coupling[M, {}, 0]^4)*Bar[Field[d, Fermion, {Index[d$$1, SU3c[fund]], 
-          Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[-1]]**
+          Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] 
        Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$1, SU2L[fund]], 
          Index[d$$1, Flavor]}, {}] + 
      hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
@@ -5517,7 +5517,7 @@
           Coupling[A, {}, 0]^2*Coupling[Ye, {Index[d$$4, Flavor], 
             Index[d$$3, Flavor]}, 0]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2])/
         Coupling[M, {}, 0]^4)*Bar[Field[e, Fermion, {Index[d$$2, Flavor]}, 
-         {}]]**DiracProduct[Proj[-1]]**Field[l, Fermion, 
+         {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[l, Fermion, 
         {Index[d$$1, SU2L[fund]], Index[d$$1, Flavor]}, {}] + 
      hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
@@ -5535,7 +5535,7 @@
             Index[d$$4, Flavor]}, 0]*Coupling[Ye, {Index[d$$3, Flavor], 
             Index[d$$1, Flavor]}, 0]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2])/
         Coupling[M, {}, 0]^4)*Bar[Field[l, Fermion, {Index[d$$2, SU2L[fund]], 
-          Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[1]]**
+          Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[1]]\[CenterDot] 
        Field[e, Fermion, {Index[d$$1, Flavor]}, {}] + 
      hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]*
@@ -5553,8 +5553,8 @@
             Index[d$$4, Flavor]}, 0]*Coupling[Yd, {Index[d$$3, Flavor], 
             Index[d$$1, Flavor]}, 0]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2])/
         Coupling[M, {}, 0]^4)*Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], 
-          Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-       DiracProduct[Proj[1]]**Field[d, Fermion, {Index[d$$1, SU3c[fund]], 
+          Index[d$$2, SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+       DiracProduct[Proj[1]]\[CenterDot] Field[d, Fermion, {Index[d$$1, SU3c[fund]], 
          Index[d$$1, Flavor]}, {}] + 
      hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       Bar[Field[H, Scalar, {Index[d$$2, SU2L[fund]]}, {}]]*
@@ -5573,8 +5573,8 @@
             Index[d$$4, Flavor]}, 0]*Coupling[Yu, {Index[d$$3, Flavor], 
             Index[d$$1, Flavor]}, 0]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2])/
         Coupling[M, {}, 0]^4)*Bar[Field[q, Fermion, {Index[d$$1, SU3c[fund]], 
-          Index[d$$3, SU2L[fund]], Index[d$$2, Flavor]}, {}]]**
-       DiracProduct[Proj[1]]**Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
+          Index[d$$3, SU2L[fund]], Index[d$$2, Flavor]}, {}]]\[CenterDot] 
+       DiracProduct[Proj[1]]\[CenterDot] Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
          Index[d$$1, Flavor]}, {}] + 
      hbar*Bar[Field[H, Scalar, {Index[d$$1, SU2L[fund]]}, {}]]*
       CG[Bar[eps[SU2L]], {Bar[Index[d$$2, SU2L[fund]]], 
@@ -5594,7 +5594,7 @@
           Coupling[A, {}, 0]^2*Coupling[Yu, {Index[d$$4, Flavor], 
             Index[d$$3, Flavor]}, 0]*Log[\[Mu]bar2/Coupling[M, {}, 0]^2])/
         Coupling[M, {}, 0]^4)*Bar[Field[u, Fermion, {Index[d$$1, SU3c[fund]], 
-          Index[d$$2, Flavor]}, {}]]**DiracProduct[Proj[-1]]**
+          Index[d$$2, Flavor]}, {}]]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] 
        Field[q, Fermion, {Index[d$$1, SU3c[fund]], Index[d$$2, SU2L[fund]], 
          Index[d$$1, Flavor]}, {}], 
    "hScalar-lScalar-lFermion-lVector-lScalar" -> 0, 

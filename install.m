@@ -86,12 +86,8 @@ InstallMatchete[]:=Module[{yn,packageName,packageDir,MinVersion,MatcheteLink,Que
 
 	(* Delete the extracted archive *)
 	Quiet@DeleteDirectory[unzipDir,DeleteContents->True];
-	(* build documentation *)
-	DialogInput@DialogNotebook[{
-			TextCell["Do you want to build the integrated documentation?",24],
-			TextCell["This may take a few seconds, and your screen may be flashing in the meantime.",14],
-			ChoiceButtons[{"Build documentation","Cancel"},{BuildDocu[packageDir];DialogReturn[NotebookClose[]],DialogReturn[NotebookClose[]]}]
-	}];
+	(* link documentation *)
+	LinkDocu[packageDir];
 	
 	(*Remove development folders*)
 	Quiet@ DeleteDirectory[FileNameJoin[{packageDir, "DocumentationSource"}], DeleteContents-> True];
@@ -102,16 +98,9 @@ InstallMatchete[]:=Module[{yn,packageName,packageDir,MinVersion,MatcheteLink,Que
 ];
 
 
-BuildDocu[packageDir_]:=Module[{},
-	(*
-	(* expose Matchete to Mathematica *)
-	If[Length@PacletFind["Matchete"]===0,PacletDirectoryLoad[packageDir]];
-	(* link documentation *)
-	PacletDataRebuild[]; (* this links again the documentation of all paclets that can be found by Matchete *)
-	*)
-	
+LinkDocu[packageDir_]:=Module[{},	
 	Get[FileNameJoin[{packageDir,"Kernel","init.m"}]];
-	Matchete`PackageScope`BuildDocumentation[ "HTML" -> False ];
+	Matchete`PackageScope`LinkDocumentation[];
 ]
 
 

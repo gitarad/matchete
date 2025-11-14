@@ -15,7 +15,7 @@ Package["Matchete`"]
 (*Scoping & usage definitions*)
 
 
-(* ::Subsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Exported*)
 
 
@@ -44,7 +44,13 @@ PackageExport["CGsToReplace"]
 PackageExport["del"]
 
 
-(* ::Subsection:: *)
+PackageExport["Dimension"]
+PackageExport["DynkinCoefficients"]
+PackageExport["Group"]
+PackageExport["Reality"]
+
+
+(* ::Subsubsection::Closed:: *)
 (*Internal*)
 
 
@@ -54,14 +60,12 @@ PackageScope["$CGproperties"]
 PackageScope["$CGreplacements"]
 
 
-PackageScope["GroupName"]
-PackageScope["RepDimension"]
 PackageScope["InBasis"]
 PackageScope["UniqueConj"]
 PackageScope["DeltaDecomposable"]
 
 
-(* ::Subsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Definitions*)
 
 
@@ -125,6 +129,18 @@ CGsToReplace::usage= "Option used in ReplaceCGs.";
 del::usage     = "Standard head for delta Clebsch-Gordan coefficients. E.g., CG[del@ rep, {a, b}] for \!\(\*SubscriptBox[\(\[Delta]\), \(ab\)]\).";
 
 
+Dimension::usage= 
+	"Dimension is a property dictating the size of a representation."
+DynkinCoefficients::usage= 
+	"DynkinCoefficients is a property of a representation, the highest weight associated with it."
+Reality::usage= 
+	"Reality is a property of a representation determining if it is Real, Pseudoreal, or Complex."
+
+
+Group::usage= 
+	"Group is a property indicating the name of the associated Lie group.";
+
+
 (* ::Section:: *)
 (*Tensor contractions *)
 
@@ -137,8 +153,15 @@ del::usage     = "Standard head for delta Clebsch-Gordan coefficients. E.g., CG[
 (*Representations *)
 
 
+(* ::Text:: *)
+(*Get the group and representation properties*)
+
+
 GetGroups[]:= $Groups;
-GetRepresentations[GroupName___]:= $Representations[GroupName];
+
+
+GetRepresentations[args___]:= 
+	(ReplaceAt[{1-> "Real", 0-> "Complex", -1-> "PseudoReal"}, Key@Reality]/@ $Representations)[args];
 
 
 (* ::Text:: *)
@@ -177,14 +200,14 @@ Module[{fsIndicator, lieAlg},
 	
 	(*If repName is already used for a representation, abort or do nothing*)
 	If[!KeyFreeQ[$Representations, repName],
-		If[{groupName, dynkCoef} === Lookup[$Representations@ repName, {GroupName, DynkinCoefficients}],
+		If[{groupName, dynkCoef} === Lookup[$Representations@ repName, {Group, DynkinCoefficients}],
 			(* If provided, overwrite the index alphabet for the representation *)
 			If[OptionValue@ IndexAlphabet =!= None,
 				AppendTo[$IndexAlphabets, repName-> BuildIndexAssoc@ OptionValue@ IndexAlphabet]
 			];
 			Return[];
 		,
-			Message[DefineRepresentation::repinuse, repName, $Representations[repName, GroupName]];
+			Message[DefineRepresentation::repinuse, repName, $Representations[repName, Group]];
 			Abort[];		
 		];
 	];
@@ -194,9 +217,9 @@ Module[{fsIndicator, lieAlg},
 	
 	(*Set up the representation*)
 	AppendTo[$Representations, repName-> <|
-		GroupName-> groupName, 
+		Group-> groupName, 
 		DynkinCoefficients-> dynkCoef, 
-		RepDimension-> RepresentationDimension[$Groups@ groupName, dynkCoef],
+		Dimension-> RepresentationDimension[$Groups@ groupName, dynkCoef],
 		Reality-> fsIndicator
 		|>];
 	If[$Representations[repName, Reality]=== 1, 
@@ -351,6 +374,14 @@ DegeneratePerms[set_List, targetSet_List]:=
 
 
 (* ::Text:: *)
+(*Factor out symmetry subgroup from symmetry group (assuming full groups)*)
+
+
+FactorOutSymmetrySubgroup[group_List, subGroup_List]:= 
+	DeleteDuplicatesBy[group, Function[{x}, First@Sort[x[[#]]&/@ subGroup]]];
+
+
+(* ::Text:: *)
 (*Determine if two tensors are linearly dependent*)
 
 
@@ -387,7 +418,7 @@ SubsetMultQ[subset_, set_]:= And@@ NonNegative/@ Merge[{Association@@ Rule@@@ Ta
 
 TensorInvariantQ[indexTypes_, tensor_]:= Module[{alg, rep, reps, generators, 
 		n= Length@ indexTypes},
-	alg= $Groups@ $Representations[First@ indexTypes/. Bar-> Identity, GroupName];
+	alg= $Groups@ $Representations[First@ indexTypes/. Bar-> Identity, Group];
 	(*Find the generators of associated to the representation of all external indicies*)
 	reps= Table[
 			If[Head@ rep === Bar, 
@@ -451,7 +482,7 @@ DefineCG[symb: _Symbol | _Symbol[_], indexTypes_List, tensorIn_]:= Module[
 		If[indexTypes === $CGproperties[symb, Indices] && SAZeroQ[tensorIn- $CGtensors@ symb],
 			Return[];
 		,
-			Message[DefineCG::cginuse, symb, $CGproperties[symb, GroupName]];
+			Message[DefineCG::cginuse, symb, $CGproperties[symb, Group]];
 			Abort[];		
 		];
 	];
@@ -464,7 +495,7 @@ DefineCG[symb: _Symbol | _Symbol[_], indexTypes_List, tensorIn_]:= Module[
 		];
 	, {rep, reps}]; 
 	
-	If[Length@ DeleteDuplicates[$Representations[#, GroupName]&/@ reps] > 1,
+	If[Length@ DeleteDuplicates[$Representations[#, Group]&/@ reps] > 1,
 		Message[DefineCG::notSameGroup];
 		Abort[];
 	];
@@ -475,7 +506,7 @@ DefineCG[symb: _Symbol | _Symbol[_], indexTypes_List, tensorIn_]:= Module[
 	];
 	tensor= SparseArray@ tensorIn;
 	
-	If[Dimensions@ tensor =!= Lookup[Lookup[$Representations, reps], RepDimension],
+	If[Dimensions@ tensor =!= Lookup[Lookup[$Representations, reps], Dimension],
 		Message[DefineCG::dimensions];
 		Abort[];
 	];
@@ -501,7 +532,7 @@ DefineCG[symb: _Symbol | _Symbol[_], indexTypes_List, tensorIn_]:= Module[
 	
 	AppendTo[$CGtensors, symb-> tensor];	
 	AppendTo[$CGproperties, symb-> <|
-			GroupName-> $Representations[First@ reps, GroupName], 
+			Group-> $Representations[First@ reps, Group], 
 			Indices-> indexTypes, 
 			UniqueConj-> UniqueConjQ[indexTypes, tensor],
 			Symmetries-> FindTensorSymmetries[symb/. $CGtensors, indexTypes],
@@ -712,7 +743,7 @@ RemoveRepresentation[name_]:= Block[{group, cg},
 		Message[RemoveRepresentation::unkwn, name];
 		Abort[];
 	];
-	group= $Representations[name, GroupName];
+	group= $Representations[name, Group];
 	
 	(*Unsetting the associated Bar properties*)
 	If[$Representations[name, Reality]=== 1, 
@@ -723,7 +754,7 @@ RemoveRepresentation[name_]:= Block[{group, cg},
 	KeyDropFrom[$Representations, name];
 	
 	Do[
-		If[$CGproperties[cg, GroupName] =!= group, Continue[] ];
+		If[$CGproperties[cg, Group] =!= group, Continue[] ];
 		If[MemberQ[$CGproperties[cg, Indices]/. {Bar@ x_:> x}, name],
 			RemoveCG@ cg;
 		];
@@ -754,7 +785,7 @@ RemoveGroup[name_]:= Block[{rep},
 	
 	KeyDropFrom[$Groups, name];
 	Do[
-		If[$Representations[rep, GroupName] === name, 
+		If[$Representations[rep, Group] === name, 
 			RemoveRepresentation@ rep; 
 		];
 	, {rep, Keys@ $Representations}];
@@ -817,8 +848,8 @@ ElementaryTensors[indexTypes_List]:= Block[{cg, inds, out},
 (*This is not guaranteed to be a true basis as there might be some redundancy left over.*)
 
 
-TensorBasis[indexTypes_List]:= Block[{compTensors, types, eTensInds, len, cur, target, type, 
-	countMat, v, temp, proceed= True, tens, inds, t, perms, sa},
+TensorBasis[indexTypes_List]:= Module[{compTensors, types, eTensInds, len, cur, target, type, 
+	countMat, v, temp, proceed= True, tens, inds, t, fromOrigPerm, perms, sa},
 	(*Finds elementary CGs and determine what index types are available from among them*)
 	eTensInds= ElementaryTensors@ indexTypes; 
 	types= DeleteDuplicates@ indexTypes;
@@ -859,7 +890,15 @@ TensorBasis[indexTypes_List]:= Block[{compTensors, types, eTensInds, len, cur, t
 	compTensors= Table[
 		inds= Flatten[tens/. eTensInds];
 		(*Performance could be improved by factoring out the symmetries already inherent the ECGs*)
-		perms= DegeneratePerms[inds, indexTypes];
+		(*perms= DegeneratePerms[inds, indexTypes];*)
+		
+		perms= FactorOutSymmetrySubgroup[DegeneratePerms@ inds, SymmetriesOfTensorProduct[tens, eTensInds]];
+		(*toOrigPerm= FindPerm[inds, indexTypes]//Echo;
+		perms= #[[toOrigPerm]]&/@ perms//Echo;*)
+		
+		fromOrigPerm= FindPerm[indexTypes, inds];
+		perms= InversePerm@ ComposePerm[#, fromOrigPerm]&/@ perms;
+		
 		sa= TensorProduct@@ tens/. $CGtensors;
 		perms= Reap[
 			While[Length@ perms>= 1,
@@ -875,6 +914,24 @@ TensorBasis[indexTypes_List]:= Block[{compTensors, types, eTensInds, len, cur, t
 
 
 (* ::Text:: *)
+(*Determines full symmetry group inherent in tensor product of CGs *)
+
+
+SymmetriesOfTensorProduct[tens_List, tensIndices_Association]:= Module[{i= 1, inds, p, perms, toOrigPerm},
+	(*Enumerate the indices *)
+	inds= Map[(i++ &), tens/. tensIndices, {2}];
+	(*Find symmetries of the individual CGs*)
+	perms= Keys@ $CGproperties[#, Symmetries]&/@ (tens/. Bar-> Identity);
+	inds= MapThread[Table[#1[[p]], {p, #2}]&, {inds, perms}];
+	(*Symmetries of like CG exchanges*)
+	perms= Flatten/@ Tuples[Permutations/@ List@@ PositionIndex@ tens];
+	toOrigPerm= FindPerm[First@ perms, Range@ Length@ First@ perms];
+	perms= #[[toOrigPerm]]&/@ perms;
+	Join@@ Table[Flatten/@ Tuples@ inds[[p]], {p, perms}]
+]
+
+
+(* ::Text:: *)
 (*For comparing all numbers in two vectors *)
 
 
@@ -885,7 +942,7 @@ VecCompare[logOp_, comp_, v1_, v2_]:= logOp@@ MapThread[comp, {v1, v2}];
 (*Remove delta-decomposable  products of tensors from the basis sets*)
 
 
-RemoveDeltaDecomposables@ tensorSets_:= Block[{decomposableCGs, out= tensorSets},
+RemoveDeltaDecomposables@ tensorSets_:= Module[{decomposableCGs, out= tensorSets},
 	decomposableCGs= Intersection[DeleteDuplicates@ Flatten[tensorSets/. Bar-> Identity],
 		GetByProperty[$CGproperties, DeltaDecomposable-> True] ];
 	decomposableCGs= {#, Bar@ #}&/@ decomposableCGs;

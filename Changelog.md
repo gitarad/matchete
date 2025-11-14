@@ -1,10 +1,29 @@
 # Matchete changelog
 
-## v0.3.1 (2024-06-25)
+## v0.4.0 (2025-11-14)
+- Now uses `NCM` instead of `NonCommutativeMultiply`; Use of `\[CenterDot]` (shortcut: `[esc] . [esc]`) is encouraged over `**`.
+- Included `ExportWCxf` function for exporting WCxf files.
+- Included `DR2MS` function that allows to transform.renormalizable Lagrangian in the $\overline{\mathrm{DR}}$ scheme to the $\overline{\mathrm{MS}}$ scheme.
+- Introduced `Simplify` option for `MapEffectiveCouplings`, which allows to simplify the right-hand side of all matching conditions.
+- Introduced `BackgroundField` option for `DefineField`.
+- Removed `RepresentationProperties` in favor of `GetRepresentations`.  
+- Renamed model `SMEFT.m` -> `SMEFT_Warsaw.m`. Sign convention on field strength tensors changed to match https://arxiv.org/pdf/1008.4884.
+- Bug fixes:
+	- Fixed compatibility with `Wolfram 14.3`.
+	- Fixed bug in `Match` from loops involving derivative interactions (Xterms with open derivatives).
+	- Several bug fixes concerning Majorana fermions and charge conjugation.
+	- Fixed bug in `EOMSimplify`, failing to remove EOM terms proportional to multiple field strength tensors.
+	- Corrected redefinition of renormalizable couplings (inparticular for of scalar quartics) when using `MapEffectiveCouplings` with the option `ShiftRenCouplings->True`. Previously, indirect contributions to the renormalizable couplings from field redefinitions/EOMs where not considered for the shift.
+- Performance and improvements:
+	- Improved performance for `GreensSimplify` for higher dimension operators.
+	- Added a more reliable algorithm for solving the matching conditions in `MapEffectiveCouplings`.
+	- Improved performance of `ContractCGs` when going outside the basis with CGs with many indices.
+
+### v0.3.1 (2025-06-25)
 - Fixed installation
 - Minor bug fixes
 
-## v0.3.0 (2024-05-30)
+## v0.3.0 (2025-05-30)
 - Added option `ReductionIdentities` to `GreensSimplify` and `EOMSimplify` to perform simplifications in either $d=4$ or $d=4-2\epsilon$ space-time dimensions, including the possibility to map results to an evanescent-free version of the $\overline{\text{MS}}$ renormalization scheme.
 - Added documentation for all functions and objects in the built-in Mathematica documentation center, which can be accessed conveniently with the \`F1\` key. (w.i.p.)
 - Added support for flavor indices on diagonal mass matrices (and other diagonal tensors in flavor space) in the matching and simplifications.

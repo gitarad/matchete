@@ -76,7 +76,7 @@ ResetAll[];
 
 VerificationTest[
 	DefineField[\[Psi],Fermion,Chiral->LeftHanded];
-	PR**\[Psi][]
+	PR\[CenterDot] \[Psi][]
 	,
 	0,
 	TestID->"Projectors onto chiral fields"
@@ -205,13 +205,13 @@ VerificationTest[
 	DefineField[\[CapitalPsi],Fermion,Mass->{Heavy,M,{Flavor}},Indices->{SU2[fund],SU3[fund],Flavor}];
 	FreeLag[\[CapitalPsi]]
 	,
-	I Bar[\[CapitalPsi][d$$1,d$$1,d$$1]]**\[Gamma][d$$1]**CD[d$$1,\[CapitalPsi][d$$1,d$$1,d$$1]]-M[d$$1] Bar[\[CapitalPsi][d$$1,d$$1,d$$1]]**\[CapitalPsi][d$$1,d$$1,d$$1],
+	I Bar[\[CapitalPsi][d$$1,d$$1,d$$1]]\[CenterDot] \[Gamma][d$$1]\[CenterDot] CD[d$$1,\[CapitalPsi][d$$1,d$$1,d$$1]]-M[d$$1] Bar[\[CapitalPsi][d$$1,d$$1,d$$1]]\[CenterDot] \[CapitalPsi][d$$1,d$$1,d$$1],
 	TestID->"Free Lagrangian: fermions"
 ]
 ResetAll[];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Chiral fermions*)
 
 
@@ -220,7 +220,7 @@ VerificationTest[
 	DefineField[\[Psi],Fermion,Mass->{Light,m,{Flavor}},Indices->{Flavor},Chiral->LeftHanded];
 	FreeLag[\[Psi]]//Expand
 	,
-	I Bar[\[Psi][d$$1]]**\[Gamma][d$$1]**CD[d$$1,\[Psi][d$$1]]-1/2 m[d$$1,d$$2] Bar[CConj[\[Psi][d$$1]]]**\[Psi][d$$2]- 1/2 Bar@m[d$$1,d$$2] Bar[\[Psi][d$$1]]** CConj@\[Psi]@d$$2,
+	I Bar[\[Psi][d$$1]]\[CenterDot] \[Gamma][d$$1]\[CenterDot] CD[d$$1,\[Psi][d$$1]]-1/2 m[d$$1,d$$2] Bar[CConj[\[Psi][d$$1]]]\[CenterDot] \[Psi][d$$2]- 1/2 Bar@m[d$$1,d$$2] Bar[\[Psi][d$$1]]\[CenterDot] CConj@\[Psi]@d$$2,
 	TestID->"Free Lagrangian: chiral fermions"
 ]
 ResetAll[];
@@ -231,7 +231,7 @@ VerificationTest[
 	DefineGaugeGroup[SU2, SU@ 2, g, W];
 	DefineField[\[Psi], Fermion, Mass-> {Light, m, {Flavor}}, Indices-> {SU2@ fund, Flavor}, Chiral-> LeftHanded];
 	
-	I Bar@ \[Psi][a, i]** \[Gamma]@\[Mu]**CD[\[Mu],\[Psi][a, i]] - PlusHc[1/2 m[i, j] Bar@ CG[eps@ SU2, {a, b}] Bar@ CConj@ \[Psi][a, i]** \[Psi][b, j]]- 
+	I Bar@ \[Psi][a, i]\[CenterDot] \[Gamma]@\[Mu]\[CenterDot] CD[\[Mu],\[Psi][a, i]] - PlusHc[1/2 m[i, j] Bar@ CG[eps@ SU2, {a, b}] Bar@ CConj@ \[Psi][a, i]\[CenterDot] \[Psi][b, j]]- 
 		FreeLag@ \[Psi]// GreensSimplify
 ,
 	0
@@ -257,7 +257,7 @@ VerificationTest[
 ResetAll[];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Loading the package*)
 
 

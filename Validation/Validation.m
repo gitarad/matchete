@@ -4,15 +4,15 @@ Begin["BranchValidation`"]
 
 
 (* ::Title:: *)
-(*Validation of Matching Results*)
+(*Validation of Results*)
+
+
+(* ::Section:: *)
+(*Matching results*)
 
 
 (* ::Text:: *)
 (*List of UV models for which a model file and a saved EFT Lagrangian result exist.*)
-
-
-(* this is set in Matchete.m now *)
-(*$UVmodels= {"VLF_toy_model", "Singlet_Scalar_Extension", "E_VLL", "S1S3LQs"};*)
 
 
 $validatedModels=0;
@@ -119,7 +119,7 @@ Do[
 	
 	(* check MapEffectiveCouplings *)
 	If[!StringMatchQ[model,"VLF_toy_model"],
-		\[ScriptCapitalL]SMEFT = LoadModel["SMEFT"];
+		\[ScriptCapitalL]SMEFT = LoadModel["SMEFT_Warsaw"];
 		mc$diff = GreensSimplify[ReplaceInLagrangian[\[ScriptCapitalL]SMEFT, LEFT$now["Matching Conditions"]]-
 			ReplaceInLagrangian[\[ScriptCapitalL]SMEFT, LEFT$previous["Matching Conditions"]], ReductionIdentities->dDimensional];
 		If[mc$diff===0,
@@ -138,6 +138,35 @@ Do[
 
 
 Print["Validation of implemented models finished: ", $validatedModels, "/", Length@$UVmodels, " successfully verfied."];
+
+
+(* ::Section:: *)
+(*Evanescent results*)
+
+
+If[TrueQ[$EvanescentTests],
+	(* reset the model *)
+	ResetAll[];
+	Print["__________"];
+	Print["Validating evanescent shifts in SMEFT"];
+		
+	
+	Module[{output},
+	  output=QuietEcho@Quiet@NotebookEvaluate[FileNameJoin[{$MatchetePath, "Validation", "Evanescent_check.nb"}]];
+	
+	  If[output[[1]] === 0,
+	    Print["\t Validation Passed:"],
+	    Print["\t Validation Failed:"];
+	    Echo[output[[1]], "Difference between automatic evanescent shift and paper results: ", Iconize[#,Format[#,NiceForm]]&];
+	  ];
+	  
+	  Print["\t- Computation time in sec: ", output[[2]], " (now) vs. ", 88, " (reference time)." ];	
+	]
+];
+
+
+Print["__________"];
+Print["Validation succesful!"];
 
 
 End[];

@@ -1,0 +1,285 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 14.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     10735,        277]
+NotebookOptionsPosition[      7551,        205]
+NotebookOutlinePosition[      9794,        263]
+CellTagsIndexPosition[      9710,        258]
+WindowTitle->GammaReduction
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[GridBox[{
+   {GridBox[{
+      {
+       ItemBox[Cell[BoxData[
+         RowBox[{
+          TemplateBox[{12},
+           "Spacer1"], Cell["MATCHETE SYMBOL", "PacletNameCell",
+           TextAlignment->Center,ExpressionUUID->
+           "6c5bba09-c653-4067-b362-508aef682d8b"], 
+          TemplateBox[{8},
+           "Spacer1"]}]],
+         TextAlignment->Center,ExpressionUUID->
+         "5d4ab7c2-dcc3-4001-8a9c-ad7bed6c415e"],
+        Background->RGBColor[0.490196, 0.576471, 0.690196],
+        ItemSize->Full], ""}
+     },
+     GridBoxAlignment->{"Rows" -> {{Center}}},
+     GridBoxItemSize->{"Columns" -> {Full, 
+         Scaled[0.02]}, "Rows" -> {{2.5}}}], Cell[TextData[Cell[BoxData[
+     TagBox[
+      ActionMenuBox[
+       FrameBox[Cell[TextData[{
+         "URL",
+         " ",
+         Cell[BoxData[
+          GraphicsBox[
+           {GrayLevel[0.66667], Thickness[0.13], 
+            LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]},
+           AspectRatio->1,
+           ImageSize->20,
+           PlotRange->{{-3, 4}, {-1, 1}}]],ExpressionUUID->
+          "899a8b11-9b2b-4dbd-86f0-58f4f9f6b364"]
+        }],ExpressionUUID->"57a66c97-2ef3-491e-8311-c001b669db0a"],
+        StripOnInput->False],{
+       "\"Matchete/ref/GammaReduction\"" :> None, 
+        "\"Copy Wolfram Documentation Center URL\"" :> 
+        Module[{DocumentationSearch`Private`nb$}, 
+          DocumentationSearch`Private`nb$ = 
+           NotebookPut[
+            Notebook[{Cell["Matchete/ref/GammaReduction"]}, Visible -> 
+              False]]; SelectionMove[
+           DocumentationSearch`Private`nb$, All, Notebook]; 
+          FrontEndTokenExecute[DocumentationSearch`Private`nb$, "Copy"]; 
+          NotebookClose[DocumentationSearch`Private`nb$]; Null], Delimiter, 
+        "\"Copy web URL\"" :> 
+        Module[{DocumentationSearch`Private`nb$}, 
+          DocumentationSearch`Private`nb$ = 
+           NotebookPut[
+            Notebook[{
+              Cell[BoxData[
+                MakeBoxes[
+                 Hyperlink[
+                  "http://reference.wolfram.com/language/Matchete/ref/\
+GammaReduction.html"], StandardForm]], "Input", TextClipboardType -> 
+                "PlainText"]}, Visible -> False]]; 
+          SelectionMove[DocumentationSearch`Private`nb$, All, Notebook]; 
+          FrontEndTokenExecute[DocumentationSearch`Private`nb$, "Copy"]; 
+          NotebookClose[DocumentationSearch`Private`nb$]; Null], 
+        "\"Go to web URL\"" :> 
+        FrontEndExecute[{
+          NotebookLocate[{
+            URL[If[TrueQ[False], 
+                "http://reference.wolfram.com/system-modeler/", 
+                "http://reference.wolfram.com/language/"] <> 
+              "Matchete/ref/GammaReduction" <> ".html"], None}]}]},
+       Appearance->None,
+       MenuAppearance->Automatic,
+       MenuStyle->"URLMenu"],
+      MouseAppearanceTag["LinkHand"]]],
+     LineSpacing->{1.4, 0},ExpressionUUID->
+     "ada43163-39d5-46fe-91cb-d534c30d80b0"]], "AnchorBar",
+     CacheGraphics->False,ExpressionUUID->
+     "43adc585-78fd-4ebd-a383-2187d2e7eed1"]}
+  }]], "AnchorBarGrid",
+ GridBoxOptions->{GridBoxItemSize->{"Columns" -> {
+     Scaled[0.65], {
+      Scaled[0.34]}}, "ColumnsIndexed" -> {}, "Rows" -> {{1.}}, 
+   "RowsIndexed" -> {}}},
+ CellID->1,ExpressionUUID->"0e247a4f-2aee-4ce5-8d74-b732589a429c"],
+
+Cell["Matchete`", "ContextNameCell",ExpressionUUID->"c828e218-bdd5-49eb-a6d1-c9798e104541"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[GridBox[{
+   {Cell[TextData[{
+     Cell[
+     "GammaReduction", "ObjectName",ExpressionUUID->
+      "02f76365-8b55-43ef-9fac-11a80bd8bc55"],
+     Cell[BoxData[
+      TemplateBox[{8},
+       "Spacer1"]],ExpressionUUID->"53a6d077-a364-41a5-9224-0edfa7e46dcd"],
+     Cell[BoxData[
+     ""], "ObjectNameTranslation",ExpressionUUID->
+      "c7d4e279-3a8f-4252-86d5-a000ba69a27a"]
+    }],ExpressionUUID->"6384e1f8-ab7a-4299-8807-8b2a4134afd9"], 
+    "\[SpanFromLeft]"}
+  }]], "ObjectNameGrid",ExpressionUUID->"bd3759aa-3f43-4277-9df1-\
+3ba943712140"],
+
+Cell[BoxData[GridBox[{
+   {"", Cell[TextData[{
+     Cell[BoxData[
+      RowBox[{
+       TemplateBox[{
+         Cell[
+          TextData["GammaReduction"]], "paclet:Matchete/ref/GammaReduction", 
+         "Matchete Package Symbol"},
+        "PackageLink",
+        BaseStyle->"InlineFormula"], "[", 
+       RowBox[{"SP$1", " ", "*", " ", "SP$2"}], "]"}]], "InlineFormula",
+      FontFamily->"Source Sans Pro",ExpressionUUID->
+      "8ca4fb9b-f9ad-4b5d-9a12-70de031c8cf4"],
+     "\[LineSeparator]returns the simplification of SP1 and SP2 current after \
+a projection of the Dirac structures to the 4D basis."
+    }],ExpressionUUID->"6bf835ac-f618-4222-b5f8-63d80552c9c2"]}
+  }]], "Usage",
+ CellID->2065482161,ExpressionUUID->"d2e3aca7-d0ab-4338-a3bf-596c310e6208"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ Cell[BoxData[
+  DynamicBox[ToBoxes[
+    If[
+     MatchQ[
+      CurrentValue[
+       EvaluationNotebook[], {
+       TaggingRules, "Openers", "PrimaryExamplesSection"}, Open], 
+      Alternatives[True, Open]], 
+     Style[
+      Graphics[{
+        Thickness[0.18], 
+        RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+        Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+       PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+      0.68 Inherited], 
+     Rotate[
+      Style[
+       Graphics[{
+         Thickness[0.18], 
+         RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+         Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+        PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+       0.68 Inherited], Rational[1, 2] Pi, {-1.65, -1}]]],
+   ImageSizeCache->{17., {6., 11.}}]],ExpressionUUID->
+  "d7f75fac-65b2-4798-ad4c-a4e52ba1ac2b"],
+ Cell[BoxData[
+  TemplateBox[{1},
+   "Spacer1"]],ExpressionUUID->"8132ed66-6b75-4a93-9ecc-870c18a07f21"],
+ "Examples",
+ "\[NonBreakingSpace]\[NonBreakingSpace]",
+ Cell["(0)", "ExampleCount",ExpressionUUID->
+  "c46f0ab3-589a-49e8-8daf-123e81948000"]
+}], "PrimaryExamplesSection",
+ WholeCellGroupOpener->True,
+ CacheGraphics->False,
+ CellTags->"PrimaryExamplesSection",
+ CellID->102690019,ExpressionUUID->"c8460da5-4b19-49dc-88c9-70ef52cbeca2"],
+
+Cell[BoxData[
+ RowBox[{"Needs", "[", "\"\<Matchete`\>\"", "]"}]], "Input", "ExampleInitialization",
+ CellLabel->"In[1]:=",
+ CellID->1635833587,ExpressionUUID->"c1ac61e4-7089-4859-9360-670ea5cd96c4"]
+}, Dynamic[CurrentValue[
+ EvaluationNotebook[], {TaggingRules, "Openers", "PrimaryExamplesSection"}, 
+  Closed]]]],
+
+Cell[BoxData[GridBox[{
+   {
+    DynamicBox[FEPrivate`ImportImage[
+      FrontEnd`FileName[{"Documentation", "FooterIcons"}, 
+       "RelatedFunction.png"]],
+     ImageSizeCache->{63., {34., 41.}}], GridBox[{
+      {
+       StyleBox[
+        RowBox[{"See", " ", "Also"}], "SeeAlsoSection"]}
+     }]}
+  }]], "SeeAlsoSection",ExpressionUUID->"87bb27a0-86df-4617-b9a4-\
+f44fc413703c"],
+
+Cell[" ", "FooterCell",ExpressionUUID->"b82d55cf-1af9-4598-8a63-b5861efd2fa3"]
+},
+Saveable->False,
+ScreenStyleEnvironment->"Working",
+WindowSize->{900, 830},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+WindowTitle->"GammaReduction",
+Visible->False,
+TaggingRules->{
+ "ModificationHighlight" -> False, "ColorType" -> "", "LinkTrails" -> "", 
+  "ExampleCounter" -> 1, 
+  "Openers" -> {
+   "PrimaryExamplesSection" -> Open, "ExampleSection" -> {"0" -> Open}, 
+    "AllOptsTable" -> Closed}, "NewStyles" -> True, 
+  "CitationPopupData" -> $Failed, "ShowCitation" -> False, "HasOptions" -> 
+  True, "RootCaptions" -> "", "HeaderCoreAreaLink" -> {}, 
+  "Metadata" -> {
+   "built" -> "{2025, 11, 14, 18, 45, 17.949638}", 
+    "history" -> {"XX", "", "", ""}, "context" -> "Matchete`", 
+    "keywords" -> {}, "specialkeywords" -> {}, 
+    "tutorialcollectionlinks" -> {}, "index" -> True, "label" -> 
+    "Matchete Symbol", "language" -> "en", "paclet" -> "Matchete", "status" -> 
+    "None", "summary" -> 
+    "GammaReduction[SP$1 * SP$2] returns the simplification of SP1 and SP2 \
+current after a projection of the Dirac structures to the 4D basis.", 
+    "synonyms" -> {}, "tabletags" -> {}, "title" -> "GammaReduction", 
+    "titlemodifier" -> "", "metadescription" -> "", "windowtitle" -> 
+    "GammaReduction", "type" -> "Symbol", "uri" -> 
+    "Matchete/ref/GammaReduction"}},
+CellContext->"Global`",
+FrontEndVersion->"14.0 for Mac OS X ARM (64-bit) (December 12, 2023)",
+StyleDefinitions->Notebook[{
+   Cell[
+    StyleData[
+    StyleDefinitions -> FrontEnd`FileName[{"Wolfram"}, "Reference.nb"]]], 
+   Cell[
+    StyleData["Input"], CellContext -> "Global`"], 
+   Cell[
+    StyleData["Output"], CellContext -> "Global`"]}, Visible -> False, 
+  FrontEndVersion -> "14.0 for Mac OS X ARM (64-bit) (December 12, 2023)", 
+  StyleDefinitions -> "Default.nb"],
+ExpressionUUID->"5e3dff18-d1fb-48b9-8232-8579f0f1e862"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "PrimaryExamplesSection"->{
+  Cell[5377, 143, 1390, 37, 45, "PrimaryExamplesSection",ExpressionUUID->"c8460da5-4b19-49dc-88c9-70ef52cbeca2",
+   CellTags->"PrimaryExamplesSection",
+   CellID->102690019]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"PrimaryExamplesSection", 9511, 251}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[586, 21, 3314, 78, 72, "AnchorBarGrid",ExpressionUUID->"0e247a4f-2aee-4ce5-8d74-b732589a429c",
+ CellID->1],
+Cell[3903, 101, 91, 0, 30, "ContextNameCell",ExpressionUUID->"c828e218-bdd5-49eb-a6d1-c9798e104541"],
+Cell[CellGroupData[{
+Cell[4019, 105, 557, 14, 76, "ObjectNameGrid",ExpressionUUID->"bd3759aa-3f43-4277-9df1-3ba943712140"],
+Cell[4579, 121, 761, 17, 139, "Usage",ExpressionUUID->"d2e3aca7-d0ab-4338-a3bf-596c310e6208",
+ CellID->2065482161]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5377, 143, 1390, 37, 45, "PrimaryExamplesSection",ExpressionUUID->"c8460da5-4b19-49dc-88c9-70ef52cbeca2",
+ CellTags->"PrimaryExamplesSection",
+ CellID->102690019],
+Cell[6770, 182, 198, 3, 38, "Input",ExpressionUUID->"c1ac61e4-7089-4859-9360-670ea5cd96c4",
+ CellID->1635833587]
+}, Dynamic[CurrentValue[EvaluationNotebook[], {TaggingRules, "Openers", "PrimaryExamplesSection"}, Closed]]]],
+Cell[7086, 190, 380, 11, 142, "SeeAlsoSection",ExpressionUUID->"87bb27a0-86df-4617-b9a4-f44fc413703c"],
+Cell[7469, 203, 78, 0, 27, "FooterCell",ExpressionUUID->"b82d55cf-1af9-4598-8a63-b5861efd2fa3"]
+}
+]
+*)
+

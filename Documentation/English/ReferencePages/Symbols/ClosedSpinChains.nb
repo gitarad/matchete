@@ -1,0 +1,273 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 14.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     10281,        265]
+NotebookOptionsPosition[      7115,        194]
+NotebookOutlinePosition[      9341,        251]
+CellTagsIndexPosition[      9257,        246]
+WindowTitle->ClosedSpinChains
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[GridBox[{
+   {GridBox[{
+      {
+       ItemBox[Cell[BoxData[
+         RowBox[{
+          TemplateBox[{12},
+           "Spacer1"], Cell["MATCHETE SYMBOL", "PacletNameCell",
+           TextAlignment->Center,ExpressionUUID->
+           "c6e353f1-7c64-4bee-a899-c19f63c421d8"], 
+          TemplateBox[{8},
+           "Spacer1"]}]],
+         TextAlignment->Center,ExpressionUUID->
+         "f884306a-73bd-4ab2-a8ec-35cf4a1da41a"],
+        Background->RGBColor[0.490196, 0.576471, 0.690196],
+        ItemSize->Full], ""}
+     },
+     GridBoxAlignment->{"Rows" -> {{Center}}},
+     GridBoxItemSize->{"Columns" -> {Full, 
+         Scaled[0.02]}, "Rows" -> {{2.5}}}], Cell[TextData[Cell[BoxData[
+     TagBox[
+      ActionMenuBox[
+       FrameBox[Cell[TextData[{
+         "URL",
+         " ",
+         Cell[BoxData[
+          GraphicsBox[
+           {GrayLevel[0.66667], Thickness[0.13], 
+            LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]},
+           AspectRatio->1,
+           ImageSize->20,
+           PlotRange->{{-3, 4}, {-1, 1}}]],ExpressionUUID->
+          "c454573f-9bf9-4745-ae3c-a4d82c9f51ea"]
+        }],ExpressionUUID->"8f944397-abc9-4b41-90b8-dfb1646f39b2"],
+        StripOnInput->False],{
+       "\"Matchete/ref/ClosedSpinChains\"" :> None, 
+        "\"Copy Wolfram Documentation Center URL\"" :> 
+        Module[{DocumentationSearch`Private`nb$}, 
+          DocumentationSearch`Private`nb$ = 
+           NotebookPut[
+            Notebook[{Cell["Matchete/ref/ClosedSpinChains"]}, Visible -> 
+              False]]; SelectionMove[
+           DocumentationSearch`Private`nb$, All, Notebook]; 
+          FrontEndTokenExecute[DocumentationSearch`Private`nb$, "Copy"]; 
+          NotebookClose[DocumentationSearch`Private`nb$]; Null], Delimiter, 
+        "\"Copy web URL\"" :> 
+        Module[{DocumentationSearch`Private`nb$}, 
+          DocumentationSearch`Private`nb$ = 
+           NotebookPut[
+            Notebook[{
+              Cell[BoxData[
+                MakeBoxes[
+                 Hyperlink[
+                  "http://reference.wolfram.com/language/Matchete/ref/\
+ClosedSpinChains.html"], StandardForm]], "Input", TextClipboardType -> 
+                "PlainText"]}, Visible -> False]]; 
+          SelectionMove[DocumentationSearch`Private`nb$, All, Notebook]; 
+          FrontEndTokenExecute[DocumentationSearch`Private`nb$, "Copy"]; 
+          NotebookClose[DocumentationSearch`Private`nb$]; Null], 
+        "\"Go to web URL\"" :> 
+        FrontEndExecute[{
+          NotebookLocate[{
+            URL[If[TrueQ[False], 
+                "http://reference.wolfram.com/system-modeler/", 
+                "http://reference.wolfram.com/language/"] <> 
+              "Matchete/ref/ClosedSpinChains" <> ".html"], None}]}]},
+       Appearance->None,
+       MenuAppearance->Automatic,
+       MenuStyle->"URLMenu"],
+      MouseAppearanceTag["LinkHand"]]],
+     LineSpacing->{1.4, 0},ExpressionUUID->
+     "a2c8671c-d7b4-4c40-90d4-55ae23e159aa"]], "AnchorBar",
+     CacheGraphics->False,ExpressionUUID->
+     "d8514cf6-a5ce-44ef-ba7a-433850ae7dab"]}
+  }]], "AnchorBarGrid",
+ GridBoxOptions->{GridBoxItemSize->{"Columns" -> {
+     Scaled[0.65], {
+      Scaled[0.34]}}, "ColumnsIndexed" -> {}, "Rows" -> {{1.}}, 
+   "RowsIndexed" -> {}}},
+ CellID->1,ExpressionUUID->"6d553feb-1b6a-45da-b083-b5d61c18be37"],
+
+Cell["Matchete`", "ContextNameCell",ExpressionUUID->"a4f823da-f737-480a-8a18-fcc0b3d8e0a6"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[GridBox[{
+   {Cell[TextData[{
+     Cell[
+     "ClosedSpinChains", "ObjectName",ExpressionUUID->
+      "673ad7c9-3b34-484a-b39e-7e310a74c1b4"],
+     Cell[BoxData[
+      TemplateBox[{8},
+       "Spacer1"]],ExpressionUUID->"60acc69e-289e-4f49-bcc2-d36abd51c6e9"],
+     Cell[BoxData[
+     ""], "ObjectNameTranslation",ExpressionUUID->
+      "aae857b1-ff2b-475a-a4df-4366e36eaae3"]
+    }],ExpressionUUID->"ace1c4bc-4008-48a9-a18f-578376cd572c"], 
+    "\[SpanFromLeft]"}
+  }]], "ObjectNameGrid",ExpressionUUID->"0b88c9ad-52e2-4d98-a38d-\
+83dad6675527"],
+
+Cell[BoxData[GridBox[{
+   {"", Cell["\<\
+Option for the CheckLagrangian function. It takes the values True/False to \
+determine whether the check is performed.\
+\>",ExpressionUUID->"53190dea-d60e-4a8c-9c79-da5788ecfa02"]}
+  }]], "Usage",
+ CellID->274687473,ExpressionUUID->"aec2b564-4b50-4d66-bf55-c9da06e93430"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ Cell[BoxData[
+  DynamicBox[ToBoxes[
+    If[
+     MatchQ[
+      CurrentValue[
+       EvaluationNotebook[], {
+       TaggingRules, "Openers", "PrimaryExamplesSection"}, Open], 
+      Alternatives[True, Open]], 
+     Style[
+      Graphics[{
+        Thickness[0.18], 
+        RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+        Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+       PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+      0.68 Inherited], 
+     Rotate[
+      Style[
+       Graphics[{
+         Thickness[0.18], 
+         RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+         Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+        PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+       0.68 Inherited], Rational[1, 2] Pi, {-1.65, -1}]]],
+   ImageSizeCache->{17., {6., 11.}}]],ExpressionUUID->
+  "ea67fab4-6686-423f-ba95-77dbeb904f90"],
+ Cell[BoxData[
+  TemplateBox[{1},
+   "Spacer1"]],ExpressionUUID->"98ca438b-172d-433b-8561-86f56c914a80"],
+ "Examples",
+ "\[NonBreakingSpace]\[NonBreakingSpace]",
+ Cell["(0)", "ExampleCount",ExpressionUUID->
+  "fbbdaf2b-b7b2-4230-b464-a73cea1e0151"]
+}], "PrimaryExamplesSection",
+ WholeCellGroupOpener->True,
+ CacheGraphics->False,
+ CellTags->"PrimaryExamplesSection",
+ CellID->1658511028,ExpressionUUID->"c1772967-b756-486d-a189-abfb4123d72a"],
+
+Cell[BoxData[
+ RowBox[{"Needs", "[", "\"\<Matchete`\>\"", "]"}]], "Input", "ExampleInitialization",
+ CellLabel->"In[1]:=",
+ CellID->1193871368,ExpressionUUID->"87c8848f-64cd-4d2c-9d54-4c4b147cf268"]
+}, Dynamic[CurrentValue[
+ EvaluationNotebook[], {TaggingRules, "Openers", "PrimaryExamplesSection"}, 
+  Closed]]]],
+
+Cell[BoxData[GridBox[{
+   {
+    DynamicBox[FEPrivate`ImportImage[
+      FrontEnd`FileName[{"Documentation", "FooterIcons"}, 
+       "RelatedFunction.png"]],
+     ImageSizeCache->{63., {34., 41.}}], GridBox[{
+      {
+       StyleBox[
+        RowBox[{"See", " ", "Also"}], "SeeAlsoSection"]}
+     }]}
+  }]], "SeeAlsoSection",ExpressionUUID->"83196591-2f97-48db-af56-\
+d649d4b21630"],
+
+Cell[" ", "FooterCell",ExpressionUUID->"c8cf5387-9857-481a-876f-b4731f16fd5a"]
+},
+Saveable->False,
+ScreenStyleEnvironment->"Working",
+WindowSize->{900, 830},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+WindowTitle->"ClosedSpinChains",
+Visible->False,
+TaggingRules->{
+ "ModificationHighlight" -> False, "ColorType" -> "", "LinkTrails" -> "", 
+  "ExampleCounter" -> 1, 
+  "Openers" -> {
+   "PrimaryExamplesSection" -> Open, "ExampleSection" -> {"0" -> Open}, 
+    "AllOptsTable" -> Closed}, "NewStyles" -> True, 
+  "CitationPopupData" -> $Failed, "ShowCitation" -> False, "HasOptions" -> 
+  True, "RootCaptions" -> "", "HeaderCoreAreaLink" -> {}, 
+  "Metadata" -> {
+   "built" -> "{2025, 11, 14, 18, 44, 57.974526}", 
+    "history" -> {"XX", "", "", ""}, "context" -> "Matchete`", 
+    "keywords" -> {}, "specialkeywords" -> {}, 
+    "tutorialcollectionlinks" -> {}, "index" -> True, "label" -> 
+    "Matchete Symbol", "language" -> "en", "paclet" -> "Matchete", "status" -> 
+    "None", "summary" -> 
+    "Option for the CheckLagrangian function. It takes the values True/False \
+to determine whether the check is performed.", "synonyms" -> {}, 
+    "tabletags" -> {}, "title" -> "ClosedSpinChains", "titlemodifier" -> "", 
+    "metadescription" -> "", "windowtitle" -> "ClosedSpinChains", "type" -> 
+    "Symbol", "uri" -> "Matchete/ref/ClosedSpinChains"}},
+CellContext->"Global`",
+FrontEndVersion->"14.0 for Mac OS X ARM (64-bit) (December 12, 2023)",
+StyleDefinitions->Notebook[{
+   Cell[
+    StyleData[
+    StyleDefinitions -> FrontEnd`FileName[{"Wolfram"}, "Reference.nb"]]], 
+   Cell[
+    StyleData["Input"], CellContext -> "Global`"], 
+   Cell[
+    StyleData["Output"], CellContext -> "Global`"]}, Visible -> False, 
+  FrontEndVersion -> "14.0 for Mac OS X ARM (64-bit) (December 12, 2023)", 
+  StyleDefinitions -> "Default.nb"],
+ExpressionUUID->"8f5759f7-9c50-4dd3-9ef6-c682e22db52f"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "PrimaryExamplesSection"->{
+  Cell[4940, 132, 1391, 37, 45, "PrimaryExamplesSection",ExpressionUUID->"c1772967-b756-486d-a189-abfb4123d72a",
+   CellTags->"PrimaryExamplesSection",
+   CellID->1658511028]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"PrimaryExamplesSection", 9057, 239}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[588, 21, 3322, 78, 72, "AnchorBarGrid",ExpressionUUID->"6d553feb-1b6a-45da-b083-b5d61c18be37",
+ CellID->1],
+Cell[3913, 101, 91, 0, 30, "ContextNameCell",ExpressionUUID->"a4f823da-f737-480a-8a18-fcc0b3d8e0a6"],
+Cell[CellGroupData[{
+Cell[4029, 105, 559, 14, 76, "ObjectNameGrid",ExpressionUUID->"0b88c9ad-52e2-4d98-a38d-83dad6675527"],
+Cell[4591, 121, 312, 6, 137, "Usage",ExpressionUUID->"aec2b564-4b50-4d66-bf55-c9da06e93430",
+ CellID->274687473]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4940, 132, 1391, 37, 45, "PrimaryExamplesSection",ExpressionUUID->"c1772967-b756-486d-a189-abfb4123d72a",
+ CellTags->"PrimaryExamplesSection",
+ CellID->1658511028],
+Cell[6334, 171, 198, 3, 38, "Input",ExpressionUUID->"87c8848f-64cd-4d2c-9d54-4c4b147cf268",
+ CellID->1193871368]
+}, Dynamic[CurrentValue[EvaluationNotebook[], {TaggingRules, "Openers", "PrimaryExamplesSection"}, Closed]]]],
+Cell[6650, 179, 380, 11, 142, "SeeAlsoSection",ExpressionUUID->"83196591-2f97-48db-af56-d649d4b21630"],
+Cell[7033, 192, 78, 0, 27, "FooterCell",ExpressionUUID->"c8cf5387-9857-481a-876f-b4731f16fd5a"]
+}
+]
+*)
+

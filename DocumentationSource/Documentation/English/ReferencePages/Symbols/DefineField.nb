@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    135018,       3801]
-NotebookOptionsPosition[    110503,       3291]
-NotebookOutlinePosition[    111277,       3317]
-CellTagsIndexPosition[    111196,       3312]
+NotebookDataLength[    131227,       3634]
+NotebookOptionsPosition[    105791,       3105]
+NotebookOutlinePosition[    106594,       3132]
+CellTagsIndexPosition[    106513,       3127]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -114,16 +114,25 @@ Cell["The following options can be given: ", "Notes",
 
 Cell[BoxData[GridBox[{
    {Cell["   ", "ModInfo",ExpressionUUID->
-     "85d38d8c-0c65-4e70-884c-465450db61af"], 
+     "2b275a84-2395-4808-9997-c3e1c9f9d415"], 
+    ButtonBox["BackgroundField",
+     BaseStyle->"Link",
+     ButtonData->"paclet:Matchete/ref/BackgroundField"], 
+    ButtonBox["False",
+     BaseStyle->"Link"], Cell["\<\
+specifies if the field is a background field (non-propagating).\
+\>", "TableText",ExpressionUUID->"cbd46f05-5c80-41e0-a42a-18d702762807"]},
+   {Cell["      ", "ModInfo",ExpressionUUID->
+     "ebc8ace2-7723-4128-85e4-55efef5f573b"], 
     ButtonBox["Charges",
      BaseStyle->"Link",
      ButtonData->"paclet:Matchete/ref/Charges"], 
     RowBox[{"{", "}"}], Cell["\<\
 specifies a (list of) U(1) group(s) and corresponding charge(s) of the field.\
 \
-\>", "TableText",ExpressionUUID->"c4831c25-1691-4023-a181-b42664def9a0"]},
+\>", "TableText",ExpressionUUID->"31b23836-9862-43c2-a7c0-2ef4d4f2f19b"]},
    {Cell["   ", "ModInfo",ExpressionUUID->
-     "6a3dd893-e9ad-4101-a727-f5efc6e2d9bd"], 
+     "452b5794-6b40-4784-aa76-c58ebce40500"], 
     ButtonBox["Chiral",
      BaseStyle->"Link",
      ButtonData->"paclet:Matchete/ref/Chiral"], 
@@ -134,36 +143,36 @@ specifies a (list of) U(1) group(s) and corresponding charge(s) of the field.\
       ButtonBox["LeftHanded",
        BaseStyle->"Link",
        ButtonData->"paclet:Matchete/ref/LeftHanded"]], "InlineFormula",
-      ExpressionUUID->"b75b3ced-7269-4089-be70-e5d98d5f065d"],
+      ExpressionUUID->"6aa1d27d-4f48-44e6-890a-1f9c65aa62fa"],
      " or ",
      Cell[BoxData[
       ButtonBox["RightHanded",
        BaseStyle->"Link",
        ButtonData->"paclet:Matchete/ref/RightHanded"]], "InlineFormula",
-      ExpressionUUID->"0f687b68-e0ce-4d46-aa1c-8ce3fe07de6d"],
+      ExpressionUUID->"38843b25-5b5e-4f7b-ae8f-ee5e2c040461"],
      ". The option is only valid if the ",
      Cell[BoxData[
       StyleBox["type", "TI"]], "InlineFormula",ExpressionUUID->
-      "7611c97e-ee89-4978-9a5a-5e8936da9031"],
+      "cba43805-03df-44c2-9b55-b01b11e56780"],
      " is ",
      Cell[BoxData[
       ButtonBox["Fermion",
        BaseStyle->"Link",
        ButtonData->"paclet:Matchete/ref/Fermion"]], "InlineFormula",
-      ExpressionUUID->"49aef816-e9c8-47d7-a3e9-6157bee7a0f7"],
+      ExpressionUUID->"b7a11cfc-a9bc-43b3-ba24-66fe8bd0e48a"],
      "."
-    }], "TableText",ExpressionUUID->"12cf2b40-5571-4076-b766-d15b511f883f"]},
+    }], "TableText",ExpressionUUID->"a5887d7c-6ab1-42c3-9cb1-32b0e2367672"]},
    {Cell["   ", "ModInfo",ExpressionUUID->
-     "2a5b38ac-0c9d-473e-bb1c-00e8bbd4c346"], 
+     "a9f0a867-994b-4354-baa6-8e94e619ed09"], 
     ButtonBox["Indices",
      BaseStyle->"Link",
      ButtonData->"paclet:Matchete/ref/Indices"], 
     RowBox[{"{", "}"}], Cell["\<\
 specifies a (list of) representation(s) under which the field transforms. \
 Theses can be representations of gauge or global groups or flavor indices.\
-\>", "TableText",ExpressionUUID->"c1f88797-7744-4594-9046-54bd2f0847cf"]},
+\>", "TableText",ExpressionUUID->"fcc257d3-b48e-4dac-8f73-9b85bdaae43e"]},
    {Cell["   ", "ModInfo",ExpressionUUID->
-     "3d79c2fa-827b-47b2-bb1e-b9bc8eaf423d"], 
+     "1b91e6ed-8cce-4bd5-8f6c-a5a66d12a0c6"], 
     ButtonBox["Mass",
      BaseStyle->"Link",
      ButtonData->"paclet:Matchete/ref/Mass"], 
@@ -172,9 +181,9 @@ Theses can be representations of gauge or global groups or flavor indices.\
      ButtonData->"paclet:Matchete/ref/Heavy"], Cell["\<\
 specifies the mass label and EFT scaling of the field.  If no mass label is \
 given, a default value based on the field label is used.\
-\>", "TableText",ExpressionUUID->"a57df365-ba18-4aa9-8ad1-c5430d450f26"]},
+\>", "TableText",ExpressionUUID->"e99cfc61-55e8-4f3c-80d2-b8c452c45d1d"]},
    {Cell["   ", "ModInfo",ExpressionUUID->
-     "fb70aa35-6e85-4686-80da-6c34a93ea2c3"], 
+     "3a9e25cd-be6a-485c-a08f-9c2af0cfa51e"], 
     ButtonBox["NiceForm",
      BaseStyle->"Link",
      ButtonData->"paclet:Matchete/ref/NiceForm"], 
@@ -185,26 +194,27 @@ given, a default value based on the field label is used.\
       ButtonBox["NiceForm",
        BaseStyle->"Link",
        ButtonData->"paclet:Matchete/ref/NiceForm"]], "InlineFormula",
-      ExpressionUUID->"626fc0a8-eb34-41a9-8fa8-0c59e6c7d1c3"],
+      ExpressionUUID->"1443748e-a5f5-4b36-9e7f-b94b7f179622"],
      " formatting."
-    }], "TableText",ExpressionUUID->"8ef0187f-22d0-4d69-b9d0-f49bd001accd"]},
+    }], "TableText",ExpressionUUID->"c17b27e0-2cae-430f-8c5d-28344aff766b"]},
    {Cell["   ", "ModInfo",ExpressionUUID->
-     "e05f5a8f-f280-4799-8eb4-2095aacd949f"], 
+     "8268433e-d4c4-43fc-aef1-f2a3c241fd16"], 
     ButtonBox["SelfConjugate",
      BaseStyle->"Link",
      ButtonData->"paclet:Matchete/ref/SelfConjugate"], 
     ButtonBox["False",
      BaseStyle->"Link"], Cell[
     "specifies whether the field is self-conjugated (real).", "TableText",
-     ExpressionUUID->"5950f240-da53-4d57-b054-e402eaef6f91"]}
+     ExpressionUUID->"1267a212-a127-4885-8dbd-af5b2f6f3521"]}
   }]], "3ColumnTableMod",
  CellChangeTimes->{{3.936189102299005*^9, 3.936189104365843*^9}, {
   3.936189258889482*^9, 3.936189258889488*^9}, {3.93618928969307*^9, 
   3.936189313950213*^9}, {3.936189353413448*^9, 3.936189360264067*^9}, {
   3.936190566637854*^9, 3.936190866765308*^9}, {3.936191106459969*^9, 
   3.93619110646*^9}, {3.936250637668251*^9, 3.936250638637476*^9}, {
-  3.9362546908899813`*^9, 3.936254704130282*^9}},
- CellID->801735258,ExpressionUUID->"6d46fd22-d0dc-40c6-9376-0547a5d6a057"]
+  3.9362546908899813`*^9, 3.936254704130282*^9}, {3.960881033379464*^9, 
+  3.960881124056782*^9}},
+ CellID->801735258,ExpressionUUID->"21b07791-120d-44be-a45b-f6786786020c"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -304,10 +314,10 @@ Cell[TextData[{
     "7d3dd9eb-36f0-4801-a2ec-a932d46b37d5"], 
    DynamicModuleBox[{$CellContext`nbobj$$ = NotebookObject[
     "710bbff4-e455-4701-bf47-d9b14fbea1ed", 
-     "0d0536c8-962f-46a6-9504-861e48f1df56"], $CellContext`cellobj$$ = 
+     "5d2a0b43-7f9e-40ba-87ea-b333503c51f7"], $CellContext`cellobj$$ = 
     CellObject[
     "463de885-5f0a-43f9-b520-61ec1fc45d6e", 
-     "733dc7b7-2161-49e1-a6dd-4a29de62eece"]}, 
+     "2b7579fc-6e50-4d80-9090-234f5dfc3594"]}, 
     TemplateBox[{
       GraphicsBox[{{
          Thickness[0.06], 
@@ -335,7 +345,7 @@ Cell[TextData[{
  CellChangeTimes->{{3.936236107107454*^9, 3.93623621984695*^9}, {
   3.936236791003565*^9, 3.936236803123856*^9}, {3.936237653605586*^9, 
   3.936237661004098*^9}, {3.936250589754287*^9, 3.936250606271563*^9}, {
-  3.936252597082624*^9, 3.9362526143667574`*^9}},
+  3.936252597082624*^9, 3.9362526143667564`*^9}},
  CellID->689076682,ExpressionUUID->"acca6eff-9d3b-4204-9aab-035aa958cc63"]
 }, Open  ]],
 
@@ -848,37 +858,125 @@ Cell[CellGroupData[{
 Cell[BoxData[
  InterpretationBox[Cell[
   "Options", "ExampleSection",ExpressionUUID->
-   "9120a55c-8cb6-4da7-aa3c-8489066bb9a8"],
+   "aacb053a-df75-41f2-b363-ca86116fddaf"],
   $Line = 0; Null]], "ExampleSection",
- CellID->957929267,ExpressionUUID->"8bbb2e9b-57ab-4e2d-a310-978b81535bc0"],
+ CellID->508241985,ExpressionUUID->"035e46e1-dda6-48f3-b87f-89274fe7ac28"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[Cell[
+  "BackgroundField", "ExampleSubsection",ExpressionUUID->
+   "b88c1be9-01e4-42e7-8335-90de3c882eba"],
+  $Line = 0; Null]], "ExampleSubsection",
+ CellID->1480577776,ExpressionUUID->"2e60e844-a8dc-4aff-a08f-4960326f0df3"],
+
+Cell[TextData[{
+ "With the ",
+ Cell[BoxData[
+  ButtonBox["BackgroundField",
+   BaseStyle->"Link",
+   ButtonData->"paclet:Matchete/ref/BackgroundField"]], "InlineFormula",
+  ExpressionUUID->"6d2ebdfb-27eb-42c8-8f6c-9a81bd9d4482"],
+ " option, the user may set a field to be non-propagating, i.e., it is \
+treated as a background field. A scalar field background field can be defined \
+with"
+}], "ExampleText",
+ CellChangeTimes->{{3.9608812007883472`*^9, 3.96088126980416*^9}, {
+  3.9608814681042423`*^9, 3.9608814796607933`*^9}},
+ CellID->790478155,ExpressionUUID->"122838de-df82-434b-bbb3-b035b6728737"],
+
+Cell[BoxData[
+ RowBox[{"DefineField", "[", 
+  RowBox[{"\[Phi]", ",", " ", "Scalar", ",", 
+   RowBox[{"BackgroundField", "\[Rule]", " ", "True"}]}], "]"}]], "Input",
+ CellChangeTimes->{
+  3.960881282309003*^9, {3.960881376766839*^9, 3.960881381053275*^9}, {
+   3.9608814226986723`*^9, 3.960881441640758*^9}},
+ CellLabel->"In[6]:=",
+ CellID->2059778085,ExpressionUUID->"8fc2395c-917d-452f-aa17-021ab9948934"],
+
+Cell[TextData[{
+ "Background fields are treated as ",
+ Cell[BoxData[
+  ButtonBox["Light",
+   BaseStyle->"Link",
+   ButtonData->"paclet:Matchete/ref/Light"]], "InlineFormula",ExpressionUUID->
+  "c5d1eeb7-4a89-4967-b274-0fb99f15167e"],
+ " fields with a vanishing mass (trying to associate a mass with a background \
+field results in a failure). It does not have a kinetic term associated, and \
+it cannot be passed to ",
+ Cell[BoxData[
+  ButtonBox["FreeLag",
+   BaseStyle->"Link",
+   ButtonData->"paclet:Matchete/ref/FreeLag"]], "InlineFormula",
+  ExpressionUUID->"49179340-f2cb-4458-89ca-d74e04eeb59b"],
+ ":"
+}], "ExampleText",
+ CellChangeTimes->{{3.960881285357831*^9, 3.96088141858961*^9}},
+ CellID->59223890,ExpressionUUID->"ea4a2315-c1d6-4105-8101-2ec74272f22e"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FreeLag", "[", "\[Phi]", "]"}]], "Input",
+ CellChangeTimes->{{3.9608814463830013`*^9, 3.9608814497293873`*^9}},
+ CellLabel->"In[7]:=",
+ CellID->750771608,ExpressionUUID->"75a9a125-c910-4bc9-bcfc-d158ee1ea4ad"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "FreeLag", "bkgfield", 
+   "\"The field '\\!\\(\\*RowBox[{\\\"\[Phi]\\\"}]\\)' is a background field \
+and has no associated kinetic term/free Lagrangian.\"", 2, 7, 2, 
+   24292945549018001893, "Local", "Matchete`FreeLag"},
+  "MessageTemplate2",
+  BaseStyle->"MSG"]], "Message",
+ CellChangeTimes->{3.960881450538362*^9},
+ CellLabel->"During evaluation of In[7]:=",
+ CellID->309512758,ExpressionUUID->"2fa243eb-bb32-41e4-a92a-a612155d5bb4"],
+
+Cell[BoxData["$Aborted"], "Output",
+ CellChangeTimes->{3.96088145054221*^9},
+ CellLabel->"Out[7]=",
+ CellID->775530672,ExpressionUUID->"d244faa6-8f0f-4645-a872-912e7fc52e63"]
+}, Open  ]]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
  InterpretationBox[Cell[
   "Charges", "ExampleSubsection",ExpressionUUID->
-   "5c96c004-2f34-4f15-ae6e-80578c5b5a29"],
+   "fc5fd569-05b0-479d-99da-163022fe1acd"],
   $Line = 0; Null]], "ExampleSubsection",
- CellID->232288910,ExpressionUUID->"7ded96e9-cba0-4b95-a860-fc7b17920ab5"],
+ CellID->232288910,ExpressionUUID->"ae9c9611-6380-4472-928c-3b2d5e515bb2"],
 
 Cell[TextData[{
- "The charge option is used to specify that the field is charged under one or \
-more U(1) gauge groups. Having defined a U(1) group with ",
+ "The ",
+ Cell[BoxData[
+  ButtonBox["Charges",
+   BaseStyle->"Link",
+   ButtonData->"paclet:Matchete/ref/Charges"]], "InlineFormula",
+  ExpressionUUID->"161ad20e-0a21-43f9-af2b-98c38ac65980"],
+ " option is used to specify that the field is charged under one or more U(1) \
+gauge groups. Having defined a U(1) group with ",
  Cell[BoxData[
   ButtonBox["DefineGaugeGroup",
    BaseStyle->"Link",
    ButtonData->"paclet:Matchete/ref/DefineGaugeGroup"]], "InlineFormula",
-  ExpressionUUID->"423d0b76-3ff2-4aa7-a749-fa52949e9e45"],
+  ExpressionUUID->"aaf9e748-9626-4273-ac19-deac7311de3d"],
  ", "
 }], "ExampleText",
- CellChangeTimes->{{3.936236416216044*^9, 3.936236545248623*^9}},
- CellID->500291033,ExpressionUUID->"98287d9e-e96d-45ab-8c81-018d1d3d76f3"],
+ CellChangeTimes->{{3.936236416216044*^9, 3.936236545248623*^9}, {
+  3.960881183361024*^9, 3.96088119833912*^9}},
+ CellID->500291033,ExpressionUUID->"db918988-46ff-42ac-ab89-8efee6773161"],
 
 Cell[BoxData[
  RowBox[{"DefineGaugeGroup", "[", 
   RowBox[{"U1Y", ",", "U1", ",", "gY", ",", "B"}], "]"}]], "Input",
  CellLabel->"In[14]:=",
- CellID->1560934494,ExpressionUUID->"0464075d-93a0-431b-9b1b-04d023b15abd"],
+ CellID->1560934494,ExpressionUUID->"eb0890e1-4492-497d-8880-1da03603711d"],
 
 Cell[TextData[{
  "it becomes possible to specify the charge of a field under that group. The \
@@ -888,7 +986,7 @@ charge under the group is specified in the format ",
 }], "ExampleText",
  CellChangeTimes->{{3.936236555737947*^9, 3.936236615446313*^9}, {
   3.936236671767516*^9, 3.936236770256578*^9}},
- CellID->911623616,ExpressionUUID->"ffe034d7-977b-4926-bfac-f56b18ca62b2"],
+ CellID->911623616,ExpressionUUID->"251de772-8930-4e22-a84a-246d8b5ea774"],
 
 Cell[CellGroupData[{
 
@@ -901,7 +999,7 @@ Cell[BoxData[{
  CellChangeTimes->{{3.9362366289740252`*^9, 3.93623666101997*^9}, {
   3.936236774178355*^9, 3.936236779109296*^9}},
  CellLabel->"In[15]:=",
- CellID->1960087021,ExpressionUUID->"1c363dbf-1033-4b2d-8c76-977f2b455e04"],
+ CellID->1960087021,ExpressionUUID->"90cd406f-4bb4-4184-b15b-aa8d64944f64"],
 
 Cell[BoxData[
  RowBox[{"\[LeftAssociation]", 
@@ -918,7 +1016,7 @@ Cell[BoxData[
 
  CellChangeTimes->{3.9362367795145407`*^9, 3.9362558101138897`*^9},
  CellLabel->"Out[16]=",
- CellID->216164004,ExpressionUUID->"be2d45b7-a2ab-4dff-befe-70bf13a774dc"]
+ CellID->216164004,ExpressionUUID->"0ff15149-5632-4b35-a932-38d4a35129d5"]
 }, Open  ]],
 
 Cell[TextData[{
@@ -926,11 +1024,11 @@ Cell[TextData[{
   ButtonBox["Charges",
    BaseStyle->"Link",
    ButtonData->"paclet:Matchete/ref/Charges"]], "InlineFormula",
-  ExpressionUUID->"5a4d5d22-6cc4-4f66-aa24-7b9d065f2d8e"],
+  ExpressionUUID->"a21c485a-4f31-47ad-95d7-affce6c4978a"],
  " can also take a list of charges as a value."
 }], "ExampleText",
  CellChangeTimes->{{3.9362375309938493`*^9, 3.936237582355985*^9}},
- CellID->1424581727,ExpressionUUID->"b579e50e-20ef-4494-978a-3e2d40871404"]
+ CellID->1424581727,ExpressionUUID->"eddcda3b-a587-4732-98e6-aeed34131ef4"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -938,9 +1036,9 @@ Cell[CellGroupData[{
 Cell[BoxData[
  InterpretationBox[Cell[
   "Chiral", "ExampleSubsection",ExpressionUUID->
-   "5dca5377-6a46-4c2e-a1f3-48d6ff71cf50"],
+   "b274d646-8df1-4e90-a4b8-468f8517ff91"],
   $Line = 0; Null]], "ExampleSubsection",
- CellID->2101923771,ExpressionUUID->"d5524bee-45b6-433c-aa13-4a545b6e46da"],
+ CellID->2101923771,ExpressionUUID->"abdff063-c7a4-45ff-ace3-f857429bbdc0"],
 
 Cell["\<\
 The chiral option is used exclusively for fermions. Matchete employs Dirac \
@@ -949,7 +1047,7 @@ is left- or right-handed or if it is vector-like.\
 \>", "ExampleText",
  CellChangeTimes->{{3.936236958941579*^9, 3.936237008429597*^9}, {
   3.936237045389884*^9, 3.936237066043756*^9}},
- CellID->1871383609,ExpressionUUID->"1d2f3456-bdf0-4d28-9b2e-f2a589265c89"],
+ CellID->1871383609,ExpressionUUID->"710e63ca-887e-432a-b2dc-db7f3d665b46"],
 
 Cell["\<\
 The default option sets the field to be vector-like, which appears from the \
@@ -957,7 +1055,7 @@ associated free Lagrangian \
 \>", "ExampleText",
  CellChangeTimes->{{3.93623706961967*^9, 3.936237074068879*^9}, {
   3.936237111390745*^9, 3.9362371530964737`*^9}},
- CellID->1846503913,ExpressionUUID->"54393f31-0e4b-4064-81a0-7552bc814719"],
+ CellID->1846503913,ExpressionUUID->"02bcc3b2-4ba6-41ba-a9b4-fb91b3639223"],
 
 Cell[CellGroupData[{
 
@@ -970,7 +1068,7 @@ Cell[BoxData[{
   "NiceForm"}]}], "Input",
  CellChangeTimes->{{3.936237084231241*^9, 3.936237156686659*^9}},
  CellLabel->"In[17]:=",
- CellID->458808180,ExpressionUUID->"458e1902-34de-4421-ad61-92ae71b34561"],
+ CellID->458808180,ExpressionUUID->"04c245e4-9d6e-44a6-b941-bf9dd8226422"],
 
 Cell[BoxData[
  RowBox[{
@@ -982,91 +1080,68 @@ Cell[BoxData[
      StyleBox[
       RowBox[{"(", 
        RowBox[{
-        FormBox[
+        TagBox[
          FormBox[
+          OverscriptBox["\[CapitalPsi]", "_"],
+          StandardForm],
+         StandardForm,
+         Editable->True], "\[CenterDot]", 
+        FormBox[
+         SubscriptBox[
+          FormBox["\[Gamma]",
+           StandardForm], 
           TagBox[
-           FormBox[
-            OverscriptBox["\[CapitalPsi]", "_"],
-            StandardForm],
-           StandardForm,
-           Editable->True],
-          Matchete`NiceForm],
-         Matchete`NiceForm], "\[CenterDot]", 
-        FormBox[
-         FormBox[
-          SubscriptBox[
-           FormBox["\[Gamma]",
-            StandardForm], 
-           TagBox[
-            FormBox[
-             FormBox[
-              StyleBox["\<\"\[Mu]\"\>",
-               StripOnInput->False,
-               FontSize->10],
-              Matchete`NiceForm],
-             Matchete`NiceForm],
-            Format[#, Matchete`NiceForm]& ]],
-          Matchete`NiceForm],
+           StyleBox["\<\"\[Mu]\"\>",
+            StripOnInput->False,
+            FontSize->10],
+           Format[#, Matchete`NiceForm]& ]],
          StandardForm], "\[CenterDot]", 
-        FormBox[
-         TagBox[
-          FormBox[
-           TemplateBox[{
-             SubscriptBox["D", 
-              StyleBox[
-               TagBox[
-                FormBox[
-                 FormBox[
-                  StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
-                  Matchete`NiceForm], Matchete`NiceForm], 
-                Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
-               False]], 
-             TagBox[
-              FormBox["\[CapitalPsi]", StandardForm], StandardForm, Editable -> 
-              True]},
-            "RowDefault"],
-           StandardForm],
-          StandardForm,
-          Editable->True],
-         Matchete`NiceForm]}], ")"}],
+        TagBox[
+         FormBox[
+          TemplateBox[{
+            SubscriptBox["D", 
+             StyleBox[
+              TagBox[
+               StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
+               Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
+              False]], 
+            TagBox[
+             FormBox["\[CapitalPsi]", StandardForm], StandardForm, Editable -> 
+             True]},
+           "RowDefault"],
+          StandardForm],
+         StandardForm,
+         Editable->True]}], ")"}],
       SpanSymmetric->False],
      StandardForm]}],
    StandardForm], "-", 
   FormBox[
    RowBox[{
-    FormBox[
-     TagBox[
-      FormBox["M\[CapitalPsi]",
-       StandardForm],
-      StandardForm,
-      Editable->True],
-     Matchete`NiceForm], 
+    TagBox[
+     FormBox["M\[CapitalPsi]",
+      StandardForm],
+     StandardForm,
+     Editable->True], 
     FormBox[
      StyleBox[
       RowBox[{"(", 
-       FormBox[
+       TagBox[
         FormBox[
-         TagBox[
-          FormBox[
-           OverscriptBox["\[CapitalPsi]", "_"],
-           StandardForm],
-          StandardForm,
-          Editable->True],
-         Matchete`NiceForm],
-        Matchete`NiceForm], "\[CenterDot]", 
-       FormBox[
-        TagBox[
-         FormBox["\[CapitalPsi]",
-          StandardForm],
-         StandardForm,
-         Editable->True],
-        Matchete`NiceForm], ")"}],
+         OverscriptBox["\[CapitalPsi]", "_"],
+         StandardForm],
+        StandardForm,
+        Editable->True], "\[CenterDot]", 
+       TagBox[
+        FormBox["\[CapitalPsi]",
+         StandardForm],
+        StandardForm,
+        Editable->True], ")"}],
       SpanSymmetric->False],
      StandardForm]}],
    StandardForm]}]], "Output",
  CellChangeTimes->{3.936237157074683*^9, 3.9362558134142103`*^9},
  CellLabel->"Out[18]//NiceForm=",
- CellID->224546759,ExpressionUUID->"76a58c2f-2859-45ff-9253-c99588a9e141"]
+ CellID->224546759,ExpressionUUID->"9c7c40e0-24e6-473b-b30c-8c3a0cf1b857"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -1074,9 +1149,9 @@ Cell[CellGroupData[{
 Cell[BoxData[
  InterpretationBox[Cell[
   "\t", "ExampleDelimiter",ExpressionUUID->
-   "67dd1761-0cd6-4e0e-934e-5f99b285b06c"],
+   "fe2035b2-0ec8-40c1-a1a9-7508f64f6486"],
   $Line = 0; Null]], "ExampleDelimiter",
- CellID->1381912037,ExpressionUUID->"a5850af9-818c-48e9-ace2-a3419f52f5f2"],
+ CellID->1381912037,ExpressionUUID->"6e337645-c73f-4ffe-ab55-0af84ed3ce77"],
 
 Cell[TextData[{
  "Option values ",
@@ -1084,31 +1159,30 @@ Cell[TextData[{
   ButtonBox["LeftHanded",
    BaseStyle->"Link",
    ButtonData->"paclet:Matchete/ref/LeftHanded"]], "InlineFormula",
-  ExpressionUUID->"0b1098fb-e402-45cf-968d-fcfcbb51b713"],
+  ExpressionUUID->"eb6ecd7e-e25a-4d8e-9e2d-93b1096e2160"],
  " or ",
  Cell[BoxData[
   ButtonBox["RightHanded",
    BaseStyle->"Link",
    ButtonData->"paclet:Matchete/ref/RightHanded"]], "InlineFormula",
-  ExpressionUUID->"40cd2dcc-1423-4ae0-8e64-f37360a4151e"],
+  ExpressionUUID->"9596c42e-ebc6-4059-9517-e631feee3f60"],
  " designates that the field is chiral, such as "
 }], "ExampleText",
  CellChangeTimes->{3.936237247994391*^9},
- CellID->579977525,ExpressionUUID->"ab870269-90fb-47bf-b22c-f11cb9aff044"],
+ CellID->579977525,ExpressionUUID->"dac3c0a2-55c7-4e8f-bacb-8f60c7d9d07b"],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[{
  RowBox[{"DefineField", "[", 
   RowBox[{"\[CapitalPsi]1", ",", "Fermion", ",", " ", 
-   RowBox[{"Chiral", "\[Rule]", "RightHanded"}]}], 
-  "]"}], "\[IndentingNewLine]", 
+   RowBox[{"Chiral", "\[Rule]", "RightHanded"}]}], "]"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"FreeLag", "[", "\[CapitalPsi]1", "]"}], "//", 
   "NiceForm"}]}], "Input",
  CellChangeTimes->{{3.936237252605886*^9, 3.936237265467975*^9}},
  CellLabel->"In[19]:=",
- CellID->583289485,ExpressionUUID->"87453d26-c81c-4435-b703-418762c64ee2"],
+ CellID->583289485,ExpressionUUID->"d706b57c-6af1-4c8c-bdb8-8a8a3163902c"],
 
 Cell[BoxData[
  RowBox[{
@@ -1120,159 +1194,116 @@ Cell[BoxData[
      StyleBox[
       RowBox[{"(", 
        RowBox[{
-        FormBox[
+        TagBox[
          FormBox[
-          TagBox[
-           FormBox[
-            OverscriptBox["\[CapitalPsi]1", "_"],
-            StandardForm],
-           StandardForm,
-           Editable->True],
-          Matchete`NiceForm],
-         Matchete`NiceForm], "\[CenterDot]", 
+          OverscriptBox["\[CapitalPsi]1", "_"],
+          StandardForm],
+         StandardForm,
+         Editable->True], "\[CenterDot]", 
         FormBox[
          RowBox[{
-          FormBox[
-           SubscriptBox[
-            FormBox["\[Gamma]",
-             StandardForm], 
-            TagBox[
-             FormBox[
-              FormBox[
-               StyleBox["\<\"\[Mu]\"\>",
-                StripOnInput->False,
-                FontSize->10],
-               Matchete`NiceForm],
-              Matchete`NiceForm],
-             Format[#, Matchete`NiceForm]& ]],
-           Matchete`NiceForm], 
-          FormBox[
-           SubscriptBox["\<\"P\"\>", "\<\"R\"\>"],
-           Matchete`NiceForm]}],
+          SubscriptBox[
+           FormBox["\[Gamma]",
+            StandardForm], 
+           TagBox[
+            StyleBox["\<\"\[Mu]\"\>",
+             StripOnInput->False,
+             FontSize->10],
+            Format[#, Matchete`NiceForm]& ]], 
+          SubscriptBox["\<\"P\"\>", "\<\"R\"\>"]}],
          StandardForm], "\[CenterDot]", 
-        FormBox[
-         TagBox[
-          FormBox[
-           TemplateBox[{
-             SubscriptBox["D", 
-              StyleBox[
-               TagBox[
-                FormBox[
-                 FormBox[
-                  StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
-                  Matchete`NiceForm], Matchete`NiceForm], 
-                Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
-               False]], 
-             TagBox[
-              FormBox["\[CapitalPsi]1", StandardForm], StandardForm, Editable -> 
-              True]},
-            "RowDefault"],
-           StandardForm],
-          StandardForm,
-          Editable->True],
-         Matchete`NiceForm]}], ")"}],
-      SpanSymmetric->False],
-     StandardForm]}],
-   StandardForm], "-", 
-  FormBox[
-   RowBox[{
-    FormBox[
-     FractionBox["1", "2"],
-     StandardForm], 
-    FormBox[
-     TagBox[
-      FormBox["M\[CapitalPsi]1",
-       StandardForm],
-      StandardForm,
-      Editable->True],
-     Matchete`NiceForm], 
-    FormBox[
-     StyleBox[
-      RowBox[{"(", 
-       RowBox[{
-        FormBox[
+        TagBox[
          FormBox[
-          TagBox[
-           FormBox[
-            OverscriptBox["\[CapitalPsi]1", "_"],
-            StandardForm],
-           StandardForm,
-           Editable->True],
-          Matchete`NiceForm],
-         Matchete`NiceForm], "\[CenterDot]", 
-        FormBox[
-         RowBox[{
-          FormBox["\<\"C\"\>",
-           Matchete`NiceForm], 
-          FormBox[
-           SubscriptBox["\<\"P\"\>", "\<\"L\"\>"],
-           Matchete`NiceForm]}],
-         StandardForm], "\[CenterDot]", 
-        FormBox[
-         TemplateBox[{
-           FormBox[
-            FormBox[
-             TagBox[
-              FormBox[
-               OverscriptBox["\[CapitalPsi]1", "_"], StandardForm], 
-              StandardForm, Editable -> True], Matchete`NiceForm], 
-            Matchete`NiceForm], "\"T\""},
-          "Superscript"],
-         Matchete`NiceForm]}], ")"}],
-      SpanSymmetric->False],
-     StandardForm]}],
-   StandardForm], "-", 
-  FormBox[
-   RowBox[{
-    FormBox[
-     FractionBox["1", "2"],
-     StandardForm], 
-    FormBox[
-     TagBox[
-      FormBox["M\[CapitalPsi]1",
-       StandardForm],
-      StandardForm,
-      Editable->True],
-     Matchete`NiceForm], 
-    FormBox[
-     StyleBox[
-      RowBox[{"(", 
-       RowBox[{
-        FormBox[
-         TemplateBox[{
-           FormBox[
+          TemplateBox[{
+            SubscriptBox["D", 
+             StyleBox[
+              TagBox[
+               StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
+               Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
+              False]], 
             TagBox[
              FormBox["\[CapitalPsi]1", StandardForm], StandardForm, Editable -> 
-             True], Matchete`NiceForm], "\"T\""},
-          "Superscript"],
-         Matchete`NiceForm], "\[CenterDot]", 
+             True]},
+           "RowDefault"],
+          StandardForm],
+         StandardForm,
+         Editable->True]}], ")"}],
+      SpanSymmetric->False],
+     StandardForm]}],
+   StandardForm], "-", 
+  FormBox[
+   RowBox[{
+    FormBox[
+     FractionBox["1", "2"],
+     StandardForm], 
+    TagBox[
+     FormBox["M\[CapitalPsi]1",
+      StandardForm],
+     StandardForm,
+     Editable->True], 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       RowBox[{
+        TagBox[
+         FormBox[
+          OverscriptBox["\[CapitalPsi]1", "_"],
+          StandardForm],
+         StandardForm,
+         Editable->True], "\[CenterDot]", 
         FormBox[
-         RowBox[{
-          FormBox["\<\"C\"\>",
-           Matchete`NiceForm], 
-          FormBox[
-           SubscriptBox["\<\"P\"\>", "\<\"R\"\>"],
-           Matchete`NiceForm]}],
+         RowBox[{"\<\"C\"\>", 
+          SubscriptBox["\<\"P\"\>", "\<\"L\"\>"]}],
          StandardForm], "\[CenterDot]", 
+        TemplateBox[{
+          TagBox[
+           FormBox[
+            OverscriptBox["\[CapitalPsi]1", "_"], StandardForm], StandardForm,
+            Editable -> True], "\"T\""},
+         "Superscript"]}], ")"}],
+      SpanSymmetric->False],
+     StandardForm]}],
+   StandardForm], "-", 
+  FormBox[
+   RowBox[{
+    FormBox[
+     FractionBox["1", "2"],
+     StandardForm], 
+    TagBox[
+     FormBox["M\[CapitalPsi]1",
+      StandardForm],
+     StandardForm,
+     Editable->True], 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       RowBox[{
+        TemplateBox[{
+          TagBox[
+           FormBox["\[CapitalPsi]1", StandardForm], StandardForm, Editable -> 
+           True], "\"T\""},
+         "Superscript"], "\[CenterDot]", 
         FormBox[
-         TagBox[
-          FormBox["\[CapitalPsi]1",
-           StandardForm],
-          StandardForm,
-          Editable->True],
-         Matchete`NiceForm]}], ")"}],
+         RowBox[{"\<\"C\"\>", 
+          SubscriptBox["\<\"P\"\>", "\<\"R\"\>"]}],
+         StandardForm], "\[CenterDot]", 
+        TagBox[
+         FormBox["\[CapitalPsi]1",
+          StandardForm],
+         StandardForm,
+         Editable->True]}], ")"}],
       SpanSymmetric->False],
      StandardForm]}],
    StandardForm]}]], "Output",
  CellChangeTimes->{3.936237265823469*^9, 3.936255814965727*^9},
  CellLabel->"Out[20]//NiceForm=",
- CellID->667534403,ExpressionUUID->"258127c2-bb6a-4fc8-a66b-c6bea9fd23ab"]
+ CellID->667534403,ExpressionUUID->"81654d0d-2a76-4afa-8223-562f30f56410"]
 }, Open  ]],
 
 Cell["By default such fields are assumed to have a Majorana mass. ", \
 "ExampleText",
  CellChangeTimes->{{3.936237305188347*^9, 3.9362373324397078`*^9}},
- CellID->718341711,ExpressionUUID->"34f516ea-6295-45df-8177-91a681b82e1a"]
+ CellID->718341711,ExpressionUUID->"c2b3ec02-4969-4c68-b37d-2423990d95bc"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -1280,9 +1311,9 @@ Cell[CellGroupData[{
 Cell[BoxData[
  InterpretationBox[Cell[
   "\t", "ExampleDelimiter",ExpressionUUID->
-   "66ea30ba-dc27-436b-988b-f3f2c1cdb812"],
+   "bdc745f4-13c4-487a-a761-fc72cc2cda2b"],
   $Line = 0; Null]], "ExampleDelimiter",
- CellID->1098490237,ExpressionUUID->"929a86b0-e5ba-41e1-bc1f-64e0c997456f"],
+ CellID->1098490237,ExpressionUUID->"eb134e43-836b-4dd0-84a3-5dde39b5f1f6"],
 
 Cell["\<\
 A common use case, known from the SM, is to have massless chiral fermions. In \
@@ -1290,7 +1321,7 @@ that case, one can also invoke the mass option to obtain\
 \>", "ExampleText",
  CellChangeTimes->{{3.936237343856134*^9, 3.936237388790002*^9}, {
   3.936237445819206*^9, 3.9362374628112*^9}},
- CellID->1320755931,ExpressionUUID->"b9513758-4070-4247-816a-d5cba16b9c85"],
+ CellID->1320755931,ExpressionUUID->"6601ef44-d626-4885-bd3b-63ad837a4f21"],
 
 Cell[CellGroupData[{
 
@@ -1305,7 +1336,7 @@ Cell[BoxData[{
  CellChangeTimes->{{3.9362373396910267`*^9, 3.936237340404315*^9}, 
    3.936237438210898*^9, {3.936237471651925*^9, 3.9362374867146177`*^9}},
  CellLabel->"In[21]:=",
- CellID->154280541,ExpressionUUID->"edbbe35a-c9b4-42ab-9fd8-609e3fb124af"],
+ CellID->154280541,ExpressionUUID->"a5803032-d00b-4f30-b2a9-072558472d8f"],
 
 Cell[BoxData[
  RowBox[{
@@ -1315,63 +1346,46 @@ Cell[BoxData[
    StyleBox[
     RowBox[{"(", 
      RowBox[{
-      FormBox[
+      TagBox[
        FormBox[
-        TagBox[
-         FormBox[
-          OverscriptBox["\[CapitalPsi]2", "_"],
-          StandardForm],
-         StandardForm,
-         Editable->True],
-        Matchete`NiceForm],
-       Matchete`NiceForm], "\[CenterDot]", 
+        OverscriptBox["\[CapitalPsi]2", "_"],
+        StandardForm],
+       StandardForm,
+       Editable->True], "\[CenterDot]", 
       FormBox[
        RowBox[{
-        FormBox[
-         SubscriptBox[
-          FormBox["\[Gamma]",
-           StandardForm], 
-          TagBox[
-           FormBox[
-            FormBox[
-             StyleBox["\<\"\[Mu]\"\>",
-              StripOnInput->False,
-              FontSize->10],
-             Matchete`NiceForm],
-            Matchete`NiceForm],
-           Format[#, Matchete`NiceForm]& ]],
-         Matchete`NiceForm], 
-        FormBox[
-         SubscriptBox["\<\"P\"\>", "\<\"R\"\>"],
-         Matchete`NiceForm]}],
+        SubscriptBox[
+         FormBox["\[Gamma]",
+          StandardForm], 
+         TagBox[
+          StyleBox["\<\"\[Mu]\"\>",
+           StripOnInput->False,
+           FontSize->10],
+          Format[#, Matchete`NiceForm]& ]], 
+        SubscriptBox["\<\"P\"\>", "\<\"R\"\>"]}],
        StandardForm], "\[CenterDot]", 
-      FormBox[
-       TagBox[
-        FormBox[
-         TemplateBox[{
-           SubscriptBox["D", 
-            StyleBox[
-             TagBox[
-              FormBox[
-               FormBox[
-                StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
-                Matchete`NiceForm], Matchete`NiceForm], 
-              Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
-             False]], 
-           TagBox[
-            FormBox["\[CapitalPsi]2", StandardForm], StandardForm, Editable -> 
-            True]},
-          "RowDefault"],
-         StandardForm],
-        StandardForm,
-        Editable->True],
-       Matchete`NiceForm]}], ")"}],
+      TagBox[
+       FormBox[
+        TemplateBox[{
+          SubscriptBox["D", 
+           StyleBox[
+            TagBox[
+             StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
+             Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
+            False]], 
+          TagBox[
+           FormBox["\[CapitalPsi]2", StandardForm], StandardForm, Editable -> 
+           True]},
+         "RowDefault"],
+        StandardForm],
+       StandardForm,
+       Editable->True]}], ")"}],
     SpanSymmetric->False],
    StandardForm]}]], "Output",
  CellChangeTimes->{{3.9362374818354893`*^9, 3.936237487042161*^9}, 
    3.93625581651492*^9},
  CellLabel->"Out[22]//NiceForm=",
- CellID->1716056579,ExpressionUUID->"343ab285-ad3a-4929-90e7-43f441e13b2d"]
+ CellID->1716056579,ExpressionUUID->"172277a9-28a8-4cd7-ade8-b5c3bd6296d9"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
@@ -1381,9 +1395,9 @@ Cell[CellGroupData[{
 Cell[BoxData[
  InterpretationBox[Cell[
   "Indices", "ExampleSubsection",ExpressionUUID->
-   "11da7ea3-4ad9-46ca-862b-4411f42daca1"],
+   "ae219451-522c-408f-b84e-9c2b6bf6d5aa"],
   $Line = 0; Null]], "ExampleSubsection",
- CellID->926826047,ExpressionUUID->"3b0c18f4-07af-46c5-83ed-d604af14ca06"],
+ CellID->926826047,ExpressionUUID->"0aaa165a-01b9-470d-885e-215573ef7892"],
 
 Cell[TextData[{
  "The index option specifies all the indices of a field associated with \
@@ -1395,14 +1409,14 @@ type we wish to specify. For instance defining a gauge group with ",
   ButtonBox["DefineGaugeGroup",
    BaseStyle->"Link",
    ButtonData->"paclet:Matchete/ref/DefineGaugeGroup"]], "InlineFormula",
-  ExpressionUUID->"2ebde427-eb8f-4b5e-954c-f4f99a1cedcf"],
+  ExpressionUUID->"62632065-544f-47eb-a1ce-2d566a7b3e6c"],
  " automatically defines some common representations, e.g., "
 }], "ExampleText",
  CellChangeTimes->{{3.9362526568416758`*^9, 3.936252788147572*^9}, 
    3.936252822612689*^9, {3.936252887382916*^9, 3.936252894027787*^9}, {
    3.936252925862083*^9, 3.936253038047064*^9}, {3.936253253991908*^9, 
    3.9362532689323397`*^9}},
- CellID->947998980,ExpressionUUID->"94d0e8ce-7a5a-4e85-a747-b569ef94e8b6"],
+ CellID->947998980,ExpressionUUID->"4a197b1d-76a6-49b0-9a13-2574abebeba8"],
 
 Cell[BoxData[
  RowBox[{"DefineGaugeGroup", "[", 
@@ -1413,7 +1427,7 @@ Cell[BoxData[
    3.936253128546879*^9, 3.936253129287931*^9}, {3.936255833843569*^9, 
    3.93625583456345*^9}},
  CellLabel->"In[24]:=",
- CellID->1893423347,ExpressionUUID->"0644d274-df7b-4847-b130-e388777d3720"],
+ CellID->1893423347,ExpressionUUID->"29b9a0f6-519f-4e5f-b8e6-5935a4de04d7"],
 
 Cell[TextData[{
  "Then we may make a new field with a fundamental representation (",
@@ -1421,13 +1435,13 @@ Cell[TextData[{
   ButtonBox["fund",
    BaseStyle->"Link",
    ButtonData->"paclet:Matchete/ref/fund"]], "InlineFormula",ExpressionUUID->
-  "8d92360e-2b91-4667-aa2d-4994143c225a"],
+  "851ee5d0-b82a-44c8-a082-439ff56c10c6"],
  ") of the SU3 group"
 }], "ExampleText",
  CellChangeTimes->{{3.9362530420111437`*^9, 3.9362530479041348`*^9}, {
   3.936253399365672*^9, 3.9362534289645023`*^9}, {3.936253470017749*^9, 
   3.936253473264007*^9}},
- CellID->1639037916,ExpressionUUID->"6675b4fe-8936-4393-ae7f-b15ef0434035"],
+ CellID->1639037916,ExpressionUUID->"ece33607-d9e6-4102-b96d-f6425a93e16e"],
 
 Cell[BoxData[
  RowBox[{"DefineField", "[", 
@@ -1438,12 +1452,12 @@ Cell[BoxData[
   3.9362530514438667`*^9, {3.936253100265856*^9, 3.936253155956959*^9}, 
    3.936253456683305*^9},
  CellLabel->"In[25]:=",
- CellID->1682086663,ExpressionUUID->"7c5fa37d-34f1-481f-a030-eeae8f7aaf71"],
+ CellID->1682086663,ExpressionUUID->"2606d8a6-b1c6-48e4-a473-c26db3c338d5"],
 
 Cell["which now needs to be specified with one index. For instance", \
 "ExampleText",
  CellChangeTimes->{{3.936253162628315*^9, 3.936253206758196*^9}},
- CellID->1998833852,ExpressionUUID->"b1dd9251-8334-40ac-8780-4be619504cce"],
+ CellID->1998833852,ExpressionUUID->"5d43244b-ec94-40e4-90f2-97b9a3dc2528"],
 
 Cell[CellGroupData[{
 
@@ -1453,7 +1467,7 @@ Cell[BoxData[{
   RowBox[{"\[CapitalPhi]2", "[", "a", "]"}], "//", "NiceForm"}]}], "Input",
  CellChangeTimes->{{3.9362533517648783`*^9, 3.9362533526046457`*^9}},
  CellLabel->"In[26]:=",
- CellID->1536551804,ExpressionUUID->"314ecbbc-a6d4-433f-9f92-66db03d9dbcc"],
+ CellID->1536551804,ExpressionUUID->"b7535c9a-61b3-4b6a-97be-5a2a9f743f62"],
 
 Cell[BoxData[
  RowBox[{"Field", "[", 
@@ -1466,26 +1480,24 @@ Cell[BoxData[
  CellChangeTimes->{3.936253208496705*^9, 3.936253352998165*^9, 
   3.936255837564307*^9},
  CellLabel->"Out[26]=",
- CellID->1557836470,ExpressionUUID->"3d837dd0-8275-4ea1-a13f-f8fec46a38dd"],
+ CellID->1557836470,ExpressionUUID->"026eb5b8-f463-405f-b23a-3a2d965c5b90"],
 
 Cell[BoxData[
- FormBox[
-  TemplateBox[{
-    TagBox[
-     FormBox["\[CapitalPhi]2", StandardForm], StandardForm, Editable -> True], 
-    StyleBox[
-     TemplateBox[{
-       TagBox[
-        FormBox[
-         FormBox[
-          StyleBox["\"a\"", 10, StripOnInput -> False], Matchete`NiceForm], 
-         Matchete`NiceForm], Format[#, Matchete`NiceForm]& ]}, "RowDefault"], 
-     FontSize -> 12, StripOnInput -> False]},
-   "Superscript"], Matchete`NiceForm]], "Output",
+ TemplateBox[{
+   TagBox[
+    FormBox["\[CapitalPhi]2", StandardForm], StandardForm, Editable -> True], 
+   
+   StyleBox[
+    TemplateBox[{
+      TagBox[
+       StyleBox["\"a\"", 10, StripOnInput -> False], 
+       Format[#, Matchete`NiceForm]& ]}, "RowDefault"], FontSize -> 12, 
+    StripOnInput -> False]},
+  "Superscript"]], "Output",
  CellChangeTimes->{3.936253208496705*^9, 3.936253352998165*^9, 
   3.9362558375653667`*^9},
  CellLabel->"Out[27]//NiceForm=",
- CellID->436927066,ExpressionUUID->"7633a480-d4c0-4458-b8ea-6092dd403459"]
+ CellID->436927066,ExpressionUUID->"65bb7dee-122a-449e-8f00-1f10ef570153"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -1493,9 +1505,9 @@ Cell[CellGroupData[{
 Cell[BoxData[
  InterpretationBox[Cell[
   "\t", "ExampleDelimiter",ExpressionUUID->
-   "344894e0-3b15-4a76-a56b-90949ba172a8"],
+   "26fb57c2-b4e1-4924-8cd0-98e9b20d4122"],
   $Line = 0; Null]], "ExampleDelimiter",
- CellID->761528069,ExpressionUUID->"18bfb3d0-1eaa-4adb-a7b8-f0318dd4ce23"],
+ CellID->761528069,ExpressionUUID->"c2db1ab1-376f-4fa8-baed-b7a2b9add6fd"],
 
 Cell[TextData[{
  "Flavor indices for a field are specified in a similar way. Defining a \
@@ -1504,32 +1516,32 @@ generation index counting 2 generations  with ",
   ButtonBox["DefineFlavorIndex",
    BaseStyle->"Link",
    ButtonData->"paclet:Matchete/ref/DefineFlavorIndex"]], "InlineFormula",
-  ExpressionUUID->"004e6ee9-6b48-4214-8bcc-d65dbc939d9a"]
+  ExpressionUUID->"32e9626b-31ab-404a-9400-e08e80f0db05"]
 }], "ExampleText",
  CellChangeTimes->{{3.9362532193020287`*^9, 3.9362533232018223`*^9}, 
    3.93625375078012*^9},
- CellID->234862965,ExpressionUUID->"7899ee26-7a06-4b9c-ae0b-5670d1c9185b"],
+ CellID->234862965,ExpressionUUID->"778f38af-1e37-480f-a6c9-85430e0896b6"],
 
 Cell[BoxData[
  RowBox[{"DefineFlavorIndex", "[", 
   RowBox[{"Generation", ",", "2"}], "]"}]], "Input",
  CellChangeTimes->{{3.936253327377028*^9, 3.9362533312140093`*^9}},
  CellLabel->"In[28]:=",
- CellID->699396657,ExpressionUUID->"3ea90d96-e205-42e2-9e27-787c487d355a"],
+ CellID->699396657,ExpressionUUID->"36a5a50f-6457-4a54-ad7b-dac6f69462ab"],
 
 Cell["lets us define a field with that generation index:", "ExampleText",
  CellChangeTimes->{{3.936253333615037*^9, 3.936253368738955*^9}},
- CellID->1657753132,ExpressionUUID->"00ca316a-bcb2-441c-a278-8c819c1f78b4"],
+ CellID->1657753132,ExpressionUUID->"979b0c78-0842-41db-a0b7-031b9f291b63"],
 
 Cell["DefineField[\[CapitalPhi]3, Scalar, Indices\[Rule]Generation]", "Input",
  CellChangeTimes->{{3.936253374763248*^9, 3.936253390208304*^9}, {
   3.936253492221098*^9, 3.936253492293483*^9}},
  CellLabel->"In[29]:=",
- CellID->1590833656,ExpressionUUID->"23e7aec3-eec1-4940-a4d5-effb046ed57e"],
+ CellID->1590833656,ExpressionUUID->"c60d3a60-df2d-4367-827c-2500a1b11fb8"],
 
 Cell["We see that the index is of the appropriate type", "ExampleText",
  CellChangeTimes->{{3.9362535024298153`*^9, 3.936253543056979*^9}},
- CellID->1346144137,ExpressionUUID->"7f36aaea-1dea-4828-92c5-c192e5e3337d"],
+ CellID->1346144137,ExpressionUUID->"de3fb042-d527-40b0-951b-bf4faa4aec7a"],
 
 Cell[CellGroupData[{
 
@@ -1540,7 +1552,7 @@ Cell[BoxData[{
  CellChangeTimes->{{3.936253510240341*^9, 3.93625351183815*^9}, {
   3.936253700389399*^9, 3.9362537013795357`*^9}},
  CellLabel->"In[30]:=",
- CellID->920094860,ExpressionUUID->"5520a9bd-583c-4fd1-ac14-e105f47745c0"],
+ CellID->920094860,ExpressionUUID->"feacbd65-53c9-46af-882b-cce040fe409f"],
 
 Cell[BoxData[
  RowBox[{"Field", "[", 
@@ -1552,26 +1564,24 @@ Cell[BoxData[
  CellChangeTimes->{3.936253512709189*^9, 3.9362537017760878`*^9, 
   3.936255841946844*^9},
  CellLabel->"Out[30]=",
- CellID->359986054,ExpressionUUID->"bac951dc-dbc2-47c9-a11b-0f584172bc43"],
+ CellID->359986054,ExpressionUUID->"e5567348-4993-4e96-a873-e805a2f1e54d"],
 
 Cell[BoxData[
- FormBox[
-  TemplateBox[{
-    TagBox[
-     FormBox["\[CapitalPhi]3", StandardForm], StandardForm, Editable -> True], 
-    StyleBox[
-     TemplateBox[{
-       TagBox[
-        FormBox[
-         FormBox[
-          StyleBox["\"p\"", 10, StripOnInput -> False], Matchete`NiceForm], 
-         Matchete`NiceForm], Format[#, Matchete`NiceForm]& ]}, "RowDefault"], 
-     FontSize -> 12, StripOnInput -> False]},
-   "Superscript"], Matchete`NiceForm]], "Output",
+ TemplateBox[{
+   TagBox[
+    FormBox["\[CapitalPhi]3", StandardForm], StandardForm, Editable -> True], 
+   
+   StyleBox[
+    TemplateBox[{
+      TagBox[
+       StyleBox["\"p\"", 10, StripOnInput -> False], 
+       Format[#, Matchete`NiceForm]& ]}, "RowDefault"], FontSize -> 12, 
+    StripOnInput -> False]},
+  "Superscript"]], "Output",
  CellChangeTimes->{3.936253512709189*^9, 3.9362537017760878`*^9, 
   3.936255841947875*^9},
  CellLabel->"Out[31]//NiceForm=",
- CellID->824175979,ExpressionUUID->"1613f7db-4a3a-40dd-8ae3-41ba54a472f0"]
+ CellID->824175979,ExpressionUUID->"963e612e-7d71-40b8-8397-ffaf3f760fc6"]
 }, Open  ]]
 }, Open  ]],
 
@@ -1580,9 +1590,9 @@ Cell[CellGroupData[{
 Cell[BoxData[
  InterpretationBox[Cell[
   "\t", "ExampleDelimiter",ExpressionUUID->
-   "5fc837db-5394-472e-96a5-6fb607c3a49e"],
+   "fa12f5ca-23a7-4908-8d4a-dbc1fd838f1c"],
   $Line = 0; Null]], "ExampleDelimiter",
- CellID->905029541,ExpressionUUID->"50c234de-88d6-43e0-b83b-df22fa9082b8"],
+ CellID->905029541,ExpressionUUID->"66029b55-5d57-42a7-9198-98c3fa7950ec"],
 
 Cell["\<\
 When more indices are specified for the same field, for instance and SU(3) \
@@ -1591,7 +1601,7 @@ informs the ordering of the labels in the field short cut. \
 \>", "ExampleText",
  CellChangeTimes->{{3.9362535556054173`*^9, 3.936253628312768*^9}, {
   3.936253659228519*^9, 3.9362536663142242`*^9}},
- CellID->204823886,ExpressionUUID->"d954b038-b00a-4be7-b7f9-84b4c8ba5424"],
+ CellID->204823886,ExpressionUUID->"1240f8c2-6cf2-4499-aaf4-01b6bb6e7fd0"],
 
 Cell[BoxData[
  RowBox[{"DefineField", "[", 
@@ -1603,7 +1613,7 @@ Cell[BoxData[
   "]"}]], "Input",
  CellChangeTimes->{{3.936253636088263*^9, 3.936253649428771*^9}},
  CellLabel->"In[32]:=",
- CellID->329803870,ExpressionUUID->"2c13216f-4c96-4073-b861-0dcdcc033efd"],
+ CellID->329803870,ExpressionUUID->"68cf01d6-1ece-4e09-8c82-0bc54de7963d"],
 
 Cell[TextData[{
  "We may specify an instance of this field with triplet index ",
@@ -1613,7 +1623,7 @@ Cell[TextData[{
  " by"
 }], "ExampleText",
  CellChangeTimes->{{3.936253711115025*^9, 3.936253771908452*^9}},
- CellID->473197928,ExpressionUUID->"85f87aca-1a03-475b-aa1e-a94fafc55235"],
+ CellID->473197928,ExpressionUUID->"338b79c4-b9f8-486b-ab84-271bfde5dafc"],
 
 Cell[CellGroupData[{
 
@@ -1625,7 +1635,7 @@ Cell[BoxData[{
    RowBox[{"a", ",", "p"}], "]"}], "//", "NiceForm", " "}]}], "Input",
  CellChangeTimes->{{3.936253681374007*^9, 3.9362536980129147`*^9}},
  CellLabel->"In[33]:=",
- CellID->725485569,ExpressionUUID->"26c773f8-e723-44b6-873e-4071484ee756"],
+ CellID->725485569,ExpressionUUID->"d6cdf103-8784-4f88-b2ab-cc1950a79f87"],
 
 Cell[BoxData[
  RowBox[{"Field", "[", 
@@ -1641,31 +1651,27 @@ Cell[BoxData[
  CellChangeTimes->{{3.936253694850891*^9, 3.936253698744309*^9}, 
    3.936255845204472*^9},
  CellLabel->"Out[33]=",
- CellID->503929664,ExpressionUUID->"c2e38106-7179-414e-9274-6b9900a62d7f"],
+ CellID->503929664,ExpressionUUID->"ffedc198-357d-4cb6-80c5-309bf9e64185"],
 
 Cell[BoxData[
- FormBox[
-  TemplateBox[{
-    TagBox[
-     FormBox["\[CapitalPhi]4", StandardForm], StandardForm, Editable -> True], 
-    StyleBox[
-     TemplateBox[{
-       TagBox[
-        FormBox[
-         FormBox[
-          StyleBox["\"a\"", 10, StripOnInput -> False], Matchete`NiceForm], 
-         Matchete`NiceForm], Format[#, Matchete`NiceForm]& ], 
-       TagBox[
-        FormBox[
-         FormBox[
-          StyleBox["\"p\"", 10, StripOnInput -> False], Matchete`NiceForm], 
-         Matchete`NiceForm], Format[#, Matchete`NiceForm]& ]}, "RowDefault"], 
-     FontSize -> 12, StripOnInput -> False]},
-   "Superscript"], Matchete`NiceForm]], "Output",
+ TemplateBox[{
+   TagBox[
+    FormBox["\[CapitalPhi]4", StandardForm], StandardForm, Editable -> True], 
+   
+   StyleBox[
+    TemplateBox[{
+      TagBox[
+       StyleBox["\"a\"", 10, StripOnInput -> False], 
+       Format[#, Matchete`NiceForm]& ], 
+      TagBox[
+       StyleBox["\"p\"", 10, StripOnInput -> False], 
+       Format[#, Matchete`NiceForm]& ]}, "RowDefault"], FontSize -> 12, 
+    StripOnInput -> False]},
+  "Superscript"]], "Output",
  CellChangeTimes->{{3.936253694850891*^9, 3.936253698744309*^9}, 
    3.93625584520535*^9},
  CellLabel->"Out[34]//NiceForm=",
- CellID->2017842727,ExpressionUUID->"b6bee3ab-d152-416e-b3f6-3ee5d701e226"]
+ CellID->2017842727,ExpressionUUID->"4e875eec-4dbf-4f11-8c56-1218f6d754a7"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
@@ -1675,9 +1681,9 @@ Cell[CellGroupData[{
 Cell[BoxData[
  InterpretationBox[Cell[
   "Mass", "ExampleSubsection",ExpressionUUID->
-   "ef193c20-3ecb-492b-bc55-ef78765742c6"],
+   "4582aed4-f088-425f-9e09-b3aef2f205e4"],
   $Line = 0; Null]], "ExampleSubsection",
- CellID->1466480238,ExpressionUUID->"7e9affd1-a1f2-44ef-a322-08d346e34160"],
+ CellID->1466480238,ExpressionUUID->"b348a221-db30-468e-9d87-2ac24636ddc4"],
 
 Cell[TextData[{
  "The mass option is used to specify the label for the default mass of the \
@@ -1686,21 +1692,21 @@ field (used in ",
   ButtonBox["FreeLag",
    BaseStyle->"Link",
    ButtonData->"paclet:Matchete/ref/FreeLag"]], "InlineFormula",
-  ExpressionUUID->"063fdb06-bd5f-4e7e-99ea-2da93b6f87c4"],
+  ExpressionUUID->"301da79d-73f9-4964-992c-d2ce1d1b35d2"],
  ") and to inform the program whether the field is considered heavy or light \
 for the purposes of matching. "
 }], "ExampleText",
  CellChangeTimes->{{3.936234173814035*^9, 3.936234181652079*^9}, {
   3.936234240719589*^9, 3.936234324054881*^9}, {3.936234480226285*^9, 
   3.936234507449658*^9}},
- CellID->2017538067,ExpressionUUID->"2d3ea46b-89dc-418d-b3ae-491081f6270e"],
+ CellID->2017538067,ExpressionUUID->"51ff6891-ab73-4283-aedb-f73f2e3a5980"],
 
 Cell["\<\
 Specifying a heavy mass (the default), produces a generic mass label for the \
 field and sets it as heavy:\
 \>", "ExampleText",
  CellChangeTimes->{{3.9362346433859863`*^9, 3.9362346846284533`*^9}},
- CellID->2020412994,ExpressionUUID->"37d9f5bd-9b99-412e-b346-a840e4c5982e"],
+ CellID->2020412994,ExpressionUUID->"19339ff0-0cd9-481d-99b8-901cab670b9b"],
 
 Cell[CellGroupData[{
 
@@ -1714,91 +1720,71 @@ Cell[BoxData[{
   3.936234520617134*^9, 3.936234541602738*^9}, {3.936234584972938*^9, 
   3.936234586325568*^9}, {3.936234793704352*^9, 3.936234793997072*^9}},
  CellLabel->"In[35]:=",
- CellID->894756262,ExpressionUUID->"f8261051-6d37-46c1-8d8c-a6145b1ee58e"],
+ CellID->894756262,ExpressionUUID->"7e6b1247-3b6e-44e8-b740-a2574f2e903b"],
 
 Cell[BoxData[
  RowBox[{
   FormBox[
    RowBox[{
-    FormBox[
+    TagBox[
      FormBox[
-      TagBox[
-       FormBox[
-        TemplateBox[{
-          SubscriptBox["D", 
-           StyleBox[
-            TagBox[
-             FormBox[
-              FormBox[
-               StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
-               Matchete`NiceForm], Matchete`NiceForm], 
-             Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
-            False]], 
+      TemplateBox[{
+        SubscriptBox["D", 
+         StyleBox[
           TagBox[
-           FormBox[
-            OverscriptBox["\[Phi]1", "_"], StandardForm], StandardForm, 
-           Editable -> True]},
-         "RowDefault"],
-        StandardForm],
-       StandardForm,
-       Editable->True],
-      Matchete`NiceForm],
-     Matchete`NiceForm], 
-    FormBox[
-     TagBox[
-      FormBox[
-       TemplateBox[{
-         SubscriptBox["D", 
-          StyleBox[
-           TagBox[
-            FormBox[
-             FormBox[
-              StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
-              Matchete`NiceForm], Matchete`NiceForm], 
-            Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
-           False]], 
-         TagBox[
-          FormBox["\[Phi]1", StandardForm], StandardForm, Editable -> True]},
-        "RowDefault"],
-       StandardForm],
-      StandardForm,
-      Editable->True],
-     Matchete`NiceForm]}],
+           StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
+           Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
+          False]], 
+        TagBox[
+         FormBox[
+          OverscriptBox["\[Phi]1", "_"], StandardForm], StandardForm, 
+         Editable -> True]},
+       "RowDefault"],
+      StandardForm],
+     StandardForm,
+     Editable->True], 
+    TagBox[
+     FormBox[
+      TemplateBox[{
+        SubscriptBox["D", 
+         StyleBox[
+          TagBox[
+           StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
+           Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
+          False]], 
+        TagBox[
+         FormBox["\[Phi]1", StandardForm], StandardForm, Editable -> True]},
+       "RowDefault"],
+      StandardForm],
+     StandardForm,
+     Editable->True]}],
    StandardForm], "-", 
   FormBox[
    RowBox[{
     SuperscriptBox[
-     FormBox[
-      TagBox[
-       FormBox["M\[Phi]1",
-        StandardForm],
-       StandardForm,
-       Editable->True],
-      Matchete`NiceForm], 
-     FormBox["2",
-      StandardForm]], 
-    FormBox[
-     FormBox[
-      TagBox[
-       FormBox[
-        OverscriptBox["\[Phi]1", "_"],
-        StandardForm],
-       StandardForm,
-       Editable->True],
-      Matchete`NiceForm],
-     Matchete`NiceForm], 
-    FormBox[
      TagBox[
-      FormBox["\[Phi]1",
+      FormBox["M\[Phi]1",
        StandardForm],
       StandardForm,
-      Editable->True],
-     Matchete`NiceForm]}],
+      Editable->True], 
+     FormBox["2",
+      StandardForm]], 
+    TagBox[
+     FormBox[
+      OverscriptBox["\[Phi]1", "_"],
+      StandardForm],
+     StandardForm,
+     Editable->True], 
+    TagBox[
+     FormBox["\[Phi]1",
+      StandardForm],
+     StandardForm,
+     Editable->True]}],
    StandardForm]}]], "Output",
  CellChangeTimes->{3.936234794442905*^9, 3.936234999084469*^9, 
   3.93623687941105*^9, 3.936255847544386*^9},
  CellLabel->"Out[36]//NiceForm=",
- CellID->89924824,ExpressionUUID->"0cb40761-788d-496b-a286-992fe6ac184d"]
+ CellID->89924824,ExpressionUUID->"2f32c376-1a34-48c1-8a38-1bf8173c70ed"]
 }, Open  ]],
 
 Cell["\<\
@@ -1806,7 +1792,7 @@ In the associated field information, the field now appears with designation \
 heavy:\
 \>", "ExampleText",
  CellChangeTimes->{{3.936236838278865*^9, 3.9362368693967953`*^9}},
- CellID->1538616500,ExpressionUUID->"8b75d6da-d1f6-43d7-8bab-1f7f4288635e"],
+ CellID->1538616500,ExpressionUUID->"f8457280-adc3-45b1-b7ce-5823d187ba38"],
 
 Cell[CellGroupData[{
 
@@ -1814,7 +1800,7 @@ Cell[BoxData[
  RowBox[{"GetFields", "[", "\[Phi]1", "]"}]], "Input",
  CellChangeTimes->{{3.936236870933693*^9, 3.936236876034867*^9}},
  CellLabel->"In[37]:=",
- CellID->63141797,ExpressionUUID->"d09bc976-e1b7-4fd2-89c3-cd8130169613"],
+ CellID->63141797,ExpressionUUID->"b666e73a-97b2-4f53-8ee0-8b01a6378ddf"],
 
 Cell[BoxData[
  RowBox[{"\[LeftAssociation]", 
@@ -1832,7 +1818,7 @@ Cell[BoxData[
  CellChangeTimes->{{3.936236876979374*^9, 3.936236880946157*^9}, 
    3.936255848479124*^9},
  CellLabel->"Out[37]=",
- CellID->1586324529,ExpressionUUID->"a56aabbe-6db7-47fe-9c27-c4dc8410715f"]
+ CellID->1586324529,ExpressionUUID->"4511103b-b279-4057-a236-2af82dbd5238"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -1840,16 +1826,16 @@ Cell[CellGroupData[{
 Cell[BoxData[
  InterpretationBox[Cell[
   "\t", "ExampleDelimiter",ExpressionUUID->
-   "b65b3302-58cf-4bea-875c-5d1bd469ca40"],
+   "aa08acfe-d4b9-421f-be74-53a6de743dfa"],
   $Line = 0; Null]], "ExampleDelimiter",
- CellID->207610531,ExpressionUUID->"ef43b22e-2d22-4855-a9eb-cdff3ccee2d2"],
+ CellID->207610531,ExpressionUUID->"f418be80-40ad-4ed7-a216-231e7f533dec"],
 
 Cell["\<\
 Specifying a light mass (the default), produces a generic mass label for the \
 field and sets it as light:\
 \>", "ExampleText",
  CellChangeTimes->{{3.9362346893501377`*^9, 3.936234700296966*^9}},
- CellID->466207443,ExpressionUUID->"386a3da5-67ce-45f2-9751-cf16787bd16a"],
+ CellID->466207443,ExpressionUUID->"94f26c8b-4c5f-4e18-82ed-d68318a58fc7"],
 
 Cell[CellGroupData[{
 
@@ -1862,91 +1848,71 @@ Cell[BoxData[{
  CellChangeTimes->{{3.936234595583178*^9, 3.936234598429319*^9}, {
   3.936234786025537*^9, 3.936234786271455*^9}},
  CellLabel->"In[38]:=",
- CellID->418857143,ExpressionUUID->"2f0a2aae-96be-4e87-a31e-4f973cd973b2"],
+ CellID->418857143,ExpressionUUID->"c48d4900-6299-435e-834c-841e9f0b506b"],
 
 Cell[BoxData[
  RowBox[{
   FormBox[
    RowBox[{
-    FormBox[
+    TagBox[
      FormBox[
-      TagBox[
-       FormBox[
-        TemplateBox[{
-          SubscriptBox["D", 
-           StyleBox[
-            TagBox[
-             FormBox[
-              FormBox[
-               StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
-               Matchete`NiceForm], Matchete`NiceForm], 
-             Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
-            False]], 
+      TemplateBox[{
+        SubscriptBox["D", 
+         StyleBox[
           TagBox[
-           FormBox[
-            OverscriptBox["\[Phi]2", "_"], StandardForm], StandardForm, 
-           Editable -> True]},
-         "RowDefault"],
-        StandardForm],
-       StandardForm,
-       Editable->True],
-      Matchete`NiceForm],
-     Matchete`NiceForm], 
-    FormBox[
-     TagBox[
-      FormBox[
-       TemplateBox[{
-         SubscriptBox["D", 
-          StyleBox[
-           TagBox[
-            FormBox[
-             FormBox[
-              StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
-              Matchete`NiceForm], Matchete`NiceForm], 
-            Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
-           False]], 
-         TagBox[
-          FormBox["\[Phi]2", StandardForm], StandardForm, Editable -> True]},
-        "RowDefault"],
-       StandardForm],
-      StandardForm,
-      Editable->True],
-     Matchete`NiceForm]}],
+           StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
+           Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
+          False]], 
+        TagBox[
+         FormBox[
+          OverscriptBox["\[Phi]2", "_"], StandardForm], StandardForm, 
+         Editable -> True]},
+       "RowDefault"],
+      StandardForm],
+     StandardForm,
+     Editable->True], 
+    TagBox[
+     FormBox[
+      TemplateBox[{
+        SubscriptBox["D", 
+         StyleBox[
+          TagBox[
+           StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
+           Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
+          False]], 
+        TagBox[
+         FormBox["\[Phi]2", StandardForm], StandardForm, Editable -> True]},
+       "RowDefault"],
+      StandardForm],
+     StandardForm,
+     Editable->True]}],
    StandardForm], "-", 
   FormBox[
    RowBox[{
     SuperscriptBox[
-     FormBox[
-      TagBox[
-       FormBox["m\[Phi]2",
-        StandardForm],
-       StandardForm,
-       Editable->True],
-      Matchete`NiceForm], 
-     FormBox["2",
-      StandardForm]], 
-    FormBox[
-     FormBox[
-      TagBox[
-       FormBox[
-        OverscriptBox["\[Phi]2", "_"],
-        StandardForm],
-       StandardForm,
-       Editable->True],
-      Matchete`NiceForm],
-     Matchete`NiceForm], 
-    FormBox[
      TagBox[
-      FormBox["\[Phi]2",
+      FormBox["m\[Phi]2",
        StandardForm],
       StandardForm,
-      Editable->True],
-     Matchete`NiceForm]}],
+      Editable->True], 
+     FormBox["2",
+      StandardForm]], 
+    TagBox[
+     FormBox[
+      OverscriptBox["\[Phi]2", "_"],
+      StandardForm],
+     StandardForm,
+     Editable->True], 
+    TagBox[
+     FormBox["\[Phi]2",
+      StandardForm],
+     StandardForm,
+     Editable->True]}],
    StandardForm]}]], "Output",
  CellChangeTimes->{3.936234789253533*^9, 3.936235001156746*^9, 
   3.93623691015903*^9, 3.936255850584247*^9},
  CellLabel->"Out[39]//NiceForm=",
- CellID->616371251,ExpressionUUID->"b2c420ca-6eb5-4095-abb8-d8d630ff5e3b"]
+ CellID->616371251,ExpressionUUID->"e1df23d1-e475-4c77-baab-c0cac11d47ff"]
 }, Open  ]],
 
 Cell["\<\
@@ -1955,7 +1921,7 @@ light:\
 \>", "ExampleText",
  CellChangeTimes->{{3.936236838278865*^9, 3.9362368693967953`*^9}, {
   3.936236899521275*^9, 3.936236900040906*^9}},
- CellID->2001167366,ExpressionUUID->"fefc0555-dc8d-480f-b1df-ac4286ed01ac"],
+ CellID->2001167366,ExpressionUUID->"18fb3212-41f0-42ce-b0a2-d5b82158acfb"],
 
 Cell[CellGroupData[{
 
@@ -1964,7 +1930,7 @@ Cell[BoxData[
  CellChangeTimes->{{3.936236870933693*^9, 3.936236876034867*^9}, {
   3.936236907720583*^9, 3.936236907790569*^9}},
  CellLabel->"In[40]:=",
- CellID->1878524695,ExpressionUUID->"01d8fb70-2aa4-4baf-9268-1c0e36b0b532"],
+ CellID->1878524695,ExpressionUUID->"932ccf77-9dc1-4de9-a19c-8b3273f57b3c"],
 
 Cell[BoxData[
  RowBox[{"\[LeftAssociation]", 
@@ -1982,7 +1948,7 @@ Cell[BoxData[
  CellChangeTimes->{{3.936236876979374*^9, 3.936236880946157*^9}, 
    3.93623691106089*^9, 3.936255851643283*^9},
  CellLabel->"Out[40]=",
- CellID->999259248,ExpressionUUID->"e53557fc-820c-4d1e-b292-8f07d45abcad"]
+ CellID->999259248,ExpressionUUID->"f6d7c7a9-7afe-44d0-95bd-72915819545f"]
 }, Open  ]]
 }, Open  ]],
 
@@ -1991,9 +1957,9 @@ Cell[CellGroupData[{
 Cell[BoxData[
  InterpretationBox[Cell[
   "\t", "ExampleDelimiter",ExpressionUUID->
-   "54e44adc-4976-4ed3-84f6-35d58e5701dc"],
+   "460de184-4eb1-4c3b-9db1-550f1a3a83dd"],
   $Line = 0; Null]], "ExampleDelimiter",
- CellID->269869285,ExpressionUUID->"9685e30f-6942-4a8d-8113-2246bee991f0"],
+ CellID->269869285,ExpressionUUID->"c9b6cc08-2697-4649-91b8-c87189dd40d3"],
 
 Cell["\<\
 Setting the mass to zero also defines it as light, as would be expected. It \
@@ -2001,7 +1967,7 @@ ensures that no mass term is included in the free Lagrangian:\
 \>", "ExampleText",
  CellChangeTimes->{{3.936234730757624*^9, 3.936234770642239*^9}, {
   3.936234806187711*^9, 3.936234825666658*^9}},
- CellID->1126635636,ExpressionUUID->"40bce42d-db79-4d1a-bbfb-9138876c7bf8"],
+ CellID->1126635636,ExpressionUUID->"9c66d542-a396-4559-9f39-8b4cd3fd2e46"],
 
 Cell[CellGroupData[{
 
@@ -2013,58 +1979,46 @@ Cell[BoxData[{
   RowBox[{"FreeLag", "[", "\[Phi]3", "]"}], "//", "NiceForm"}]}], "Input",
  CellChangeTimes->{{3.936234776889377*^9, 3.936234798551577*^9}},
  CellLabel->"In[41]:=",
- CellID->2095068163,ExpressionUUID->"9aa34a50-dba2-4826-99fa-84769e330eda"],
+ CellID->2095068163,ExpressionUUID->"c8057192-8b53-46c4-89d3-07fb0f81f48c"],
 
 Cell[BoxData[
  RowBox[{
-  FormBox[
+  TagBox[
    FormBox[
-    TagBox[
-     FormBox[
-      TemplateBox[{
-        SubscriptBox["D", 
-         StyleBox[
-          TagBox[
-           FormBox[
-            FormBox[
-             StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
-             Matchete`NiceForm], Matchete`NiceForm], 
-           Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
-          False]], 
+    TemplateBox[{
+      SubscriptBox["D", 
+       StyleBox[
         TagBox[
-         FormBox[
-          OverscriptBox["\[Phi]3", "_"], StandardForm], StandardForm, 
-         Editable -> True]},
-       "RowDefault"],
-      StandardForm],
-     StandardForm,
-     Editable->True],
-    Matchete`NiceForm],
-   Matchete`NiceForm], 
-  FormBox[
-   TagBox[
-    FormBox[
-     TemplateBox[{
-       SubscriptBox["D", 
-        StyleBox[
-         TagBox[
-          FormBox[
-           FormBox[
-            StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
-            Matchete`NiceForm], Matchete`NiceForm], 
-          Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
-         False]], 
-       TagBox[
-        FormBox["\[Phi]3", StandardForm], StandardForm, Editable -> True]},
-      "RowDefault"],
-     StandardForm],
-    StandardForm,
-    Editable->True],
-   Matchete`NiceForm]}]], "Output",
+         StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
+         Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
+        False]], 
+      TagBox[
+       FormBox[
+        OverscriptBox["\[Phi]3", "_"], StandardForm], StandardForm, Editable -> 
+       True]},
+     "RowDefault"],
+    StandardForm],
+   StandardForm,
+   Editable->True], 
+  TagBox[
+   FormBox[
+    TemplateBox[{
+      SubscriptBox["D", 
+       StyleBox[
+        TagBox[
+         StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
+         Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
+        False]], 
+      TagBox[
+       FormBox["\[Phi]3", StandardForm], StandardForm, Editable -> True]},
+     "RowDefault"],
+    StandardForm],
+   StandardForm,
+   Editable->True]}]], "Output",
  CellChangeTimes->{3.9362347989069033`*^9, 3.936235002951473*^9, 
   3.9362558539636106`*^9},
  CellLabel->"Out[42]//NiceForm=",
- CellID->1905366304,ExpressionUUID->"430a587e-6e2f-4300-93c6-c2f042560c57"]
+ CellID->1905366304,ExpressionUUID->"41c29b0b-bdfb-4daa-8b71-737fa1417f97"]
 }, Open  ]]
 }, Open  ]],
 
@@ -2073,9 +2027,9 @@ Cell[CellGroupData[{
 Cell[BoxData[
  InterpretationBox[Cell[
   "\t", "ExampleDelimiter",ExpressionUUID->
-   "a75e8f94-b023-4726-b2e0-db9cf6c18d02"],
+   "ce6ab7b1-fa31-4a6e-b097-ca20f5bbc40d"],
   $Line = 0; Null]], "ExampleDelimiter",
- CellID->1602579273,ExpressionUUID->"96736807-b7e9-41fa-bb57-b3c193d7e184"],
+ CellID->1602579273,ExpressionUUID->"254ec3a7-dafc-40a8-94eb-1eb6c1bd946f"],
 
 Cell[TextData[{
  "To use a custom mass label rather than the generic one, one has to specify \
@@ -2084,18 +2038,18 @@ the label in addition to ",
   ButtonBox["Light",
    BaseStyle->"Link",
    ButtonData->"paclet:Matchete/ref/Light"]], "InlineFormula",ExpressionUUID->
-  "6749b73f-daab-4357-a5ae-4cbef4310da6"],
+  "993a7350-215a-461b-8274-c9af6de24074"],
  " or ",
  Cell[BoxData[
   ButtonBox["Heavy",
    BaseStyle->"Link",
    ButtonData->"paclet:Matchete/ref/Heavy"]], "InlineFormula",ExpressionUUID->
-  "d82ee588-cceb-4277-a68a-792d29dec093"],
+  "49a3ab5e-cef5-4f31-8093-bfd8deeac691"],
  ". For instance,"
 }], "ExampleText",
  CellChangeTimes->{{3.936234841636757*^9, 3.936234943224601*^9}, {
    3.93623505157476*^9, 3.936235053341755*^9}, 3.9362558594105463`*^9},
- CellID->608002130,ExpressionUUID->"6f063830-81aa-4949-aa97-3ddf5266bb6a"],
+ CellID->608002130,ExpressionUUID->"94664ecc-6220-4930-96d1-9f0a703d11cf"],
 
 Cell[CellGroupData[{
 
@@ -2104,97 +2058,76 @@ Cell[BoxData[{
   RowBox[{"\[Phi]4", ",", "Scalar", ",", 
    RowBox[{"Mass", "\[Rule]", 
     RowBox[{"{", 
-     RowBox[{"Light", ",", " ", "mCustom"}], "}"}]}]}], 
-  "]"}], "\[IndentingNewLine]", 
+     RowBox[{"Light", ",", " ", "mCustom"}], "}"}]}]}], "]"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"FreeLag", "[", "\[Phi]4", "]"}], "//", "NiceForm"}]}], "Input",
  CellChangeTimes->{{3.9362350604779863`*^9, 3.936235082668168*^9}},
  CellLabel->"In[43]:=",
- CellID->433390069,ExpressionUUID->"6c1d64d6-baa3-4f90-a6db-4f63cd63a595"],
+ CellID->433390069,ExpressionUUID->"663c0cdf-1ea4-475a-b231-7e8015ff124a"],
 
 Cell[BoxData[
  RowBox[{
   FormBox[
    RowBox[{
-    FormBox[
+    TagBox[
      FormBox[
-      TagBox[
-       FormBox[
-        TemplateBox[{
-          SubscriptBox["D", 
-           StyleBox[
-            TagBox[
-             FormBox[
-              FormBox[
-               StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
-               Matchete`NiceForm], Matchete`NiceForm], 
-             Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
-            False]], 
+      TemplateBox[{
+        SubscriptBox["D", 
+         StyleBox[
           TagBox[
-           FormBox[
-            OverscriptBox["\[Phi]4", "_"], StandardForm], StandardForm, 
-           Editable -> True]},
-         "RowDefault"],
-        StandardForm],
-       StandardForm,
-       Editable->True],
-      Matchete`NiceForm],
-     Matchete`NiceForm], 
-    FormBox[
-     TagBox[
-      FormBox[
-       TemplateBox[{
-         SubscriptBox["D", 
-          StyleBox[
-           TagBox[
-            FormBox[
-             FormBox[
-              StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
-              Matchete`NiceForm], Matchete`NiceForm], 
-            Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
-           False]], 
-         TagBox[
-          FormBox["\[Phi]4", StandardForm], StandardForm, Editable -> True]},
-        "RowDefault"],
-       StandardForm],
-      StandardForm,
-      Editable->True],
-     Matchete`NiceForm]}],
+           StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
+           Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
+          False]], 
+        TagBox[
+         FormBox[
+          OverscriptBox["\[Phi]4", "_"], StandardForm], StandardForm, 
+         Editable -> True]},
+       "RowDefault"],
+      StandardForm],
+     StandardForm,
+     Editable->True], 
+    TagBox[
+     FormBox[
+      TemplateBox[{
+        SubscriptBox["D", 
+         StyleBox[
+          TagBox[
+           StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
+           Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
+          False]], 
+        TagBox[
+         FormBox["\[Phi]4", StandardForm], StandardForm, Editable -> True]},
+       "RowDefault"],
+      StandardForm],
+     StandardForm,
+     Editable->True]}],
    StandardForm], "-", 
   FormBox[
    RowBox[{
     SuperscriptBox[
-     FormBox[
-      TagBox[
-       FormBox["mCustom",
-        StandardForm],
-       StandardForm,
-       Editable->True],
-      Matchete`NiceForm], 
-     FormBox["2",
-      StandardForm]], 
-    FormBox[
-     FormBox[
-      TagBox[
-       FormBox[
-        OverscriptBox["\[Phi]4", "_"],
-        StandardForm],
-       StandardForm,
-       Editable->True],
-      Matchete`NiceForm],
-     Matchete`NiceForm], 
-    FormBox[
      TagBox[
-      FormBox["\[Phi]4",
+      FormBox["mCustom",
        StandardForm],
       StandardForm,
-      Editable->True],
-     Matchete`NiceForm]}],
+      Editable->True], 
+     FormBox["2",
+      StandardForm]], 
+    TagBox[
+     FormBox[
+      OverscriptBox["\[Phi]4", "_"],
+      StandardForm],
+     StandardForm,
+     Editable->True], 
+    TagBox[
+     FormBox["\[Phi]4",
+      StandardForm],
+     StandardForm,
+     Editable->True]}],
    StandardForm]}]], "Output",
  CellChangeTimes->{{3.936235076287567*^9, 3.9362350829266148`*^9}, 
    3.9362558564200077`*^9},
  CellLabel->"Out[44]//NiceForm=",
- CellID->2084312989,ExpressionUUID->"1a0f735f-c6c3-4c0b-be0b-01382138000a"]
+ CellID->2084312989,ExpressionUUID->"c14f9141-e30b-425e-a26d-474bf19b1e26"]
 }, Open  ]]
 }, Open  ]],
 
@@ -2203,9 +2136,9 @@ Cell[CellGroupData[{
 Cell[BoxData[
  InterpretationBox[Cell[
   "\t", "ExampleDelimiter",ExpressionUUID->
-   "08125698-43b1-48a0-bf7f-acaa282329f5"],
+   "26799d5d-c700-4cd3-b9b1-170c276b0dc8"],
   $Line = 0; Null]], "ExampleDelimiter",
- CellID->1047250718,ExpressionUUID->"b6b14550-9225-4fe4-aafd-d2e8deeecdb5"],
+ CellID->1047250718,ExpressionUUID->"b1b8d1b7-a6c3-4105-8572-71a0d86821b2"],
 
 Cell["\<\
 When the field has a flavor index, it will default to the assumption of a \
@@ -2214,7 +2147,7 @@ flavor universal mass: \
  CellChangeTimes->{{3.936235142982051*^9, 3.936235169789105*^9}, {
   3.936235247281514*^9, 3.936235262074067*^9}, {3.936235320513081*^9, 
   3.936235326717791*^9}},
- CellID->165490961,ExpressionUUID->"a49810c9-f9e0-4fb2-a094-6c7454f77b46"],
+ CellID->165490961,ExpressionUUID->"e310e9df-90d5-404a-89b1-c31c6bb3d6f0"],
 
 Cell[CellGroupData[{
 
@@ -2227,129 +2160,99 @@ Cell[BoxData[{
   RowBox[{"FreeLag", "[", "\[Phi]5", "]"}], "//", "NiceForm"}]}], "Input",
  CellChangeTimes->{{3.93623517903166*^9, 3.936235209049174*^9}},
  CellLabel->"In[45]:=",
- CellID->858535998,ExpressionUUID->"4f9feb05-35b0-430d-b812-465af25cdca5"],
+ CellID->858535998,ExpressionUUID->"80d5cbe8-084e-4df1-b998-8d4dc912c27a"],
 
 Cell[BoxData[
  RowBox[{
   FormBox[
    RowBox[{
-    FormBox[
+    TagBox[
      FormBox[
-      TagBox[
-       FormBox[
+      TemplateBox[{
+        SubscriptBox["D", 
+         StyleBox[
+          TagBox[
+           StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
+           Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
+          False]], 
         TemplateBox[{
-          SubscriptBox["D", 
-           StyleBox[
-            TagBox[
-             FormBox[
-              FormBox[
-               StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
-               Matchete`NiceForm], Matchete`NiceForm], 
-             Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
-            False]], 
-          TemplateBox[{
-            TagBox[
-             FormBox[
-              OverscriptBox["\[Phi]5", "_"], StandardForm], StandardForm, 
-             Editable -> True], 
-            StyleBox[
-             TemplateBox[{
-               TagBox[
-                FormBox[
-                 FormBox[
-                  StyleBox["\"p\"", 10, StripOnInput -> False], 
-                  Matchete`NiceForm], Matchete`NiceForm], 
-                Format[#, Matchete`NiceForm]& ]}, "RowDefault"], FontSize -> 
-             12, StripOnInput -> False]}, "Superscript", SyntaxForm -> 
-           SuperscriptBox]},
-         "RowDefault"],
-        StandardForm],
-       StandardForm,
-       Editable->True],
-      Matchete`NiceForm],
-     Matchete`NiceForm], 
-    FormBox[
-     TagBox[
-      FormBox[
-       TemplateBox[{
-         SubscriptBox["D", 
+          TagBox[
+           FormBox[
+            OverscriptBox["\[Phi]5", "_"], StandardForm], StandardForm, 
+           Editable -> True], 
           StyleBox[
-           TagBox[
-            FormBox[
-             FormBox[
-              StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
-              Matchete`NiceForm], Matchete`NiceForm], 
-            Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
-           False]], 
-         TemplateBox[{
-           TagBox[
-            FormBox["\[Phi]5", StandardForm], StandardForm, Editable -> True], 
-           StyleBox[
-            TemplateBox[{
-              TagBox[
-               FormBox[
-                FormBox[
-                 StyleBox["\"p\"", 10, StripOnInput -> False], 
-                 Matchete`NiceForm], Matchete`NiceForm], 
-               Format[#, Matchete`NiceForm]& ]}, "RowDefault"], FontSize -> 
-            12, StripOnInput -> False]}, "Superscript", SyntaxForm -> 
-          SuperscriptBox]},
-        "RowDefault"],
-       StandardForm],
-      StandardForm,
-      Editable->True],
-     Matchete`NiceForm]}],
+           TemplateBox[{
+             TagBox[
+              StyleBox["\"p\"", 10, StripOnInput -> False], 
+              Format[#, Matchete`NiceForm]& ]}, "RowDefault"], FontSize -> 12,
+            StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+         SuperscriptBox]},
+       "RowDefault"],
+      StandardForm],
+     StandardForm,
+     Editable->True], 
+    TagBox[
+     FormBox[
+      TemplateBox[{
+        SubscriptBox["D", 
+         StyleBox[
+          TagBox[
+           StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
+           Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
+          False]], 
+        TemplateBox[{
+          TagBox[
+           FormBox["\[Phi]5", StandardForm], StandardForm, Editable -> True], 
+          
+          StyleBox[
+           TemplateBox[{
+             TagBox[
+              StyleBox["\"p\"", 10, StripOnInput -> False], 
+              Format[#, Matchete`NiceForm]& ]}, "RowDefault"], FontSize -> 12,
+            StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+         SuperscriptBox]},
+       "RowDefault"],
+      StandardForm],
+     StandardForm,
+     Editable->True]}],
    StandardForm], "-", 
   FormBox[
    RowBox[{
     SuperscriptBox[
-     FormBox[
-      TagBox[
-       FormBox["M\[Phi]5",
-        StandardForm],
-       StandardForm,
-       Editable->True],
-      Matchete`NiceForm], 
+     TagBox[
+      FormBox["M\[Phi]5",
+       StandardForm],
+      StandardForm,
+      Editable->True], 
      FormBox["2",
       StandardForm]], 
-    FormBox[
-     FormBox[
-      TemplateBox[{
-        TagBox[
-         FormBox[
-          OverscriptBox["\[Phi]5", "_"], StandardForm], StandardForm, 
-         Editable -> True], 
-        StyleBox[
-         TemplateBox[{
-           TagBox[
-            FormBox[
-             FormBox[
-              StyleBox["\"p\"", 10, StripOnInput -> False], 
-              Matchete`NiceForm], Matchete`NiceForm], 
-            Format[#, Matchete`NiceForm]& ]}, "RowDefault"], FontSize -> 12, 
-         StripOnInput -> False]},
-       "Superscript"],
-      Matchete`NiceForm],
-     Matchete`NiceForm], 
-    FormBox[
-     TemplateBox[{
-       TagBox[
-        FormBox["\[Phi]5", StandardForm], StandardForm, Editable -> True], 
-       StyleBox[
-        TemplateBox[{
-          TagBox[
-           FormBox[
-            FormBox[
-             StyleBox["\"p\"", 10, StripOnInput -> False], Matchete`NiceForm],
-             Matchete`NiceForm], Format[#, Matchete`NiceForm]& ]}, 
-         "RowDefault"], FontSize -> 12, StripOnInput -> False]},
-      "Superscript"],
-     Matchete`NiceForm]}],
+    TemplateBox[{
+      TagBox[
+       FormBox[
+        OverscriptBox["\[Phi]5", "_"], StandardForm], StandardForm, Editable -> 
+       True], 
+      StyleBox[
+       TemplateBox[{
+         TagBox[
+          StyleBox["\"p\"", 10, StripOnInput -> False], 
+          Format[#, Matchete`NiceForm]& ]}, "RowDefault"], FontSize -> 12, 
+       StripOnInput -> False]},
+     "Superscript"], 
+    TemplateBox[{
+      TagBox[
+       FormBox["\[Phi]5", StandardForm], StandardForm, Editable -> True], 
+      StyleBox[
+       TemplateBox[{
+         TagBox[
+          StyleBox["\"p\"", 10, StripOnInput -> False], 
+          Format[#, Matchete`NiceForm]& ]}, "RowDefault"], FontSize -> 12, 
+       StripOnInput -> False]},
+     "Superscript"]}],
    StandardForm]}]], "Output",
  CellChangeTimes->{{3.936235203380619*^9, 3.936235225961257*^9}, 
    3.93625585784832*^9},
  CellLabel->"Out[46]//NiceForm=",
- CellID->1370896528,ExpressionUUID->"b2df13c9-f18a-45d7-a599-45f39b801ab5"]
+ CellID->1370896528,ExpressionUUID->"244f6750-c758-4989-823e-6c4d62a7b050"]
 }, Open  ]],
 
 Cell[TextData[{
@@ -2362,7 +2265,7 @@ receives just a single diagonal index. "
  CellChangeTimes->{{3.9362352703434553`*^9, 3.936235273014801*^9}, 
    3.936235329839453*^9, {3.936235793377103*^9, 3.9362359322139063`*^9}, {
    3.936254740359593*^9, 3.936254745071072*^9}},
- CellID->89187122,ExpressionUUID->"d7237c10-637d-4e6b-ad4a-be807b668b7c"],
+ CellID->89187122,ExpressionUUID->"6a8d5410-36eb-4e41-a2fd-77702cba1805"],
 
 Cell[CellGroupData[{
 
@@ -2379,137 +2282,104 @@ Cell[BoxData[{
  CellChangeTimes->{{3.936235282425967*^9, 3.936235305887908*^9}, {
   3.936235820049842*^9, 3.9362358206014137`*^9}},
  CellLabel->"In[47]:=",
- CellID->369127959,ExpressionUUID->"332a7248-e23c-44aa-a8ea-b693f4e64ea8"],
+ CellID->369127959,ExpressionUUID->"f5955998-1669-4fa3-83ab-289c2a0be739"],
 
 Cell[BoxData[
  RowBox[{
   FormBox[
    RowBox[{
-    FormBox[
+    TagBox[
      FormBox[
-      TagBox[
-       FormBox[
+      TemplateBox[{
+        SubscriptBox["D", 
+         StyleBox[
+          TagBox[
+           StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
+           Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
+          False]], 
         TemplateBox[{
-          SubscriptBox["D", 
-           StyleBox[
-            TagBox[
-             FormBox[
-              FormBox[
-               StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
-               Matchete`NiceForm], Matchete`NiceForm], 
-             Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
-            False]], 
-          TemplateBox[{
-            TagBox[
-             FormBox[
-              OverscriptBox["\[Phi]6", "_"], StandardForm], StandardForm, 
-             Editable -> True], 
-            StyleBox[
-             TemplateBox[{
-               TagBox[
-                FormBox[
-                 FormBox[
-                  StyleBox["\"p\"", 10, StripOnInput -> False], 
-                  Matchete`NiceForm], Matchete`NiceForm], 
-                Format[#, Matchete`NiceForm]& ]}, "RowDefault"], FontSize -> 
-             12, StripOnInput -> False]}, "Superscript", SyntaxForm -> 
-           SuperscriptBox]},
-         "RowDefault"],
-        StandardForm],
-       StandardForm,
-       Editable->True],
-      Matchete`NiceForm],
-     Matchete`NiceForm], 
-    FormBox[
-     TagBox[
-      FormBox[
-       TemplateBox[{
-         SubscriptBox["D", 
+          TagBox[
+           FormBox[
+            OverscriptBox["\[Phi]6", "_"], StandardForm], StandardForm, 
+           Editable -> True], 
           StyleBox[
-           TagBox[
-            FormBox[
-             FormBox[
-              StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
-              Matchete`NiceForm], Matchete`NiceForm], 
-            Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
-           False]], 
-         TemplateBox[{
-           TagBox[
-            FormBox["\[Phi]6", StandardForm], StandardForm, Editable -> True], 
-           StyleBox[
-            TemplateBox[{
-              TagBox[
-               FormBox[
-                FormBox[
-                 StyleBox["\"p\"", 10, StripOnInput -> False], 
-                 Matchete`NiceForm], Matchete`NiceForm], 
-               Format[#, Matchete`NiceForm]& ]}, "RowDefault"], FontSize -> 
-            12, StripOnInput -> False]}, "Superscript", SyntaxForm -> 
-          SuperscriptBox]},
-        "RowDefault"],
-       StandardForm],
-      StandardForm,
-      Editable->True],
-     Matchete`NiceForm]}],
+           TemplateBox[{
+             TagBox[
+              StyleBox["\"p\"", 10, StripOnInput -> False], 
+              Format[#, Matchete`NiceForm]& ]}, "RowDefault"], FontSize -> 12,
+            StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+         SuperscriptBox]},
+       "RowDefault"],
+      StandardForm],
+     StandardForm,
+     Editable->True], 
+    TagBox[
+     FormBox[
+      TemplateBox[{
+        SubscriptBox["D", 
+         StyleBox[
+          TagBox[
+           StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
+           Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
+          False]], 
+        TemplateBox[{
+          TagBox[
+           FormBox["\[Phi]6", StandardForm], StandardForm, Editable -> True], 
+          
+          StyleBox[
+           TemplateBox[{
+             TagBox[
+              StyleBox["\"p\"", 10, StripOnInput -> False], 
+              Format[#, Matchete`NiceForm]& ]}, "RowDefault"], FontSize -> 12,
+            StripOnInput -> False]}, "Superscript", SyntaxForm -> 
+         SuperscriptBox]},
+       "RowDefault"],
+      StandardForm],
+     StandardForm,
+     Editable->True]}],
    StandardForm], "-", 
   FormBox[
    RowBox[{
     SuperscriptBox[
-     FormBox[
-      TemplateBox[{
-        TagBox[
-         FormBox["M\[Phi]6", StandardForm], StandardForm, Editable -> True], 
-        StyleBox[
-         TemplateBox[{
-           TagBox[
-            FormBox[
-             FormBox[
-              StyleBox["\"p\"", 10, StripOnInput -> False], 
-              Matchete`NiceForm], Matchete`NiceForm], 
-            Format[#, Matchete`NiceForm]& ]}, "RowDefault"], FontSize -> 12, 
-         StripOnInput -> False]},
-       "Superscript"],
-      Matchete`NiceForm], 
-     FormBox["2",
-      StandardForm]], 
-    FormBox[
-     FormBox[
-      TemplateBox[{
-        TagBox[
-         FormBox[
-          OverscriptBox["\[Phi]6", "_"], StandardForm], StandardForm, 
-         Editable -> True], 
-        StyleBox[
-         TemplateBox[{
-           TagBox[
-            FormBox[
-             FormBox[
-              StyleBox["\"p\"", 10, StripOnInput -> False], 
-              Matchete`NiceForm], Matchete`NiceForm], 
-            Format[#, Matchete`NiceForm]& ]}, "RowDefault"], FontSize -> 12, 
-         StripOnInput -> False]},
-       "Superscript"],
-      Matchete`NiceForm],
-     Matchete`NiceForm], 
-    FormBox[
      TemplateBox[{
        TagBox[
-        FormBox["\[Phi]6", StandardForm], StandardForm, Editable -> True], 
+        FormBox["M\[Phi]6", StandardForm], StandardForm, Editable -> True], 
        StyleBox[
         TemplateBox[{
           TagBox[
-           FormBox[
-            FormBox[
-             StyleBox["\"p\"", 10, StripOnInput -> False], Matchete`NiceForm],
-             Matchete`NiceForm], Format[#, Matchete`NiceForm]& ]}, 
-         "RowDefault"], FontSize -> 12, StripOnInput -> False]},
-      "Superscript"],
-     Matchete`NiceForm]}],
+           StyleBox["\"p\"", 10, StripOnInput -> False], 
+           Format[#, Matchete`NiceForm]& ]}, "RowDefault"], FontSize -> 12, 
+        StripOnInput -> False]},
+      "Superscript"], 
+     FormBox["2",
+      StandardForm]], 
+    TemplateBox[{
+      TagBox[
+       FormBox[
+        OverscriptBox["\[Phi]6", "_"], StandardForm], StandardForm, Editable -> 
+       True], 
+      StyleBox[
+       TemplateBox[{
+         TagBox[
+          StyleBox["\"p\"", 10, StripOnInput -> False], 
+          Format[#, Matchete`NiceForm]& ]}, "RowDefault"], FontSize -> 12, 
+       StripOnInput -> False]},
+     "Superscript"], 
+    TemplateBox[{
+      TagBox[
+       FormBox["\[Phi]6", StandardForm], StandardForm, Editable -> True], 
+      StyleBox[
+       TemplateBox[{
+         TagBox[
+          StyleBox["\"p\"", 10, StripOnInput -> False], 
+          Format[#, Matchete`NiceForm]& ]}, "RowDefault"], FontSize -> 12, 
+       StripOnInput -> False]},
+     "Superscript"]}],
    StandardForm]}]], "Output",
  CellChangeTimes->{3.936235306119821*^9, 3.936236234063671*^9, 
   3.936255861923624*^9},
  CellLabel->"Out[48]//NiceForm=",
- CellID->1061908,ExpressionUUID->"78aafa99-eee4-4171-8a11-5153bb5a5e49"]
+ CellID->1061908,ExpressionUUID->"f004c8e7-8e68-4342-a697-18f4be8c5be8"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
@@ -2519,9 +2389,9 @@ Cell[CellGroupData[{
 Cell[BoxData[
  InterpretationBox[Cell[
   "NiceForm", "ExampleSubsection",ExpressionUUID->
-   "c33170a4-8cf9-4ac7-89a0-0fe78c451cfa"],
+   "3fddbbcc-599a-4265-85f8-daafbf5a9204"],
   $Line = 0; Null]], "ExampleSubsection",
- CellID->463543447,ExpressionUUID->"70902518-8ac5-4f29-ba62-877d40e91533"],
+ CellID->463543447,ExpressionUUID->"8e571087-f28d-412f-956b-96c583451b77"],
 
 Cell[TextData[{
  "The NiceForm option provides the possibility of defining how the field is \
@@ -2530,33 +2400,34 @@ displayed in ",
   ButtonBox["NiceForm",
    BaseStyle->"Link",
    ButtonData->"paclet:Matchete/ref/NiceForm"]], "InlineFormula",
-  ExpressionUUID->"8fa7523d-4566-45d4-a71e-df7710ad980d"],
+  ExpressionUUID->"b2afa423-0dfa-4361-b4d0-e809670a4f46"],
  ". The Default choice uses the ",
  Cell[BoxData[
   StyleBox["label", "TI"]], "InlineFormula",ExpressionUUID->
-  "54dc9fcd-9758-4a09-b35e-6bb026de1ea6"],
+  "86f8e3a8-e752-4a09-a2b6-4689c62cd935"],
  " for the field in ",
  Cell[BoxData[
   ButtonBox["NiceForm",
    BaseStyle->"Link",
    ButtonData->"paclet:Matchete/ref/NiceForm"]], "InlineFormula",
-  ExpressionUUID->"04341863-21ba-48f3-a6be-30010dae3e39"],
+  ExpressionUUID->"e85c29cf-114b-40c4-99f9-abaaef451ff0"],
  ", but this can be changed  "
 }], "ExampleText",
  CellChangeTimes->{{3.936254838409404*^9, 3.936254975204034*^9}, 
    3.9362557594072657`*^9},
- CellID->1938111257,ExpressionUUID->"caa97ba7-bea9-44a6-afaa-4e9efb1eb63a"],
+ CellID->1938111257,ExpressionUUID->"14da36df-3e04-4e59-85e4-df5c57fe2626"],
 
 Cell[BoxData[
  RowBox[{"DefineField", "[", 
   RowBox[{"f1", ",", "Scalar", ",", 
    RowBox[{
-   "NiceForm", "\[Rule]", 
-    "\"\<\!\(\*SubscriptBox[\(\[Phi]\), \(f\)]\)\>\""}]}], "]"}]], "Input",
+   "NiceForm", 
+    "\[Rule]", "\"\<\!\(\*SubscriptBox[\(\[Phi]\), \(f\)]\)\>\""}]}], 
+  "]"}]], "Input",
  CellChangeTimes->{{3.936254989802463*^9, 3.936255030164218*^9}, 
    3.936255191406528*^9},
  CellLabel->"In[49]:=",
- CellID->1762011999,ExpressionUUID->"f4bf92a5-890a-404a-8908-a477d4b7f186"],
+ CellID->1762011999,ExpressionUUID->"b1619ee1-b21c-4d91-8bd9-00ca8d4c2050"],
 
 Cell[TextData[{
  "This does not change the internal representation of the field ",
@@ -2566,11 +2437,11 @@ Cell[TextData[{
   ButtonBox["NiceForm",
    BaseStyle->"Link",
    ButtonData->"paclet:Matchete/ref/NiceForm"]], "InlineFormula",
-  ExpressionUUID->"d6c44154-b555-4e24-8466-1eda69606e68"],
+  ExpressionUUID->"2dc13d1f-8e40-4e69-b82b-90248482e629"],
  " display"
 }], "ExampleText",
  CellChangeTimes->{{3.936255042331747*^9, 3.936255102571094*^9}},
- CellID->222961595,ExpressionUUID->"37a3a1ba-18e1-4971-9dfa-88cd7202fc2e"],
+ CellID->222961595,ExpressionUUID->"9f744894-db5a-4121-999d-e6fc851d8cd1"],
 
 Cell[CellGroupData[{
 
@@ -2582,7 +2453,7 @@ Cell[BoxData[{
   3.9362551059091263`*^9, 3.936255110422619*^9}, {3.936255193801759*^9, 
   3.936255194676895*^9}},
  CellLabel->"In[50]:=",
- CellID->500355107,ExpressionUUID->"134808af-b84d-4817-9ec9-19c513526550"],
+ CellID->500355107,ExpressionUUID->"c4ca27f5-3f58-4aa1-ac4d-8d3b7b4e608e"],
 
 Cell[BoxData[
  RowBox[{"Field", "[", 
@@ -2592,19 +2463,18 @@ Cell[BoxData[
  CellChangeTimes->{3.936255110879747*^9, 3.936255198960681*^9, 
   3.936255864737465*^9},
  CellLabel->"Out[50]=",
- CellID->19032739,ExpressionUUID->"8149c8f8-7ef3-4e89-b21d-ebe076e127bb"],
+ CellID->19032739,ExpressionUUID->"902898c6-1c6c-4f62-b13d-35115034f871"],
 
 Cell[BoxData[
- FormBox[
-  TagBox[
-   FormBox["\<\"\\!\\(\\*SubscriptBox[\\(\[Phi]\\), \\(f\\)]\\)\"\>",
-    StandardForm],
-   StandardForm,
-   Editable->True], Matchete`NiceForm]], "Output",
+ TagBox[
+  FormBox["\<\"\\!\\(\\*SubscriptBox[\\(\[Phi]\\), \\(f\\)]\\)\"\>",
+   StandardForm],
+  StandardForm,
+  Editable->True]], "Output",
  CellChangeTimes->{3.936255110879747*^9, 3.936255198960681*^9, 
   3.936255864738183*^9},
  CellLabel->"Out[51]//NiceForm=",
- CellID->2055664617,ExpressionUUID->"ec81c760-d393-4c10-aaf8-3b5f4439c0e8"]
+ CellID->2055664617,ExpressionUUID->"280d6746-f38a-41e0-a9e2-cf6fb966fa51"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -2612,28 +2482,27 @@ Cell[CellGroupData[{
 Cell[BoxData[
  InterpretationBox[Cell[
   "\t", "ExampleDelimiter",ExpressionUUID->
-   "08bd1597-d69d-4abb-ad94-d00daca933a0"],
+   "3ec128f4-a586-4a84-b0ae-7956bc396cf6"],
   $Line = 0; Null]], "ExampleDelimiter",
- CellID->1985818634,ExpressionUUID->"2ea5f8f2-ed5b-4432-b527-884b72091014"],
+ CellID->1985818634,ExpressionUUID->"4160d4a6-5d58-418d-85ad-adb9a5f4e99f"],
 
 Cell["\<\
 We can control also the display of the mass, by giving a list of two strings \
 to the option:\
 \>", "ExampleText",
  CellChangeTimes->{{3.936255118196741*^9, 3.9362551829263887`*^9}},
- CellID->1227897984,ExpressionUUID->"94826903-3f07-4fcb-a10d-6424e49cf38c"],
+ CellID->1227897984,ExpressionUUID->"e93c07d3-72b0-4c53-95e8-ea4e4f7b50fb"],
 
 Cell[BoxData[
  RowBox[{"DefineField", "[", 
   RowBox[{"f2", ",", " ", "Scalar", ",", " ", 
    RowBox[{"NiceForm", "\[Rule]", " ", 
     RowBox[{"{", 
-     RowBox[{
-     "\"\<\!\(\*SubscriptBox[\(\[Phi]\), \(f\)]\)\>\"", ",", " ", 
-      "\"\<m\[Phi]\>\""}], "}"}]}]}], "]"}]], "Input",
+     RowBox[{"\"\<\!\(\*SubscriptBox[\(\[Phi]\), \(f\)]\)\>\"", ",", 
+      " ", "\"\<m\[Phi]\>\""}], "}"}]}]}], "]"}]], "Input",
  CellChangeTimes->{{3.936255621955329*^9, 3.936255668272448*^9}},
  CellLabel->"In[52]:=",
- CellID->1562574200,ExpressionUUID->"a1cde6da-44b9-4607-8ee9-adec59d367fd"],
+ CellID->1562574200,ExpressionUUID->"03ec2efa-ccc5-46ba-bc8c-627a85f5bc9e"],
 
 Cell[CellGroupData[{
 
@@ -2642,94 +2511,74 @@ Cell[BoxData[
   RowBox[{"FreeLag", "[", "f2", "]"}], "//", "NiceForm"}]], "Input",
  CellChangeTimes->{{3.936255671189101*^9, 3.936255680843787*^9}},
  CellLabel->"In[53]:=",
- CellID->1163616493,ExpressionUUID->"33a8d728-f469-4d71-b49c-f4a4d08d6a38"],
+ CellID->1163616493,ExpressionUUID->"a085c84c-6cbb-4ce0-89d5-414fd25e887b"],
 
 Cell[BoxData[
  RowBox[{
   FormBox[
    RowBox[{
-    FormBox[
+    TagBox[
      FormBox[
-      TagBox[
-       FormBox[
-        TemplateBox[{
-          SubscriptBox["D", 
-           StyleBox[
-            TagBox[
-             FormBox[
-              FormBox[
-               StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
-               Matchete`NiceForm], Matchete`NiceForm], 
-             Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
-            False]], 
+      TemplateBox[{
+        SubscriptBox["D", 
+         StyleBox[
           TagBox[
-           FormBox[
-            OverscriptBox[
-            "\"\\!\\(\\*SubscriptBox[\\(\[Phi]\\), \\(f\\)]\\)\"", "_"], 
-            StandardForm], StandardForm, Editable -> True]},
-         "RowDefault"],
-        StandardForm],
-       StandardForm,
-       Editable->True],
-      Matchete`NiceForm],
-     Matchete`NiceForm], 
-    FormBox[
-     TagBox[
-      FormBox[
-       TemplateBox[{
-         SubscriptBox["D", 
-          StyleBox[
-           TagBox[
-            FormBox[
-             FormBox[
-              StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
-              Matchete`NiceForm], Matchete`NiceForm], 
-            Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
-           False]], 
-         TagBox[
-          FormBox[
-          "\"\\!\\(\\*SubscriptBox[\\(\[Phi]\\), \\(f\\)]\\)\"", 
-           StandardForm], StandardForm, Editable -> True]},
-        "RowDefault"],
-       StandardForm],
-      StandardForm,
-      Editable->True],
-     Matchete`NiceForm]}],
+           StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
+           Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
+          False]], 
+        TagBox[
+         FormBox[
+          OverscriptBox[
+          "\"\\!\\(\\*SubscriptBox[\\(\[Phi]\\), \\(f\\)]\\)\"", "_"], 
+          StandardForm], StandardForm, Editable -> True]},
+       "RowDefault"],
+      StandardForm],
+     StandardForm,
+     Editable->True], 
+    TagBox[
+     FormBox[
+      TemplateBox[{
+        SubscriptBox["D", 
+         StyleBox[
+          TagBox[
+           StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
+           Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
+          False]], 
+        TagBox[
+         FormBox[
+         "\"\\!\\(\\*SubscriptBox[\\(\[Phi]\\), \\(f\\)]\\)\"", StandardForm],
+          StandardForm, Editable -> True]},
+       "RowDefault"],
+      StandardForm],
+     StandardForm,
+     Editable->True]}],
    StandardForm], "-", 
   FormBox[
    RowBox[{
     SuperscriptBox[
-     FormBox[
-      TagBox[
-       FormBox["\<\"m\[Phi]\"\>",
-        StandardForm],
-       StandardForm,
-       Editable->True],
-      Matchete`NiceForm], 
-     FormBox["2",
-      StandardForm]], 
-    FormBox[
-     FormBox[
-      TagBox[
-       FormBox[
-        OverscriptBox["\<\"\\!\\(\\*SubscriptBox[\\(\[Phi]\\), \
-\\(f\\)]\\)\"\>", "_"],
-        StandardForm],
-       StandardForm,
-       Editable->True],
-      Matchete`NiceForm],
-     Matchete`NiceForm], 
-    FormBox[
      TagBox[
-      FormBox["\<\"\\!\\(\\*SubscriptBox[\\(\[Phi]\\), \\(f\\)]\\)\"\>",
+      FormBox["\<\"m\[Phi]\"\>",
        StandardForm],
       StandardForm,
-      Editable->True],
-     Matchete`NiceForm]}],
+      Editable->True], 
+     FormBox["2",
+      StandardForm]], 
+    TagBox[
+     FormBox[
+      OverscriptBox["\<\"\\!\\(\\*SubscriptBox[\\(\[Phi]\\), \\(f\\)]\\)\"\>",
+        "_"],
+      StandardForm],
+     StandardForm,
+     Editable->True], 
+    TagBox[
+     FormBox["\<\"\\!\\(\\*SubscriptBox[\\(\[Phi]\\), \\(f\\)]\\)\"\>",
+      StandardForm],
+     StandardForm,
+     Editable->True]}],
    StandardForm]}]], "Output",
  CellChangeTimes->{3.936255681266121*^9, 3.9362558677454576`*^9},
  CellLabel->"Out[53]//NiceForm=",
- CellID->1221768232,ExpressionUUID->"dca1f36a-0fe4-40d9-850c-bfc44b1da3d0"]
+ CellID->1221768232,ExpressionUUID->"3152b6a7-69a6-4d3e-81cd-4809d12b0d30"]
 }, Open  ]],
 
 Cell[TextData[{
@@ -2737,21 +2586,21 @@ Cell[TextData[{
  Cell[BoxData[
   ButtonBox["Default",
    BaseStyle->"Link"]], "InlineFormula",ExpressionUUID->
-  "9286e7e0-1faa-4351-a4e5-73b120810d41"],
+  "753f2e41-b2d3-4084-8cfc-107efbbd3f8b"],
  " value can be used in place of either string to use the default ",
  Cell[BoxData[
   ButtonBox["NiceForm",
    BaseStyle->"Link",
    ButtonData->"paclet:Matchete/ref/NiceForm"]], "InlineFormula",
-  ExpressionUUID->"5d6f97a1-e833-4bda-89b2-2e31a8d8acf0"],
+  ExpressionUUID->"e22a3757-312a-4de5-a762-3e0c3deb33da"],
  " that would be associated to the field ",
  Cell[BoxData[
   StyleBox["label", "TI"]], "InlineFormula",ExpressionUUID->
-  "e46d75df-5eeb-4933-a3c6-30d706d00b52"],
+  "ebbc9470-2f73-4da6-9db1-ae548b906abc"],
  "."
 }], "ExampleText",
  CellChangeTimes->{{3.936255690741848*^9, 3.93625574652533*^9}},
- CellID->139270512,ExpressionUUID->"37f78b33-4483-47ee-840f-70d9a145a38d"]
+ CellID->139270512,ExpressionUUID->"0f7c9d88-54c7-4b48-b28a-fca7e872628e"]
 }, Open  ]]
 }, Open  ]],
 
@@ -2760,14 +2609,14 @@ Cell[CellGroupData[{
 Cell[BoxData[
  InterpretationBox[Cell[
   "SelfConjugate", "ExampleSubsection",ExpressionUUID->
-   "30db7ded-8a6c-4a85-89cb-8cd9b1c1d256"],
+   "2db19ec6-dac8-44d3-9369-c0abe8aecf78"],
   $Line = 0; Null]], "ExampleSubsection",
- CellID->1851526060,ExpressionUUID->"3e05bea3-486f-44db-9e1a-c6151e20d1ef"],
+ CellID->1851526060,ExpressionUUID->"3fc2fed0-2ec5-42e0-b213-78ced4a7b358"],
 
 Cell["Self-conjugate allows specifying if a scalar is real, e.g.,", \
 "ExampleText",
  CellChangeTimes->{{3.936254164800856*^9, 3.936254195110018*^9}},
- CellID->1460725567,ExpressionUUID->"b86afc70-c3e7-43fe-b55f-9cb2dec1337d"],
+ CellID->1460725567,ExpressionUUID->"ae1e7c4c-8d18-4355-ab54-2be9196d4a7d"],
 
 Cell[BoxData[
  RowBox[{"DefineField", "[", 
@@ -2775,12 +2624,12 @@ Cell[BoxData[
    RowBox[{"SelfConjugate", "\[Rule]", "True"}]}], "]"}]], "Input",
  CellChangeTimes->{{3.9362541981109543`*^9, 3.936254241388586*^9}},
  CellLabel->"In[54]:=",
- CellID->1464112779,ExpressionUUID->"faaf879b-2ac7-45b6-8bc0-38602cf9c8b9"],
+ CellID->1464112779,ExpressionUUID->"642f42aa-95b3-4a89-913f-7a290015ffbb"],
 
 Cell["This is reflected both in the generic free Lagrangian ", "ExampleText",
  CellChangeTimes->{{3.9362542481011143`*^9, 3.936254268312454*^9}, {
   3.9362543446167717`*^9, 3.936254347992815*^9}},
- CellID->791709752,ExpressionUUID->"8e34df2b-3a07-4bc7-9194-d48f97acb142"],
+ CellID->791709752,ExpressionUUID->"c5803562-927b-4522-b28e-a0871903b409"],
 
 Cell[CellGroupData[{
 
@@ -2789,7 +2638,7 @@ Cell[BoxData[
   RowBox[{"FreeLag", "@", " ", "S"}], "//", "NiceForm", " "}]], "Input",
  CellChangeTimes->{{3.936254326934238*^9, 3.9362543331751003`*^9}},
  CellLabel->"In[55]:=",
- CellID->790157480,ExpressionUUID->"956ae878-88d6-404a-ab31-a02fd431e5ee"],
+ CellID->790157480,ExpressionUUID->"cb3d9032-5a6c-412b-a719-3744e2373b66"],
 
 Cell[BoxData[
  RowBox[{
@@ -2802,26 +2651,21 @@ Cell[BoxData[
      FormBox[
       StyleBox[
        RowBox[{"(", 
-        FormBox[
-         TagBox[
-          FormBox[
-           TemplateBox[{
-             SubscriptBox["D", 
-              StyleBox[
-               TagBox[
-                FormBox[
-                 FormBox[
-                  StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
-                  Matchete`NiceForm], Matchete`NiceForm], 
-                Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
-               False]], 
-             TagBox[
-              FormBox["S", StandardForm], StandardForm, Editable -> True]},
-            "RowDefault"],
-           StandardForm],
-          StandardForm,
-          Editable->True],
-         Matchete`NiceForm], ")"}],
+        TagBox[
+         FormBox[
+          TemplateBox[{
+            SubscriptBox["D", 
+             StyleBox[
+              TagBox[
+               StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
+               Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
+              False]], 
+            TagBox[
+             FormBox["S", StandardForm], StandardForm, Editable -> True]},
+           "RowDefault"],
+          StandardForm],
+         StandardForm,
+         Editable->True], ")"}],
        SpanSymmetric->False],
       StandardForm], "2"]}],
    StandardForm], "-", 
@@ -2831,27 +2675,23 @@ Cell[BoxData[
      FractionBox["1", "2"],
      StandardForm], 
     SuperscriptBox[
-     FormBox[
-      TagBox[
-       FormBox["MS",
-        StandardForm],
-       StandardForm,
-       Editable->True],
-      Matchete`NiceForm], 
+     TagBox[
+      FormBox["MS",
+       StandardForm],
+      StandardForm,
+      Editable->True], 
      FormBox["2",
       StandardForm]], 
     SuperscriptBox[
-     FormBox[
-      TagBox[
-       FormBox["S",
-        StandardForm],
-       StandardForm,
-       Editable->True],
-      Matchete`NiceForm], "2"]}],
+     TagBox[
+      FormBox["S",
+       StandardForm],
+      StandardForm,
+      Editable->True], "2"]}],
    StandardForm]}]], "Output",
  CellChangeTimes->{3.936254333584243*^9, 3.936255870744439*^9},
  CellLabel->"Out[55]//NiceForm=",
- CellID->1597593413,ExpressionUUID->"360fa4ba-bfed-4d0b-8e58-a292a61d14d5"]
+ CellID->1597593413,ExpressionUUID->"d5130b08-b5b7-4a1e-9ec2-c56a9a27eddd"]
 }, Open  ]],
 
 Cell[TextData[{
@@ -2860,12 +2700,12 @@ Cell[TextData[{
   ButtonBox["Bar",
    BaseStyle->"Link",
    ButtonData->"paclet:Matchete/ref/Bar"]], "InlineFormula",ExpressionUUID->
-  "ee780866-7fd7-4140-86d4-0c563861df3a"],
+  "717bf0d1-c9dd-42c2-a581-e621e549fcee"],
  ")"
 }], "ExampleText",
  CellChangeTimes->{{3.9362542721130466`*^9, 3.936254294663803*^9}, {
   3.93625457798518*^9, 3.9362545846841908`*^9}},
- CellID->1910193792,ExpressionUUID->"b65a3167-a540-427b-aa0f-1cc7759fa316"],
+ CellID->1910193792,ExpressionUUID->"ef1943f9-a7ee-4b4c-b473-738663f5eba1"],
 
 Cell[CellGroupData[{
 
@@ -2876,13 +2716,13 @@ Cell[BoxData[
   RowBox[{"S", "[", "]"}]}]], "Input",
  CellChangeTimes->{{3.9362543060243053`*^9, 3.936254321525854*^9}},
  CellLabel->"In[56]:=",
- CellID->1398899287,ExpressionUUID->"f84cea45-6035-4f6f-94d9-14bbd7026c77"],
+ CellID->1398899287,ExpressionUUID->"60acba57-808b-40bb-a022-5c7cf55cd1cd"],
 
 Cell[BoxData["True"], "Output",
  CellChangeTimes->{{3.9362543159152117`*^9, 3.936254321921053*^9}, 
    3.936255871745173*^9},
  CellLabel->"Out[56]=",
- CellID->326178527,ExpressionUUID->"7e5a7467-bf08-4c16-887b-b2b8ad71f285"]
+ CellID->326178527,ExpressionUUID->"61a06a14-9cd6-49fa-b264-fa7dd965a175"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -2890,13 +2730,13 @@ Cell[CellGroupData[{
 Cell[BoxData[
  InterpretationBox[Cell[
   "\t", "ExampleDelimiter",ExpressionUUID->
-   "2b11ae70-64a0-4e20-8e05-96b2483c6c77"],
+   "99c67557-965f-46af-bf06-3987f962208a"],
   $Line = 0; Null]], "ExampleDelimiter",
- CellID->661498079,ExpressionUUID->"798061a5-4879-4543-bda8-23a7d4b66846"],
+ CellID->661498079,ExpressionUUID->"fa3ac764-cba7-4cdc-b131-f62bcdac5af4"],
 
 Cell["Fermions can also be self conjugate", "ExampleText",
  CellChangeTimes->{{3.936254445913455*^9, 3.9362544556367493`*^9}},
- CellID->2077608707,ExpressionUUID->"164d38d8-7878-4baa-8612-0be864777cf6"],
+ CellID->2077608707,ExpressionUUID->"6645ec99-30db-4ebe-8113-da85b0496b8a"],
 
 Cell[BoxData[
  RowBox[{"DefineField", "[", 
@@ -2904,7 +2744,7 @@ Cell[BoxData[
    RowBox[{"SelfConjugate", "\[Rule]", " ", "True"}]}], "]"}]], "Input",
  CellChangeTimes->{{3.936254359968206*^9, 3.936254373693616*^9}},
  CellLabel->"In[57]:=",
- CellID->370684553,ExpressionUUID->"251aa283-6ef9-4746-971c-fe19a15c9b84"],
+ CellID->370684553,ExpressionUUID->"d3e4f35c-d0da-4ff5-9489-b6ee51bc78cc"],
 
 Cell[TextData[{
  "In this case charge conjugation (",
@@ -2912,12 +2752,12 @@ Cell[TextData[{
   ButtonBox["CConj",
    BaseStyle->"Link",
    ButtonData->"paclet:Matchete/ref/CConj"]], "InlineFormula",ExpressionUUID->
-  "fd5e557b-901c-43b8-92b7-d798b2b952d9"],
+  "377e53b7-b1bb-40dd-8bfe-0028f4314720"],
  ") returns the original field"
 }], "ExampleText",
  CellChangeTimes->{{3.93625446266543*^9, 3.936254465230671*^9}, {
   3.93625454123275*^9, 3.936254593764237*^9}},
- CellID->1016235586,ExpressionUUID->"070a1cd6-0805-40b9-a247-acebcf9e3009"],
+ CellID->1016235586,ExpressionUUID->"58b752d9-a9f3-4375-b612-24f193e8005a"],
 
 Cell[CellGroupData[{
 
@@ -2928,20 +2768,20 @@ Cell[BoxData[
   RowBox[{"\[Chi]", "[", "]"}]}]], "Input",
  CellChangeTimes->{{3.936254402001437*^9, 3.936254418118565*^9}},
  CellLabel->"In[58]:=",
- CellID->1272924256,ExpressionUUID->"3dc56bba-e8b5-4671-bb4a-588569095b46"],
+ CellID->1272924256,ExpressionUUID->"7559724b-6c93-4646-b2cc-36c80b651cef"],
 
 Cell[BoxData["True"], "Output",
  CellChangeTimes->{{3.93625441178903*^9, 3.936254430970624*^9}, 
    3.936255874801711*^9},
  CellLabel->"Out[58]=",
- CellID->411902561,ExpressionUUID->"8ebbc4a8-ae44-4660-bc03-78c1134715f7"]
+ CellID->411902561,ExpressionUUID->"794f159c-abac-4be9-bc36-d13c04989bc7"]
 }, Open  ]],
 
 Cell["\<\
 The free Lagrangian in this case provides a Majorana mass for the fermion\
 \>", "ExampleText",
  CellChangeTimes->{{3.936254599754586*^9, 3.936254640702667*^9}},
- CellID->1743019876,ExpressionUUID->"5aec40fe-896f-4bb6-8849-e82819aae5a8"],
+ CellID->1743019876,ExpressionUUID->"c99e2019-42f2-4725-a7b4-448b069a5654"],
 
 Cell[CellGroupData[{
 
@@ -2950,7 +2790,7 @@ Cell[BoxData[
   RowBox[{"FreeLag", "@", "\[Chi]"}], "//", "NiceForm"}]], "Input",
  CellChangeTimes->{{3.9362543834076157`*^9, 3.9362543971812077`*^9}},
  CellLabel->"In[59]:=",
- CellID->1618449420,ExpressionUUID->"6ee37b85-db86-4005-9c65-2abf7249ae03"],
+ CellID->1618449420,ExpressionUUID->"72dda175-35cd-4e0e-be41-c064ee0be761"],
 
 Cell[BoxData[
  RowBox[{
@@ -2963,54 +2803,37 @@ Cell[BoxData[
      StyleBox[
       RowBox[{"(", 
        RowBox[{
+        TemplateBox[{
+          TagBox[
+           FormBox["\[Chi]", StandardForm], StandardForm, Editable -> True], 
+          "\"T\""},
+         "Superscript"], "\[CenterDot]", 
         FormBox[
-         TemplateBox[{
-           FormBox[
-            TagBox[
-             FormBox["\[Chi]", StandardForm], StandardForm, Editable -> True],
-             Matchete`NiceForm], "\"T\""},
-          "Superscript"],
-         Matchete`NiceForm], "\[CenterDot]", 
-        FormBox[
-         RowBox[{
-          FormBox["\<\"C\"\>",
-           Matchete`NiceForm], 
-          FormBox[
-           SubscriptBox[
-            FormBox["\[Gamma]",
-             StandardForm], 
-            TagBox[
-             FormBox[
-              FormBox[
-               StyleBox["\<\"\[Mu]\"\>",
-                StripOnInput->False,
-                FontSize->10],
-               Matchete`NiceForm],
-              Matchete`NiceForm],
-             Format[#, Matchete`NiceForm]& ]],
-           Matchete`NiceForm]}],
+         RowBox[{"\<\"C\"\>", 
+          SubscriptBox[
+           FormBox["\[Gamma]",
+            StandardForm], 
+           TagBox[
+            StyleBox["\<\"\[Mu]\"\>",
+             StripOnInput->False,
+             FontSize->10],
+            Format[#, Matchete`NiceForm]& ]]}],
          StandardForm], "\[CenterDot]", 
-        FormBox[
-         TagBox[
-          FormBox[
-           TemplateBox[{
-             SubscriptBox["D", 
-              StyleBox[
-               TagBox[
-                FormBox[
-                 FormBox[
-                  StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
-                  Matchete`NiceForm], Matchete`NiceForm], 
-                Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
-               False]], 
-             TagBox[
-              FormBox["\[Chi]", StandardForm], StandardForm, Editable -> 
-              True]},
-            "RowDefault"],
-           StandardForm],
-          StandardForm,
-          Editable->True],
-         Matchete`NiceForm]}], ")"}],
+        TagBox[
+         FormBox[
+          TemplateBox[{
+            SubscriptBox["D", 
+             StyleBox[
+              TagBox[
+               StyleBox["\"\[Mu]\"", 10, StripOnInput -> False], 
+               Format[#, Matchete`NiceForm]& ], FontSize -> 12, StripOnInput -> 
+              False]], 
+            TagBox[
+             FormBox["\[Chi]", StandardForm], StandardForm, Editable -> True]},
+           "RowDefault"],
+          StandardForm],
+         StandardForm,
+         Editable->True]}], ")"}],
       SpanSymmetric->False],
      StandardForm]}],
    StandardForm], "-", 
@@ -3019,42 +2842,33 @@ Cell[BoxData[
     FormBox[
      FractionBox["1", "2"],
      StandardForm], 
-    FormBox[
-     TagBox[
-      FormBox["M\[Chi]",
-       StandardForm],
-      StandardForm,
-      Editable->True],
-     Matchete`NiceForm], 
+    TagBox[
+     FormBox["M\[Chi]",
+      StandardForm],
+     StandardForm,
+     Editable->True], 
     FormBox[
      StyleBox[
       RowBox[{"(", 
        RowBox[{
-        FormBox[
-         TemplateBox[{
-           FormBox[
-            TagBox[
-             FormBox["\[Chi]", StandardForm], StandardForm, Editable -> True],
-             Matchete`NiceForm], "\"T\""},
-          "Superscript"],
-         Matchete`NiceForm], "\[CenterDot]", 
-        FormBox[
-         FormBox["\<\"C\"\>",
-          Matchete`NiceForm],
+        TemplateBox[{
+          TagBox[
+           FormBox["\[Chi]", StandardForm], StandardForm, Editable -> True], 
+          "\"T\""},
+         "Superscript"], "\[CenterDot]", 
+        FormBox["\<\"C\"\>",
          StandardForm], "\[CenterDot]", 
-        FormBox[
-         TagBox[
-          FormBox["\[Chi]",
-           StandardForm],
-          StandardForm,
-          Editable->True],
-         Matchete`NiceForm]}], ")"}],
+        TagBox[
+         FormBox["\[Chi]",
+          StandardForm],
+         StandardForm,
+         Editable->True]}], ")"}],
       SpanSymmetric->False],
      StandardForm]}],
    StandardForm]}]], "Output",
  CellChangeTimes->{3.936254397611107*^9, 3.936255877053474*^9},
  CellLabel->"Out[59]//NiceForm=",
- CellID->520111740,ExpressionUUID->"1ce42178-a085-4bae-92ca-a0e9b7a679c9"]
+ CellID->520111740,ExpressionUUID->"ee504ab5-5d5c-4430-8bd0-36773ad3faad"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
@@ -3172,7 +2986,7 @@ created with a vanishing mass, i.e. by adding the option Mass->0.\"", 2, 63,
    5, 24131561823289580448, "Local", "Matchete`DefineField"},
   "MessageTemplate2"]], "Message", "MSG",
  CellChangeTimes->{
-  3.936234090088521*^9, 3.936234124579521*^9, {3.9362558842535543`*^9, 
+  3.936234090088521*^9, 3.936234124579521*^9, {3.9362558842535534`*^9, 
    3.936255896658354*^9}},
  CellLabel->"During evaluation of In[63]:=",
  CellID->335894209,ExpressionUUID->"e18bad5e-d868-457a-9990-2a44c80de028"],
@@ -3293,6 +3107,7 @@ WindowSize->{960, 1027},
 WindowMargins->{{0, Automatic}, {Automatic, 0}},
 TaggingRules-><|"Paclet" -> "Matchete"|>,
 CellContext->"Global`",
+TrackCellChangeTimes->False,
 FrontEndVersion->"14.0 for Mac OS X ARM (64-bit) (December 12, 2023)",
 StyleDefinitions->FrontEnd`FileName[{"Wolfram"}, "FunctionPageStylesExt.nb", 
   CharacterEncoding -> "UTF-8"],
@@ -3304,14 +3119,14 @@ ExpressionUUID->"710bbff4-e455-4701-bf47-d9b14fbea1ed"
 (*CellTagsOutline
 CellTagsIndex->{
  "ExtendedExamples"->{
-  Cell[22446, 602, 487, 13, 72, "ExtendedExamplesSection",ExpressionUUID->"7e9769b2-9a6d-49a3-8042-2ea0d2f8543a",
+  Cell[22901, 612, 487, 13, 56, "ExtendedExamplesSection",ExpressionUUID->"7e9769b2-9a6d-49a3-8042-2ea0d2f8543a",
    CellTags->"ExtendedExamples",
    CellID->148875477]}
  }
 *)
 (*CellTagsIndex
 CellTagsIndex->{
- {"ExtendedExamples", 111002, 3305}
+ {"ExtendedExamples", 106319, 3120}
  }
 *)
 (*NotebookFileOutline
@@ -3327,479 +3142,497 @@ Cell[2855, 82, 1151, 27, 79, "Notes",ExpressionUUID->"7be088af-473e-4446-9a88-e5
  CellID->914697409],
 Cell[4009, 111, 128, 1, 33, "Notes",ExpressionUUID->"0d58abd6-8283-42f5-934e-6de74f793220",
  CellID->423743530],
-Cell[4140, 114, 4056, 92, 347, "3ColumnTableMod",ExpressionUUID->"6d46fd22-d0dc-40c6-9376-0547a5d6a057",
+Cell[4140, 114, 4511, 102, 395, "3ColumnTableMod",ExpressionUUID->"21b07791-120d-44be-a45b-f6786786020c",
  CellID->801735258]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[8233, 211, 459, 13, 50, "SeeAlsoSection",ExpressionUUID->"72b65885-1e87-49cd-9a17-9157f3bac4af",
+Cell[8688, 221, 459, 13, 50, "SeeAlsoSection",ExpressionUUID->"72b65885-1e87-49cd-9a17-9157f3bac4af",
  CellID->1452079928],
-Cell[8695, 226, 4730, 112, 56, "SeeAlso",ExpressionUUID->"acca6eff-9d3b-4204-9aab-035aa958cc63",
+Cell[9150, 236, 4730, 112, 56, "SeeAlso",ExpressionUUID->"acca6eff-9d3b-4204-9aab-035aa958cc63",
  CellID->689076682]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[13462, 343, 436, 12, 51, "TechNotesSection",ExpressionUUID->"1e4e8789-fc2a-4f17-a198-b616f75b5e2a",
+Cell[13917, 353, 436, 12, 51, "TechNotesSection",ExpressionUUID->"1e4e8789-fc2a-4f17-a198-b616f75b5e2a",
  CellID->2010491565],
-Cell[13901, 357, 101, 1, 24, "Tutorials",ExpressionUUID->"dd9ac5c0-fbe1-4c4e-a800-69761175dbb4",
+Cell[14356, 367, 101, 1, 24, "Tutorials",ExpressionUUID->"dd9ac5c0-fbe1-4c4e-a800-69761175dbb4",
  CellID->1824031057]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[14039, 363, 118, 1, 50, "MoreAboutSection",ExpressionUUID->"f029b64f-b9e9-4e71-9ff1-ec2627e47f32",
+Cell[14494, 373, 118, 1, 50, "MoreAboutSection",ExpressionUUID->"f029b64f-b9e9-4e71-9ff1-ec2627e47f32",
  CellID->1160914074],
-Cell[14160, 366, 101, 1, 24, "MoreAbout",ExpressionUUID->"cba0158a-432a-43fc-9823-802148779973",
+Cell[14615, 376, 101, 1, 24, "MoreAbout",ExpressionUUID->"cba0158a-432a-43fc-9823-802148779973",
  CellID->1593908723]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[14298, 372, 473, 13, 50, "RelatedLinksSection",ExpressionUUID->"312e6b32-aa3c-4904-9499-417f80da0c4d",
+Cell[14753, 382, 473, 13, 50, "RelatedLinksSection",ExpressionUUID->"312e6b32-aa3c-4904-9499-417f80da0c4d",
  CellID->1112894783],
-Cell[14774, 387, 104, 1, 24, "RelatedLinks",ExpressionUUID->"507698f7-023d-42ad-b110-a4f3ed7f7fca",
+Cell[15229, 397, 104, 1, 17, "RelatedLinks",ExpressionUUID->"507698f7-023d-42ad-b110-a4f3ed7f7fca",
  CellID->1987536158]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[14915, 393, 530, 14, 87, "ExamplesInitializationSection",ExpressionUUID->"6b9a86d5-93bc-411e-86cc-bce2e04216c6",
+Cell[15370, 403, 530, 14, 68, "ExamplesInitializationSection",ExpressionUUID->"6b9a86d5-93bc-411e-86cc-bce2e04216c6",
  CellID->412078421],
-Cell[15448, 409, 436, 7, 52, "ExampleText",ExpressionUUID->"487e3317-47e8-470f-91be-85a1bf73b5ae",
+Cell[15903, 419, 436, 7, 39, "ExampleText",ExpressionUUID->"487e3317-47e8-470f-91be-85a1bf73b5ae",
  CellID->2063534172],
-Cell[15887, 418, 1855, 37, 274, "ExampleInitialization",ExpressionUUID->"5bda518f-c81c-4b1f-a339-77fe6c78a424",
+Cell[16342, 428, 1855, 37, 215, "ExampleInitialization",ExpressionUUID->"5bda518f-c81c-4b1f-a339-77fe6c78a424",
  CellID->167260172]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[17779, 460, 441, 12, 90, "PrimaryExamplesSection",ExpressionUUID->"a1ce48e4-801c-4cf3-87be-c89cd52e022f",
+Cell[18234, 470, 441, 12, 70, "PrimaryExamplesSection",ExpressionUUID->"a1ce48e4-801c-4cf3-87be-c89cd52e022f",
  CellID->85616881],
-Cell[18223, 474, 238, 3, 30, "ExampleText",ExpressionUUID->"002c7355-b028-4aa7-8268-0ac45793e2c6",
+Cell[18678, 484, 238, 3, 23, "ExampleText",ExpressionUUID->"002c7355-b028-4aa7-8268-0ac45793e2c6",
  CellID->406804936],
-Cell[18464, 479, 262, 5, 33, "Input",ExpressionUUID->"80565ada-753c-4a09-aa8e-96db84f4a4a4",
+Cell[18919, 489, 262, 5, 26, "Input",ExpressionUUID->"80565ada-753c-4a09-aa8e-96db84f4a4a4",
  CellID->1919860645],
 Cell[CellGroupData[{
-Cell[18751, 488, 246, 5, 33, "Input",ExpressionUUID->"0f231de9-a09d-4b95-9e57-4a7f72555246",
+Cell[19206, 498, 246, 5, 26, "Input",ExpressionUUID->"0f231de9-a09d-4b95-9e57-4a7f72555246",
  CellID->1373184164],
-Cell[19000, 495, 385, 8, 32, "Output",ExpressionUUID->"16fbeced-93fd-403a-8255-421d2f2b6ddd",
+Cell[19455, 505, 385, 8, 25, "Output",ExpressionUUID->"16fbeced-93fd-403a-8255-421d2f2b6ddd",
  CellID->1790320438]
 }, Open  ]],
-Cell[19400, 506, 238, 3, 30, "ExampleText",ExpressionUUID->"373a6360-9873-4ccf-b2ed-d50b96641576",
+Cell[19855, 516, 238, 3, 23, "ExampleText",ExpressionUUID->"373a6360-9873-4ccf-b2ed-d50b96641576",
  CellID->2030578641],
-Cell[19641, 511, 239, 5, 33, "Input",ExpressionUUID->"d8f6ba2f-1867-42d1-bf06-2a72304aa148",
+Cell[20096, 521, 239, 5, 26, "Input",ExpressionUUID->"d8f6ba2f-1867-42d1-bf06-2a72304aa148",
  CellID->1291467037],
 Cell[CellGroupData[{
-Cell[19905, 520, 219, 4, 33, "Input",ExpressionUUID->"55a52cdf-458c-4fbb-bf52-5cad9b4b3a57",
+Cell[20360, 530, 219, 4, 26, "Input",ExpressionUUID->"55a52cdf-458c-4fbb-bf52-5cad9b4b3a57",
  CellID->1604848535],
-Cell[20127, 526, 411, 9, 32, "Output",ExpressionUUID->"5535af38-8d46-4f7d-b8d8-f9674cd97c48",
+Cell[20582, 536, 411, 9, 25, "Output",ExpressionUUID->"5535af38-8d46-4f7d-b8d8-f9674cd97c48",
  CellID->568221253]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[20575, 540, 241, 5, 24, "ExampleDelimiter",ExpressionUUID->"af281ecf-129f-43d7-bc70-5ae7d3a57e75",
+Cell[21030, 550, 241, 5, 16, "ExampleDelimiter",ExpressionUUID->"af281ecf-129f-43d7-bc70-5ae7d3a57e75",
  CellID->48258754],
-Cell[20819, 547, 487, 11, 32, "ExampleText",ExpressionUUID->"3c45b92b-a8bc-40f2-bac6-d9b260a118de",
+Cell[21274, 557, 487, 11, 23, "ExampleText",ExpressionUUID->"3c45b92b-a8bc-40f2-bac6-d9b260a118de",
  CellID->725869021],
 Cell[CellGroupData[{
-Cell[21331, 562, 433, 10, 33, "Input",ExpressionUUID->"426deaf9-3e23-4df1-a096-9670a106845f",
+Cell[21786, 572, 433, 10, 26, "Input",ExpressionUUID->"426deaf9-3e23-4df1-a096-9670a106845f",
  CellID->1001770984],
-Cell[21767, 574, 618, 21, 29, "Output",ExpressionUUID->"6ab7f5f2-5210-44d8-82e8-68cfdc95d3df",
+Cell[22222, 584, 618, 21, 22, "Output",ExpressionUUID->"6ab7f5f2-5210-44d8-82e8-68cfdc95d3df",
  CellID->359804486]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[22446, 602, 487, 13, 72, "ExtendedExamplesSection",ExpressionUUID->"7e9769b2-9a6d-49a3-8042-2ea0d2f8543a",
+Cell[22901, 612, 487, 13, 56, "ExtendedExamplesSection",ExpressionUUID->"7e9769b2-9a6d-49a3-8042-2ea0d2f8543a",
  CellTags->"ExtendedExamples",
  CellID->148875477],
 Cell[CellGroupData[{
-Cell[22958, 619, 241, 5, 43, "ExampleSection",ExpressionUUID->"6488a4b8-2253-48e2-9eb2-ae4af63b5f82",
+Cell[23413, 629, 241, 5, 32, "ExampleSection",ExpressionUUID->"6488a4b8-2253-48e2-9eb2-ae4af63b5f82",
  CellID->331693184],
-Cell[23202, 626, 559, 12, 54, "ExampleText",ExpressionUUID->"bce8092c-a9c8-47be-95d6-ceeb004b9450",
+Cell[23657, 636, 559, 12, 39, "ExampleText",ExpressionUUID->"bce8092c-a9c8-47be-95d6-ceeb004b9450",
  CellID->1833501546],
-Cell[23764, 640, 835, 18, 58, "Input",ExpressionUUID->"544303c1-9022-47f6-8fa5-18db3c794944",
+Cell[24219, 650, 835, 18, 44, "Input",ExpressionUUID->"544303c1-9022-47f6-8fa5-18db3c794944",
  CellID->1044290282],
 Cell[CellGroupData[{
-Cell[24624, 662, 373, 8, 58, "Input",ExpressionUUID->"746b2646-5751-4e65-a80a-f812b815f431",
+Cell[25079, 672, 373, 8, 44, "Input",ExpressionUUID->"746b2646-5751-4e65-a80a-f812b815f431",
  CellID->232292721],
-Cell[25000, 672, 801, 22, 57, "Output",ExpressionUUID->"0ef30457-7bc6-45a7-b958-882e13e310f8",
+Cell[25455, 682, 801, 22, 43, "Output",ExpressionUUID->"0ef30457-7bc6-45a7-b958-882e13e310f8",
  CellID->235483139],
-Cell[25804, 696, 1348, 38, 35, "Output",ExpressionUUID->"cce769d0-1cce-4a9d-8598-403f3390e615",
+Cell[26259, 706, 1348, 38, 25, "Output",ExpressionUUID->"cce769d0-1cce-4a9d-8598-403f3390e615",
  CellID->2100239399]
 }, Open  ]],
-Cell[27167, 737, 513, 11, 54, "ExampleText",ExpressionUUID->"7930e423-4aeb-4c8f-9ec8-6496d0a7f8c1",
+Cell[27622, 747, 513, 11, 39, "ExampleText",ExpressionUUID->"7930e423-4aeb-4c8f-9ec8-6496d0a7f8c1",
  CellID->1606838331],
 Cell[CellGroupData[{
-Cell[27705, 752, 242, 5, 24, "ExampleDelimiter",ExpressionUUID->"8366bf64-763f-4ee6-8098-9e50b5ba70a7",
+Cell[28160, 762, 242, 5, 16, "ExampleDelimiter",ExpressionUUID->"8366bf64-763f-4ee6-8098-9e50b5ba70a7",
  CellID->183306901],
-Cell[27950, 759, 697, 14, 54, "ExampleText",ExpressionUUID->"5ff62945-a714-477d-badb-889ab8cdf3b5",
+Cell[28405, 769, 697, 14, 39, "ExampleText",ExpressionUUID->"5ff62945-a714-477d-badb-889ab8cdf3b5",
  CellID->1347535309],
 Cell[CellGroupData[{
-Cell[28672, 777, 479, 10, 82, "Input",ExpressionUUID->"7f814bc6-b4fb-4661-bb76-6b8ead8e0a3f",
+Cell[29127, 787, 479, 10, 63, "Input",ExpressionUUID->"7f814bc6-b4fb-4661-bb76-6b8ead8e0a3f",
  CellID->387802235],
-Cell[29154, 789, 477, 11, 32, "Output",ExpressionUUID->"0c7d926b-dbcf-46b9-9a29-3f3152f2426c",
+Cell[29609, 799, 477, 11, 25, "Output",ExpressionUUID->"0c7d926b-dbcf-46b9-9a29-3f3152f2426c",
  CellID->36390833],
-Cell[29634, 802, 712, 18, 30, "Output",ExpressionUUID->"b71e4605-0320-4702-8d70-a8c6d4a8e00a",
+Cell[30089, 812, 712, 18, 22, "Output",ExpressionUUID->"b71e4605-0320-4702-8d70-a8c6d4a8e00a",
  CellID->1735374483]
 }, Open  ]],
-Cell[30361, 823, 475, 11, 54, "ExampleText",ExpressionUUID->"2b348a5c-0b65-44ac-9add-6dc9023326f3",
+Cell[30816, 833, 475, 11, 39, "ExampleText",ExpressionUUID->"2b348a5c-0b65-44ac-9add-6dc9023326f3",
  CellID->1226069823]
 }, Open  ]]
 }, Open  ]],
-Cell[30863, 838, 265, 5, 43, "ExampleSection",ExpressionUUID->"c7d07bdf-7965-490a-9d49-6bac2e1bd264",
+Cell[31318, 848, 265, 5, 32, "ExampleSection",ExpressionUUID->"c7d07bdf-7965-490a-9d49-6bac2e1bd264",
  CellID->2047279523],
 Cell[CellGroupData[{
-Cell[31153, 847, 243, 5, 27, "ExampleSection",ExpressionUUID->"8bbb2e9b-57ab-4e2d-a310-978b81535bc0",
- CellID->957929267],
+Cell[31608, 857, 243, 5, 20, "ExampleSection",ExpressionUUID->"035e46e1-dda6-48f3-b87f-89274fe7ac28",
+ CellID->508241985],
 Cell[CellGroupData[{
-Cell[31421, 856, 249, 5, 32, "ExampleSubsection",ExpressionUUID->"7ded96e9-cba0-4b95-a860-fc7b17920ab5",
+Cell[31876, 866, 258, 5, 23, "ExampleSubsection",ExpressionUUID->"2e60e844-a8dc-4aff-a08f-4960326f0df3",
+ CellID->1480577776],
+Cell[32137, 873, 602, 13, 39, "ExampleText",ExpressionUUID->"122838de-df82-434b-bbb3-b035b6728737",
+ CellID->790478155],
+Cell[32742, 888, 406, 8, 26, "Input",ExpressionUUID->"8fc2395c-917d-452f-aa17-021ab9948934",
+ CellID->2059778085],
+Cell[33151, 898, 765, 18, 55, "ExampleText",ExpressionUUID->"ea4a2315-c1d6-4105-8101-2ec74272f22e",
+ CellID->59223890],
+Cell[CellGroupData[{
+Cell[33941, 920, 233, 4, 26, "Input",ExpressionUUID->"75a9a125-c910-4bc9-bcfc-d158ee1ea4ad",
+ CellID->750771608],
+Cell[34177, 926, 470, 10, 24, "Message",ExpressionUUID->"2fa243eb-bb32-41e4-a92a-a612155d5bb4",
+ CellID->309512758],
+Cell[34650, 938, 174, 3, 25, "Output",ExpressionUUID->"d244faa6-8f0f-4645-a872-912e7fc52e63",
+ CellID->775530672]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[34873, 947, 249, 5, 23, "ExampleSubsection",ExpressionUUID->"ae9c9611-6380-4472-928c-3b2d5e515bb2",
  CellID->232288910],
-Cell[31673, 863, 523, 11, 54, "ExampleText",ExpressionUUID->"98287d9e-e96d-45ab-8c81-018d1d3d76f3",
+Cell[35125, 954, 754, 18, 39, "ExampleText",ExpressionUUID->"db918988-46ff-42ac-ab89-8efee6773161",
  CellID->500291033],
-Cell[32199, 876, 216, 4, 33, "Input",ExpressionUUID->"0464075d-93a0-431b-9b1b-04d023b15abd",
+Cell[35882, 974, 216, 4, 26, "Input",ExpressionUUID->"eb0890e1-4492-497d-8880-1da03603711d",
  CellID->1560934494],
-Cell[32418, 882, 465, 8, 57, "ExampleText",ExpressionUUID->"ffe034d7-977b-4926-bfac-f56b18ca62b2",
+Cell[36101, 980, 465, 8, 42, "ExampleText",ExpressionUUID->"251de772-8930-4e22-a84a-246d8b5ea774",
  CellID->911623616],
 Cell[CellGroupData[{
-Cell[32908, 894, 482, 9, 58, "Input",ExpressionUUID->"1c363dbf-1033-4b2d-8c76-977f2b455e04",
+Cell[36591, 992, 482, 9, 44, "Input",ExpressionUUID->"90cd406f-4bb4-4184-b15b-aa8d64944f64",
  CellID->1960087021],
-Cell[33393, 905, 658, 15, 57, "Output",ExpressionUUID->"be2d45b7-a2ab-4dff-befe-70bf13a774dc",
+Cell[37076, 1003, 658, 15, 43, "Output",ExpressionUUID->"0ff15149-5632-4b35-a932-38d4a35129d5",
  CellID->216164004]
 }, Open  ]],
-Cell[34066, 923, 410, 9, 32, "ExampleText",ExpressionUUID->"b579e50e-20ef-4494-978a-3e2d40871404",
+Cell[37749, 1021, 410, 9, 23, "ExampleText",ExpressionUUID->"eddcda3b-a587-4732-98e6-aeed34131ef4",
  CellID->1424581727]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[34513, 937, 249, 5, 32, "ExampleSubsection",ExpressionUUID->"d5524bee-45b6-433c-aa13-4a545b6e46da",
+Cell[38196, 1035, 249, 5, 23, "ExampleSubsection",ExpressionUUID->"abdff063-c7a4-45ff-ace3-f857429bbdc0",
  CellID->2101923771],
-Cell[34765, 944, 428, 7, 52, "ExampleText",ExpressionUUID->"1d2f3456-bdf0-4d28-9b2e-f2a589265c89",
+Cell[38448, 1042, 428, 7, 39, "ExampleText",ExpressionUUID->"710e63ca-887e-432a-b2dc-db7f3d665b46",
  CellID->1871383609],
-Cell[35196, 953, 328, 6, 30, "ExampleText",ExpressionUUID->"54393f31-0e4b-4064-81a0-7552bc814719",
+Cell[38879, 1051, 328, 6, 23, "ExampleText",ExpressionUUID->"02bcc3b2-4ba6-41ba-a9b4-fb91b3639223",
  CellID->1846503913],
 Cell[CellGroupData[{
-Cell[35549, 963, 433, 9, 58, "Input",ExpressionUUID->"458e1902-34de-4421-ad61-92ae71b34561",
+Cell[39232, 1061, 433, 9, 44, "Input",ExpressionUUID->"04c245e4-9d6e-44a6-b941-bf9dd8226422",
  CellID->458808180],
-Cell[35985, 974, 2612, 94, 36, "Output",ExpressionUUID->"76a58c2f-2859-45ff-9253-c99588a9e141",
+Cell[39668, 1072, 1966, 71, 27, "Output",ExpressionUUID->"9c7c40e0-24e6-473b-b30c-8c3a0cf1b857",
  CellID->224546759]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[38634, 1073, 243, 5, 24, "ExampleDelimiter",ExpressionUUID->"a5850af9-818c-48e9-ace2-a3419f52f5f2",
+Cell[41671, 1148, 243, 5, 16, "ExampleDelimiter",ExpressionUUID->"6e337645-c73f-4ffe-ab55-0af84ed3ce77",
  CellID->1381912037],
-Cell[38880, 1080, 611, 16, 32, "ExampleText",ExpressionUUID->"ab870269-90fb-47bf-b22c-f11cb9aff044",
+Cell[41917, 1155, 611, 16, 23, "ExampleText",ExpressionUUID->"dac3c0a2-55c7-4e8f-bacb-8f60c7d9d07b",
  CellID->579977525],
 Cell[CellGroupData[{
-Cell[39516, 1100, 444, 10, 58, "Input",ExpressionUUID->"87453d26-c81c-4435-b703-418762c64ee2",
+Cell[42553, 1175, 441, 9, 44, "Input",ExpressionUUID->"d706b57c-6af1-4c8c-bdb8-8a8a3163902c",
  CellID->583289485],
-Cell[39963, 1112, 4357, 156, 49, "Output",ExpressionUUID->"258127c2-bb6a-4fc8-a66b-c6bea9fd23ab",
+Cell[42997, 1186, 3155, 113, 37, "Output",ExpressionUUID->"81654d0d-2a76-4afa-8223-562f30f56410",
  CellID->667534403]
 }, Open  ]],
-Cell[44335, 1271, 228, 3, 24, "ExampleText",ExpressionUUID->"34f516ea-6295-45df-8177-91a681b82e1a",
+Cell[46167, 1302, 228, 3, 23, "ExampleText",ExpressionUUID->"c2b3ec02-4969-4c68-b37d-2423990d95bc",
  CellID->718341711]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[44600, 1279, 243, 5, 20, "ExampleDelimiter",ExpressionUUID->"929a86b0-e5ba-41e1-bc1f-64e0c997456f",
+Cell[46432, 1310, 243, 5, 16, "ExampleDelimiter",ExpressionUUID->"eb134e43-836b-4dd0-84a3-5dde39b5f1f6",
  CellID->1098490237],
-Cell[44846, 1286, 356, 6, 41, "ExampleText",ExpressionUUID->"b9513758-4070-4247-816a-d5cba16b9c85",
+Cell[46678, 1317, 356, 6, 39, "ExampleText",ExpressionUUID->"6601ef44-d626-4885-bd3b-63ad837a4f21",
  CellID->1320755931],
 Cell[CellGroupData[{
-Cell[45227, 1296, 565, 11, 47, "Input",ExpressionUUID->"edbbe35a-c9b4-42ab-9fd8-609e3fb124af",
+Cell[47059, 1327, 565, 11, 44, "Input",ExpressionUUID->"a5803032-d00b-4f30-b2a9-072558472d8f",
  CellID->154280541],
-Cell[45795, 1309, 1879, 64, 29, "Output",ExpressionUUID->"343ab285-ad3a-4929-90e7-43f441e13b2d",
+Cell[47627, 1340, 1404, 47, 26, "Output",ExpressionUUID->"172277a9-28a8-4cd7-ade8-b5c3bd6296d9",
  CellID->1716056579]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[47735, 1380, 249, 5, 26, "ExampleSubsection",ExpressionUUID->"3b0c18f4-07af-46c5-83ed-d604af14ca06",
+Cell[49092, 1394, 249, 5, 23, "ExampleSubsection",ExpressionUUID->"0aaa165a-01b9-470d-885e-215573ef7892",
  CellID->926826047],
-Cell[47987, 1387, 988, 17, 94, "ExampleText",ExpressionUUID->"94d0e8ce-7a5a-4e85-a747-b569ef94e8b6",
+Cell[49344, 1401, 988, 17, 87, "ExampleText",ExpressionUUID->"4a197b1d-76a6-49b0-9a13-2574abebeba8",
  CellID->947998980],
-Cell[48978, 1406, 483, 9, 27, "Input",ExpressionUUID->"0644d274-df7b-4847-b130-e388777d3720",
+Cell[50335, 1420, 483, 9, 26, "Input",ExpressionUUID->"29b9a0f6-519f-4e5f-b8e6-5935a4de04d7",
  CellID->1893423347],
-Cell[49464, 1417, 549, 12, 26, "ExampleText",ExpressionUUID->"6675b4fe-8936-4393-ae7f-b15ef0434035",
+Cell[50821, 1431, 549, 12, 23, "ExampleText",ExpressionUUID->"ece33607-d9e6-4102-b96d-f6425a93e16e",
  CellID->1639037916],
-Cell[50016, 1431, 415, 9, 27, "Input",ExpressionUUID->"7c5fa37d-34f1-481f-a030-eeae8f7aaf71",
+Cell[51373, 1445, 415, 9, 26, "Input",ExpressionUUID->"2606d8a6-b1c6-48e4-a473-c26db3c338d5",
  CellID->1682086663],
-Cell[50434, 1442, 227, 3, 24, "ExampleText",ExpressionUUID->"b1dd9251-8334-40ac-8780-4be619504cce",
+Cell[51791, 1456, 227, 3, 23, "ExampleText",ExpressionUUID->"5d43244b-ec94-40e4-90f2-97b9a3dc2528",
  CellID->1998833852],
 Cell[CellGroupData[{
-Cell[50686, 1449, 338, 6, 47, "Input",ExpressionUUID->"314ecbbc-a6d4-433f-9f92-66db03d9dbcc",
+Cell[52043, 1463, 338, 6, 44, "Input",ExpressionUUID->"b7535c9a-61b3-4b6a-97be-5a2a9f743f62",
  CellID->1536551804],
-Cell[51027, 1457, 449, 11, 26, "Output",ExpressionUUID->"3d837dd0-8275-4ea1-a13f-f8fec46a38dd",
+Cell[52384, 1471, 449, 11, 25, "Output",ExpressionUUID->"026eb5b8-f463-405f-b23a-3a2d965c5b90",
  CellID->1557836470],
-Cell[51479, 1470, 666, 17, 24, "Output",ExpressionUUID->"7633a480-d4c0-4458-b8ea-6092dd403459",
+Cell[52836, 1484, 552, 15, 25, "Output",ExpressionUUID->"65bb7dee-122a-449e-8f00-1f10ef570153",
  CellID->436927066]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[52182, 1492, 242, 5, 20, "ExampleDelimiter",ExpressionUUID->"18bfb3d0-1eaa-4adb-a7b8-f0318dd4ce23",
+Cell[53425, 1504, 242, 5, 16, "ExampleDelimiter",ExpressionUUID->"c2db1ab1-376f-4fa8-baed-b7a2b9add6fd",
  CellID->761528069],
-Cell[52427, 1499, 530, 11, 43, "ExampleText",ExpressionUUID->"7899ee26-7a06-4b9c-ae0b-5670d1c9185b",
+Cell[53670, 1511, 530, 11, 39, "ExampleText",ExpressionUUID->"778f38af-1e37-480f-a6c9-85430e0896b6",
  CellID->234862965],
-Cell[52960, 1512, 269, 5, 27, "Input",ExpressionUUID->"3ea90d96-e205-42e2-9e27-787c487d355a",
+Cell[54203, 1524, 269, 5, 26, "Input",ExpressionUUID->"36a5a50f-6457-4a54-ad7b-dac6f69462ab",
  CellID->699396657],
-Cell[53232, 1519, 215, 2, 24, "ExampleText",ExpressionUUID->"00ca316a-bcb2-441c-a278-8c819c1f78b4",
+Cell[54475, 1531, 215, 2, 70, "ExampleText",ExpressionUUID->"979b0c78-0842-41db-a0b7-031b9f291b63",
  CellID->1657753132],
-Cell[53450, 1523, 293, 4, 27, "Input",ExpressionUUID->"23e7aec3-eec1-4940-a4d5-effb046ed57e",
+Cell[54693, 1535, 293, 4, 70, "Input",ExpressionUUID->"c60d3a60-df2d-4367-827c-2500a1b11fb8",
  CellID->1590833656],
-Cell[53746, 1529, 215, 2, 24, "ExampleText",ExpressionUUID->"7f36aaea-1dea-4828-92c5-c192e5e3337d",
+Cell[54989, 1541, 215, 2, 70, "ExampleText",ExpressionUUID->"de3fb042-d527-40b0-951b-bf4faa4aec7a",
  CellID->1346144137],
 Cell[CellGroupData[{
-Cell[53986, 1535, 383, 7, 47, "Input",ExpressionUUID->"5520a9bd-583c-4fd1-ac14-e105f47745c0",
+Cell[55229, 1547, 383, 7, 70, "Input",ExpressionUUID->"feacbd65-53c9-46af-882b-cce040fe409f",
  CellID->920094860],
-Cell[54372, 1544, 422, 10, 26, "Output",ExpressionUUID->"bac951dc-dbc2-47c9-a11b-0f584172bc43",
+Cell[55615, 1556, 422, 10, 70, "Output",ExpressionUUID->"e5567348-4993-4e96-a873-e805a2f1e54d",
  CellID->359986054],
-Cell[54797, 1556, 666, 17, 24, "Output",ExpressionUUID->"1613f7db-4a3a-40dd-8ae3-41ba54a472f0",
+Cell[56040, 1568, 552, 15, 70, "Output",ExpressionUUID->"963e612e-7d71-40b8-8397-ffaf3f760fc6",
  CellID->824175979]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[55512, 1579, 242, 5, 20, "ExampleDelimiter",ExpressionUUID->"50c234de-88d6-43e0-b83b-df22fa9082b8",
+Cell[56641, 1589, 242, 5, 70, "ExampleDelimiter",ExpressionUUID->"66029b55-5d57-42a7-9198-98c3fa7950ec",
  CellID->905029541],
-Cell[55757, 1586, 439, 7, 41, "ExampleText",ExpressionUUID->"d954b038-b00a-4be7-b7f9-84b4c8ba5424",
+Cell[56886, 1596, 439, 7, 70, "ExampleText",ExpressionUUID->"1240f8c2-6cf2-4499-aaf4-01b6bb6e7fd0",
  CellID->204823886],
-Cell[56199, 1595, 426, 10, 27, "Input",ExpressionUUID->"2c13216f-4c96-4073-b861-0dcdcc033efd",
+Cell[57328, 1605, 426, 10, 70, "Input",ExpressionUUID->"68cf01d6-1ece-4e09-8c82-0bc54de7963d",
  CellID->329803870],
-Cell[56628, 1607, 334, 8, 25, "ExampleText",ExpressionUUID->"85f87aca-1a03-475b-aa1e-a94fafc55235",
+Cell[57757, 1617, 334, 8, 70, "ExampleText",ExpressionUUID->"338b79c4-b9f8-486b-ab84-271bfde5dafc",
  CellID->473197928],
 Cell[CellGroupData[{
-Cell[56987, 1619, 387, 8, 47, "Input",ExpressionUUID->"26c773f8-e723-44b6-873e-4071484ee756",
+Cell[58116, 1629, 387, 8, 70, "Input",ExpressionUUID->"d6cdf103-8784-4f88-b2ab-cc1950a79f87",
  CellID->725485569],
-Cell[57377, 1629, 550, 14, 26, "Output",ExpressionUUID->"c2e38106-7179-414e-9274-6b9900a62d7f",
+Cell[58506, 1639, 550, 14, 70, "Output",ExpressionUUID->"ffedc198-357d-4cb6-80c5-309bf9e64185",
  CellID->503929664],
-Cell[57930, 1645, 857, 22, 25, "Output",ExpressionUUID->"b6bee3ab-d152-416e-b3f6-3ee5d701e226",
+Cell[59059, 1655, 662, 18, 70, "Output",ExpressionUUID->"4e875eec-4dbf-4f11-8c56-1218f6d754a7",
  CellID->2017842727]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[58848, 1674, 247, 5, 26, "ExampleSubsection",ExpressionUUID->"7e9affd1-a1f2-44ef-a322-08d346e34160",
+Cell[59782, 1680, 247, 5, 70, "ExampleSubsection",ExpressionUUID->"b348a221-db30-468e-9d87-2ac24636ddc4",
  CellID->1466480238],
-Cell[59098, 1681, 664, 14, 43, "ExampleText",ExpressionUUID->"2d3ea46b-89dc-418d-b3ae-491081f6270e",
+Cell[60032, 1687, 664, 14, 70, "ExampleText",ExpressionUUID->"51ff6891-ab73-4283-aedb-f73f2e3a5980",
  CellID->2017538067],
-Cell[59765, 1697, 283, 5, 24, "ExampleText",ExpressionUUID->"37d9f5bd-9b99-412e-b346-a840e4c5982e",
+Cell[60699, 1703, 283, 5, 70, "ExampleText",ExpressionUUID->"19339ff0-0cd9-481d-99b8-901cab670b9b",
  CellID->2020412994],
 Cell[CellGroupData[{
-Cell[60073, 1706, 553, 10, 47, "Input",ExpressionUUID->"f8261051-6d37-46c1-8d8c-a6145b1ee58e",
+Cell[61007, 1712, 553, 10, 70, "Input",ExpressionUUID->"7e6b1247-3b6e-44e8-b740-a2574f2e903b",
  CellID->894756262],
-Cell[60629, 1718, 2216, 82, 29, "Output",ExpressionUUID->"0cb40761-788d-496b-a286-992fe6ac184d",
+Cell[61563, 1724, 1670, 62, 70, "Output",ExpressionUUID->"2f32c376-1a34-48c1-8a38-1bf8173c70ed",
  CellID->89924824]
 }, Open  ]],
-Cell[62860, 1803, 259, 5, 24, "ExampleText",ExpressionUUID->"8b75d6da-d1f6-43d7-8bab-1f7f4288635e",
+Cell[63248, 1789, 259, 5, 70, "ExampleText",ExpressionUUID->"f8457280-adc3-45b1-b7ce-5823d187ba38",
  CellID->1538616500],
 Cell[CellGroupData[{
-Cell[63144, 1812, 232, 4, 27, "Input",ExpressionUUID->"d09bc976-e1b7-4fd2-89c3-cd8130169613",
+Cell[63532, 1798, 232, 4, 70, "Input",ExpressionUUID->"b666e73a-97b2-4f53-8ee0-8b01a6378ddf",
  CellID->63141797],
-Cell[63379, 1818, 664, 16, 46, "Output",ExpressionUUID->"a56aabbe-6db7-47fe-9c27-c4dc8410715f",
+Cell[63767, 1804, 664, 16, 70, "Output",ExpressionUUID->"4511103b-b279-4057-a236-2af82dbd5238",
  CellID->1586324529]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[64080, 1839, 242, 5, 20, "ExampleDelimiter",ExpressionUUID->"ef43b22e-2d22-4855-a9eb-cdff3ccee2d2",
+Cell[64468, 1825, 242, 5, 70, "ExampleDelimiter",ExpressionUUID->"f418be80-40ad-4ed7-a216-231e7f533dec",
  CellID->207610531],
-Cell[64325, 1846, 280, 5, 24, "ExampleText",ExpressionUUID->"386a3da5-67ce-45f2-9751-cf16787bd16a",
+Cell[64713, 1832, 280, 5, 70, "ExampleText",ExpressionUUID->"94f26c8b-4c5f-4e18-82ed-d68318a58fc7",
  CellID->466207443],
 Cell[CellGroupData[{
-Cell[64630, 1855, 459, 9, 47, "Input",ExpressionUUID->"2f0a2aae-96be-4e87-a31e-4f973cd973b2",
+Cell[65018, 1841, 459, 9, 70, "Input",ExpressionUUID->"c48d4900-6299-435e-834c-841e9f0b506b",
  CellID->418857143],
-Cell[65092, 1866, 2217, 82, 29, "Output",ExpressionUUID->"b2c420ca-6eb5-4095-abb8-d8d630ff5e3b",
+Cell[65480, 1852, 1671, 62, 70, "Output",ExpressionUUID->"e1df23d1-e475-4c77-baab-c0cac11d47ff",
  CellID->616371251]
 }, Open  ]],
-Cell[67324, 1951, 308, 6, 24, "ExampleText",ExpressionUUID->"fefc0555-dc8d-480f-b1df-ac4286ed01ac",
+Cell[67166, 1917, 308, 6, 70, "ExampleText",ExpressionUUID->"18fb3212-41f0-42ce-b0a2-d5b82158acfb",
  CellID->2001167366],
 Cell[CellGroupData[{
-Cell[67657, 1961, 283, 5, 27, "Input",ExpressionUUID->"01d8fb70-2aa4-4baf-9268-1c0e36b0b532",
+Cell[67499, 1927, 283, 5, 70, "Input",ExpressionUUID->"932ccf77-9dc1-4de9-a19c-8b3273f57b3c",
  CellID->1878524695],
-Cell[67943, 1968, 685, 16, 46, "Output",ExpressionUUID->"e53557fc-820c-4d1e-b292-8f07d45abcad",
+Cell[67785, 1934, 685, 16, 70, "Output",ExpressionUUID->"f6d7c7a9-7afe-44d0-95bd-72915819545f",
  CellID->999259248]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[68677, 1990, 242, 5, 20, "ExampleDelimiter",ExpressionUUID->"9685e30f-6942-4a8d-8113-2246bee991f0",
+Cell[68519, 1956, 242, 5, 70, "ExampleDelimiter",ExpressionUUID->"c9b6cc08-2697-4649-91b8-c87189dd40d3",
  CellID->269869285],
-Cell[68922, 1997, 361, 6, 41, "ExampleText",ExpressionUUID->"40bce42d-db79-4d1a-bbfb-9138876c7bf8",
+Cell[68764, 1963, 361, 6, 70, "ExampleText",ExpressionUUID->"9c66d542-a396-4559-9f39-8b4cd3fd2e46",
  CellID->1126635636],
 Cell[CellGroupData[{
-Cell[69308, 2007, 407, 8, 47, "Input",ExpressionUUID->"9aa34a50-dba2-4826-99fa-84769e330eda",
+Cell[69150, 1973, 407, 8, 70, "Input",ExpressionUUID->"c8057192-8b53-46c4-89d3-07fb0f81f48c",
  CellID->2095068163],
-Cell[69718, 2017, 1453, 49, 29, "Output",ExpressionUUID->"430a587e-6e2f-4300-93c6-c2f042560c57",
+Cell[69560, 1983, 1109, 37, 70, "Output",ExpressionUUID->"41c29b0b-bdfb-4daa-8b71-737fa1417f97",
  CellID->1905366304]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[71220, 2072, 243, 5, 20, "ExampleDelimiter",ExpressionUUID->"96736807-b7e9-41fa-bb57-b3c193d7e184",
+Cell[70718, 2026, 243, 5, 70, "ExampleDelimiter",ExpressionUUID->"254ec3a7-dafc-40a8-94eb-1eb6c1bd946f",
  CellID->1602579273],
-Cell[71466, 2079, 743, 18, 45, "ExampleText",ExpressionUUID->"6f063830-81aa-4949-aa97-3ddf5266bb6a",
+Cell[70964, 2033, 743, 18, 70, "ExampleText",ExpressionUUID->"94664ecc-6220-4930-96d1-9f0a703d11cf",
  CellID->608002130],
 Cell[CellGroupData[{
-Cell[72234, 2101, 477, 11, 47, "Input",ExpressionUUID->"6c1d64d6-baa3-4f90-a6db-4f63cd63a595",
+Cell[71732, 2055, 474, 10, 70, "Input",ExpressionUUID->"663c0cdf-1ea4-475a-b231-7e8015ff124a",
  CellID->433390069],
-Cell[72714, 2114, 2203, 82, 29, "Output",ExpressionUUID->"1a0f735f-c6c3-4c0b-be0b-01382138000a",
+Cell[72209, 2067, 1657, 62, 70, "Output",ExpressionUUID->"c14f9141-e30b-425e-a26d-474bf19b1e26",
  CellID->2084312989]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[74966, 2202, 243, 5, 20, "ExampleDelimiter",ExpressionUUID->"b6b14550-9225-4fe4-aafd-d2e8deeecdb5",
+Cell[73915, 2135, 243, 5, 70, "ExampleDelimiter",ExpressionUUID->"b1b8d1b7-a6c3-4105-8572-71a0d86821b2",
  CellID->1047250718],
-Cell[75212, 2209, 369, 7, 24, "ExampleText",ExpressionUUID->"a49810c9-f9e0-4fb2-a094-6c7454f77b46",
+Cell[74161, 2142, 369, 7, 70, "ExampleText",ExpressionUUID->"e310e9df-90d5-404a-89b1-c31c6bb3d6f0",
  CellID->165490961],
 Cell[CellGroupData[{
-Cell[75606, 2220, 455, 9, 47, "Input",ExpressionUUID->"4f9feb05-35b0-430d-b812-465af25cdca5",
+Cell[74555, 2153, 455, 9, 44, "Input",ExpressionUUID->"80d5cbe8-084e-4df1-b998-8d4dc912c27a",
  CellID->858535998],
-Cell[76064, 2231, 3810, 120, 29, "Output",ExpressionUUID->"b2df13c9-f18a-45d7-a599-45f39b801ab5",
+Cell[75013, 2164, 2828, 90, 26, "Output",ExpressionUUID->"244f6750-c758-4989-823e-6c4d62a7b050",
  CellID->1370896528]
 }, Open  ]],
-Cell[79889, 2354, 611, 10, 63, "ExampleText",ExpressionUUID->"d7237c10-637d-4e6b-ad4a-be807b668b7c",
+Cell[77856, 2257, 611, 10, 58, "ExampleText",ExpressionUUID->"6a8d5410-36eb-4e41-a2fd-77702cba1805",
  CellID->89187122],
 Cell[CellGroupData[{
-Cell[80525, 2368, 617, 13, 47, "Input",ExpressionUUID->"332a7248-e23c-44aa-a8ea-b693f4e64ea8",
+Cell[78492, 2271, 617, 13, 44, "Input",ExpressionUUID->"f5955998-1669-4fa3-83ab-289c2a0be739",
  CellID->369127959],
-Cell[81145, 2383, 4164, 128, 29, "Output",ExpressionUUID->"78aafa99-eee4-4171-8a11-5153bb5a5e49",
+Cell[79112, 2286, 3077, 95, 26, "Output",ExpressionUUID->"f004c8e7-8e68-4342-a697-18f4be8c5be8",
  CellID->1061908]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[85370, 2518, 250, 5, 26, "ExampleSubsection",ExpressionUUID->"70902518-8ac5-4f29-ba62-877d40e91533",
+Cell[82250, 2388, 250, 5, 23, "ExampleSubsection",ExpressionUUID->"8e571087-f28d-412f-956b-96c583451b77",
  CellID->463543447],
-Cell[85623, 2525, 878, 22, 45, "ExampleText",ExpressionUUID->"caa97ba7-bea9-44a6-afaa-4e9efb1eb63a",
+Cell[82503, 2395, 878, 22, 39, "ExampleText",ExpressionUUID->"14da36df-3e04-4e59-85e4-df5c57fe2626",
  CellID->1938111257],
-Cell[86504, 2549, 387, 9, 27, "Input",ExpressionUUID->"f4bf92a5-890a-404a-8908-a477d4b7f186",
+Cell[83384, 2419, 390, 10, 26, "Input",ExpressionUUID->"b1619ee1-b21c-4d91-8bd9-00ca8d4c2050",
  CellID->1762011999],
-Cell[86894, 2560, 510, 12, 43, "ExampleText",ExpressionUUID->"37a3a1ba-18e1-4971-9dfa-88cd7202fc2e",
+Cell[83777, 2431, 510, 12, 39, "ExampleText",ExpressionUUID->"9f744894-db5a-4121-999d-e6fc851d8cd1",
  CellID->222961595],
 Cell[CellGroupData[{
-Cell[87429, 2576, 404, 8, 47, "Input",ExpressionUUID->"134808af-b84d-4817-9ec9-19c513526550",
+Cell[84312, 2447, 404, 8, 44, "Input",ExpressionUUID->"c4ca27f5-3f58-4aa1-ac4d-8d3b7b4e608e",
  CellID->500355107],
-Cell[87836, 2586, 333, 8, 26, "Output",ExpressionUUID->"8149c8f8-7ef3-4e89-b21d-ebe076e127bb",
+Cell[84719, 2457, 333, 8, 25, "Output",ExpressionUUID->"902898c6-1c6c-4f62-b13d-35115034f871",
  CellID->19032739],
-Cell[88172, 2596, 389, 10, 26, "Output",ExpressionUUID->"ec81c760-d393-4c10-aaf8-3b5f4439c0e8",
+Cell[85055, 2467, 354, 9, 25, "Output",ExpressionUUID->"280d6746-f38a-41e0-a9e2-cf6fb966fa51",
  CellID->2055664617]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[88598, 2611, 243, 5, 20, "ExampleDelimiter",ExpressionUUID->"2ea5f8f2-ed5b-4432-b527-884b72091014",
+Cell[85446, 2481, 243, 5, 16, "ExampleDelimiter",ExpressionUUID->"4160d4a6-5d58-418d-85ad-adb9a5f4e99f",
  CellID->1985818634],
-Cell[88844, 2618, 268, 5, 24, "ExampleText",ExpressionUUID->"94826903-3f07-4fcb-a10d-6424e49cf38c",
+Cell[85692, 2488, 268, 5, 23, "ExampleText",ExpressionUUID->"e93c07d3-72b0-4c53-95e8-ea4e4f7b50fb",
  CellID->1227897984],
-Cell[89115, 2625, 450, 10, 27, "Input",ExpressionUUID->"a1cde6da-44b9-4607-8ee9-adec59d367fd",
+Cell[85963, 2495, 444, 9, 26, "Input",ExpressionUUID->"03ec2efa-ccc5-46ba-bc8c-627a85f5bc9e",
  CellID->1562574200],
 Cell[CellGroupData[{
-Cell[89590, 2639, 258, 5, 27, "Input",ExpressionUUID->"33a8d728-f469-4d71-b49c-f4a4d08d6a38",
+Cell[86432, 2508, 258, 5, 26, "Input",ExpressionUUID->"a085c84c-6cbb-4ce0-89d5-414fd25e887b",
  CellID->1163616493],
-Cell[89851, 2646, 2404, 85, 29, "Output",ExpressionUUID->"dca1f36a-0fe4-40d9-850c-bfc44b1da3d0",
+Cell[86693, 2515, 1859, 65, 26, "Output",ExpressionUUID->"3152b6a7-69a6-4d3e-81cd-4809d12b0d30",
  CellID->1221768232]
 }, Open  ]],
-Cell[92270, 2734, 744, 19, 43, "ExampleText",ExpressionUUID->"37f78b33-4483-47ee-840f-70d9a145a38d",
+Cell[88567, 2583, 744, 19, 39, "ExampleText",ExpressionUUID->"0f7c9d88-54c7-4b48-b28a-fca7e872628e",
  CellID->139270512]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[93063, 2759, 256, 5, 26, "ExampleSubsection",ExpressionUUID->"3e05bea3-486f-44db-9e1a-c6151e20d1ef",
+Cell[89360, 2608, 256, 5, 23, "ExampleSubsection",ExpressionUUID->"3fc2fed0-2ec5-42e0-b213-78ced4a7b358",
  CellID->1851526060],
-Cell[93322, 2766, 226, 3, 24, "ExampleText",ExpressionUUID->"b86afc70-c3e7-43fe-b55f-9cb2dec1337d",
+Cell[89619, 2615, 226, 3, 23, "ExampleText",ExpressionUUID->"ae1e7c4c-8d18-4355-ab54-2be9196d4a7d",
  CellID->1460725567],
-Cell[93551, 2771, 315, 6, 27, "Input",ExpressionUUID->"faaf879b-2ac7-45b6-8bc0-38602cf9c8b9",
+Cell[89848, 2620, 315, 6, 26, "Input",ExpressionUUID->"642f42aa-95b3-4a89-913f-7a290015ffbb",
  CellID->1464112779],
-Cell[93869, 2779, 271, 3, 24, "ExampleText",ExpressionUUID->"8e34df2b-3a07-4bc7-9194-d48f97acb142",
+Cell[90166, 2628, 271, 3, 23, "ExampleText",ExpressionUUID->"c5803562-927b-4522-b28e-a0871903b409",
  CellID->791709752],
 Cell[CellGroupData[{
-Cell[94165, 2786, 263, 5, 27, "Input",ExpressionUUID->"956ae878-88d6-404a-ab31-a02fd431e5ee",
+Cell[90462, 2635, 263, 5, 26, "Input",ExpressionUUID->"cb3d9032-5a6c-412b-a719-3744e2373b66",
  CellID->790157480],
-Cell[94431, 2793, 1607, 60, 41, "Output",ExpressionUUID->"360fa4ba-bfed-4d0b-8e58-a292a61d14d5",
+Cell[90728, 2642, 1344, 51, 37, "Output",ExpressionUUID->"d5130b08-b5b7-4a1e-9ec2-c56a9a27eddd",
  CellID->1597593413]
 }, Open  ]],
-Cell[96053, 2856, 442, 11, 26, "ExampleText",ExpressionUUID->"b65a3167-a540-427b-aa0f-1cc7759fa316",
+Cell[92087, 2696, 442, 11, 23, "ExampleText",ExpressionUUID->"ef1943f9-a7ee-4b4c-b473-738663f5eba1",
  CellID->1910193792],
 Cell[CellGroupData[{
-Cell[96520, 2871, 296, 7, 27, "Input",ExpressionUUID->"f84cea45-6035-4f6f-94d9-14bbd7026c77",
+Cell[92554, 2711, 296, 7, 26, "Input",ExpressionUUID->"60acba57-808b-40bb-a022-5c7cf55cd1cd",
  CellID->1398899287],
-Cell[96819, 2880, 224, 4, 26, "Output",ExpressionUUID->"7e5a7467-bf08-4c16-887b-b2b8ad71f285",
+Cell[92853, 2720, 224, 4, 25, "Output",ExpressionUUID->"61a06a14-9cd6-49fa-b264-fa7dd965a175",
  CellID->326178527]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[97080, 2889, 242, 5, 20, "ExampleDelimiter",ExpressionUUID->"798061a5-4879-4543-bda8-23a7d4b66846",
+Cell[93114, 2729, 242, 5, 16, "ExampleDelimiter",ExpressionUUID->"fa3ac764-cba7-4cdc-b131-f62bcdac5af4",
  CellID->661498079],
-Cell[97325, 2896, 202, 2, 24, "ExampleText",ExpressionUUID->"164d38d8-7878-4baa-8612-0be864777cf6",
+Cell[93359, 2736, 202, 2, 23, "ExampleText",ExpressionUUID->"6645ec99-30db-4ebe-8113-da85b0496b8a",
  CellID->2077608707],
-Cell[97530, 2900, 323, 6, 27, "Input",ExpressionUUID->"251aa283-6ef9-4746-971c-fe19a15c9b84",
+Cell[93564, 2740, 323, 6, 33, "Input",ExpressionUUID->"d3e4f35c-d0da-4ff5-9489-b6ee51bc78cc",
  CellID->370684553],
-Cell[97856, 2908, 473, 11, 26, "ExampleText",ExpressionUUID->"070a1cd6-0805-40b9-a247-acebcf9e3009",
+Cell[93890, 2748, 473, 11, 32, "ExampleText",ExpressionUUID->"58b752d9-a9f3-4375-b612-24f193e8005a",
  CellID->1016235586],
 Cell[CellGroupData[{
-Cell[98354, 2923, 301, 7, 27, "Input",ExpressionUUID->"3dc56bba-e8b5-4671-bb4a-588569095b46",
+Cell[94388, 2763, 301, 7, 33, "Input",ExpressionUUID->"7559724b-6c93-4646-b2cc-36c80b651cef",
  CellID->1272924256],
-Cell[98658, 2932, 221, 4, 26, "Output",ExpressionUUID->"8ebbc4a8-ae44-4660-bc03-78c1134715f7",
+Cell[94692, 2772, 221, 4, 32, "Output",ExpressionUUID->"794f159c-abac-4be9-bc36-d13c04989bc7",
  CellID->411902561]
 }, Open  ]],
-Cell[98894, 2939, 246, 4, 24, "ExampleText",ExpressionUUID->"5aec40fe-896f-4bb6-8849-e82819aae5a8",
+Cell[94928, 2779, 246, 4, 30, "ExampleText",ExpressionUUID->"c99e2019-42f2-4725-a7b4-448b069a5654",
  CellID->1743019876],
 Cell[CellGroupData[{
-Cell[99165, 2947, 261, 5, 27, "Input",ExpressionUUID->"6ee37b85-db86-4005-9c65-2abf7249ae03",
+Cell[95199, 2787, 261, 5, 33, "Input",ExpressionUUID->"72dda175-35cd-4e0e-be41-c064ee0be761",
  CellID->1618449420],
-Cell[99429, 2954, 2917, 102, 41, "Output",ExpressionUUID->"1ce42178-a085-4bae-92ca-a0e9b7a679c9",
+Cell[95463, 2794, 2171, 76, 49, "Output",ExpressionUUID->"ee504ab5-5d5c-4430-8bd0-36773ad3faad",
  CellID->520111740]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
-Cell[102397, 3062, 248, 5, 35, "ExampleSection",ExpressionUUID->"48f20809-50b5-40e2-aa1f-d29868b0a0c5",
+Cell[97685, 2876, 248, 5, 43, "ExampleSection",ExpressionUUID->"48f20809-50b5-40e2-aa1f-d29868b0a0c5",
  CellID->661696253],
-Cell[102648, 3069, 259, 5, 23, "ExampleSection",ExpressionUUID->"29f5489f-1be1-48e1-a3a9-e56d5cafe0b6",
+Cell[97936, 2883, 259, 5, 27, "ExampleSection",ExpressionUUID->"29f5489f-1be1-48e1-a3a9-e56d5cafe0b6",
  CellID->1458600005],
 Cell[CellGroupData[{
-Cell[102932, 3078, 252, 5, 23, "ExampleSection",ExpressionUUID->"eaacdbd0-6d11-4b53-b037-2c2a61434ed5",
+Cell[98220, 2892, 252, 5, 27, "ExampleSection",ExpressionUUID->"eaacdbd0-6d11-4b53-b037-2c2a61434ed5",
  CellID->1164453530],
-Cell[103187, 3085, 573, 12, 43, "ExampleText",ExpressionUUID->"410c31ba-35ec-4e25-b196-c08196802978",
+Cell[98475, 2899, 573, 12, 54, "ExampleText",ExpressionUUID->"410c31ba-35ec-4e25-b196-c08196802978",
  CellID->660017830],
 Cell[CellGroupData[{
-Cell[103785, 3101, 491, 11, 27, "Input",ExpressionUUID->"a382403a-67aa-4df6-8186-ad5279ea0f2e",
+Cell[99073, 2915, 491, 11, 33, "Input",ExpressionUUID->"a382403a-67aa-4df6-8186-ad5279ea0f2e",
  CellID->2001185775],
-Cell[104279, 3114, 610, 11, 61, "Message",ExpressionUUID->"c5e93a05-c156-4911-97a6-6f32f4fa6665",
+Cell[99567, 2928, 610, 11, 68, "Message",ExpressionUUID->"c5e93a05-c156-4911-97a6-6f32f4fa6665",
  CellID->1335938736],
-Cell[104892, 3127, 228, 4, 26, "Output",ExpressionUUID->"9c877d03-f4de-47fd-92cc-36ab0fa6b52a",
+Cell[100180, 2941, 228, 4, 32, "Output",ExpressionUUID->"9c877d03-f4de-47fd-92cc-36ab0fa6b52a",
  CellID->1180806567]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[105157, 3136, 242, 5, 20, "ExampleDelimiter",ExpressionUUID->"cd27b515-ff54-406b-b811-454ebb05a4fb",
+Cell[100445, 2950, 242, 5, 24, "ExampleDelimiter",ExpressionUUID->"cd27b515-ff54-406b-b811-454ebb05a4fb",
  CellID->375309067],
-Cell[105402, 3143, 300, 6, 24, "ExampleText",ExpressionUUID->"da9103f1-b706-4c6a-bb13-5472667fc40b",
+Cell[100690, 2957, 300, 6, 30, "ExampleText",ExpressionUUID->"da9103f1-b706-4c6a-bb13-5472667fc40b",
  CellID->1531322897],
 Cell[CellGroupData[{
-Cell[105727, 3153, 597, 11, 27, "Input",ExpressionUUID->"495680b6-99d5-4b1b-8030-830f2eabab38",
+Cell[101015, 2967, 597, 11, 58, "Input",ExpressionUUID->"495680b6-99d5-4b1b-8030-830f2eabab38",
  CellID->1172078751],
-Cell[106327, 3166, 555, 11, 44, "Message",ExpressionUUID->"e18bad5e-d868-457a-9990-2a44c80de028",
+Cell[101615, 2980, 555, 11, 47, "Message",ExpressionUUID->"e18bad5e-d868-457a-9990-2a44c80de028",
  CellID->335894209],
-Cell[106885, 3179, 251, 5, 26, "Output",ExpressionUUID->"7c93d471-3c61-433e-94db-bbe4d4153e37",
+Cell[102173, 2993, 251, 5, 32, "Output",ExpressionUUID->"7c93d471-3c61-433e-94db-bbe4d4153e37",
  CellID->1786946347]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
-Cell[107175, 3189, 256, 5, 35, "ExampleSection",ExpressionUUID->"cd76f69f-69ca-4082-a71b-0daed00c90a7",
+Cell[102463, 3003, 256, 5, 43, "ExampleSection",ExpressionUUID->"cd76f69f-69ca-4082-a71b-0daed00c90a7",
  CellID->952003599],
-Cell[107434, 3196, 250, 5, 23, "ExampleSection",ExpressionUUID->"a7cdec30-8900-49aa-a279-bc274af3b3ee",
+Cell[102722, 3010, 250, 5, 27, "ExampleSection",ExpressionUUID->"a7cdec30-8900-49aa-a279-bc274af3b3ee",
  CellID->1571318243]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[107721, 3206, 111, 1, 72, "MetadataSection",ExpressionUUID->"87eca4cc-682d-4375-889c-376a005f5c01",
+Cell[103009, 3020, 111, 1, 90, "MetadataSection",ExpressionUUID->"87eca4cc-682d-4375-889c-376a005f5c01",
  CellID->1539302942],
-Cell[107835, 3209, 591, 14, 26, "History",ExpressionUUID->"30c9f129-d174-48b4-a747-c5b2c657e467",
+Cell[103123, 3023, 591, 14, 33, "History",ExpressionUUID->"30c9f129-d174-48b4-a747-c5b2c657e467",
  CellID->329050785],
 Cell[CellGroupData[{
-Cell[108451, 3227, 484, 13, 21, "CategorizationSection",ExpressionUUID->"de27468a-7889-43be-94f8-5044aa03b931",
+Cell[103739, 3041, 484, 13, 27, "CategorizationSection",ExpressionUUID->"de27468a-7889-43be-94f8-5044aa03b931",
  CellID->586152470],
-Cell[108938, 3242, 134, 2, 45, "Categorization",ExpressionUUID->"12cebcc6-8f7d-4d3d-b4a4-62e575c08439",
+Cell[104226, 3056, 134, 2, 45, "Categorization",ExpressionUUID->"12cebcc6-8f7d-4d3d-b4a4-62e575c08439",
  CellID->957074501],
-Cell[109075, 3246, 137, 2, 45, "Categorization",ExpressionUUID->"adc3ffdc-83f0-410e-88b0-5d78f929d787",
+Cell[104363, 3060, 137, 2, 45, "Categorization",ExpressionUUID->"adc3ffdc-83f0-410e-88b0-5d78f929d787",
  CellID->1560445390],
-Cell[109215, 3250, 134, 2, 45, "Categorization",ExpressionUUID->"ef6615e7-f137-4d6f-83f1-aa4761d23475",
+Cell[104503, 3064, 134, 2, 45, "Categorization",ExpressionUUID->"ef6615e7-f137-4d6f-83f1-aa4761d23475",
  CellID->1335372566],
-Cell[109352, 3254, 144, 2, 45, "Categorization",ExpressionUUID->"38454593-8110-41ae-aaaf-611ea58ea8df",
+Cell[104640, 3068, 144, 2, 45, "Categorization",ExpressionUUID->"38454593-8110-41ae-aaaf-611ea58ea8df",
  CellID->255121965]
 }, Closed]],
 Cell[CellGroupData[{
-Cell[109533, 3261, 110, 1, 21, "KeywordsSection",ExpressionUUID->"e5b1bdf5-c1a7-4b48-b11a-0eecd0a50933",
+Cell[104821, 3075, 110, 1, 26, "KeywordsSection",ExpressionUUID->"e5b1bdf5-c1a7-4b48-b11a-0eecd0a50933",
  CellID->309708796],
-Cell[109646, 3264, 100, 1, 70, "Keywords",ExpressionUUID->"9c27b812-adef-43ed-abec-be2c24e2ef54",
+Cell[104934, 3078, 100, 1, 70, "Keywords",ExpressionUUID->"9c27b812-adef-43ed-abec-be2c24e2ef54",
  CellID->1922857691]
 }, Closed]],
 Cell[CellGroupData[{
-Cell[109783, 3270, 120, 1, 21, "TemplatesSection",ExpressionUUID->"c0b36506-e231-4839-b54e-7c58bc1bb7ff",
+Cell[105071, 3084, 120, 1, 26, "TemplatesSection",ExpressionUUID->"c0b36506-e231-4839-b54e-7c58bc1bb7ff",
  CellID->2135292581],
-Cell[109906, 3273, 149, 2, 70, "Template",ExpressionUUID->"3dcaac73-7551-494c-b93f-6eb7b09f95b8",
+Cell[105194, 3087, 149, 2, 70, "Template",ExpressionUUID->"3dcaac73-7551-494c-b93f-6eb7b09f95b8",
  CellID->1263183850],
-Cell[110058, 3277, 137, 2, 70, "Template",ExpressionUUID->"3f8b6384-e4ef-4a4b-ac84-9bf116e317c4",
+Cell[105346, 3091, 137, 2, 70, "Template",ExpressionUUID->"3f8b6384-e4ef-4a4b-ac84-9bf116e317c4",
  CellID->307632708],
-Cell[110198, 3281, 136, 2, 70, "Template",ExpressionUUID->"c716a77d-15ea-4361-82f7-205804f5ade5",
+Cell[105486, 3095, 136, 2, 70, "Template",ExpressionUUID->"c716a77d-15ea-4361-82f7-205804f5ade5",
  CellID->1389785027],
-Cell[110337, 3285, 138, 2, 70, "Template",ExpressionUUID->"42b0dfaf-c203-42cc-b7f4-61f79f8a2d3a",
+Cell[105625, 3099, 138, 2, 70, "Template",ExpressionUUID->"42b0dfaf-c203-42cc-b7f4-61f79f8a2d3a",
  CellID->2084804017]
 }, Closed]]
 }, Open  ]]

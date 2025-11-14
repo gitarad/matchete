@@ -31,10 +31,12 @@ PackageExport["GetFields"]
 PackageExport["GetFieldsByProperty"]
 
 
+PackageExport["FieldGenerators"]
+
+
 PackageExport["Scalar"]
 PackageExport["Fermion"]
 PackageExport["Vector"]
-PackageExport["Ghost"]
 
 
 PackageExport["Indices"]
@@ -47,6 +49,7 @@ PackageExport["Type"]
 PackageExport["Chiral"]
 PackageExport["LeftHanded"]
 PackageExport["RightHanded"]
+PackageExport["BackgroundField"]
 
 
 PackageExport["Symmetries"]
@@ -72,14 +75,9 @@ PackageExport["ResetFlavorIndices"]
 PackageExport["IndexAlphabet"]
 
 
-PackageExport["Group"]
 PackageExport["Abelian"]
 PackageExport["Representations"]
 PackageExport["ClebschGordanCoefficients"]
-PackageExport["RepresentationProperties"]
-PackageExport["Dimension"]
-PackageExport["DynkinCoefficients"]
-PackageExport["Reality"]
 PackageExport["ClebschGordanIndices"]
 
 
@@ -130,7 +128,8 @@ PackageExport["ModelParameters"]
 (*Internal*)
 
 
-PackageExport["FieldGenerators"]
+PackageScope["Ghost"]
+PackageScope["AntiGhost"]
 
 
 PackageScope["SymmetryOverride"]
@@ -157,6 +156,9 @@ PackageScope["KinOpLagrangian"]
 PackageScope["$DropDiagonalCouplings"]
 
 
+PackageScope["ReadFileExpression"]
+
+
 (* ::Section:: *)
 (*Usage messages*)
 
@@ -173,10 +175,12 @@ GetFields::usage           = "GetFields[] returns an association of all fields t
 GetFieldsByProperty::usage = "GetFieldsByProperty[properties] returns all fields matching the property, list of properties or sequence of properties determined by the argument.";
 
 
+FieldGenerators::usage      = "FieldGenerators[Field,GaugeGroup,Indices] returns the generator of the given GaugeGroup in the same representation as the given Field, with given Indices."
+
+
 Scalar::usage  =    "Field[\[Phi],Scalar,{indices},{CDerivs}] denotes a scalar field \[Phi].";
 Vector::usage  =    "Field[A,Vector[Index[\[Mu],Lorentz]],{indices},{CDerivs}] denotes a vector field \!\(\*SubscriptBox[\(A\), \(\[Mu]\)]\).";
 Fermion::usage =    "Field[\[Psi],Fermion,{indices},{CDerivs}] denotes a fermion field \[Psi].";
-Ghost::usage   =    "Field[c,Ghost,{indices},{CDerivs}] denotes a ghost field c.";
 
 
 Indices::usage       = "Indices is an option for the routine DefineField that specifies a list of representations under which the field transforms. By default, Indices is an empty list {}.";
@@ -189,14 +193,12 @@ Type::usage          = "Type specifies the type of a field. It can be Scalar, Ve
 Chiral::usage        = "Chiral is an option for the routine DefineField that specifies if a fermion field is LeftHanded or RightHanded.";
 LeftHanded::usage    = "LeftHanded specifies that a field is of left-handed chirality."
 RightHanded::usage   = "RightHanded specifies that a field is of right-handed chirality."
+BackgroundField::usage= "Is an option used in Matchete."
 
 
 Symmetries::usage               = "Symmetries is an option that takes a list of symmetries. The possible option values are: SymmetricIndices[n1, n2, ...], AntisymmetricIndices[n1, n2, ...], SymmetricPermutation[n1, n2, ...] or AntisymmetricPermutation[n1, n2, ...]." ;
 SymmetricPermutation::usage     = "SymmetricPermutation is a possible value for the option Symmetries. SymmetricPermutation[n1, n2, ...] denotes symmetry under a particular permutation of indices." ;
 AntisymmetricPermutation::usage = "AntisymmetricPermutation is a possible value for the option Symmetries. AntisymmetricPermutation[n1, n2, ...] denotes antisymmetry under a particular permutation of indices." ;
-
-
-EFTOrder::usage = "EFTOrder is an option for various routines specifying the targeted order in power-counting, as well as defining the power-counting of couplings.";
 
 
 Coupling::usage         = "Coupling[label,{indices},EFTOrder] denotes the coupling label with a set of indices and an EFTOrder."
@@ -205,11 +207,10 @@ RemoveCoupling::usage   = "RemoveCoupling[alias] undefines the coupling with lab
 GetCouplings::usage     = "GetCouplings[] returns an association of all couplings that have been defined by DefineCoupling and their properties.GetCouplings[coupling] returns an association with all the properties of an already defined coupling.";
 ResetCouplings::usage   = "Undefines all couplings (excluding the field masses and the gauge couplings)."
 DiagonalCoupling::usage = "DiagonalCoupling is an option for the routine DefineCoupling. Allowed values are a list of booleans or an empty list. The n-th boolean specifies whether the n-th flavor index is a diagonal in flavor space. By default all flavor indices are assumed to be non-diagonal.
-
 DiagonalCoupling is also the corresponding key in the association returned by GetCouplings[]."
 
 
-GetFlavorIndices::usage   = "GetFlavorIndices[] returns an association of all flavor indices that have been defined by DefineFlavorIndex and their dimension. GetFlavorIndices[GaugeGroup] returns an association with the dimension of an already defined flavor index.";
+GetFlavorIndices::usage   = "GetFlavorIndices[] returns an association of all flavor indices that have been defined by DefineFlavorIndex and their dimension. GetFlavorIndices[flavor] returns an association with the dimension of an already defined flavor index.";
 IndexDimension::usage     = "IndexDimension is a key for the association returned by GetFlavorIndices.";
 DefineFlavorIndex::usage  = "DefineFlavorIndex[IndexName, Dimension] defines a flavor index with given IndexName and Dimension. This routine has one optional argument, IndexAlphabet, to define the printing alphabet of the representation.";
 RemoveFlavorIndex::usage  = "RemoveFlavorIndex[alias] undefines the flavor index with given alias.";
@@ -219,14 +220,9 @@ ResetFlavorIndices::usage = "Undefines all flavor indices.";
 IndexAlphabet::usage             = "IndexAlphabet is an option for the routine DefineRepresentation and DefineFlavorIndex that specifies a printing alphabet for the representation or flavor indices.";
 
 
-Group::usage                     = "Group is a key for the associations returned by GetGaugeGroups and RepresentationProperties.";
 Abelian::usage                   = "Abelian is a key for the association returned by GetGaugeGroups.";
 Representations::usage           = "Representations is a key for the association returned by GetGaugeGroups.";
 ClebschGordanCoefficients::usage = "ClebschGordanCoefficients is a key for the association returned by GetGaugeGroups.";
-RepresentationProperties::usage  = "RepresentationProperties[RepName] return the main properties of the representation RepName."
-Dimension::usage                 = "Dimension is a key for the association returned by RepresentationProperties."
-DynkinCoefficients::usage        = "Representations is a key for the association returned by RepresentationProperties."
-Reality::usage                   = "Reality is a key for the association returned by RepresentationProperties."
 ClebschGordanIndices::usage      = "ClebschGordanIndices[CGname] return the representation of the indices (ordered) for the Clebsch-Gordan coefficient CGname."
 
 
@@ -290,7 +286,10 @@ KinOpLagrangian::usage      = "KinOpLagrangian[field] returns the  the part of t
 GroupFromRep::usage         = "Returns the name of the group associtated to a given representation."
 FieldsFromGroup::usage      = "Returns a list of fields that are charged under a given group."
 CouplingsFromGroup::usage   = "Returns a list of couplings that are charged under a given group."
-FieldGenerators::usage      = "FieldGenerators[Field,GaugeGroup,Indices] returns the generator of the given GaugeGroup in the same representation as the given Field, with given Indices."
+
+
+Ghost::usage   =    "Field[c,Ghost,{indices},{CDerivs}] denotes a ghost field c.";
+AntiGhost::usage =    "Field[c,AntiGhost,{indices},{CDerivs}] denotes an antighost field c.";
 
 
 (* ::Chapter:: *)
@@ -324,9 +323,17 @@ GetFieldsByProperty[props:_List|_Rule]:=
 
 
 (* ::Subsubsection::Closed:: *)
+(*Field properties*)
+
+
+Field[0, __]= 0;
+
+
+(* ::Subsubsection::Closed:: *)
 (*Error messages*)
 
 
+DefineField::bkgMass      = "Background fields do not have a mass. They are Formally taken to have mass 0. Mass\[Rule] 0 is the only valid option for background fields.";
 DefineField::FieldLabel   = "The label '`1`' is not a Symbol, it is already used in some loaded context or already has some definitions. Please use another label.";
 DefineField::FieldType    = "The field type '`1`' is invalid. Please use either Scalar, Fermion or Vector.";
 DefineField::Heavy0       = "The mass of the '`1`' cannot be simultaneously `Heavy` and `0`.";
@@ -334,7 +341,6 @@ DefineField::LorentzIndex = "Lorentz cannot be part of the Indices list.";
 DefineField::MassIndices  = "The indices in the Mass option must be a subset of the field flavor Indices";
 DefineField::MassLabel    = "A mass with label '`1`' has already been defined. Please remove the previous definition or choose another label for the '`2`' field.";
 DefineField::Chiral       = "The option Chiral can only be different from False for fields of the Fermion type with SelfConjugate->False";
-DefineField::SelfGhost    = "The option SelfConjugate->True is not valid for Ghost fields";
 DefineField::ChiralMass   = "A chiral fermion with U(1) charges or complex indices can only be created with a vanishing mass, i.e. by adding the option Mass->0."
 DefineField::Complex      = "A real field cannot transform as a complex representation or be charged under an U(1) group."
 DefineField::LightIndices = "DefineField does not support light scalar/vector masses with flavor indices. Light mass should be set to 0 in DefineField and the squared mass should be defined separately with DefineCoupling with EFTOrder->2. ";
@@ -348,15 +354,17 @@ DefineField::pseudorealheavymass = "The chiral fermion is in a pseudoreal repres
 
 
 Options[DefineField]={
-	Charges->{},
+	BackgroundField-> False,
+	Charges-> {},
 	Chiral-> False,
-	Indices->{},
+	Indices-> {},
 	Mass-> Heavy,
 	NiceForm-> Default,
-	SelfConjugate->False
+	SelfConjugate-> False
 };
 
 
+OptionTest[DefineField, BackgroundField]= BooleanQ;
 OptionTest[DefineField, Charges]= If[ListQ@ #, And@@ ChargeQ/@ #, ChargeQ@ #]&;
 OptionTest[DefineField, Indices]:= If[ListQ@ #,
 		And@@ fieldIndQ/@# && DuplicateFreeQ[GroupFromRep/@ Cases[#, Not@* MemberQ[Keys@ $FlavorIndices]]]
@@ -379,6 +387,7 @@ ChargeQ@ symb_Symbol[a_Times | a_Plus]:= And@@(ChargeQ@symb[#]&/@(List@@a));
 ChargeQ@ _= False;
 
 
+OptionMessage[BackgroundField, DefineField, val_]:= Message[General::optexpectsval, BackgroundField, DefineField, val, "Boolean"];
 OptionMessage[Charges, DefineField, val_]:= Message[General::optexpectsval, Charges, DefineField, val, "(list of) valid group charge(s)"];
 OptionMessage[Indices, DefineField, val_]:= Message[General::optexpectsval, Indices, DefineField, val, "(list of) already defined group representation(s) (only one per group) and/or flavor indice(s)"];
 OptionMessage[Mass, DefineField, val_]:= Message[General::optexpectsval, Mass, DefineField, val, "value Heavy, Light, 0, {Light,0}, {Heavy,MassLabel}, {Light,MassLabel}, {Heavy,MassLabel,{FlavorIndex, \[Ellipsis]}} or {Light,MassLabel,{FlavorIndex, \[Ellipsis]}}, with FlavorIndex among the flavor indices of the field, "];
@@ -415,7 +424,7 @@ DefineField[fieldLabel,type,opts]=Module[
 	];
 
 	(*Check that 'type' is valid.*)
-	If[!MatchQ[type,Scalar|Vector|Fermion|Ghost],
+	If[!MatchQ[type,Scalar|Vector|Fermion|Ghost|AntiGhost],
 		Message[DefineField::FieldType,type];
 		Abort[]
 	];
@@ -432,17 +441,20 @@ DefineField[fieldLabel,type,opts]=Module[
 		Abort[]
 	];
 
-	(*Check that ghosts are not self-conjugate *)
-	If[OptionValue@SelfConjugate===True && type===Ghost,
-		Message[DefineField::SelfGhost];
-		Abort[]
-	];
-
 	(* Check that charges appear only once per group *)
 	If[!DuplicateFreeQ[Head/@(fieldCharges)]||
 			!DuplicateFreeQ[DeleteCases[GroupFromRep/@ fieldInds, None]],
 		Message[DefineField::DoubleGaugeCharges];
 		Abort[]
+	];
+
+	(*Ensure that background fields have zero mass*)
+	If[OptionValue@ BackgroundField,
+		If[FilterRules[{opts}, Mass] =!= {} && !MatchQ[massInfo, 0| {Light, 0}],
+			Message[DefineField::bkgMass];
+			Abort[];
+		];
+		massInfo= 0;
 	];
 
 	(* Check that chiral fermion mass is zero if field is charged under any U(1) or has complex indices *)
@@ -551,7 +563,8 @@ DefineField[fieldLabel,type,opts]=Module[
 		SelfConjugate-> OptionValue@SelfConjugate,
 		Chiral-> OptionValue@Chiral,
 		Mass-> massLabel,
-		Heavy-> scale
+		Heavy-> scale,
+		BackgroundField-> OptionValue@ BackgroundField
 		|>
 	];
 
@@ -596,7 +609,7 @@ DefineField[fieldLabel,type,opts]=Module[
 
 		If[OptionValue@Chiral===False,
 			Field[l, t, Thread@Index[inputInd,i], {}],
-			If[OptionValue@Chiral===LeftHanded,PL,PR]**Field[l, t, Thread@Index[inputInd,i], {}]
+			If[OptionValue@Chiral===LeftHanded,PL,PR]\[CenterDot] Field[l, t, Thread@Index[inputInd,i], {}]
 		]
 	];
 
@@ -808,6 +821,14 @@ CouplingAssociationEntry[order_,indInternal_, sc_,symmetries_,dc_]:=Module[{},
 			DiagonalCoupling-> dc
 		|>
 ]
+
+
+(* ::Text:: *)
+(*Thread over labels list*)
+
+
+DefineCoupling[labelList_List, opts:OptionsPattern[]]? OptionsCheck:= 
+	(DefineCoupling[#, opts]&/@ labelList;);
 
 
 (* ::Text:: *)
@@ -1077,21 +1098,6 @@ DefineFlavorIndex[flavorName,indexDim,opts]= Module[{},
 
 
 (* ::Text:: *)
-(*Shows the main representation properties*)
-
-
-RepresentationProperties[RepName_]:=Module[{real= $Representations[RepName][Reality]},
-									<|
-										Group -> $Representations[RepName][GroupName],
-										DynkinCoefficients ->  $Representations[RepName][DynkinCoefficients],
-										Dimension -> $Representations[RepName][RepDimension],
-										Reality -> Which[real==1,"Real",real==-1,"PseudoReal",real==0,"Complex"]
-									|>
-
-]
-
-
-(* ::Text:: *)
 (*Shows the representation indices for a given Clebsch Gordan*)
 
 
@@ -1118,7 +1124,7 @@ ClebschGordanIndices[CGname_]:= Module[{},
 
 GroupFromRep@ Bar@ rep_:= GroupFromRep@ rep;
 GroupFromRep@ rep_:= Module[{gr},
-	gr= Lookup[$Representations, rep, None]@ GroupName;
+	gr= Lookup[$Representations, rep, None]@ Group;
 	If[KeyExistsQ[$GaugeGroups, gr]||KeyExistsQ[$GlobalGroups, gr], gr, None]
 ];
 
@@ -1223,7 +1229,7 @@ FieldGenerators[field_,GroupName_,indices_]:= Module[{rep,generators},
 		Abort[]
 	];
 
-	rep=First@Select[GetFields[field][Indices],GroupFromRep[#]==GroupName &];
+	rep=First@Select[GetFields[field][Indices],GroupFromRep[#]===GroupName &];
 	If[Head@rep===Bar,
 		Bar@CG[gen[rep[[1]]],indices]
 	,
@@ -1252,7 +1258,7 @@ FieldGenerators[field_,GroupName_]:= Module[{generators},
 	];
 
 	(* Check that the group is Abelian *)
-	If[!$GaugeGroups[GroupName][Abelian] || !$GlobalGroups[GroupName][Abelian],
+	If[!$GaugeGroups[GroupName, Abelian] || !$GlobalGroups[GroupName, Abelian],
 		Message[FieldGenerators::NotAbelian,GroupName,field];
 		Abort[]
 	];
@@ -1279,6 +1285,7 @@ FieldGenerators[field_,GroupName_]:= Module[{generators},
 (*Field-strength properties*)
 
 
+FieldStrength[0, __]:= 0;
 FieldStrength[_, {\[Mu]_, \[Mu]_}, __]:= 0;
 FieldStrength[_, _, {a_, a_}, __]:= 0;
 FieldStrength[_, _, {a_, Bar@ a_}, __]:= 0;
@@ -1301,8 +1308,8 @@ $GaugeGroups= <||>;
 GetGaugeGroups[GaugeGroupName___]:=Module[{$tmpGauge},
 	$tmpGauge=$GaugeGroups;
 	Table[
-		AppendTo[$tmpGauge[i], ClebschGordanCoefficients -> Keys@Select[$CGproperties,#[GroupName]==i&]];
-		AppendTo[$tmpGauge[i], Representations -> Keys@Select[$Representations,#[GroupName]==i&]];
+		AppendTo[$tmpGauge[i], ClebschGordanCoefficients -> Keys@Select[$CGproperties,#[Group]===i&]];
+		AppendTo[$tmpGauge[i], Representations -> Keys@Select[$Representations,#[Group]===i&]];
 	,{i,Keys@$GaugeGroups}];
 	$tmpGauge[GaugeGroupName]
 ];
@@ -1325,13 +1332,13 @@ GetGaugeGroupByProperty[props: _List| _Rule]:=
 (*Removing gauge group*)
 
 
-RemoveGaugeGroup[groupName_]:= 
+RemoveGaugeGroup[groupName_]:=
 	If[KeyExistsQ[$GaugeGroups, groupName],
 		RemoveCoupling[$GaugeGroups[groupName, Coupling], "gauge"-> True];
 		RemoveField[#, "gauge"-> True]&/@ FieldsFromGroup[groupName];
 		RemoveCG/@ GetGaugeGroups[groupName][ClebschGordanCoefficients];
 		RemoveRepresentation/@ GetGaugeGroups[groupName][Representations];
-		KeyDropFrom[$IndexAlphabets, Keys@ Select[$Representations, #[GroupName] === groupName &]];
+		KeyDropFrom[$IndexAlphabets, Keys@ Select[$Representations, #[Group] === groupName &]];
 		If[!MatchQ[$GaugeGroups[groupName, Group], U1], KeyDropFrom[$Groups, groupName];];
 		KeyDropFrom[$GaugeGroups, groupName];
 		ClearAllValues@ groupName;
@@ -1463,6 +1470,14 @@ DefineGaugeGroup[grName,lieGroup, coupling, gaugeField,opts]= Module[{fundRep, a
 
 	(*Add gauge field*)
 	DefineField[gaugeField, Vector, Indices-> If[lieGroup=!= U1,{grName@ adj},{}], Mass-> 0, SelfConjugate-> True, NiceForm->nfField];
+	
+	(*Define associated ghost fields*)
+	If[lieGroup=!= U1,
+		DefineField[Symbol["Matchete`PackageScope`gh"<>ToString@gaugeField], Ghost,
+			Indices-> grName@ adj, Mass-> 0, SelfConjugate-> True];
+		DefineField[Symbol["Matchete`PackageScope`antigh"<>ToString@gaugeField], AntiGhost,
+			Indices-> grName@ adj, Mass-> 0, SelfConjugate-> True];
+	];
 ];
 
 
@@ -1493,8 +1508,8 @@ $GlobalGroups= <||>;
 GetGlobalGroups[GlobalGroupName___]:=Module[{$tmpGlobal},
 	$tmpGlobal=$GlobalGroups;
 	Table[
-		AppendTo[$tmpGlobal[i], ClebschGordanCoefficients -> Keys@Select[$CGproperties,#[GroupName]==i&]];
-		AppendTo[$tmpGlobal[i], Representations -> Keys@Select[$Representations,#[GroupName]==i&]];
+		AppendTo[$tmpGlobal[i], ClebschGordanCoefficients -> Keys@Select[$CGproperties,#[Group]===i&]];
+		AppendTo[$tmpGlobal[i], Representations -> Keys@Select[$Representations,#[Group]===i&]];
 	,{i,Keys@$GlobalGroups}];
 	$tmpGlobal[GlobalGroupName]
 ];
@@ -1504,11 +1519,11 @@ GetGlobalGroups[GlobalGroupName___]:=Module[{$tmpGlobal},
 (*Removing global group*)
 
 
-RemoveGlobalGroup[groupName_]:= 
+RemoveGlobalGroup[groupName_]:=
 	If[KeyExistsQ[$GlobalGroups, groupName],
 		RemoveCG/@ GetGlobalGroups[groupName][ClebschGordanCoefficients];
 		RemoveRepresentation/@ GetGlobalGroups[groupName][Representations];
-		KeyDropFrom[$IndexAlphabets, Keys@ Select[$Representations, #[GroupName] === groupName &]];
+		KeyDropFrom[$IndexAlphabets, Keys@ Select[$Representations, #[Group] === groupName &]];
 		If[!MatchQ[$GlobalGroups[groupName, Group], U1], KeyDropFrom[$Groups, groupName];];
 		KeyDropFrom[$GlobalGroups, groupName];
 		ClearAllValues@ groupName;
@@ -1743,6 +1758,7 @@ PlusHc[x_]:=x+Bar@x
 (*Free Lagrangian*)
 
 
+FreeLag::bkgfield = "The field '`1`' is a background field and has no associated kinetic term/free Lagrangian.";
 FreeLag::UndefinedField = "The field '`1`' has not been defined.";
 
 
@@ -1751,6 +1767,7 @@ FreeLag[field_Symbol]:= Module[
 
 	(* Check if the field has been defined *)
 	If[!KeyExistsQ[$FieldAssociation, field], Message[FreeLag::UndefinedField, field]; Abort[]];
+	If[$FieldAssociation[field, BackgroundField], Message[FreeLag::bkgfield, field]; Abort[]];
 
 	isChiralFermion= GetFields[field, Chiral] =!= False;
 
@@ -1784,24 +1801,26 @@ FreeLag[field_Symbol]:= Module[
 	];
 
 	If[$FieldAssociation[field, SelfConjugate] === True, 1/2, 1]* Switch[fieldType,
-		Scalar|Ghost,
-			(Bar[CD[\[Mu],field[indK]]]**CD[\[Mu],field[indK]] - m Bar[field[ind1]]**field[ind2]),
+		Scalar,
+			(Bar[CD[\[Mu],field[indK]]] CD[\[Mu],field[indK]] - m Bar[field[ind1]] field[ind2]),
 		Fermion,
 			If[$FieldAssociation[field][Chiral] === False,
-				(I Bar[field[indK]]** \[Gamma][\[Mu]]** CD[\[Mu], field[indK]] - m Bar[field[ind1]]** field[ind2])
+				(I Bar[field[indK]]\[CenterDot] \[Gamma][\[Mu]]\[CenterDot] CD[\[Mu], field[indK]] - m Bar[field[ind1]]\[CenterDot] field[ind2])
 			,
-				(I Bar[field[indK]]** \[Gamma][\[Mu]]** CD[\[Mu], field[indK]] - (m/2 Bar[CConj[field[ind1]]]** field[ind2]+ Bar@ m/2 Bar[field[ind1]]** CConj[field[ind2]]))
+				(I Bar[field[indK]]\[CenterDot] \[Gamma][\[Mu]]\[CenterDot] CD[\[Mu], field[indK]] - (m/2 Bar[CConj[field[ind1]]]\[CenterDot] field[ind2]+ Bar@ m/2 Bar[field[ind1]]\[CenterDot] CConj[field[ind2]]))
 			],
 		Vector,
 			(*Gauge fields are normalized with their couplings*)
 			normalization= First[Query[Select[#@ Field === field&], Key@ Coupling]@ $GaugeGroups, 1&][]^-2;
-			(-1/2 normalization* Bar[FS[field,\[Mu],\[Nu],indK]]**FS[field,\[Mu],\[Nu],indK] + m Bar[field[\[Mu],ind1]]**field[\[Mu],ind2])
+			(-1/2 normalization* Bar[FS[field,\[Mu],\[Nu],indK]]FS[field,\[Mu],\[Nu],indK] + m Bar[field[\[Mu],ind1]] field[\[Mu],ind2])
+		,Ghost|AntiGhost,
+			0
 	]//Contract//RelabelIndices
-]
+];
 
 
-FreeLag[field_, fields__]:=Plus@@FreeLag/@List[field, fields]
-FreeLag[]:=Sum[FreeLag[f],{f,Keys[GetFields[]]}]
+FreeLag[field_, fields__]:= Plus@@ FreeLag/@ List[field, fields];
+FreeLag[]:= Sum[FreeLag@ f, {f, GetFieldsByProperty[BackgroundField-> False]}];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1835,20 +1854,22 @@ KinOpLagrangian[field_Symbol]:=Module[
 	];
 
 	If[GetFields[field, SelfConjugate], 1/2, 1]Switch[FieldType
-		,Scalar| Ghost,
-			Bar[BackgroundCD[\[Mu],field[indK]]]**BackgroundCD[\[Mu],field[indK]] - m^2 Bar[field[ind1]]**field[ind2]
+		,Scalar,
+			Bar[BackgroundCD[\[Mu],field[indK]]] BackgroundCD[\[Mu],field[indK]] - m^2 Bar[field[ind1]] field[ind2]
 		,Fermion,
 			If[GetFields[field][Chiral]===False,
-				I Bar[field[indK]]**\[Gamma][\[Mu]]**BackgroundCD[\[Mu],field[indK]] - m Bar[field[ind1]]**field[ind2]
+				I Bar[field[indK]]\[CenterDot] \[Gamma][\[Mu]]\[CenterDot] BackgroundCD[\[Mu],field[indK]] - m Bar[field[ind1]]\[CenterDot] field[ind2]
 			,
-				I Bar[field[indK]]**\[Gamma][\[Mu]]**BackgroundCD[\[Mu],field[indK]] - m/2 (Bar[CConj[field[ind1]]]**field[ind2]+ Bar[field[ind1]]**CConj[field[ind2]])
+				I Bar[field[indK]]\[CenterDot] \[Gamma][\[Mu]]\[CenterDot] BackgroundCD[\[Mu],field[indK]] - m/2 (Bar[CConj[field[ind1]]]\[CenterDot] field[ind2]+ Bar[field[ind1]]\[CenterDot] CConj[field[ind2]])
 			]
 		,Vector,
 			If[GaugeFieldQ@ field,
-				-GetFieldsUpdated[field, Coupling]* BackgroundCD[\[Mu], field[\[Nu], indK]]^2
+				-GetFieldsUpdated[field, Coupling]  BackgroundCD[\[Mu], field[\[Nu], indK]]^2
 			,
-				-Bar@ BackgroundCD[\[Mu], field[\[Nu], indK]]** BackgroundCD[\[Mu], field[\[Nu], indK]] + m^2 Bar[field[\[Mu],ind1]]**field[\[Mu],ind2]
+				-Bar@ BackgroundCD[\[Mu], field[\[Nu], indK]]  BackgroundCD[\[Mu], field[\[Nu], indK]] + m^2 Bar[field[\[Mu],ind1]]  field[\[Mu],ind2]
 			]
+		,Ghost|AntiGhost,
+			0
 	]//Expand//RelabelIndices
 ];
 
@@ -1906,7 +1927,7 @@ LoadModel::multfiles= "Multiple files `1` matches the model name \"`2`\". Please
 DetermineModelPath[fileName_String, verbose_]:= Block[
 		{dir, extension, matches, models, modName, modPossibilities},
 	{dir, modName}= Through@ {DirectoryName, FileNameTake}@ fileName;
-	
+
 	modName= StringReplace[modName, RegularExpression["\\.$"]-> ""];
 	modPossibilities= Switch[extension= FileExtension@ modName
 		,"",
@@ -1917,7 +1938,7 @@ DetermineModelPath[fileName_String, verbose_]:= Block[
 			Message[LoadModel::fileext, extension, fileName];
 			Abort[];
 	];
-	
+
 	(*If directory is specified*)
 	If[dir =!= "",
 		matches= FileNames[modPossibilities, dir];
@@ -1933,7 +1954,7 @@ DetermineModelPath[fileName_String, verbose_]:= Block[
 			Abort[];
 		];
 	];
-	
+
 	(*Full file match*)
 	models= Normal@ GetModels[Path-> True];
 	matches= Position[models, Alternatives@@ modPossibilities];
@@ -1941,8 +1962,8 @@ DetermineModelPath[fileName_String, verbose_]:= Block[
 		(*Partial match*)
 		matches= Position[models, mod_String/; StringContainsQ[mod, fileName]];
 	];
-	
-	matches=  FileNameJoin/@ Transpose@ 
+
+	matches=  FileNameJoin/@ Transpose@
 		{Extract[models, {First@ #, 1}&/@ matches], Extract[models, matches]};
 	Switch[Length@ matches
 	,0,
@@ -1955,7 +1976,7 @@ DetermineModelPath[fileName_String, verbose_]:= Block[
 		Message[LoadModel::multfiles, matches, fileName];
 		Abort[];
 	]
-	
+
 ]
 
 
@@ -1991,6 +2012,18 @@ Quiet[NotebookDirectory[],{NotebookDirectory::nosv}]
 
 
 (* ::Subsubsection::Closed:: *)
+(*ReadFileExpression*)
+
+
+ReadFileExpression@ file_:= Module[{out},
+	out= ReadList[file, Hold[Expression]];
+		(*Catches Wolfram NonCommutativeMultiply for backwards compatibility*)
+	out= out/. HoldPattern@ NonCommutativeMultiply-> NCM;
+	DeleteCases[out, Hold@ Null]
+]
+
+
+(* ::Subsubsection::Closed:: *)
 (*Read and execute model file*)
 
 
@@ -2017,19 +2050,18 @@ Options@ ExecuteModelDefinition= {
 
 
 ExecuteModelDefinition[file_String, OptionsPattern[]]:= Module[
-		{change, changedPars, childLag, defaultParams, lag, modelDef, modelDir, modelOpts, modelLocalVars, n, overlap, 
+		{change, changedPars, childLag, defaultParams, lag, modelDef, modelDir, modelOpts, modelLocalVars, n, overlap,
 		parameterSubs, symb},
 	modelDir= DirectoryName@ file;
 
 	(*Load held Model definition*)
-	modelDef= ReadList[file, Hold[Expression]];
-	modelDef= DeleteCases[modelDef, Hold@ Null];
+	modelDef= ReadFileExpression@ file;
 
 	modelDef= ReadParentModels[modelDef, modelDir];
-	
+
 	(*Determine which are the local variables in the model file(s)*)
 	modelLocalVars= Join@@ Cases[modelDef, HoldPattern@ (Module|Block)[pars_List, _]:> pars, All]// DeleteDuplicates;
-	
+
 	(*Check parameter changes*)
 	parameterSubs= OptionValue[ModelParameters];
 	Do[
@@ -2046,14 +2078,14 @@ ExecuteModelDefinition[file_String, OptionsPattern[]]:= Module[
 			Abort[];
 		];
 		*)
-	
+
 		overlap= Intersection[modelLocalVars, List@@ symb];
 		If[Length@ overlap =!= 0,
 			Message[LoadModel::localvar, StringJoin@@ Riffle[ToString/@ overlap, ", "] ];
 			Message[LoadModel::parcall, symb];
 		];
 	, {symb, parameterSubs}];
-	
+
 	(*Remove Niceforms where parameter changes are performed*)
 	changedPars= parameterSubs[[;;, 1]];
 	modelDef= modelDef/. {
@@ -2068,10 +2100,10 @@ ExecuteModelDefinition[file_String, OptionsPattern[]]:= Module[
 			HoldPattern@ DefineGaugeGroup[s:PatternSequence[_, _, coup_, _], l___, Rule[NiceForm, {_, nfField_}], r___]/; MemberQ[changedPars, coup]:>
 				DefineGaugeGroup[s, l, r, NiceForm-> {Default, nfField}]
 		};
-	
+
 	(*Incorporate defualt paramters*)
-	defaultParams= Cases[modelDef, ParameterDefault[par_-> val_]:> 
-		If[MatchQ[par, _Symbol], 
+	defaultParams= Cases[modelDef, ParameterDefault[par_-> val_]:>
+		If[MatchQ[par, _Symbol],
 			par-> val
 		,
 			Message[LoadModel::defaultpar, FullForm@ par-> val];
@@ -2079,10 +2111,10 @@ ExecuteModelDefinition[file_String, OptionsPattern[]]:= Module[
 		]
 		, All];
 	modelDef= DeleteCases[modelDef, _ParameterDefault, All];
-	
+
 	(*Use value from ModelParameters or the value from the most junior model that provides a value*)
 	parameterSubs= DeleteDuplicatesBy[Join[parameterSubs, Reverse@ defaultParams], First];
-	
+
 	(*Change parameter names*)
 	modelDef= modelDef/. parameterSubs;
 
@@ -2097,7 +2129,7 @@ ExecuteModelDefinition[file_String, OptionsPattern[]]:= Module[
 				Message[LoadModel::optscall, change];
 				Abort[];
 			];
-			
+
 			If[FreeQ[modelDef, HoldPattern@ func[var, ___]],
 				Message[LoadModel::unkwnfunc, func, var];
 				Message[LoadModel::optscall, change];
@@ -2118,7 +2150,7 @@ ExecuteModelDefinition[file_String, OptionsPattern[]]:= Module[
 				];
 		]
 	, {change, modelOpts}];
-	
+
 	(*Run model definition over consecutive child models*)
 	lag= 0;
 	Do[
@@ -2179,21 +2211,21 @@ ReadParentModels[modelDef_List, modelDir_String]:= Module[
 		Message[LoadModel::parmoduse];
 		Abort[];
 	];
-	
+
 	If[!MatchQ[parentFile, _String],
 		Message[LoadModel::parfile, parentFile];
 		Abort[];
 	];
-	
+
 	(*Check parent options*)
 	Do[
 		Switch[opt
-		, "Use Lagrangian"->  _?BooleanQ, 
+		, "Use Lagrangian"->  _?BooleanQ,
 			useParentLag= opt[[2]];
 		, "Use Lagrangian"->  _,
 			Message[LoadModel::parentopt, ParentModel[parentFile, Sequence@@ parentOps]];
 			Abort[];
-		, _, 
+		, _,
 			Message[LoadModel::parentarg, opt, ParentModel[parentFile, Sequence@@ parentOps]];
 			Abort[];
 		];
@@ -2201,17 +2233,16 @@ ReadParentModels[modelDef_List, modelDir_String]:= Module[
 
 	(*Read parent model definitions*)
 	(*Also check for model path with the directory of the child model*)
-	parentPath= CheckAbort[DetermineModelPath[FileNameJoin@{modelDir, parentFile}, False],
-			CheckAbort[DetermineModelPath[parentFile, False],
+	parentPath= CheckAbort[Quiet@DetermineModelPath[FileNameJoin@{modelDir, parentFile}, False],
+			CheckAbort[Quiet@DetermineModelPath[parentFile, False],
 				Message[LoadModel::findparent, parentFile];
 				Abort[];
 			]
 		];
-	
-	parentDef= ReadList[parentPath, Hold[Expression]];
-	parentDef= DeleteCases[parentDef, Hold@ Null];
-	
-	(*Return 0 if Lagrangian should not be used. This way maintains all definitions that may 
+
+	parentDef= ReadFileExpression@ parentPath;
+
+	(*Return 0 if Lagrangian should not be used. This way maintains all definitions that may
 		be performed in the last file expression, e.g., in a module.*)
 	If[!useParentLag,
 		AppendTo[parentDef, 0];

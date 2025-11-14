@@ -36,7 +36,7 @@ DefineField[e2, Fermion, Chiral-> RightHanded, Mass-> 0];
 
 
 VerificationTest[Module[{op, i, p, s, r, t, \[Mu], \[Nu], \[Rho], \[Sigma]},
-	op= Bar@ l[i, p]** \[Gamma][\[Mu], \[Nu]]** e[r] Bar@ e[s]** \[Gamma][\[Rho], \[Sigma]]** l[i, t] LCTensor[\[Mu], \[Nu], \[Rho], \[Sigma]];
+	op= Bar@ l[i, p]\[CenterDot] \[Gamma][\[Mu], \[Nu]]\[CenterDot] e[r] Bar@ e[s]\[CenterDot] \[Gamma][\[Rho], \[Sigma]]\[CenterDot] l[i, t] LCTensor[\[Mu], \[Nu], \[Rho], \[Sigma]];
 	Matchete`Simplifications`PackagePrivate`Reducible4dOpQ@ Operator@ op
 ],
 	True
@@ -44,7 +44,7 @@ VerificationTest[Module[{op, i, p, s, r, t, \[Mu], \[Nu], \[Rho], \[Sigma]},
 
 
 VerificationTest[Module[{op, i, p, s, r, t, \[Mu], \[Nu], \[Rho]},
-	op= Bar@ e[p]** \[Gamma][\[Mu], \[Nu]]** \[Gamma][\[Rho]]** e[r] Bar@ e[s]** \[Gamma][\[Mu], \[Nu], \[Rho]]** e[t];
+	op= Bar@ e[p]\[CenterDot] \[Gamma][\[Mu], \[Nu]]\[CenterDot] \[Gamma][\[Rho]]\[CenterDot] e[r] Bar@ e[s]\[CenterDot] \[Gamma][\[Mu], \[Nu], \[Rho]]\[CenterDot] e[t];
 	Matchete`Simplifications`PackagePrivate`Reducible4dOpQ@ Operator@ op
 ],
 	True
@@ -52,7 +52,7 @@ VerificationTest[Module[{op, i, p, s, r, t, \[Mu], \[Nu], \[Rho]},
 
 
 VerificationTest[Module[{op, i, p, s, r, t, \[Mu]},
-	op= Bar@ e[p]** \[Gamma][\[Mu]]** e[r] Bar@ e[s]** \[Gamma][\[Mu]]** e[t];
+	op= Bar@ e[p]\[CenterDot] \[Gamma][\[Mu]]\[CenterDot] e[r] Bar@ e[s]\[CenterDot] \[Gamma][\[Mu]]\[CenterDot] e[t];
 	Matchete`Simplifications`PackagePrivate`Reducible4dOpQ@ Operator@ op
 ],
 	False
@@ -75,9 +75,9 @@ VerificationTest[
 
 
 VerificationTest[
-	- I CD[\[Mu], Bar@ l[i, p]] **\[Gamma]@\[Mu] ** l[i,p] //GreensSimplify //RelabelIndices
+	- I CD[\[Mu], Bar@ l[i, p]] \[CenterDot] \[Gamma]@\[Mu] \[CenterDot] l[i,p] //GreensSimplify //RelabelIndices
 ,
-	I Bar@ l[d$$1, d$$1] ** \[Gamma]@ d$$1 ** CD[d$$1, l[d$$1, d$$1]]
+	I Bar@ l[d$$1, d$$1] \[CenterDot] \[Gamma]@ d$$1 \[CenterDot] CD[d$$1, l[d$$1, d$$1]]
 , TestID-> "Lepton kinetic term"]
 
 
@@ -86,16 +86,16 @@ VerificationTest[
 
 
 VerificationTest[
-	Bar@ \[Psi][]** \[Psi][] + Bar@ \[Psi][]** PL** \[Psi][] + Bar@ \[Psi][]** PR** \[Psi][]// GreensSimplify
+	Bar@ \[Psi][]\[CenterDot] \[Psi][] + Bar@ \[Psi][]\[CenterDot] PL\[CenterDot] \[Psi][] + Bar@ \[Psi][]\[CenterDot] PR\[CenterDot] \[Psi][]// GreensSimplify
 ,
-	2 Bar@ \[Psi][]** \[Psi][]
+	2 Bar@ \[Psi][]\[CenterDot] \[Psi][]
 , TestID-> "VL fermion mass term"]
 
 
 VerificationTest[
-	Bar@ \[Nu][]** \[Nu][] + Bar@ \[Nu][]** PL** \[Nu][] + Bar@ \[Nu][]** PR** \[Nu][]// GreensSimplify
+	Bar@ \[Nu][]\[CenterDot] \[Nu][] + Bar@ \[Nu][]\[CenterDot] PL\[CenterDot] \[Nu][] + Bar@ \[Nu][]\[CenterDot] PR\[CenterDot] \[Nu][]// GreensSimplify
 ,
-	2 Bar@ \[Nu][]** \[Nu][]
+	2 Bar@ \[Nu][]\[CenterDot] \[Nu][]
 , TestID-> "Majorana fermion mass term"]
 
 
@@ -157,14 +157,14 @@ VerificationTest[
 
 
 VerificationTest[
-	Bar@CConj@\[Psi][]**\[Gamma][\[Mu],\[Nu]]**\[Psi][] Bar@\[Psi][]**\[Gamma][\[Mu],\[Nu]]**CConj@\[Psi][]// GreensSimplify
+	Bar@CConj@\[Psi][]\[CenterDot] \[Gamma][\[Mu],\[Nu]]\[CenterDot] \[Psi][] Bar@\[Psi][]\[CenterDot] \[Gamma][\[Mu],\[Nu]]\[CenterDot] CConj@\[Psi][]// GreensSimplify
 ,
 	0
 , TestID-> "Spinor line transposition 0"]
 
 
 VerificationTest[
-	Bar@H[i]Bar@H[j]Bar@H[k](CD[\[Mu],Bar@e[p]]**\[Gamma][\[Mu]]**CConj[l[m,r]])CG[eps[SU2L],{i,k}]CG[eps[SU2L],{m,j}]// GreensSimplify
+	Bar@H[i]Bar@H[j]Bar@H[k](CD[\[Mu],Bar@e[p]]\[CenterDot] \[Gamma][\[Mu]]\[CenterDot] CConj[l[m,r]])CG[eps[SU2L],{i,k}]CG[eps[SU2L],{m,j}]// GreensSimplify
 ,
 	0
 , TestID-> "Levi-Civita with derivatives and derivatives/EoM in spin chain"]
@@ -186,7 +186,7 @@ VerificationTest[Module[{\[Mu], \[Nu], \[Rho], a},
 
 
 VerificationTest[Module[{lag, a, \[Mu]},
-	lag= Bar@ l2[a]** e2[] Bar@ e2[]** l2[a] + 1/2 Bar@ l2@ a** \[Gamma]@\[Mu]** l2@ a Bar@ e2[]** \[Gamma][\[Mu]]** e2[];
+	lag= Bar@ l2[a]\[CenterDot] e2[] Bar@ e2[]\[CenterDot] l2[a] + 1/2 Bar@ l2@ a\[CenterDot] \[Gamma]@\[Mu]\[CenterDot] l2@ a Bar@ e2[]\[CenterDot] \[Gamma][\[Mu]]\[CenterDot] e2[];
 	(*Simplifies to purely evanescent operators*)
 	GreensSimplify[lag, ReductionIdentities-> FourDimensional]
 ],
@@ -199,7 +199,7 @@ VerificationTest[Module[{lag, a, \[Mu]},
 
 
 VerificationTest[Module[{op},
-	op= (Bar@ e[d$$1]** \[Gamma][d$$1, d$$3]** l[d$$1, d$$2]) (Bar@ l[d$$1, d$$3]** \[Gamma][d$$2, d$$4]** e[d$$4])
+	op= (Bar@ e[d$$1]\[CenterDot] \[Gamma][d$$1, d$$3]\[CenterDot] l[d$$1, d$$2]) (Bar@ l[d$$1, d$$3]\[CenterDot] \[Gamma][d$$2, d$$4]\[CenterDot] e[d$$4])
 		LCTensor[d$$1, d$$2, d$$3, d$$4];
 	(*Simplifies to purely evanescent operators*)
 	op= GreensSimplify[op, ReductionIdentities-> Evanescent];
@@ -210,7 +210,7 @@ VerificationTest[Module[{op},
 
 
 VerificationTest[Module[{op, i, p, \[Mu], \[Nu], \[Rho], \[Sigma]},
-	op= Bar@ H@ i H@ i Bar@ e@ p** \[Gamma][\[Nu], \[Rho], \[Sigma]]** CD[\[Mu], e@ p] LCTensor[\[Mu], \[Nu], \[Rho], \[Sigma]];
+	op= Bar@ H@ i H@ i Bar@ e@ p\[CenterDot] \[Gamma][\[Nu], \[Rho], \[Sigma]]\[CenterDot] CD[\[Mu], e@ p] LCTensor[\[Mu], \[Nu], \[Rho], \[Sigma]];
 	op= GreensSimplify[op, ReductionIdentities-> Evanescent];
 	FreeQ[op, EvaOp[_, _, {Index[p_, Flavor], Index[p_, Flavor]}]]
 ],
@@ -249,8 +249,8 @@ VerificationTest[Module[{op, \[Mu], \[Nu], \[Rho], \[Sigma], \[Alpha], a},
 
 VerificationTest[Module[{op, a, b, c, p, t, s, r},
 	DefineCoupling[cduu, Indices-> {Flavor, Flavor, Flavor, Flavor}];
-	op= (cduu[p, s, t, r]- cduu[p, t, s, r]) (CConj@ Bar@ d[a, p]** \[Gamma][\[Mu], \[Nu]]** e@ r)*
-		 (CConj@ Bar@ u[b, s]** \[Gamma][\[Mu], \[Nu]]** u[c, t]) eps[SU3c][a, b, c];
+	op= (cduu[p, s, t, r]- cduu[p, t, s, r]) (CConj@ Bar@ d[a, p]\[CenterDot] \[Gamma][\[Mu], \[Nu]]\[CenterDot] e@ r)*
+		 (CConj@ Bar@ u[b, s]\[CenterDot] \[Gamma][\[Mu], \[Nu]]\[CenterDot] u[c, t]) eps[SU3c][a, b, c];
 	CollectOperators/@ {op, Bar@ op}
 ],
 	{0, 0}
@@ -264,8 +264,8 @@ VerificationTest[Module[{op, a, b, c, p, t, s, r},
 VerificationTest[Module[{op5, op7, lag},
 		DefineCoupling[Cll, Indices-> {Flavor, Flavor}, Symmetries-> {SymmetricIndices[1, 2]}];
 		DefineCoupling[CllB, Indices-> {Flavor, Flavor}, Symmetries-> {AntisymmetricIndices[1, 2]}];
-		op5= Bar@ CConj@ l[i, p]**l[j, r]H@ k H@ l Bar@CG[eps@ SU2L, {i, k}]Bar@ CG[eps@ SU2L, {j, l}];
-		op7= FS[B, \[Mu], \[Nu]]Bar@ CConj@ l[i, p]** \[Sigma][\[Mu], \[Nu]]** l[j,r]H@ k H@ l Bar@ CG[eps@ SU2L, {i, k}]Bar@ CG[eps@ SU2L, {j, l}];
+		op5= Bar@ CConj@ l[i, p]\[CenterDot] l[j, r]H@ k H@ l Bar@CG[eps@ SU2L, {i, k}]Bar@ CG[eps@ SU2L, {j, l}];
+		op7= FS[B, \[Mu], \[Nu]]Bar@ CConj@ l[i, p]\[CenterDot] \[Sigma][\[Mu], \[Nu]]\[CenterDot] l[j,r]H@ k H@ l Bar@ CG[eps@ SU2L, {i, k}]Bar@ CG[eps@ SU2L, {j, l}];
 		lag= -Cll[p, r] op5- CllB[p, r] op7// PlusHc;
 		lag= InternalSimplify[lag, InternalOpRepresentation-> True];
 		{
@@ -300,8 +300,8 @@ VerificationTest[Module[{op5, op7, lag},
 
 
 VerificationTest[Module[{expr, \[Mu], p, r},
-		expr= Bar@ e[p]** \[Gamma][\[Mu]]** e[r] Bar@ e[r]** \[Gamma][\[Mu]]** e[p] - 
-			Bar@ e[p]** \[Gamma][\[Mu]]** e[p] Bar@ e[r]** \[Gamma][\[Mu]]** e[r];
+		expr= Bar@ e[p]\[CenterDot] \[Gamma][\[Mu]]\[CenterDot] e[r] Bar@ e[r]\[CenterDot] \[Gamma][\[Mu]]\[CenterDot] e[p] - 
+			Bar@ e[p]\[CenterDot] \[Gamma][\[Mu]]\[CenterDot] e[p] Bar@ e[r]\[CenterDot] \[Gamma][\[Mu]]\[CenterDot] e[r];
 		expr= GreensSimplify[expr, ReductionIdentities-> Evanescent];
 		{Count[expr, _EvaOp, All]> 0, expr/. _EvaOp-> 0}
 	]
@@ -388,7 +388,7 @@ VerificationTest[
 
 
 VerificationTest[Module[{s,t,a,b,op},
-	op= LF[{M[s], m[]}, {2, 1, 0}] (Bar@ u[a, t]** \[Gamma][\[Mu]]** u[a, s])(Bar@ u[b, s]** \[Gamma][\[Mu]]** u[b, t]);
+	op= LF[{M[s], m[]}, {2, 1, 0}] (Bar@ u[a, t]\[CenterDot] \[Gamma][\[Mu]]\[CenterDot] u[a, s])(Bar@ u[b, s]\[CenterDot] \[Gamma][\[Mu]]\[CenterDot] u[b, t]);
 	op- Bar@ op// GreensSimplify
 ],
 	0
