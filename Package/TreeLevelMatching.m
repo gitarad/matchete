@@ -19,7 +19,7 @@ Package["Matchete`"]
 (*Scoping*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Exported*)
 
 
@@ -43,7 +43,7 @@ PackageScope["IndexToPattern"]
 (*Usage messages*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Exported*)
 
 
@@ -89,13 +89,12 @@ ExpandField[Field[label_,type_,indices_,derivs_],OptionsPattern[]]:=Module[
 	(* Determine the max EFT order up to which the fields have to be expanded *)
 	(*
 		From any tree-level or one-loop vertex there is at least two external fermions (dim 3), 
-		two external vectors or ghosts, or 1 scalar. This follows from conservation of Lorentz symmetry 
-		and Ghost number.  
+		two external vectors, or 1 scalar. This follows from conservation of Lorentz symmetry.
 	*)
 	maxOrder = OptionValue[EFTOrder]+ Switch[type,
 		Fermion, 
 			- 3,
-		Ghost| Vector[_],
+		Vector[_],
 			- 2,
 		Scalar ,
 			- 1,
@@ -333,7 +332,7 @@ SolveOneEOMfixedOrder[eom_, f:(Field[l_,_,_,{}] | Bar@Field[l_,_,_,{}]), n_?Inte
 	(* solve the eom for the given field *)
 	solution = Flatten@Solve[
 		(* remove the NCM head for fermions *)
-		((eom/.NonCommutativeMultiply[x_] :> x /; !FreeQ[x, First@field, All]) /. NonCommutativeMultiply[DiracProduct[_Proj],First@field] /; (GetFields[First@First@field][Chiral]=!=False) -> First@field ) == 0,
+		((eom/.NCM[x_] :> x /; !FreeQ[x, First@field, All]) /. NCM[DiracProduct[_Proj],First@field] /; (GetFields[First@First@field][Chiral]=!=False) -> First@field ) == 0,
 		First@field
 	];
 	

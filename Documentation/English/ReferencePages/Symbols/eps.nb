@@ -1,0 +1,346 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 14.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     13126,        338]
+NotebookOptionsPosition[      9486,        259]
+NotebookOutlinePosition[     11783,        317]
+CellTagsIndexPosition[     11698,        312]
+WindowTitle->eps
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[GridBox[{
+   {GridBox[{
+      {
+       ItemBox[Cell[BoxData[
+         RowBox[{
+          TemplateBox[{12},
+           "Spacer1"], Cell["MATCHETE SYMBOL", "PacletNameCell",
+           TextAlignment->Center,ExpressionUUID->
+           "82d77986-468e-493c-9445-2a72613e667d"], 
+          TemplateBox[{8},
+           "Spacer1"]}]],
+         TextAlignment->Center,ExpressionUUID->
+         "e5fe156f-954a-4cd0-97f7-57b3c9808eb9"],
+        Background->RGBColor[0.490196, 0.576471, 0.690196],
+        ItemSize->Full], ""}
+     },
+     GridBoxAlignment->{"Rows" -> {{Center}}},
+     GridBoxItemSize->{"Columns" -> {Full, 
+         Scaled[0.02]}, "Rows" -> {{2.5}}}], Cell[TextData[Cell[BoxData[
+     TagBox[
+      ActionMenuBox[
+       FrameBox[Cell[TextData[{
+         "URL",
+         " ",
+         Cell[BoxData[
+          GraphicsBox[
+           {GrayLevel[0.66667], Thickness[0.13], 
+            LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]},
+           AspectRatio->1,
+           ImageSize->20,
+           PlotRange->{{-3, 4}, {-1, 1}}]],ExpressionUUID->
+          "284013f0-2df0-4b10-a2f3-5e0fdd884a55"]
+        }],ExpressionUUID->"8c3ba1ec-e19a-4391-8f89-7e503dc10c7c"],
+        StripOnInput->False],{
+       "\"Matchete/ref/eps\"" :> None, 
+        "\"Copy Wolfram Documentation Center URL\"" :> 
+        Module[{DocumentationSearch`Private`nb$}, 
+          DocumentationSearch`Private`nb$ = 
+           NotebookPut[
+            Notebook[{Cell["Matchete/ref/eps"]}, Visible -> False]]; 
+          SelectionMove[DocumentationSearch`Private`nb$, All, Notebook]; 
+          FrontEndTokenExecute[DocumentationSearch`Private`nb$, "Copy"]; 
+          NotebookClose[DocumentationSearch`Private`nb$]; Null], Delimiter, 
+        "\"Copy web URL\"" :> 
+        Module[{DocumentationSearch`Private`nb$}, 
+          DocumentationSearch`Private`nb$ = 
+           NotebookPut[
+            Notebook[{
+              Cell[BoxData[
+                MakeBoxes[
+                 Hyperlink[
+                  "http://reference.wolfram.com/language/Matchete/ref/eps.\
+html"], StandardForm]], "Input", TextClipboardType -> "PlainText"]}, Visible -> 
+              False]]; SelectionMove[
+           DocumentationSearch`Private`nb$, All, Notebook]; 
+          FrontEndTokenExecute[DocumentationSearch`Private`nb$, "Copy"]; 
+          NotebookClose[DocumentationSearch`Private`nb$]; Null], 
+        "\"Go to web URL\"" :> 
+        FrontEndExecute[{
+          NotebookLocate[{
+            URL[If[TrueQ[False], 
+                "http://reference.wolfram.com/system-modeler/", 
+                "http://reference.wolfram.com/language/"] <> 
+              "Matchete/ref/eps" <> ".html"], None}]}]},
+       Appearance->None,
+       MenuAppearance->Automatic,
+       MenuStyle->"URLMenu"],
+      MouseAppearanceTag["LinkHand"]]],
+     LineSpacing->{1.4, 0},ExpressionUUID->
+     "5ae4659d-d88e-4119-be90-c1e7e2f0fa53"]], "AnchorBar",
+     CacheGraphics->False,ExpressionUUID->
+     "9080458c-61d1-47f5-9640-247e48301d9e"]}
+  }]], "AnchorBarGrid",
+ GridBoxOptions->{GridBoxItemSize->{"Columns" -> {
+     Scaled[0.65], {
+      Scaled[0.34]}}, "ColumnsIndexed" -> {}, "Rows" -> {{1.}}, 
+   "RowsIndexed" -> {}}},
+ CellID->1,ExpressionUUID->"ab7cfc7e-35fe-4b60-a062-8a270867b31f"],
+
+Cell["Matchete`", "ContextNameCell",ExpressionUUID->"960906b4-1946-4f9d-85c8-33ccdf69b79d"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[GridBox[{
+   {Cell[TextData[{
+     Cell[
+     "eps", "ObjectName",ExpressionUUID->
+      "7afecceb-48db-4be2-839a-6ab9da7dd415"],
+     Cell[BoxData[
+      TemplateBox[{8},
+       "Spacer1"]],ExpressionUUID->"70d553a2-9328-4768-948c-d2a8337f069c"],
+     Cell[BoxData[
+     ""], "ObjectNameTranslation",ExpressionUUID->
+      "f54eaf2c-e8e0-4d0f-85f6-7ccc7869c1d8"]
+    }],ExpressionUUID->"e481d908-8a55-47de-9e5b-f5ef7405e0f0"], 
+    "\[SpanFromLeft]"}
+  }]], "ObjectNameGrid",ExpressionUUID->"fabdb90b-f2fa-45b9-93a5-\
+a13975e0fb03"],
+
+Cell[BoxData[GridBox[{
+   {"", Cell["\<\
+Standard head for Levi-Civita type Clebsch-Gordan coefficients for SU(N) \
+groups. E.g., CG[eps@ group, {a, b, ...}] for \!\(\*SuperscriptBox[\(\
+\[Epsilon]\), \(ab ... \)]\), with indices in the fundamental representation.\
+\
+\>",ExpressionUUID->"ec458e42-6c4f-47b5-9834-d3b7c388ae89"]}
+  }]], "Usage",
+ CellID->1683791427,ExpressionUUID->"98704cdf-4bcd-477a-8693-332b3a9ef65e"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[Cell[BoxData[
+ ButtonBox[Cell[TextData[{
+   Cell[BoxData[
+    DynamicBox[ToBoxes[
+      If[
+       MatchQ[
+        CurrentValue[
+         EvaluationNotebook[], {TaggingRules, "Openers", "NotesSection"}, 
+         Closed], 
+        Alternatives[Open, True]], 
+       Style[
+        Graphics[{
+          Thickness[0.18], 
+          RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+          Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+         PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+        0.68 Inherited], 
+       Rotate[
+        Style[
+         Graphics[{
+           Thickness[0.18], 
+           RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+           Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+          PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+         0.68 Inherited], Rational[1, 2] Pi, {-1.65, -1}]]],
+     ImageSizeCache->{17., {0.47500000000000053`, 16.525}}]],ExpressionUUID->
+    "aead168c-bcd1-42a5-9c59-6b096767a115"],
+   Cell[BoxData[
+    TemplateBox[{1},
+     "Spacer1"]],ExpressionUUID->"fb423e98-ff77-4466-91c8-06037b4c5d0d"],
+   "Details and Options"
+  }], "NotesFrameText",ExpressionUUID->"1f9f1086-5e43-4e43-840d-617d8481788e"],
+  Appearance->{Automatic, None, "Normal", Automatic},
+  BaseStyle->None,
+  ButtonFunction:>(FrontEndExecute[{
+     FrontEnd`SelectionMove[
+      FrontEnd`SelectedNotebook[], All, ButtonCell], 
+     FrontEndToken["OpenCloseGroup"], 
+     FrontEnd`SelectionMove[
+      FrontEnd`SelectedNotebook[], After, CellContents]}]& ),
+  Evaluator->None,
+  Method->
+   "Preemptive"]],ExpressionUUID->"4115f202-36dd-41a0-980a-f3ccf8e82250"]], \
+"NotesSection",
+ WholeCellGroupOpener->True,
+ CellGroupingRules->{"SectionGrouping", 50},
+ CacheGraphics->False,
+ CellID->1988469045,ExpressionUUID->"95b1049e-0c3a-427b-b63f-c22af852d481"],
+
+Cell[TextData[Cell[BoxData[
+ TemplateBox[{
+   Cell[
+    TextData["Nothing"]], "paclet:ref/Nothing"},
+  "RefLink",
+  BaseStyle->{"InlineFormula"}]], "InlineFormula",
+ FontFamily->
+  "Source Sans Pro",ExpressionUUID->"ee1afff3-0477-4bcd-8218-763239e6b0d3"]], \
+"Input",
+ CellID->1230242813,ExpressionUUID->"0f9db49f-5c14-41c7-92fa-895e06ba4d69"]
+}, Dynamic[CurrentValue[
+ EvaluationNotebook[], {TaggingRules, "Openers", "NotesSection"}, Closed]]]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ Cell[BoxData[
+  DynamicBox[ToBoxes[
+    If[
+     MatchQ[
+      CurrentValue[
+       EvaluationNotebook[], {
+       TaggingRules, "Openers", "PrimaryExamplesSection"}, Open], 
+      Alternatives[True, Open]], 
+     Style[
+      Graphics[{
+        Thickness[0.18], 
+        RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+        Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+       PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+      0.68 Inherited], 
+     Rotate[
+      Style[
+       Graphics[{
+         Thickness[0.18], 
+         RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+         Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+        PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+       0.68 Inherited], Rational[1, 2] Pi, {-1.65, -1}]]],
+   ImageSizeCache->{17., {6., 11.}}]],ExpressionUUID->
+  "965906b6-c4db-43db-9dba-69a31a4566e3"],
+ Cell[BoxData[
+  TemplateBox[{1},
+   "Spacer1"]],ExpressionUUID->"ed616885-b366-4dfd-bc69-fe3366a24131"],
+ "Examples",
+ "\[NonBreakingSpace]\[NonBreakingSpace]",
+ Cell["(0)", "ExampleCount",ExpressionUUID->
+  "fd02d065-3bc9-4157-9293-c677b31799aa"]
+}], "PrimaryExamplesSection",
+ WholeCellGroupOpener->True,
+ CacheGraphics->False,
+ CellTags->"PrimaryExamplesSection",
+ CellID->1058724701,ExpressionUUID->"f5d7b9e6-255c-410f-a5cc-e68981a2f812"],
+
+Cell[BoxData[
+ RowBox[{"Needs", "[", "\"\<Matchete`\>\"", "]"}]], "Input", "ExampleInitialization",
+ CellLabel->"In[1]:=",
+ CellID->674556910,ExpressionUUID->"bc2d52d4-d68d-4b6e-89a7-e07658f7d995"]
+}, Dynamic[CurrentValue[
+ EvaluationNotebook[], {TaggingRules, "Openers", "PrimaryExamplesSection"}, 
+  Closed]]]],
+
+Cell[BoxData[GridBox[{
+   {
+    DynamicBox[FEPrivate`ImportImage[
+      FrontEnd`FileName[{"Documentation", "FooterIcons"}, 
+       "RelatedFunction.png"]],
+     ImageSizeCache->{63., {34., 41.}}], GridBox[{
+      {
+       StyleBox[
+        RowBox[{"See", " ", "Also"}], "SeeAlsoSection"]}
+     }]}
+  }]], "SeeAlsoSection",ExpressionUUID->"9406c4d3-f27e-4fb7-a29c-\
+ca62d29ae17f"],
+
+Cell[" ", "FooterCell",ExpressionUUID->"2854d416-faf6-41fb-acdf-ee2a99ca39d9"]
+},
+Saveable->False,
+ScreenStyleEnvironment->"Working",
+WindowSize->{900, 830},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+WindowTitle->"eps",
+Visible->False,
+TaggingRules->{
+ "ModificationHighlight" -> False, "ColorType" -> "", "LinkTrails" -> "", 
+  "ExampleCounter" -> 1, 
+  "Openers" -> {
+   "PrimaryExamplesSection" -> Open, "ExampleSection" -> {"0" -> Open}, 
+    "AllOptsTable" -> Closed, "NotesSection" -> Closed}, "NewStyles" -> True, 
+  "CitationPopupData" -> $Failed, "ShowCitation" -> False, "HasOptions" -> 
+  True, "RootCaptions" -> "", "HeaderCoreAreaLink" -> {}, 
+  "Metadata" -> {
+   "built" -> "{2025, 11, 14, 18, 45, 10.987597}", 
+    "history" -> {"XX", "", "", ""}, "context" -> "Matchete`", 
+    "keywords" -> {}, "specialkeywords" -> {}, 
+    "tutorialcollectionlinks" -> {}, "index" -> True, "label" -> 
+    "Matchete Symbol", "language" -> "en", "paclet" -> "Matchete", "status" -> 
+    "None", "summary" -> 
+    "Standard head for Levi-Civita type Clebsch-Gordan coefficients for SU(N) \
+groups. E.g., CG[eps@ group, {a, b, ...}] for SuperscriptBox[\\[Epsilon],\\ \
+ab\\ ...\\ ], with indices in the fundamental representation.", 
+    "synonyms" -> {}, "tabletags" -> {}, "title" -> "eps", "titlemodifier" -> 
+    "", "metadescription" -> "", "windowtitle" -> "eps", "type" -> "Symbol", 
+    "uri" -> "Matchete/ref/eps"}},
+CellContext->"Global`",
+FrontEndVersion->"14.0 for Mac OS X ARM (64-bit) (December 12, 2023)",
+StyleDefinitions->Notebook[{
+   Cell[
+    StyleData[
+    StyleDefinitions -> FrontEnd`FileName[{"Wolfram"}, "Reference.nb"]]], 
+   Cell[
+    StyleData["Input"], CellContext -> "Global`"], 
+   Cell[
+    StyleData["Output"], CellContext -> "Global`"]}, Visible -> False, 
+  FrontEndVersion -> "14.0 for Mac OS X ARM (64-bit) (December 12, 2023)", 
+  StyleDefinitions -> "Default.nb"],
+ExpressionUUID->"57750af7-b593-462b-b9d1-383a55605cd5"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "PrimaryExamplesSection"->{
+  Cell[7312, 197, 1391, 37, 45, "PrimaryExamplesSection",ExpressionUUID->"f5d7b9e6-255c-410f-a5cc-e68981a2f812",
+   CellTags->"PrimaryExamplesSection",
+   CellID->1058724701]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"PrimaryExamplesSection", 11498, 305}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[575, 21, 3253, 77, 72, "AnchorBarGrid",ExpressionUUID->"ab7cfc7e-35fe-4b60-a062-8a270867b31f",
+ CellID->1],
+Cell[3831, 100, 91, 0, 30, "ContextNameCell",ExpressionUUID->"960906b4-1946-4f9d-85c8-33ccdf69b79d"],
+Cell[CellGroupData[{
+Cell[3947, 104, 546, 14, 76, "ObjectNameGrid",ExpressionUUID->"fabdb90b-f2fa-45b9-93a5-a13975e0fb03"],
+Cell[4496, 120, 420, 8, 137, "Usage",ExpressionUUID->"98704cdf-4bcd-477a-8693-332b3a9ef65e",
+ CellID->1683791427]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4953, 133, 1886, 47, 46, "NotesSection",ExpressionUUID->"95b1049e-0c3a-427b-b63f-c22af852d481",
+ CellGroupingRules->{"SectionGrouping", 50},
+ CellID->1988469045],
+Cell[6842, 182, 343, 9, 70, "Input",ExpressionUUID->"0f9db49f-5c14-41c7-92fa-895e06ba4d69",
+ CellID->1230242813]
+}, Dynamic[CurrentValue[EvaluationNotebook[], {TaggingRules, "Openers", "NotesSection"}, Closed]]]],
+Cell[CellGroupData[{
+Cell[7312, 197, 1391, 37, 45, "PrimaryExamplesSection",ExpressionUUID->"f5d7b9e6-255c-410f-a5cc-e68981a2f812",
+ CellTags->"PrimaryExamplesSection",
+ CellID->1058724701],
+Cell[8706, 236, 197, 3, 38, "Input",ExpressionUUID->"bc2d52d4-d68d-4b6e-89a7-e07658f7d995",
+ CellID->674556910]
+}, Dynamic[CurrentValue[EvaluationNotebook[], {TaggingRules, "Openers", "PrimaryExamplesSection"}, Closed]]]],
+Cell[9021, 244, 380, 11, 142, "SeeAlsoSection",ExpressionUUID->"9406c4d3-f27e-4fb7-a29c-ca62d29ae17f"],
+Cell[9404, 257, 78, 0, 27, "FooterCell",ExpressionUUID->"2854d416-faf6-41fb-acdf-ee2a99ca39d9"]
+}
+]
+*)
+

@@ -19,12 +19,15 @@ Package["Matchete`"]
 (*Scoping*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Exported*)
 
 
 (* ::Subsubsection::Closed:: *)
 (*Internal*)
+
+
+PackageScope["FuncNCM"]
 
 
 PackageScope["DeriveEOM"]
@@ -37,9 +40,6 @@ PackageScope["FuncD"]
 PackageScope["FuncDSimplify"]
 PackageScope["ShiftCD"]
 PackageScope["ShiftFS"]
-
-
-PackageScope["GaugeFixing"]
 
 
 PackageScope["TransposeThisSpinChain"]
@@ -64,7 +64,7 @@ PackageScope["NCProduct"]
 PackageScope["FieldTransformsUnderGaugeGroupQ"]
 
 
-PackageScope["BackgroundField"]
+PackageScope["BkgField"]
 PackageScope["BackgroundCD"]
 PackageScope["BackgroundFS"]
 
@@ -73,7 +73,7 @@ PackageScope["BackgroundFS"]
 (*Usage messages*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Exported*)
 
 
@@ -124,6 +124,86 @@ ChangeFieldIndex::usage="ChangeFieldIndex[field, group, indexLabel] returns the 
 
 (* ::Chapter:: *)
 (*Private:*)
+
+
+(* ::Section:: *)
+(*Functional Non-commutative product *)
+
+
+(* ::Text:: *)
+(*A non-commutative product used in the evaluation on functional derivatives*)
+
+
+(* ::Subsection:: *)
+(*Commutative check*)
+
+
+(* ::Text:: *)
+(*Default assumption: everything is commutative*)
+
+
+FuncCommuteQ[f_?FuncCommuteQ[x___]] := And@@ FuncCommuteQ/@ {x};
+FuncCommuteQ[f_[x___]] := False;
+FuncCommuteQ[_] := True;
+
+
+(* ::Text:: *)
+(*Define the non-commutative objects*)
+
+
+FuncCommuteQ@ Alternatives[Pattern, Blank, BlankSequence, BlankNullSequence, Except, Hold] = False;
+
+
+(* ::Text:: *)
+(*Commutative is a head that can be used to temporarily treat an object as commutative*)
+
+
+FuncCommuteQ@ Commutative@ _ ^= True;
+
+
+(* ::Subsection:: *)
+(*Non-commutative symbols used in Matchete declared here*)
+
+
+(* ::Text:: *)
+(*Define non-commutative objects*)
+
+
+((FuncCommuteQ@ # ^= False) &) /@ {
+	Field,
+	FieldStrength,
+	DiracProduct,
+	OpenCD,
+	Xop, Xterm,
+	WilsonLine, WilsonTerm
+	};
+
+
+(* ::Subsection:: *)
+(*Properties of FuncNCM*)
+
+
+(* ::Text:: *)
+(*Flatness*)
+
+
+FuncNCM[a___, FuncNCM[b__], c___]:= FuncNCM[a, b, c];
+FuncNCM[] = 1;
+
+
+(* ::Text:: *)
+(*Extracting commuting objects*)
+
+
+FuncNCM[a___, b_?FuncCommuteQ, c___]:= b * FuncNCM[a, c];
+FuncNCM[a___, b_?FuncCommuteQ * x_, c___]:= b * FuncNCM[a, x, c];
+
+
+(* ::Text:: *)
+(*Distributivity*)
+
+
+FuncNCM[a___, b_Plus, c___]:= FuncNCM[a, #, c] & /@ b
 
 
 (* ::Section:: *)
@@ -184,7 +264,7 @@ FD::invalidargument =
 "The second argument `1` of FuncD is invalid. It must be either of the following forms: Field[...], Bar[Field[...]].";
 
 
-FD[_,y_,OptionsPattern[]] := Message[FD::invalidargument,y] /; !MatchQ[y, Field[___] | Bar@Field[___] | Transp@Field[___] | Transp@Bar@Field[___] | HoldComplete[___] | NonCommutativeMultiply[DiracProduct[GammaCC],_] | NonCommutativeMultiply[_,DiracProduct[GammaCC]]]
+FD[_,y_,OptionsPattern[]] := Message[FD::invalidargument,y] /; !MatchQ[y, Field[___] | Bar@Field[___] | Transp@Field[___] | Transp@Bar@Field[___] | HoldComplete[___] | NCM[DiracProduct[GammaCC],_] | NCM[_,DiracProduct[GammaCC]]]
 
 
 (* ::Subsection:: *)
@@ -214,7 +294,7 @@ ExpandVectorFluctuations[x, y]= Module[
 	If[GaugeFieldQ@yField,
 
 		(* shift explicit gauge fields *)
-		arg = Expand[arg /. Field[yFieldLabel,type_Vector,rest___]:>(Field[BackgroundField[yFieldLabel],type,rest]+$\[Epsilon]FD*Field[yFieldLabel,type,rest])];
+		arg = Expand[arg /. Field[yFieldLabel,type_Vector,rest___]:>(Field[BkgField[yFieldLabel],type,rest]+$\[Epsilon]FD*Field[yFieldLabel,type,rest])];
 
 		(* remove powers for pattern matching *)
 		arg = RemovePower[arg];
@@ -239,7 +319,7 @@ ExpandVectorFluctuations[x, y]= Module[
 	If[VectorFieldQ@yField && !GaugeFieldQ@yField,
 
 		(* shift explicit vector fields *)
-		arg = Expand[arg /. Field[yFieldLabel,type_Vector,rest___]:>(Field[BackgroundField[yFieldLabel],type,rest]+$\[Epsilon]FD*Field[yFieldLabel,type,rest])];
+		arg = Expand[arg /. Field[yFieldLabel,type_Vector,rest___]:>(Field[BkgField[yFieldLabel],type,rest]+$\[Epsilon]FD*Field[yFieldLabel,type,rest])];
 
 		(* remove powers for pattern matching *)
 		arg = RemovePower[arg];
@@ -249,25 +329,13 @@ ExpandVectorFluctuations[x, y]= Module[
 	];
 
 	(*Release BackgroundCD*)
-	arg = arg/. BackgroundCD[ind__,exp_]:>CD[ind,exp] /.BackgroundFS[all___]:>FieldStrength[all];
+	arg = arg/. BackgroundCD[ind__,exp_]:>CD[ind,exp] /.BackgroundFS[all___]:>FS[all];
 
 	(* expand to quadratic order in the fluctuation *)
 	arg = Normal@Series[Expand[ReleaseHold@arg],{$\[Epsilon]FD,0,2}];
 
 	RelabelIndices[arg]
 ]
-
-
-(* ::Subsubsection::Closed:: *)
-(*Gauge fixing*)
-
-
-(*ExpandVectorFluctuations[,_]:=0;*)
-(*ExpandVectorFluctuations[GaugeFixing[exp_],_]:= exp*$\[Epsilon]FD^2
-ExpandVectorFluctuations[Plus[a___,GaugeFixing[exp_],b___],f__]:= Plus[ExpandVectorFluctuations[If[a===Blank,0,Plus@a],f],exp*$\[Epsilon]FD^2,ExpandVectorFluctuations[If[b===Blank,0,Plus@b],f]]*)
-
-(*Change CD to BackgroundCD and FS to BackgroundFS*)
-GaugeFixing[exp_]:= exp/.Field[label_,type_,ind_, derivs:{\[Mu]_,\[Nu]___}]:>BackgroundCD[derivs, Field[label, type, ind,{}]]/.FieldStrength[all___]:>BackgroundFS[all];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -469,7 +537,7 @@ GetFieldLabel[field:(_Field | _FieldStrength)]:=Module[
 	}
 	,
 	(* treat Background vector fields *)
-	If[Head[label]===BackgroundField,
+	If[Head[label]===BkgField,
 		label = First[label]
 	];
 	(* treat fields expanded in the EFT power counting *)
@@ -593,10 +661,10 @@ FuncD[Times[x1_,x2__],y_,OptionsPattern[]] :=
 
 
 (* ::Text:: *)
-(*NonCommutativeMultiply[]*)
+(*FuncNCM[]*)
 
 
-FuncD[NonCommutativeMultiply[x1_,x2__],y_,OptionsPattern[]] := Module[
+FuncD[FuncNCM[x1_,x2___],y_,OptionsPattern[]] := Module[
 	{
 		fieldType,
 		sign = 1
@@ -606,22 +674,51 @@ FuncD[NonCommutativeMultiply[x1_,x2__],y_,OptionsPattern[]] := Module[
 	If[OptionValue[Grassmann],
 		(*extract field type*)
 		fieldType = Cases[y,Field[_,typ_,___]:>typ,All];
-		If[MatchQ[fieldType,{Fermion|Ghost}],
+		If[MatchQ[fieldType,{Ghost|AntiGhost}],
 			(*get the number of anti-commuting fields in x1*)
-			sign = (-1)^(Plus@@Cases[x1,Field[_,Fermion|Ghost,___]->1,All]);
+			sign = (-1)^(Plus@@Cases[x1,Field[_,Ghost|AntiGhost,___]->1,All]);
 		];
 	];
 
 	(*apply the product rule*)
 	Plus[
-		NonCommutativeMultiply[FuncD[x1,y,Grassmann->OptionValue[Grassmann]],x2],
-		sign * NonCommutativeMultiply[x1,FuncD[NonCommutativeMultiply[x2],y,Grassmann->OptionValue[Grassmann]]]
+		FuncNCM[FuncD[x1,y,Grassmann->OptionValue[Grassmann]],x2],
+		sign * FuncNCM[x1,FuncD[FuncNCM[x2],y,Grassmann->OptionValue[Grassmann]]]
 	]
 ] /; FreeQ[x1,Plus]
 
 
 
-FuncD[NonCommutativeMultiply[x:(Field[___] | Bar@Field[___] | Transp@Field[___] | Transp@Bar@Field[___])], y_, OptionsPattern[]] := NonCommutativeMultiply@FuncD[x, y, Grassmann->OptionValue[Grassmann]]
+(* ::Text:: *)
+(*NonCommutativeMultiply[]*)
+
+
+FuncD[NCM[x1_,x2__],y_,OptionsPattern[]] := Module[
+	{
+		fieldType,
+		sign = 1
+	}
+	,
+	(* when Grassmann minus sign should be considered *)
+	If[OptionValue[Grassmann],
+		(*extract field type*)
+		fieldType = Cases[y,Field[_,typ_,___]:>typ,All];
+		If[MatchQ[fieldType,{Fermion}],
+			(*get the number of anti-commuting fields in x1*)
+			sign = (-1)^(Plus@@Cases[x1,Field[_,Fermion,___]->1,All]);
+		];
+	];
+
+	(*apply the product rule*)
+	Plus[
+		NCM[FuncD[x1,y,Grassmann->OptionValue[Grassmann]],x2],
+		sign * NCM[x1,FuncD[NCM[x2],y,Grassmann->OptionValue[Grassmann]]]
+	]
+] /; FreeQ[x1,Plus]
+
+
+
+FuncD[NCM[x:(Field[___] | Bar@Field[___] | Transp@Field[___] | Transp@Bar@Field[___])], y_, OptionsPattern[]] := NCM@FuncD[x, y, Grassmann->OptionValue[Grassmann]]
 
 
 (* ::Text:: *)
@@ -638,9 +735,9 @@ FuncD[NCProduct[x1_,x2__],y_,OptionsPattern[]] := Module[
 	If[OptionValue[Grassmann],
 		(*extract field type*)
 		fieldType = Cases[y,Field[_,typ_,___]:>typ,All];
-		If[MatchQ[fieldType,{Fermion|Ghost}],
+		If[MatchQ[fieldType,{Fermion}],
 			(*Get the number of anti-commuting fields in x1*)
-			sign = (-1)^(Plus@@Cases[x1,Field[_,Fermion|Ghost,___]->1,All]);
+			sign = (-1)^(Plus@@Cases[x1,Field[_,Fermion,___]->1,All]);
 		];
 	];
 
@@ -686,14 +783,11 @@ FuncD[Field[label1_,__], f:Field[label2_,__], OptionsPattern[]] := 0 /; (label1=
 FuncD[Bar@Field[label1_,__], Bar[f:Field[label2_,__]], OptionsPattern[]] := 0 /; (label1=!=label2)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Non-vanishing derivatives*)
 
 
 FuncD::repeatedindices = "The indices `1` in argument x and the indices `2` in argument y of FuncD[x,y] must not have identical labels.";
-
-
-FuncD::invalidtype = "Invalid combination of field types found: `1` and `2`.";
 
 
 FuncD::indexnumber = "Unmatched number of group indices found.";
@@ -730,34 +824,21 @@ FuncD[Field[label_,type1_,index1_,derivs1_], Field[label_,type2_,index2_,derivs2
 			Abort[]
 		];
 
-		(*functionality depending on field type*)
-		Switch[{type1,type2},
-			(*fermions*)
-			{Fermion,Fermion},
-				result *= 1, (*This used to be the identity in Dirac space*)
-			(*vectors*)
-			{Vector[Index[_,Lorentz]],Vector[Index[_,Lorentz]]},
+		(* add metric for vectors *)
+		If[MatchQ[{type1,type2},{Vector[Index[_,Lorentz]],Vector[Index[_,Lorentz]]}],
 				If[type1===type2,
 					Message[FuncD::repeatedindices, First@type1, First@type2]; Abort[],
 					result *= Metric[First@type1, First@type2]
-				],
-			(*scalars*)
-			{Scalar,Scalar},
-				result *= 1,
-			(*ghosts*)   (*to be crosschecked*)
-			{Ghost,Ghost},
-				result *= 1,
-			(*Graviton*)
-			{Graviton[Index[_,Lorentz], Index[_, Lorentz]],Graviton[Index[_,Lorentz], Index[_, Lorentz]]},
-				If[IntersectingQ[type1,type2],
+				]
+		];
+        
+        (*Graviton*)
+        If[MatchQ[{type1,type2},{Graviton[Index[_,Lorentz], Index[_, Lorentz]],Graviton[Index[_,Lorentz], Index[_, Lorentz]]}],
+            If[IntersectingQ[type1,type2],
 					Message[FuncD::repeatedindices, First@type1, First@type2]; Abort[],
 					result *= Metric[First@type1, First@type2] * Metric[Last@type1, Last@type2]
-				],
-			(*Other*)
-			{_,_},
-				Message[FuncD::invalidtype, Intersection[type1,type2]];
-				Abort[]
-		];
+				]
+        ]
 
 		(*include Delta[_,_] for all group indices*)
 		Do[
@@ -777,6 +858,57 @@ FuncD[Field[label_,type1_,index1_,derivs1_], Field[label_,type2_,index2_,derivs2
 	] /; (Length[derivs1]==Length[derivs2])
 
 
+(*FuncD[Field[label_,type1_,index1_,derivs1_], Field[label_,type2_,index2_,derivs2_], OptionsPattern[]] :=
+	Module[
+		{ result = 1 }
+		,
+		(*check that the group indices match up*)
+		If[Length[index1]!=Length[index2],
+			Message[FuncD::indexnumber];
+			Abort[]
+			,
+			If[(index1/.Index[_,rep_]:>rep)=!=(index2/.Index[_,rep_]:>rep),
+				Message[FuncD::unmatchedindex];
+				Abort[]
+			]
+		];
+
+		(*check that there are no duplicate index labels *)
+		If[Or@@(!FreeQ[index1,#]&/@index2),
+			Message[FuncD::repeatedindices, index1, index2];
+			Abort[]
+		];
+		If[Or@@(!FreeQ[derivs1,#]&/@derivs2),
+			Message[FuncD::repeatedindices, derivs1, derivs2];
+			Abort[]
+		];
+
+		(*multiply by metric tensor for vectors*)
+		If[{type1,type2}==={Vector[Index[_,Lorentz]],Vector[Index[_,Lorentz]]},
+				If[type1===type2,
+					Message[FuncD::repeatedindices, First@type1, First@type2]; Abort[],
+					result *= Metric[First@type1, First@type2]
+				]
+		];
+
+		(*include Delta[_,_] for all group indices*)
+		Do[
+			result *= Delta@@pair
+			,
+			{pair,Transpose[{index1,index2}]}
+		];
+
+		(*include Metric[_,_] for all Lorentz indices of the covariant derivatives*)
+		Do[
+			result *= Metric@@pair
+			,
+			{pair,Transpose[{derivs1,derivs2}]}
+		];
+
+		Return[result]
+	] /; (Length[derivs1]==Length[derivs2])*)
+
+
 (* ::Subsection:: *)
 (*FuncD with transposed and charge-conjugated fields *)
 
@@ -785,14 +917,14 @@ FuncD[Field[label_,type1_,index1_,derivs1_], Field[label_,type2_,index2_,derivs2
 (*FuncD w.r.t. Field[...]*)
 
 
-FuncD[x_, Transp[y_], OptionsPattern[]] := (TransposeThisSpinChain ** FuncD[x, y, Grassmann->OptionValue[Grassmann]])/; FreeQ[x,Plus]
+FuncD[x_, Transp[y_], OptionsPattern[]] := (TransposeThisSpinChain \[CenterDot] FuncD[x, y, Grassmann->OptionValue[Grassmann]])/; FreeQ[x,Plus]
 
 
-FuncD[Transp[x:(Field[___] | Bar@Field[___])], y:Except[_NonCommutativeMultiply] , OptionsPattern[]] := (TransposeThisSpinChain ** FuncD[x, y, Grassmann->OptionValue[Grassmann]])
+FuncD[Transp[x:(Field[___] | Bar@Field[___])], y:Except[_NCM] , OptionsPattern[]] := (TransposeThisSpinChain \[CenterDot] FuncD[x, y, Grassmann->OptionValue[Grassmann]])
 
 
 (* ::Text:: *)
-(*If y is a NonCommutativeMultiply[...] then y is the charge conjugate of some field for which the rules below should be used instead, since transposition generates minus signs due to the presence of GammaCC.*)
+(*If y is a NCM[...] then y is the charge conjugate of some field for which the rules below should be used instead, since transposition generates minus signs due to the presence of GammaCC.*)
 
 
 (* ::Subsubsection::Closed:: *)
@@ -801,9 +933,9 @@ FuncD[Transp[x:(Field[___] | Bar@Field[___])], y:Except[_NonCommutativeMultiply]
 
 FuncD[
 	Bar[x_Field],
-	NonCommutativeMultiply[DiracProduct[GammaCC], Transp@Bar[y_Field]],
+	NCM[DiracProduct[GammaCC], Transp@Bar[y_Field]],
 	OptionsPattern[]
-] := NonCommutativeMultiply[
+] := NCM[
 	DiracProduct[GammaCC],
 	TransposeThisSpinChain,
 	FuncD[Bar[x], Bar[y], Grassmann->OptionValue[Grassmann]]
@@ -812,9 +944,9 @@ FuncD[
 
 FuncD[
 	Transp@Bar[x_Field],
-	NonCommutativeMultiply[DiracProduct[GammaCC], Transp@Bar[y_Field]],
+	NCM[DiracProduct[GammaCC], Transp@Bar[y_Field]],
 	OptionsPattern[]
-] := (-1)*NonCommutativeMultiply[
+] := (-1)*NCM[
 	DiracProduct[GammaCC],
 	FuncD[Bar[x], Bar[y], Grassmann->OptionValue[Grassmann]]
 ]
@@ -822,7 +954,7 @@ FuncD[
 
 FuncD[
 	x:(Field[___] | Transp@Field[___]),
-	NonCommutativeMultiply[DiracProduct[GammaCC], Transp@Bar[y_Field]],
+	NCM[DiracProduct[GammaCC], Transp@Bar[y_Field]],
 	OptionsPattern[]
 ] := 0
 
@@ -833,9 +965,9 @@ FuncD[
 
 FuncD[
 	x_Field,
-	NonCommutativeMultiply[Transp[y_Field], DiracProduct[GammaCC]],
+	NCM[Transp[y_Field], DiracProduct[GammaCC]],
 	OptionsPattern[]
-] := NonCommutativeMultiply[
+] := NCM[
 	DiracProduct[GammaCC],
 	TransposeThisSpinChain,
 	FuncD[x, y, Grassmann->OptionValue[Grassmann]]
@@ -844,9 +976,9 @@ FuncD[
 
 FuncD[
 	Transp[x_Field],
-	NonCommutativeMultiply[Transp[y_Field], DiracProduct[GammaCC]],
+	NCM[Transp[y_Field], DiracProduct[GammaCC]],
 	OptionsPattern[]
-] := (-1) * NonCommutativeMultiply[
+] := (-1) * NCM[
 	DiracProduct[GammaCC],
 	FuncD[x, y, Grassmann->OptionValue[Grassmann]]
 ]
@@ -854,7 +986,7 @@ FuncD[
 
 FuncD[
 	x:(Bar@Field[___] | Transp@Bar@Field[___]),
-	NonCommutativeMultiply[Transp[y_Field], DiracProduct[GammaCC]],
+	NCM[Transp[y_Field], DiracProduct[GammaCC]],
 	OptionsPattern[]
 ] := 0
 
@@ -872,10 +1004,10 @@ Transp[TransposeThisSpinChain] := TransposeThisSpinChain
 
 FuncDSimplify[expr_] := Module[{solution=expr},
 	(* avoid unnecessary transpositions *)
-	solution=solution//.HoldPattern@NonCommutativeMultiply[A___,TransposeThisSpinChain,B___,TransposeThisSpinChain,C___]:>NonCommutativeMultiply[A,B,C]/;FreeQ[B,TransposeThisSpinChain];
-	solution=solution//.HoldPattern@NonCommutativeMultiply[A___,TransposeThisSpinChain,TransposeThisSpinChain,C___]:>NonCommutativeMultiply[A,C];
+	solution=solution//.HoldPattern@NCM[A___,TransposeThisSpinChain,B___,TransposeThisSpinChain,C___]:>NCM[A,B,C]/;FreeQ[B,TransposeThisSpinChain];
+	solution=solution//.HoldPattern@NCM[A___,TransposeThisSpinChain,TransposeThisSpinChain,C___]:>NCM[A,C];
 	(* transpose all necessary spin-chains *)
-	solution=solution/.HoldPattern@NonCommutativeMultiply[A___,TransposeThisSpinChain,B___]:>Transp@NonCommutativeMultiply[A,B];
+	solution=solution/.HoldPattern@NCM[A___,TransposeThisSpinChain,B___]:>Transp@NCM[A,B];
 	Contract[solution]
 ]
 
@@ -904,8 +1036,8 @@ SecondArgVarD = Alternatives[
 		Bar@Field[_,_,_,{}],
 		Transp@Field[_,_,_,{}],
 		Transp@Bar@Field[_,_,_,{}],
-		NonCommutativeMultiply[DiracProduct[GammaCC], Transp@Bar@Field[_,_,_,{}]],
-		NonCommutativeMultiply[Transp@Field[___], DiracProduct[GammaCC]]
+		NCM[DiracProduct[GammaCC], Transp@Bar@Field[_,_,_,{}]],
+		NCM[Transp@Field[___], DiracProduct[GammaCC]]
 	];
 
 
@@ -1006,22 +1138,16 @@ NotTrivialWRTGaugeFieldQ[gr_][term_] := !FreeQ[term, f : (Field[__, {__}] | _Fie
 
 
 VarD1[lag_, f1 : SecondArgVarD, opt:OptionsPattern[]] :=
-	RelabelIndices@VarDraw[lag, f1,opt]/.$\[Epsilon]FD->0 /. BackgroundField[l_]:>l
+	RelabelIndices@VarDraw[lag, f1,opt]/.$\[Epsilon]FD->0 /. BkgField[l_]:>l
 
 
 (* ::Text:: *)
 (*Variational derivative w.r.t. 2 fields*)
 
 
-(* THIS VERSION DOES NOT WORK: the result must we wrapped inside a FuncNCM with the OpenCD last *)
-(*VarD1[lag_, f1 : SecondArgVarD, f2 : SecondArgVarD, opt:OptionsPattern[]] :=
-	RelabelIndices@VarDraw[Expand[VarDraw[lag, f2,opt] * FuncNCM[OpenCD[{}]]], f1, opt]/.
-		OpenCD[{}]-> 1/. $\[Epsilon]FD-> 0/. BackgroundField[l_]:>l*)
-
-
 VarD1[lag_, f1 : SecondArgVarD, f2 : SecondArgVarD, opt:OptionsPattern[]] := Module[{res},
 	res = RelabelIndices@VarDraw[Expand[VarDraw[lag, f2,opt] * FuncNCM[OpenCD[{}]]], f1, opt]/.
-		OpenCD[{}]-> 1/. $\[Epsilon]FD-> 0/. BackgroundField[l_]:>l;
+		OpenCD[{}]-> 1/. $\[Epsilon]FD-> 0/. BkgField[l_]:>l;
 	res = res/.Times->FuncNCM;
 	res = res/.{FuncNCM[a___,ocd_OpenCD,b___]:>FuncNCM[a,b,ocd]}
 ]
@@ -1095,8 +1221,8 @@ fdPattern= Alternatives[
 		Bar@Field[_,_,_,{}],
 		Transp@Field[_,_,_,{}],
 		Transp@Bar@Field[_,_,_,{}],
-		NonCommutativeMultiply[DiracProduct[GammaCC], Transp@Bar@Field[_,_,_,{}]],
-		NonCommutativeMultiply[Transp@Field[___], DiracProduct[GammaCC]]
+		NCM[DiracProduct[GammaCC], Transp@Bar@Field[_,_,_,{}]],
+		NCM[Transp@Field[___], DiracProduct[GammaCC]]
 	];
 
 
@@ -1107,7 +1233,7 @@ FluctuationOperator[lag_, field1_, field2_, OptionsPattern[]] := Module[
 		{f1, f2, eom, xTerm, f, sign, lagrangian= NCProduct[lag]},
 	(*Remove projection operators from functional derivative field (chiral fields always have explicit projectors in the Lagrangian).*)
 	{f1, f2}= {field1, field2}/. {DiracProduct[a___, (Transp@ _Proj| _Proj)]:> DiracProduct@ a}/.
-		NonCommutativeMultiply@ x_-> x;
+		NCM@ x_-> x;
 	
 	Do[
 		If[! MatchQ[f, fdPattern],
@@ -1122,7 +1248,7 @@ FluctuationOperator[lag_, field1_, field2_, OptionsPattern[]] := Module[
 	if field2 is fermionic or ghost add a minus sign:
 	since VarD[\[ScriptCapitalL],field2] has an odd number of fermions and the fluctuation of field2 has to be anticommuted through the entire expression.
 	 *)
-	If[FreeQ[field2, Field[_, Fermion | Ghost, ___], All],
+	If[FreeQ[field2, Field[_, Fermion|Ghost|AntiGhost, ___], All],
 		sign= 1,
 		sign= -1
 	];
@@ -1130,7 +1256,7 @@ FluctuationOperator[lag_, field1_, field2_, OptionsPattern[]] := Module[
 	(* apply functional derivatives *)
 	xTerm= sign * VarD[lagrangian,f1,f2, EFTOrder->OptionValue[EFTOrder]];
 
-	xTerm= SortNCProduct[xTerm]/.NCProduct->NonCommutativeMultiply;
+	xTerm= SortNCProduct[xTerm]/.NCProduct->NCM;
 	(*Print["Xterm: ", NiceForm[FullSimplify[xTerm]]];*)
 	Return[xTerm]
 ]
@@ -1158,20 +1284,20 @@ NCProduct@NCProduct[x___]:=NCProduct[x];
 
 
 (* Extracting commuting objects *)
-NCProduct[a___, b_?CommutativeQ, c___]/; FreeQ[b,_NonCommutativeMultiply]:= b * NCProduct[a, c]
-NCProduct[a___, b_?CommutativeQ * x_, c___]/; FreeQ[b,_NonCommutativeMultiply]:= b * NCProduct[a, x, c]
+NCProduct[a___, b_?CommutativeQ, c___]/; FreeQ[b,_NCM]:= b * NCProduct[a, c]
+NCProduct[a___, b_?CommutativeQ * x_, c___]/; FreeQ[b,_NCM]:= b * NCProduct[a, x, c]
 (* Distributivity *)
 NCProduct[a___, b_Plus, c___]:= NCProduct[a, #, c] & /@ b
 
 
-NCProduct[a___, Times[b_NonCommutativeMultiply, c___], d___]:= NCProduct[a,b,Times[c],d]
+NCProduct[a___, Times[b_NCM, c___], d___]:= NCProduct[a,b,Times[c],d]
 
 
 SortNCProduct[expr_]:= Module[
 	{
 		rules={
-			NCProduct[a___,b_NonCommutativeMultiply,c___]/;ClosedSpinChainQ[b] :> NCProduct[a,c,b],
-			NCProduct[a___,x_NonCommutativeMultiply,y_NonCommutativeMultiply,b___] /;(ROpenSpinChainQ[x]&&LOpenSpinChainQ[y]) :> (-1)^(GrassmannCount[x]*GrassmannCount[y]) * NCProduct[a,y,x,b]
+			NCProduct[a___,b_NCM,c___]/;ClosedSpinChainQ[b] :> NCProduct[a,c,b],
+			NCProduct[a___,x_NCM,y_NCM,b___] /;(ROpenSpinChainQ[x]&&LOpenSpinChainQ[y]) :> (-1)^(GrassmannCount[x]*GrassmannCount[y]) * NCProduct[a,y,x,b]
 		}
 	}
 	,
@@ -1180,4 +1306,4 @@ SortNCProduct[expr_]:= Module[
 
 
 (* counts the grassmann parameters in arg *)
-GrassmannCount[arg_]:= Count[arg, Fermion|Ghost, All]
+GrassmannCount[arg_]:= Count[arg, Fermion, All]

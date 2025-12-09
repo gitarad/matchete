@@ -1,0 +1,497 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 14.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     18786,        489]
+NotebookOptionsPosition[     14421,        395]
+NotebookOutlinePosition[     16588,        451]
+CellTagsIndexPosition[     16503,        446]
+WindowTitle->ResetFlavorIndices
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[GridBox[{
+   {GridBox[{
+      {
+       ItemBox[Cell[BoxData[
+         RowBox[{
+          TemplateBox[{12},
+           "Spacer1"], Cell["MATCHETE SYMBOL", "PacletNameCell",
+           TextAlignment->Center,ExpressionUUID->
+           "6ae75455-e862-432f-9703-dccef971bb2d"], 
+          TemplateBox[{8},
+           "Spacer1"]}]],
+         TextAlignment->Center,ExpressionUUID->
+         "805e14d4-46d0-46b1-a06f-d680cbbfcc3c"],
+        Background->RGBColor[0.490196, 0.576471, 0.690196],
+        ItemSize->Full], ""}
+     },
+     GridBoxAlignment->{"Rows" -> {{Center}}},
+     GridBoxItemSize->{"Columns" -> {Full, 
+         Scaled[0.02]}, "Rows" -> {{2.5}}}], Cell[TextData[{
+     Cell[BoxData[
+      TagBox[
+       ActionMenuBox[
+        FrameBox[Cell[TextData[{
+          "See Also",
+          " ",
+          Cell[BoxData[
+           GraphicsBox[
+            {GrayLevel[0.66667], Thickness[0.13], 
+             LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]},
+            AspectRatio->1,
+            ImageSize->20,
+            PlotRange->{{-3, 4}, {-1, 1}}]],ExpressionUUID->
+           "bc7dc05e-0809-43e9-a716-da37e36cead0"]
+         }],ExpressionUUID->"0e2943a3-61e5-43ba-9ef4-c7a9824aaf9f"],
+         StripOnInput->False],{
+        "\"RemoveFlavorIndex\"" :> 
+         Documentation`HelpLookup["paclet:Matchete/ref/RemoveFlavorIndex"], 
+         "\"DefineFlavorIndex\"" :> 
+         Documentation`HelpLookup["paclet:Matchete/ref/DefineFlavorIndex"], 
+         "\"ResetAll\"" :> 
+         Documentation`HelpLookup["paclet:Matchete/ref/ResetAll"]},
+        Appearance->None,
+        MenuAppearance->Automatic,
+        MenuStyle->"SeeAlso"],
+       MouseAppearanceTag["LinkHand"]]],
+      LineSpacing->{1.4, 0},ExpressionUUID->
+      "ea508c6c-395d-434a-b421-2d45c073695a"],
+     "\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\
+\[ThickSpace]",
+     Cell[BoxData[
+      TagBox[
+       ActionMenuBox[
+        FrameBox[Cell[TextData[{
+          "URL",
+          " ",
+          Cell[BoxData[
+           GraphicsBox[
+            {GrayLevel[0.66667], Thickness[0.13], 
+             LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]},
+            AspectRatio->1,
+            ImageSize->20,
+            PlotRange->{{-3, 4}, {-1, 1}}]],ExpressionUUID->
+           "ba107901-853e-45a5-afe8-7ba630f23873"]
+         }],ExpressionUUID->"2e67c500-0667-469e-923b-319016ab9d7d"],
+         StripOnInput->False],{
+        "\"Matchete/ref/ResetFlavorIndices\"" :> None, 
+         "\"Copy Wolfram Documentation Center URL\"" :> 
+         Module[{DocumentationSearch`Private`nb$}, 
+           DocumentationSearch`Private`nb$ = 
+            NotebookPut[
+             Notebook[{Cell["Matchete/ref/ResetFlavorIndices"]}, Visible -> 
+               False]]; 
+           SelectionMove[DocumentationSearch`Private`nb$, All, Notebook]; 
+           FrontEndTokenExecute[DocumentationSearch`Private`nb$, "Copy"]; 
+           NotebookClose[DocumentationSearch`Private`nb$]; Null], Delimiter, 
+         "\"Copy web URL\"" :> 
+         Module[{DocumentationSearch`Private`nb$}, 
+           DocumentationSearch`Private`nb$ = 
+            NotebookPut[
+             Notebook[{
+               Cell[BoxData[
+                 MakeBoxes[
+                  Hyperlink[
+                   "http://reference.wolfram.com/language/Matchete/ref/\
+ResetFlavorIndices.html"], StandardForm]], "Input", TextClipboardType -> 
+                 "PlainText"]}, Visible -> False]]; 
+           SelectionMove[DocumentationSearch`Private`nb$, All, Notebook]; 
+           FrontEndTokenExecute[DocumentationSearch`Private`nb$, "Copy"]; 
+           NotebookClose[DocumentationSearch`Private`nb$]; Null], 
+         "\"Go to web URL\"" :> 
+         FrontEndExecute[{
+           NotebookLocate[{
+             URL[If[TrueQ[False], 
+                 "http://reference.wolfram.com/system-modeler/", 
+                 "http://reference.wolfram.com/language/"] <> 
+               "Matchete/ref/ResetFlavorIndices" <> ".html"], None}]}]},
+        Appearance->None,
+        MenuAppearance->Automatic,
+        MenuStyle->"URLMenu"],
+       MouseAppearanceTag["LinkHand"]]],
+      LineSpacing->{1.4, 0},ExpressionUUID->
+      "5b6b824b-d978-42cc-86b2-a30ebd96c4ec"]
+    }], "AnchorBar",
+     CacheGraphics->False,ExpressionUUID->
+     "463c4fc6-8bd4-4b71-b062-949ee72181c7"]}
+  }]], "AnchorBarGrid",
+ GridBoxOptions->{GridBoxItemSize->{"Columns" -> {
+     Scaled[0.65], {
+      Scaled[0.34]}}, "ColumnsIndexed" -> {}, "Rows" -> {{1.}}, 
+   "RowsIndexed" -> {}}},
+ CellID->1,ExpressionUUID->"398936e0-730d-4fad-a115-abd3baa31eb5"],
+
+Cell["Matchete`", "ContextNameCell",ExpressionUUID->"c1150146-2bd8-437a-abde-8f9bd15932ca"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[GridBox[{
+   {Cell[TextData[{
+     Cell[
+     "ResetFlavorIndices", "ObjectName",ExpressionUUID->
+      "0551525e-84c3-4e37-8de9-5bf81e9e5a6c"],
+     Cell[BoxData[
+      TemplateBox[{8},
+       "Spacer1"]],ExpressionUUID->"960d5c92-c952-4516-8351-4457e1ccb45a"],
+     Cell[BoxData[
+     ""], "ObjectNameTranslation",ExpressionUUID->
+      "1174ad6e-713b-4178-86db-a6e05ec3ef80"]
+    }],ExpressionUUID->"0537f787-a6e0-47f0-8b04-69efbef81aef"], 
+    "\[SpanFromLeft]"}
+  }]], "ObjectNameGrid",ExpressionUUID->"d2996b10-d0dc-48cb-8100-\
+05327c6c8571"],
+
+Cell[BoxData[GridBox[{
+   {"", Cell[TextData[{
+     Cell[BoxData[
+      RowBox[{
+       TemplateBox[{
+         Cell[
+          TextData["ResetFlavorIndices"]], 
+         "paclet:Matchete/ref/ResetFlavorIndices", "Matchete Package Symbol"},
+        
+        "PackageLink",
+        BaseStyle->"InlineFormula"], "[", "]"}]], "InlineFormula",
+      FontFamily->"Source Sans Pro",ExpressionUUID->
+      "61e42a1d-4453-4f1c-a64f-df29d45b6f8c"],
+     "\n\tundefines all flavor indices."
+    }],ExpressionUUID->"56b29c59-7677-4c99-a46f-b52aefafd8bd"]}
+  }]], "Usage",
+ CellID->785020311,ExpressionUUID->"3dfc42c9-3745-47ab-9a2f-a63125d9215a"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ Cell[BoxData[
+  DynamicBox[ToBoxes[
+    If[
+     MatchQ[
+      CurrentValue[
+       EvaluationNotebook[], {
+       TaggingRules, "Openers", "PrimaryExamplesSection"}, Open], 
+      Alternatives[True, Open]], 
+     Style[
+      Graphics[{
+        Thickness[0.18], 
+        RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+        Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+       PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+      0.68 Inherited], 
+     Rotate[
+      Style[
+       Graphics[{
+         Thickness[0.18], 
+         RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+         Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+        PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+       0.68 Inherited], Rational[1, 2] Pi, {-1.65, -1}]]],
+   ImageSizeCache->{17., {6., 11.}}]],ExpressionUUID->
+  "ba667db9-47b1-4ea4-8432-385c8294da17"],
+ Cell[BoxData[
+  TemplateBox[{1},
+   "Spacer1"]],ExpressionUUID->"ffa4c8ca-0751-4010-94c8-e822b160a42a"],
+ "Examples",
+ "\[NonBreakingSpace]\[NonBreakingSpace]",
+ Cell["(1)", "ExampleCount",ExpressionUUID->
+  "7db74d70-c2c3-4044-8405-889b5a53381a"]
+}], "PrimaryExamplesSection",
+ WholeCellGroupOpener->True,
+ CacheGraphics->False,
+ CellTags->"PrimaryExamplesSection",
+ CellID->1052182794,ExpressionUUID->"50a3623d-f795-4552-8e23-c92dc07eb98d"],
+
+Cell[BoxData[
+ RowBox[{"Needs", "[", "\"\<Matchete`\>\"", "]"}]], "Input", "ExampleInitialization",
+ CellLabel->"In[1]:=",
+ CellID->301153600,ExpressionUUID->"5fbd4953-63a9-4584-869f-992d6516dad6"],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ Cell[BoxData[
+  DynamicBox[ToBoxes[
+    If[
+     MatchQ[
+      CurrentValue[
+       EvaluationNotebook[], {TaggingRules, "Openers", "ExampleSection", "0"},
+        Closed], 
+      Alternatives[Open, True]], 
+     Style[
+      Graphics[{
+        Thickness[0.18], 
+        RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+        Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+       PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+      0.68 Inherited], 
+     Rotate[
+      Style[
+       Graphics[{
+         Thickness[0.18], 
+         RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+         Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+        PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+       0.68 Inherited], Rational[1, 2] Pi, {-1.65, -1}]]],
+   ImageSizeCache->{17., {6., 11.}}]],ExpressionUUID->
+  "13742053-266a-424c-a7e6-1b0f1f6f0b7f"],
+ Cell[BoxData[
+  TemplateBox[{1},
+   "Spacer1"]],ExpressionUUID->"8d090afc-6b46-4d34-8897-75e51d61a91f"],
+ "Basic Examples",
+ "\[NonBreakingSpace]\[NonBreakingSpace]",
+ Cell["(1)", "ExampleCount",ExpressionUUID->
+  "44a9a508-0ed2-41f1-ac0e-33d7414e7a59"]
+}], "ExampleSection", "ExampleSection",
+ WholeCellGroupOpener->True,
+ CacheGraphics->False,
+ CellID->1655869360,ExpressionUUID->"41b8f27c-77f0-4135-a79a-4c3802083582"],
+
+Cell["Define multiple types of flavor indices", "ExampleText",
+ CellID->1636649348,ExpressionUUID->"47fed31c-3e9c-401c-9c54-2ac3d469b6c9"],
+
+Cell[BoxData[{
+ RowBox[{"DefineFlavorIndex", "[", 
+  RowBox[{"Flavor1", ",", "3"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"DefineFlavorIndex", "[", 
+  RowBox[{"Flavor2", ",", "3"}], "]"}]}], "Input",
+ CellProlog:>Needs["Matchete`"],
+ CellLabel->"In[1]:=",
+ CellID->831973079,ExpressionUUID->"46682fd3-2a49-4beb-bd7f-958dd0f4fefb"],
+
+Cell["Define fields carrying these flavor indices:", "ExampleText",
+ CellID->1766986755,ExpressionUUID->"d197e15d-03ab-421d-9fd9-0123b0f17dd3"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"DefineField", "[", 
+  RowBox[{"\[Phi]", ",", "Scalar", ",", 
+   RowBox[{"Indices", "->", 
+    RowBox[{"{", "Flavor1", "}"}]}]}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"DefineField", "[", 
+  RowBox[{"\[CapitalPhi]", ",", "Scalar", ",", 
+   RowBox[{"Indices", "->", 
+    RowBox[{"{", "Flavor2", "}"}]}]}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"\[Phi]", "[", "p", "]"}], 
+  RowBox[{"\[CapitalPhi]", "[", "r", "]"}]}]}], "Input",
+ CellProlog:>Needs["Matchete`"],
+ CellLabel->"In[2]:=",
+ CellID->471481062,ExpressionUUID->"ae5679a9-0285-4b56-8c2f-3a7edff3b843"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Field", "[", 
+   RowBox[{"\[Phi]", ",", "Scalar", ",", 
+    RowBox[{"{", 
+     RowBox[{"Index", "[", 
+      RowBox[{"p", ",", "Flavor1"}], "]"}], "}"}], ",", 
+    RowBox[{"{", "}"}]}], "]"}], " ", 
+  RowBox[{"Field", "[", 
+   RowBox[{"\[CapitalPhi]", ",", "Scalar", ",", 
+    RowBox[{"{", 
+     RowBox[{"Index", "[", 
+      RowBox[{"r", ",", "Flavor2"}], "]"}], "}"}], ",", 
+    RowBox[{"{", "}"}]}], "]"}]}]], "Output",
+ CellLabel->"Out[2]=",
+ CellID->1010194363,ExpressionUUID->"1f891099-8677-4e62-b404-36aacb968d02"]
+}, Open  ]],
+
+Cell["\<\
+Resetting all flavor indices also undefines the fields carrying these flavors:\
+\>", "ExampleText",
+ CellID->2037959046,ExpressionUUID->"071db293-c797-478a-9d5f-b73e244707ea"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"ResetFlavorIndices", "[", "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"\[Phi]", "[", "p", "]"}], 
+  RowBox[{"\[CapitalPhi]", "[", "r", "]"}]}]}], "Input",
+ CellProlog:>Needs["Matchete`"],
+ CellLabel->"In[3]:=",
+ CellID->222725783,ExpressionUUID->"97f7ecde-7557-47f0-aac0-05ef97da1af2"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"\[Phi]", "[", "p", "]"}], " ", 
+  RowBox[{"\[CapitalPhi]", "[", "r", "]"}]}]], "Output",
+ CellLabel->"Out[3]=",
+ CellID->815300709,ExpressionUUID->"2a33f03a-c54e-476b-8542-03133ecf7509"]
+}, Open  ]]
+}, Dynamic[CurrentValue[
+ EvaluationNotebook[], {TaggingRules, "Openers", "ExampleSection", "0"}, 
+  Closed]]]]
+}, Dynamic[CurrentValue[
+ EvaluationNotebook[], {TaggingRules, "Openers", "PrimaryExamplesSection"}, 
+  Closed]]]],
+
+Cell[BoxData[GridBox[{
+   {
+    DynamicBox[FEPrivate`ImportImage[
+      FrontEnd`FileName[{"Documentation", "FooterIcons"}, 
+       "RelatedFunction.png"]],
+     ImageSizeCache->{63., {34., 41.}}], GridBox[{
+      {
+       StyleBox[
+        RowBox[{"See", " ", "Also"}], "SeeAlsoSection"]},
+      {Cell[TextData[{
+        Cell[BoxData[
+         TemplateBox[{
+           Cell[
+            TextData["RemoveFlavorIndex"]], 
+           "paclet:Matchete/ref/RemoveFlavorIndex", "Matchete Package Symbol"},
+          "PackageLink",
+          BaseStyle->"InlineFormula"]], "InlineFormula",
+         FontFamily->"Source Sans Pro",ExpressionUUID->
+         "3689b61f-1fba-49f9-a2f3-9de2967d8766"],
+        "\[NonBreakingSpace]",
+        StyleBox[
+        "\[MediumSpace]\[FilledVerySmallSquare]\[MediumSpace]", 
+         "InlineSeparator"],
+        " ",
+        Cell[BoxData[
+         TemplateBox[{
+           Cell[
+            TextData["DefineFlavorIndex"]], 
+           "paclet:Matchete/ref/DefineFlavorIndex", "Matchete Package Symbol"},
+          "PackageLink",
+          BaseStyle->"InlineFormula"]], "InlineFormula",
+         FontFamily->"Source Sans Pro",
+         CellTags->"0b802fbd-bc01-44d6-8ade-6b81a9046fe3",ExpressionUUID->
+         "2ba3b37d-7795-41b9-a5f7-1b9060058bac"],
+        "\[NonBreakingSpace]",
+        StyleBox[
+        "\[MediumSpace]\[FilledVerySmallSquare]\[MediumSpace]", 
+         "InlineSeparator"],
+        " ",
+        Cell[BoxData[
+         TemplateBox[{
+           Cell[
+            TextData["ResetAll"]], "paclet:Matchete/ref/ResetAll", 
+           "Matchete Package Symbol"},
+          "PackageLink",
+          BaseStyle->"InlineFormula"]], "InlineFormula",
+         FontFamily->"Source Sans Pro",
+         CellTags->"757c67a4-5eff-48d5-af71-2f96e08976ba",ExpressionUUID->
+         "152af562-78ac-4c75-9248-0fa4161209a6"]
+       }], "SeeAlso",ExpressionUUID->"d623152f-edad-41cc-965d-59e47414f6b1"]}
+     }]}
+  }]], "SeeAlsoSection",ExpressionUUID->"2d8e00c9-3140-4561-904c-\
+efa3fdb579b0"],
+
+Cell[" ", "FooterCell",ExpressionUUID->"2f6877bb-ee26-4c10-b068-770a80ecc72f"]
+},
+Saveable->False,
+ScreenStyleEnvironment->"Working",
+WindowSize->{900, 830},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+WindowTitle->"ResetFlavorIndices",
+Visible->False,
+TaggingRules->{
+ "ModificationHighlight" -> False, "ColorType" -> "", "LinkTrails" -> "", 
+  "ExampleCounter" -> 1, 
+  "Openers" -> {
+   "PrimaryExamplesSection" -> Open, "ExampleSection" -> {"0" -> Open}, 
+    "AllOptsTable" -> Closed}, "NewStyles" -> True, 
+  "CitationPopupData" -> $Failed, "ShowCitation" -> False, "HasOptions" -> 
+  True, "RootCaptions" -> "", "HeaderCoreAreaLink" -> {}, 
+  "Metadata" -> {
+   "built" -> "{2025, 11, 14, 18, 45, 42.518817}", 
+    "history" -> {"XX", "", "", ""}, "context" -> "Matchete`", 
+    "keywords" -> {}, "specialkeywords" -> {}, 
+    "tutorialcollectionlinks" -> {}, "index" -> True, "label" -> 
+    "Matchete Symbol", "language" -> "en", "paclet" -> "Matchete", "status" -> 
+    "None", "summary" -> "ResetFlavorIndices[] undefines all flavor indices.",
+     "synonyms" -> {}, "tabletags" -> {}, "title" -> "ResetFlavorIndices", 
+    "titlemodifier" -> "", "metadescription" -> "", "windowtitle" -> 
+    "ResetFlavorIndices", "type" -> "Symbol", "uri" -> 
+    "Matchete/ref/ResetFlavorIndices"}},
+CellContext->"Global`",
+FrontEndVersion->"14.0 for Mac OS X ARM (64-bit) (December 12, 2023)",
+StyleDefinitions->Notebook[{
+   Cell[
+    StyleData[
+    StyleDefinitions -> FrontEnd`FileName[{"Wolfram"}, "Reference.nb"]]], 
+   Cell[
+    StyleData["Input"], CellContext -> "Global`"], 
+   Cell[
+    StyleData["Output"], CellContext -> "Global`"]}, Visible -> False, 
+  FrontEndVersion -> "14.0 for Mac OS X ARM (64-bit) (December 12, 2023)", 
+  StyleDefinitions -> "Default.nb"],
+ExpressionUUID->"2e64d190-b86f-4b20-b082-362e9945eccc"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "PrimaryExamplesSection"->{
+  Cell[6524, 174, 1391, 37, 45, "PrimaryExamplesSection",ExpressionUUID->"50a3623d-f795-4552-8e23-c92dc07eb98d",
+   CellTags->"PrimaryExamplesSection",
+   CellID->1052182794]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"PrimaryExamplesSection", 16303, 439}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[590, 21, 4580, 110, 72, "AnchorBarGrid",ExpressionUUID->"398936e0-730d-4fad-a115-abd3baa31eb5",
+ CellID->1],
+Cell[5173, 133, 91, 0, 30, "ContextNameCell",ExpressionUUID->"c1150146-2bd8-437a-abde-8f9bd15932ca"],
+Cell[CellGroupData[{
+Cell[5289, 137, 561, 14, 76, "ObjectNameGrid",ExpressionUUID->"d2996b10-d0dc-48cb-8100-05327c6c8571"],
+Cell[5853, 153, 634, 16, 147, "Usage",ExpressionUUID->"3dfc42c9-3745-47ab-9a2f-a63125d9215a",
+ CellID->785020311]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6524, 174, 1391, 37, 45, "PrimaryExamplesSection",ExpressionUUID->"50a3623d-f795-4552-8e23-c92dc07eb98d",
+ CellTags->"PrimaryExamplesSection",
+ CellID->1052182794],
+Cell[7918, 213, 197, 3, 38, "Input",ExpressionUUID->"5fbd4953-63a9-4584-869f-992d6516dad6",
+ CellID->301153600],
+Cell[CellGroupData[{
+Cell[8140, 220, 1369, 36, 39, "ExampleSection",ExpressionUUID->"41b8f27c-77f0-4135-a79a-4c3802083582",
+ CellID->1655869360],
+Cell[9512, 258, 138, 1, 49, "ExampleText",ExpressionUUID->"47fed31c-3e9c-401c-9c54-2ac3d469b6c9",
+ CellID->1636649348],
+Cell[9653, 261, 332, 7, 60, "Input",ExpressionUUID->"46682fd3-2a49-4beb-bd7f-958dd0f4fefb",
+ CellID->831973079],
+Cell[9988, 270, 143, 1, 49, "ExampleText",ExpressionUUID->"d197e15d-03ab-421d-9fd9-0123b0f17dd3",
+ CellID->1766986755],
+Cell[CellGroupData[{
+Cell[10156, 275, 597, 14, 83, "Input",ExpressionUUID->"ae5679a9-0285-4b56-8c2f-3a7edff3b843",
+ CellID->471481062],
+Cell[10756, 291, 554, 15, 45, "Output",ExpressionUUID->"1f891099-8677-4e62-b404-36aacb968d02",
+ CellID->1010194363]
+}, Open  ]],
+Cell[11325, 309, 185, 3, 49, "ExampleText",ExpressionUUID->"071db293-c797-478a-9d5f-b73e244707ea",
+ CellID->2037959046],
+Cell[CellGroupData[{
+Cell[11535, 316, 317, 7, 60, "Input",ExpressionUUID->"97f7ecde-7557-47f0-aac0-05ef97da1af2",
+ CellID->222725783],
+Cell[11855, 325, 221, 5, 45, "Output",ExpressionUUID->"2a33f03a-c54e-476b-8542-03133ecf7509",
+ CellID->815300709]
+}, Open  ]]
+}, Dynamic[CurrentValue[EvaluationNotebook[], {TaggingRules, "Openers", "ExampleSection", "0"}, Closed]]]]
+}, Dynamic[CurrentValue[EvaluationNotebook[], {TaggingRules, "Openers", "PrimaryExamplesSection"}, Closed]]]],
+Cell[12318, 339, 2018, 52, 142, "SeeAlsoSection",ExpressionUUID->"2d8e00c9-3140-4561-904c-efa3fdb579b0"],
+Cell[14339, 393, 78, 0, 70, "FooterCell",ExpressionUUID->"2f6877bb-ee26-4c10-b068-770a80ecc72f"]
+}
+]
+*)
+

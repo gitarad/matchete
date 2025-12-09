@@ -115,17 +115,3 @@ VerificationTest[
 	2 (1+FlavorSum[Index[r,Flavor]]),
 	TestID->"Contract FlavorSum"
 ]
-
-
-(* ::Section:: *)
-(*Info for evaluating test:*)
-
-
-(* ::Text:: *)
-(*1. Each test can be evaluated individually directly in this file by first loading the package locally.*)
-(**)
-(*2. All tests contained in "TestUnit_Template.wl" can be evaluated at the same time from any other notebook. (See an example in "EvaluateTemplateTests.nb")*)
-(**)
-(*3. All tests in "TestUnit_Template.wl" and other .wl unit tests specified in the list testfiles in "RunTests.wls" script will be run before any commit to the local master branch and push to the online master branch. *)
-(*If a test unit contains at least one failed test, the commit/push will be interrupted and cancelled (the testing procedure will not proceed to the other test units) . *)
-(*A minimal error message with the failed tests ID will be displayed in the terminal, more extensive information can be found from a notebook using point 2, or directly in the unit test using point 1. *)

@@ -73,7 +73,8 @@ ActivateValidationMode[str_String, reset_:False]:=Module[{},
 Options@ ValidateCurrentVersion= {
 		"Tests"   -> All,
 		"Details" -> False,
-		"Models"  -> {"VLF_toy_model", "Singlet_Scalar_Extension", "E_VLL", "S1S3LQs"}
+		"Models"  -> {"VLF_toy_model", "Singlet_Scalar_Extension", "E_VLL", "S1S3LQs"},
+		"Evanescent" -> True
 	};
 
 
@@ -84,6 +85,7 @@ ValidateCurrentVersion[opt:OptionsPattern[]]:= Module[{},
 	(*RunUnitTests@ opt;*)
 	(* choose models to validate *)
 	BranchValidation`$UVmodels= OptionValue["Models"];
+	BranchValidation`$EvanescentTests= OptionValue["Evanescent"];
 	Get@ FileNameJoin[{$MatchetePath, "Validation", "Validation.m"}];
 ]
 
@@ -128,12 +130,12 @@ SaveValidationResults[strResults_, LagrangianEFT_, time_, lag_]:= Module[{traceR
 		If[!StringMatchQ[$ValidationModelName,"VLF_toy_model"],
 			(* need to change context so SMEFT definitions match model definitions *)
 			Begin["Global`"];
-			\[ScriptCapitalL]SMEFT=LoadModel["SMEFT"];
+			\[ScriptCapitalL]SMEFT=LoadModel["SMEFT_Warsaw"];
 			End[];
 			
 			{tMapEffectiveCouplings, matchingCond} = Timing@MapEffectiveCouplings[
-				ReplaceEffectiveCouplings@EOMSimplify[LagrangianEFT,ReductionIdentities->EvanescenceFree], 
-				ReplaceEffectiveCouplings@EOMSimplify[\[ScriptCapitalL]SMEFT,ReductionIdentities->FourDimensional]
+				ReplaceEffectiveCouplings[EOMSimplify[LagrangianEFT,ReductionIdentities->EvanescenceFree],Superleading->True], 
+				ReplaceEffectiveCouplings[EOMSimplify[\[ScriptCapitalL]SMEFT,ReductionIdentities->FourDimensional],Superleading->True]
 				,
 				SortByEFTOrder               -> True,
 				KeepTrivalReplacements       -> True,
@@ -155,7 +157,7 @@ SaveValidationResults[strResults_, LagrangianEFT_, time_, lag_]:= Module[{traceR
 			"Time (MapEffectiveCouplings)" -> tMapEffectiveCouplings,
 			"UV Lagrangian"                -> lag,
 			"Off-shell EFT Lagrangian"     -> Loff,
-			"On-shell EFT Lagrangian"      -> ReplaceEffectiveCouplings[Lon],
+			"On-shell EFT Lagrangian"      -> ReplaceEffectiveCouplings[Lon, Superleading->True],
 			"SuperTraces"                  -> traceResults,
 			"Matching Conditions"          -> matchingCond
 		|>];

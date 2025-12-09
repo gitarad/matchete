@@ -19,7 +19,7 @@ Package["Matchete`"]
 (*Scoping*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Exported*)
 
 
@@ -35,8 +35,6 @@ PackageScope["LogTypeSTr"]
 (*Options*)
 
 
-PackageScope["Matching"]
-PackageScope["Divergence"]
 PackageScope["Fields"]
 
 
@@ -60,11 +58,11 @@ PackageScope["PropBosonExpand"]
 (*Usage messages*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Exported*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Internal*)
 
 
@@ -96,7 +94,7 @@ PowerTypeSTr[propTypes_List, eftOrder_, OptionsPattern[]]:= Module[
 	(* propTypes: list of propagator types as obtained by ListPowerTypeTraces. *)
 	preFactor= -I hbar/ 2 Switch[First@ propTypes,
 			hScalar| hVector| lScalar| lVector| hGraviton| lGraviton, 1,
-			hFermion| hGhost| lFermion| lGhost, - 1
+			hFermion| hGhost| hAntiGhost| lFermion| lGhost| lAntiGhost, - 1
 		];
 	maxEFTOrd= (eftOrder/. List-> Identity);
 
@@ -261,7 +259,7 @@ PropBosonExpand[mass_, ord_]:= Module[{indices, m, set, singleCDs,  pairCDs},
 ]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Expansion of graviton propagator*)
 
 
@@ -352,28 +350,29 @@ PropFermionExpandHelper[mass_, ord_]:= Module[{indices, m, set, singleCDs,  pair
 
 
 DeterminePowerInsertions[propTypes_List, order_, propFields_]:= Module[
-		{fieldPattern, insertionOrders, XSamples, Xords, Xtypes, count, aux, props,myList},
+		{fieldPattern, insertionOrders, newOrds, ordSet, sample, XSamples, Xords, Xtypes, 
+		count, aux, props},
 
 	Xtypes= Partition[propTypes, 2, 1, 1];
 
 	props = propTypes/. $XFieldDofs;
-	Xords = Min/@ $XOrders;
+	Xords = Min/@ Map[First, $XOrders, {2}];
 
 	(* figure out all possible Xterm combinations that are allowed to be inserted up to the given order in the EFT power counting *)
 	XSamples = Table[
-		(* one of the possible combination of propagators *)
-		aux = Table[props[[j]][[count[j]]], {j, Length[props]}];
-		(* partition the list to obtain Xterms *)
-		aux = Partition[aux, 2, 1, 1];
+			(* one of the possible combination of propagators *)
+			aux = Table[props[[j]][[count[j]]], {j, Length[props]}];
+			(* partition the list to obtain Xterms *)
+			aux = Partition[aux, 2, 1, 1];
+	
+			(* drop the term if it is too high in the EFT power counting *)
+			If[Total[aux/. Xords]> order, Nothing, aux] 
 
-		(* drop the term if it is too high in the EFT power counting *)
-		If[Total[(aux/. Xords)]> order, Nothing, aux/.List->myList] (* change List head to allow for Flatten *)
-		,
-		(* loop over all fields for each propagator type *)
-		Evaluate[Sequence@@ Table[{count[i], 1, Length[props[[i]]]}, {i, Length[props]}]]
-	];
-	(* Flatten the nexted list returned by Table and replace regular Lists afterwards *)
-	XSamples = Flatten[XSamples]/.myList->List;
+			(* loop over all fields for each propagator type *)
+		, Evaluate[Sequence@@ Table[{count[i], 1, Length[props[[i]]]}, {i, Length[props]}]] ];
+	
+	(* Flatten the nexted list returned by Table*)
+	XSamples = Flatten[XSamples, Length@ propTypes- 1];
 
 	(*Remove fields if a particular loop is considered*)
 	If[propFields =!= All,
@@ -384,16 +383,26 @@ DeterminePowerInsertions[propTypes_List, order_, propFields_]:= Module[
 	If[Length@ XSamples === 0, Return@ {};];
 
 	(*List all concrete combinations Xterms+order not greater than "order"*)
-	insertionOrders= Select[Tuples[#/. $XOrders], Function[x,(Total@x <= order)]]&/@ XSamples;
+	insertionOrders= Select[Tuples[#/. $XOrders], Function[x, (Total@ x[[;;, 1]] <= order)]]&/@ XSamples;
 	XSamples= Flatten[MapThread[Function[{x, y}, Transpose/@ Thread[{x, y}, List, {2}]],
 		{XSamples, insertionOrders}], 1];
 
 	(*Delete cyclically identical insertions and add sym. factor*)
 	XSamples= {CyclicSymFactor@ #, #}&/@ DeleteDuplicatesByCylcicity@ XSamples;
-
+	
+	(*Apply possible expansions for the open CDs. Super traces are only cyclic before going to momentum space.*)
+	XSamples= Join@@ Table[
+			newOrds= PopulateCovMomOps[order, sample[[2, ;;, 2]]];
+			Table[
+				sample[[2, ;;, 2]]= ordSet;
+				sample
+			, {ordSet, newOrds}]
+		, {sample, XSamples}];
+	
 	(*Create replacement patterns*)
+	(*Xterm format: Xterm[{field labels}, {indices}, {base EFT ord, # cov. mom. ops., # of those being open CDs}]*)
 	MapAt[Function[Xs, Flatten@ MapIndexed[
-		{Xop[Xtypes[[First@ #2]], {i_, j_}, First@ #2]-> Xterm[First@ #1, {i, j}, Last@ #1],
+		{Xop[Xtypes[[First@ #2]], {i_, j_}, First@ #2]-> Xterm[First@ #1, {i, j}, Sequence@@ Last@ #1],
 		If[$FieldTypes[Xtypes[[First@ #2, 2]], Heavy],
 			Mop[Xtypes[[First@ #2, 2]], i_, First@ #2]-> Mterm[#1[[1, 2]], i],
 			Nothing],
@@ -404,7 +413,7 @@ DeterminePowerInsertions[propTypes_List, order_, propFields_]:= Module[
 			WilsonLine[Xtypes[[First@ #2, 2]], {i_, j_}]-> WilsonTerm[#1[[1, 2]], {i, j}, {}]
 		, Nothing]} &,
 		Xs]], XSamples, {All, 2}]
-]
+];
 
 
 (* ::Text:: *)
@@ -417,6 +426,17 @@ CyclicSymFactor@ list_:= Length@ DeleteDuplicates@ NestList[RotateRight, list, L
 	Length@ list;
 
 
+(* ::Text:: *)
+(*Expansion of the covariant momentum operators (up to max EFT order)*)
+
+
+PopulateCovMomOps[maxOrd_, orders_]:= Block[{expOrd, openCDs},
+	expOrd= maxOrd- Total@ orders[[;;, 1]];
+	openCDs= Select[Tuples[Range[0, #]&/@ orders[[;;, 2]]], Total@ # <= expOrd&];
+	Transpose@ Join[Transpose@ orders, #]&/@ List/@ openCDs
+];
+
+
 (* ::Subsubsection::Closed:: *)
 (*Determine divergent insertions*)
 
@@ -427,7 +447,8 @@ CyclicSymFactor@ list_:= Length@ DeleteDuplicates@ NestList[RotateRight, list, L
 
 
 DetermineDivergentInsertions[propTypes_List, eftOrder_, momOrder_, propFields_]:= Module[
-		{evaSubs, fieldPattern, insertionOrders, XSamples, Xords, evOrds, Xtypes, maxEFTOrd, props, aux, count, myList},
+		{evaSubs, fieldPattern, insertionOrders, newOrds, ordSet, sample, XSamples, Xords, 
+			Xtypes, maxEFTOrd, props, aux, count, myList},
 	maxEFTOrd= (eftOrder/. List-> Identity);
 
 	(*List all possible fields for the X terms*)
@@ -447,15 +468,13 @@ DetermineDivergentInsertions[propTypes_List, eftOrder_, momOrder_, propFields_]:
 
 		(* drop the term if it is too high in the loop momentum counting *)
 		(* ... to do ... *)
-
-		(* change List head to allow for Flatten *)
-		aux/.List->myList
+		aux
 		,
 		(* loop over all fields for each propagator type *)
 		Evaluate[Sequence@@ Table[{count[i], 1, Length[props[[i]]]}, {i, Length[props]}]]
 	];
-	(* Flatten the nested list returned by Table and replace regular Lists afterwards *)
-	XSamples = Flatten[XSamples]/.myList->List;
+	(* Flatten the nested list returned by Table*)
+	XSamples = Flatten[XSamples, Length@ propTypes -1];
 
 	(*Remove fields if a particular loop is considered*)
 	If[propFields =!= All,
@@ -468,10 +487,10 @@ DetermineDivergentInsertions[propTypes_List, eftOrder_, momOrder_, propFields_]:
 	(*List all concrete combinations Xterms not greater than eftOrder or momOrder*)
 	insertionOrders= If[Head@ eftOrder === List,
 			Select[Tuples[#/. $XOrders],
-				Function[x, (Total@ x[[;;, 1]] === maxEFTOrd && Total@ x[[;;, 2]] === momOrder)]]&/@ XSamples
+				Function[x, (Total[x[[;;, ;;2]], 2] === maxEFTOrd+ momOrder && Total@ x[[;;, 2]] >= momOrder)]]&/@ XSamples
 		,
 			Select[Tuples[#/. $XOrders],
-				Function[x, (Total@ x[[;;, 1]] <= maxEFTOrd && Total@ x[[;;, 2]] === momOrder)]]&/@ XSamples
+				Function[x, (Total[x[[;;, ;;2]], 2] <= maxEFTOrd+ momOrder && Total@ x[[;;, 2]] >= momOrder)]]&/@ XSamples
 		];
 	XSamples= Flatten[MapThread[Function[{x, y}, Transpose/@ Thread[{x, y}, List, {2}]],
 		{XSamples, insertionOrders}], 1];
@@ -479,7 +498,17 @@ DetermineDivergentInsertions[propTypes_List, eftOrder_, momOrder_, propFields_]:
 	(*Delete cyclically identical insertions and add sym. factor*)
 	XSamples= {CyclicSymFactor@ #, #}&/@ DeleteDuplicatesByCylcicity@ XSamples;
 
+	(*Apply possible expansions for the open CDs. Super traces are only cyclic before going to momentum space.*)
+	XSamples= Join@@ Table[
+			newOrds= PopulateCovMomOpsLoopExact[momOrder, sample[[2, ;;, 2]]];
+			Table[
+				sample[[2, ;;, 2]]= ordSet;
+				sample
+			, {ordSet, newOrds}]
+		, {sample, XSamples}];
+
 	(*Create replacement patterns*)
+	(*Xterm format: Xterm[{field labels}, {indices}, {base EFT ord, # cov. mom. ops., # of those being open CDs, ev. T/F}]*)
 	MapAt[Function[Xs, Flatten@ MapIndexed[
 		{Xop[Xtypes[[First@ #2]], {i_, j_}, First@ #2]-> Xterm[First@ #1, {i, j}, Sequence@@ Last@ #1],
 		If[Xtypes[[First@ #2, 2]] === lVector,
@@ -489,7 +518,18 @@ DetermineDivergentInsertions[propTypes_List, eftOrder_, momOrder_, propFields_]:
 			WilsonLine[Xtypes[[First@ #2, 2]], {i_, j_}]-> WilsonTerm[#1[[1, 2]], {i, j}, {}]
 		, Nothing]} &,
 		Xs]], XSamples, {All, 2}]
-]
+];
+
+
+(* ::Text:: *)
+(*Expansion of the covariant momentum operators (keeping a specific number of loop momenta)*)
+
+
+PopulateCovMomOpsLoopExact[momOrder_, orders_]:= Block[{expOrd, openCDs},
+	expOrd= Total@ orders[[;;, 2]]- momOrder;
+	openCDs= Select[Tuples[Range[0, #]&/@ orders[[;;, 2]]], Total@ # === expOrd&];
+	Transpose@ Insert[Transpose@ orders, #, 3]&/@ openCDs
+];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -521,16 +561,16 @@ DetermineEvanescentInsertions[propTypes_List, eftOrder_, momOrder_, propFields_]
 	XSamples= Select[XSamples, MatchQ[Alternatives@@ Keys@ evaSubs]@* First];
 
 	{evOrds, Xords}= {Min/@ First/@ Transpose/@ evaSubs, Min/@ First/@ Transpose/@ $XOrders};
-	XSamples= Select[XSamples, (First@ #/. evOrds) + Total@ (#[[2;;]]/. Xords) <= maxEFTOrd &];
+	XSamples= Select[XSamples, (First@ #/. evOrds) + Total@ (#[[2;;]]/. Xords) <= maxEFTOrd &] ;
 	If[Length@ XSamples === 0, Return@ {};];
 
 	(*List all concrete combinations Xterms not greater than eftOrder or momOrder*)
 	insertionOrders= If[Head@ eftOrder === List,
 			Select[Tuples@ Prepend[#[[2;;]]/. $XOrders, #[[1]]/. evaSubs],
-				Function[x, (Total@ x[[;;, 1]] === maxEFTOrd && Total@ x[[;;, 2]] === momOrder)]]&/@ XSamples
+				Function[x, (Total[x[[;;, ;;2]], 2] === maxEFTOrd+ momOrder && Total@ x[[;;, 2]] >= momOrder)]]&/@ XSamples
 		,
 			Select[Tuples@ Prepend[#[[2;;]]/. $XOrders, #[[1]]/. evaSubs],
-				Function[x, (Total@ x[[;;, 1]] <= maxEFTOrd && Total@ x[[;;, 2]] === momOrder)]]&/@ XSamples
+				Function[x, (Total[x[[;;, ;;2]], 2] <= maxEFTOrd+ momOrder && Total@ x[[;;, 2]] >= momOrder)]]&/@ XSamples
 		];
 	XSamples= Flatten[MapThread[Function[{x, y}, Transpose/@ Thread[{x, y}, List, {2}]],
 		{XSamples, insertionOrders}], 1];
@@ -538,7 +578,17 @@ DetermineEvanescentInsertions[propTypes_List, eftOrder_, momOrder_, propFields_]
 	(*Delete cyclically identical insertions and add sym. factor*)
 	XSamples= {CyclicSymFactor@ #, #}&/@ DeleteDuplicatesByCylcicity@ XSamples;
 
+	(*Apply possible expansions for the open CDs. Super traces are only cyclic before going to momentum space.*)
+	XSamples= Join@@ Table[
+			newOrds= PopulateCovMomOpsLoopExact[momOrder, sample[[2, ;;, 2]]];
+			Table[
+				sample[[2, ;;, 2]]= ordSet;
+				sample
+			, {ordSet, newOrds}]
+		, {sample, XSamples}];
+
 	(*Create replacement patterns*)
+	(*Xterm format: Xterm[{field labels}, {indices}, {base EFT ord, # cov. mom. ops., # of those being open CDs, ev. T/F}]*)
 	MapAt[Function[Xs, Flatten@ MapIndexed[
 		{Xop[Xtypes[[First@ #2]], {i_, j_}, First@ #2]-> Xterm[First@ #1, {i, j}, Sequence@@ Last@ #1],
 		If[Xtypes[[First@ #2, 2]] === lVector,
@@ -548,7 +598,7 @@ DetermineEvanescentInsertions[propTypes_List, eftOrder_, momOrder_, propFields_]
 			WilsonLine[Xtypes[[First@ #2, 2]], {i_, j_}]-> WilsonTerm[#1[[1, 2]], {i, j}, {}]
 		, Nothing]} &,
 		Xs]], XSamples, {All, 2}]
-]
+];
 
 
 (* ::Section:: *)
@@ -585,7 +635,7 @@ LogTypeSTr[propType_, {eftOrder_}, OptionsPattern[]]:= Module[
 
 	preFactor= I hbar/ 2 Switch[propType,
 			hScalar| hVector | hGraviton | lScalar| lVector | lGraviton, 1,
-			hFermion| hGhost| lFermion| lGhost, - 1
+			hFermion| hGhost| hAntiGhost| lFermion| lGhost| lAntiGhost, - 1
 		];
 
 	(* Determine all allowed insertions of X-terms, Masses, ... such that the total EFT order of the STr is \[LessEqual] EFTOrder.
@@ -633,7 +683,7 @@ DetermineLogInsertions[propType_, propFields_]:= Module[
 	If[Length@ fields === 0, Return@ {};];
 
 	replacements= {
-		If[MemberQ[{hScalar, hFermion, hVector, hGhost}, propType], Mop[propType, i_, 1]-> Mterm[#, i], Nothing]
+		If[MemberQ[{hScalar, hFermion, hVector, hGhost, hAntiGhost}, propType], Mop[propType, i_, 1]-> Mterm[#, i], Nothing]
 		,
 		WilsonLine[propType, {i_, j_}] -> WilsonTerm[#, {i, j}, {}]
 	}&/@ fields;
@@ -769,7 +819,7 @@ LogFermionExpand[mass_, ord_]:= Module[{indices, m, set, singleCDs,  pairCDs},
 
 EvaluateSTr[expr_, {factor_, replacement_}, propTypes_, mode_]:= Module[{out,propcount},
 	out= factor expr/. replacement/. $Xsubs/. $Msubs/. $Gsubs;
-	out= ActWithOpenCDs@ out/. FuncNCM-> NonCommutativeMultiply// GatherLoopMomenta// RemoveSymmetryVanishingWilsonTerms;
+	out= ActWithOpenCDs@ out/. FuncNCM-> NCM// GatherLoopMomenta// RemoveSymmetryVanishingWilsonTerms;
 	out= CloseFermionLoop[out, propTypes];
 
 	out= out// EvaluateSymmetricLorentzInds// ContractMetric// WilsonExpand;
@@ -1012,7 +1062,7 @@ GaugeIndexSet[originalSet_, multiples_Integer]:= Block[{lab, out},
 (*Masses of light field types vanish*)
 
 
-Mop[lScalar|lFermion|lVector|lGhost|lGraviton, __]:= 0;
+Mop[lScalar|lFermion|lVector|lGhost|lAntiGhost|lGraviton, __]:= 0;
 
 
 (* ::Text:: *)

@@ -212,6 +212,7 @@ BuildDocumentation[OptionsPattern[]]:=Module[{builtPath=FileNameJoin[{$pacletPat
 	
 	(* build documentation *)
 	PacletTools`PacletDocumentationBuild[$pacletPath,builtPath];
+	(* loop over all created notebooks and fix the references to style sheets *)
 	
 	(* build HTML documentation if required*)
 	If[OptionValue["HTML"],
@@ -228,7 +229,22 @@ BuildDocumentation[OptionsPattern[]]:=Module[{builtPath=FileNameJoin[{$pacletPat
 	CopyDirectory[FileNameJoin[{builtPath,$pacletName,"Documentation"}],$pacletDocumentationPath];
 	DeleteDirectory[builtPath,DeleteContents->True];
 	
+	FixStyleSheets/@FileNames["*.nb",$pacletDocumentationPath,Infinity];
+	
 	LinkDocumentation[];
+]
+
+
+(* This function fiyes the style sheet references for the documentation notebook at the given path *)
+FixStyleSheets[path_]:=Module[
+	{nb=NotebookOpen[path,Visible->False],opt}
+	,
+	(* get option value of StyleDefinitions and overwrite StyleSheet *)
+	opt=(Options[nb,StyleDefinitions][[1,-1]])/.x_FrontEnd`FileName/;!FreeQ[x,HoldPattern@$RootDirectory,All]->"Default.nb";
+	SetOptions[nb,StyleDefinitions->opt];
+	(* save and close notebook *)
+	NotebookSave[nb];
+	NotebookClose[nb];
 ]
 
 

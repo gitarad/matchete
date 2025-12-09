@@ -25,6 +25,7 @@ Package["Matchete`"]
 
 PackageExport["PrintEffectiveCouplings"]
 PackageExport["ReplaceEffectiveCouplings"]
+PackageExport["Superleading"]
 PackageExport["Rules"]
 PackageExport["DummyCoefficients"]
 PackageExport["EffectiveCouplingSymbol"]
@@ -54,7 +55,7 @@ PackageScope["ResetInternalCouplings"]
 
 
 PackageScope["OverrideDuplicateCouplingCheck"]
-PackageScope["SubstituteCoefficients"]
+PackageScope["SubstituteSuperleadingCoefficients"]
 
 
 PackageScope["IntroduceDummyCoefficients"]
@@ -63,6 +64,9 @@ PackageScope["$IntCouplingRules"]
 
 PackageScope["CouplingProduct"]
 PackageScope["MassFunction"]
+
+
+PackageScope["SymmetrizeOperatorCoefficient"]
 
 
 (* ::Section:: *)
@@ -108,10 +112,19 @@ ExportSMEFT::usage= "ExportToSmelli[<filename>, <SMEFT lagrangian>, Options] cre
 
 
 (* ::Subsubsection::Closed:: *)
+(*Intermediate functions for power counting*)
+
+
+GetMaxOrder[L_]:=Max[OperatorDimension/@ TermsToList@ L]
+GetMinOrder[L_]:=Min[OperatorDimension/@ TermsToList@ L]
+
+
+(* ::Subsubsection::Closed:: *)
 (*Data structures holding the information*)
 
 
 ResetTempCouplings[]:= (
+		$TempSuperLeadingCouplings={};
 		$TempCouplings={};
 		$TempCouplingRules={};
 	);
@@ -184,11 +197,53 @@ CouplingNameFromOperator[op:(_AtomicOp|_CompOp), couplingstring_]:=Module[
 ]
 
 
+(* ::Text:: *)
+(*Explicitly symmetrizes the coefficient of an operator according to the symmetries of the operator itself. Contains an option to only return the coefficient.*)
+
+
+Options@ SymmetrizeOperatorCoefficient = {
+		CoefficientOnly -> False
+	};
+
+SymmetrizeOperatorCoefficient[c_ (x:_AtomicOp|_CompOp),OptionsPattern]:=
+	SymmetrizeOperatorCoefficient[c,x,CoefficientOnly -> OptionValue@CoefficientOnly]
+
+SymmetrizeOperatorCoefficient[x:_AtomicOp|_CompOp, OptionsPattern[]]:=If[
+	TrueQ@ OptionValue@ CoefficientOnly, 1, x]
+
+SymmetrizeOperatorCoefficient[c_, x:_AtomicOp|_CompOp, OptionsPattern[]]:=Module[
+	{
+		indexList, syms, conjSyms,
+		csym
+	},
+	
+	indexList = If[Head@x === AtomicOp, x[[3]], x[[4]]];
+	syms = LookupOperatorFlavorProperties[x][Symmetries];
+	conjSyms = LookupOperatorFlavorProperties[x][ConjugateIndexExchange];
+	
+	(* sum over symmetric permutations *)
+	csym = 1/Length@syms Sum[
+			With[{indexRepRule = DeleteCases[Thread[indexList-> Part[indexList,cur[[1]]]], Rule[f_,f_] ]},
+				c /. indexRepRule
+			]*cur[[2]]
+		,{cur, syms}];
+	
+	(* add the conjugation exchange *)
+	If[MatchQ[conjSyms, _List],
+		With[{indexRepRule = DeleteCases[Thread[indexList-> Part[indexList,conjSyms]],Rule[f_,f_]]},
+			csym = 1/2 (csym + Bar[csym/.indexRepRule])]
+	];
+	
+	If[TrueQ@ OptionValue@ CoefficientOnly, Return[SimplifyCouplings@ csym], Return[SimplifyCouplings[csym] x]]
+]
+
+
 (* ::Subsubsection::Closed:: *)
 (*ToEffectiveCoupling (for operators)*)
 
 
 ToEffectiveCoupling::IndexProblem="The expression `1` contains a mixture of diagonal and non-diagonal indices and cannot be treated.";
+ToEffectiveCoupling::DeprecatedWarning="Calling ToEffectiveCoupling for OperatorForm is using deprecated code and should not occur!";
 
 (* option Superleading specifies if this coupling acts as a replacement of superleading terms or just as an internal coupling
    option Internal specifies if this coupling is saved to the temporary internal list or the public one *)
@@ -202,6 +257,9 @@ ToEffectiveCoupling[exp_, operator_Operator, OptionsPattern[] ] :=Module[
 		baseString, incr=1, opdevcount, fieldtally, prettylabel, couplingstring = "C",
 		IndexNotRelabeled, indCounter1=1}
 	,
+		(* THIS IS OLD CODE AND SHOULD NOT BE USED *)
+		Message[ToEffectiveCoupling::DeprecatedWarning];
+		
 		(* get options *)
 		hermitianTerm = TrueQ @ OptionValue @ HermitianTerm;
 		superleading = TrueQ @ OptionValue @ Superleading;
@@ -232,7 +290,7 @@ ToEffectiveCoupling[exp_, operator_Operator, OptionsPattern[] ] :=Module[
 		];
 
 		(* determine the open indices that the coupling needs to have *)
-		nDiagIndex = FindOpenIndices @ First[List @@ (OperatorToNormalForm[operator, Unique->True]+ Nothing)];
+		nDiagIndex = FindOpenIndices @ First[TermsToList@ OperatorToNormalForm[operator, Unique->True]];
 		(* check the prefactor for diagonal indices *)
 		diagIndex = FindDiagonalIndices @ exp;
 		(* drop diagonal indices that are not contracted into to operator as they should be summed over only inside the coefficient *)
@@ -257,7 +315,7 @@ ToEffectiveCoupling[exp_, operator_Operator, OptionsPattern[] ] :=Module[
 
 		(* we need this below inside and out of the next If clause *)
 		opFlavProp = LookupOperatorFlavorProperties @ operator;
-		openIndices = FindOpenIndices @ First[List @@ (OperatorToNormalForm[operator,Unique->True]+ Nothing)];
+		openIndices = FindOpenIndices @ First[TermsToList@ OperatorToNormalForm[operator, Unique-> True]];
 		(* if this has indices, determine the conversion to the IBPSimplify database and its inverse *)
 		If[Length @ openIndices > 0,
 			With[{operatorPatternIndices = Last @ MatchOperatorPatterns @ OperatorToNormalForm[ operator, Unique->True]},
@@ -370,7 +428,7 @@ ToEffectiveCoupling[exp_, operator_Operator, OptionsPattern[] ] :=Module[
 			couplingsSameProperty = Cases[{Keys@$CouplingAssociation,Values@$CouplingAssociation}\[Transpose],{val_, tbdassociation} :> val]
 		];
 
-		If[superleading == True ||(superleading == False && internal == False),
+		If[superleading ||(!superleading && !internal),
 			(* this branch is for couplings visible to the user *)
 
 			If[!ignoreduplicates,
@@ -419,6 +477,9 @@ ToEffectiveCoupling[exp_, operator_Operator, OptionsPattern[] ] :=Module[
 			]
 
 		];
+		
+		If[superleading, AppendTo[$TempSuperLeadingCouplings,temp];];
+		
 		Return[outCoupling]
 	]
 
@@ -466,6 +527,7 @@ ToEffectiveCoupling[exp_, operator:(_CompOp|_AtomicOp), OptionsPattern[] ] :=Mod
 
 		(* power-counting of the object depending on context *)
 		If[superleading,
+		
 			power = 4 - OperatorDimension @ AtomicToNormalForm @ operator
 		,
 			power = GetMinOrder @ exp
@@ -504,7 +566,8 @@ ToEffectiveCoupling[exp_, operator:(_CompOp|_AtomicOp), OptionsPattern[] ] :=Mod
 				]
 			,
 				(* check hermiticity if coupling/operator do not contain open indices *)
-				hermite = MHermitianQ[derivativePhase OperatorToNormalForm[operator,Unique->True]]
+				(*hermite = MHermitianQ[derivativePhase OperatorToNormalForm[operator,Unique->True]]*)
+				hermite = MHermitianQ[derivativePhase AtomicToNormalForm[operator]]
 			]
 		,
 			(* called by IntroduceEffectiveCouplings with HermitianTerm -> True, need to determine symmetries *)
@@ -524,6 +587,14 @@ ToEffectiveCoupling[exp_, operator:(_CompOp|_AtomicOp), OptionsPattern[] ] :=Mod
 			];
 		];
 
+		(* read symmetries from the operator and assign them *)
+		If[Length @ openIndices > 0,
+			symmetries = (permConversionInv[[ #[[1]] ]][[ permConversion ]] -> #[[2]])&/@(opFlavProp[Symmetries])
+		,
+			symmetries = <|{}->1|>
+		];
+		
+		(*(* old version - tests the symmetries of the coupling *)
 		symmetries = Association[Range[Length@index]->1];
 		If[Length @ openIndices > 0,
 			Module[{symrules1,symrules2, ineqp, symrulesrhs, replacedexp},
@@ -538,10 +609,10 @@ ToEffectiveCoupling[exp_, operator:(_CompOp|_AtomicOp), OptionsPattern[] ] :=Mod
 					If[RelabelIndices @ Contract[(replacedexp - exp)((*RelabelIndices@*)AtomicToNormalForm@operator)] === 0,cand -> 1,
 						If[RelabelIndices @ Contract[(replacedexp + exp)((*RelabelIndices@*)AtomicToNormalForm@operator)] === 0, cand -> -1, Nothing]],
 				{cand, ineqp}];
-				symmetries = Association@@Join[symrules1,symrules2]
+				symmetries = EchoLabel["Symmetries of the coupling"][Association@@Join[symrules1,symrules2]]
 			];
 		];
-
+*)
 
 		(* indices for the replacement rules *)
 		indCounter1 = 1;
@@ -549,7 +620,7 @@ ToEffectiveCoupling[exp_, operator:(_CompOp|_AtomicOp), OptionsPattern[] ] :=Mod
 		pinds = IndexToPattern[inds];
 
 		(* setting up the rules *)
-		ruleRHS = exp /. Thread[index->inds];
+		ruleRHS = derivativePhase SymmetrizeOperatorCoefficient[ exp derivativePhase^-1, operator, CoefficientOnly -> True] /. Thread[index->inds];
 		
 		(* check if there is a tree-level contribution in exp and try to mimic index ordering from there *)
 		
@@ -558,7 +629,7 @@ ToEffectiveCoupling[exp_, operator:(_CompOp|_AtomicOp), OptionsPattern[] ] :=Mod
 			Module[{treeCouplingIndices,auxTerm},
 				(* get tree-level terms with a single coupling *)
 				auxTerm=DeleteCases[
-					TermsToList@BetterExpand[ruleRHS/.hbar->0], (* w/o TermsToList the level spec does not properly work *)
+					TermsToList[ruleRHS/.hbar->0], (* w/o TermsToList the level spec does not properly work *)
 					x_/;Count[x,Coupling[_,{__},_],All]=!=1,
 					1
 				];
@@ -596,7 +667,7 @@ ToEffectiveCoupling[exp_, operator:(_CompOp|_AtomicOp), OptionsPattern[] ] :=Mod
 			couplingsSameProperty = Cases[{Keys@$CouplingAssociation,Values@$CouplingAssociation}\[Transpose],{val_, tbdassociation} :> val]
 		];
 
-		If[superleading == True ||(superleading == False && internal == False),
+		If[superleading ||(!superleading && !internal ),
 			(* this branch is for couplings visible to the user *)
 
 			If[!ignoreduplicates,
@@ -616,8 +687,6 @@ ToEffectiveCoupling[exp_, operator:(_CompOp|_AtomicOp), OptionsPattern[] ] :=Mod
 				AppendTo[$TempCouplingRules, preRHS];
 				(* define the NiceForm of this new coupling *)
 				AppendTo[LabelsNiceForm[Coupling],temp->prettylabel];
-				(*Format[Coupling[temp, in_,_], NiceForm] := UpDownIndices[prettylabel,in];
-				If[hermite===False, Format[Bar @ Coupling[temp, in_,_], NiceForm] := UpDownIndices[OverBar @ prettylabel, Bar /@ in]]*)
 			]
 			
 		,
@@ -640,11 +709,12 @@ ToEffectiveCoupling[exp_, operator:(_CompOp|_AtomicOp), OptionsPattern[] ] :=Mod
 				AppendTo[$IntCouplingRules, preRHS];
 				(* define the NiceForm of this new coupling *)
 				AppendTo[LabelsNiceForm[Coupling],temp->prettylabel];
-				(*Format[Coupling[temp, in_,_], NiceForm] := UpDownIndices[prettylabel,in];
-				If[hermite===False, Format[Bar @ Coupling[temp, in_,_], NiceForm] := UpDownIndices[OverBar @ prettylabel, Bar /@ in]]*)
 			]
 
 		];
+		
+		If[superleading, AppendTo[$TempSuperLeadingCouplings,temp];];
+		
 		Return[outCoupling]
 	]
 
@@ -672,10 +742,6 @@ ToEffectiveCoupling[exp_, operator:AtomicOp[{{},4},_,{}], OptionsPattern[] ]:=Mo
 	internal = TrueQ @ OptionValue @ Internal;
 	ignoreduplicates = TrueQ @ OptionValue @ OverrideDuplicateCouplingCheck;
 	
-	
-	(* TEMP: ignore loop function replacement *)
-	If[internal, Print["[ToEffectiveCoupling] Dummy coefficient functionality for gauge-kinetic terms inactive!"]; Return@ exp ];
-	
 	(* throw various warnings for blind options *)
 	If[superleading, Message[ToEffectiveCoupling::noSuperleading]];
 	
@@ -692,8 +758,8 @@ ToEffectiveCoupling[exp_, operator:AtomicOp[{{},4},_,{}], OptionsPattern[] ]:=Mo
 		Return[exp]
 	];
 	
-	If[kineticMixing,
-		(* kinetic mixing just takes the prefactor and calls it a coupling *)
+	If[kineticMixing || internal,
+		(* kinetic mixing just takes the prefactor and calls it a coupling, same for dummy coefficients in loops *)
 		ceff = exp;
 	,
 		(* match the expression to the form -1/4g^2 F^2 (or -1/2g^2 F.G) *)
@@ -718,8 +784,23 @@ ToEffectiveCoupling[exp_, operator:AtomicOp[{{},4},_,{}], OptionsPattern[] ]:=Mo
 		];
 	
 	If[internal,
-		(* this branch is for couplings invisible to the user - stale branch! *)
-		0
+		(* this branch is for couplings invisible to the user *)
+				If[!ignoreduplicates,
+				candidates =  Cases[$IntCouplingRules, HoldPattern[ Coupling[f_/;MemberQ[couplingsSameProperty,f],__] :> _ ]];
+				candidateLabels =  Cases[$IntCouplingRules, HoldPattern[ Coupling[f_/;MemberQ[couplingsSameProperty,f],__] :> _ ] :> f ];
+				preExisting =  (SameRuleQ[predefinedRule,#]& /@ candidates)
+		];
+		
+		If[Or @@ preExisting && !ignoreduplicates,
+			(* this coupling exists already - reuse it *)
+			outCoupling = Coupling[candidateLabels[[FirstPosition[preExisting,True][[1]]]], {}, power]
+		,
+			(* coupling is new, or check is disabled *)
+			DefineCoupling[temp, EFTOrder -> power, SelfConjugate -> True];
+			AppendTo[$InternalCouplings,temp];
+			AppendTo[$IntCouplingRules, predefinedRule];
+			AppendTo[LabelsNiceForm[Coupling],temp -> prettylabel]
+		]
 	,
 		(* this branch is for couplings visible to the user *)
 		If[!ignoreduplicates,
@@ -740,7 +821,7 @@ ToEffectiveCoupling[exp_, operator:AtomicOp[{{},4},_,{}], OptionsPattern[] ]:=Mo
 		]
 	];
 	
-	If[kineticMixing,
+	If[kineticMixing||internal,
 		Return@ outCoupling
 	,
 		Return[ - 1/(4 outCoupling^2)]
@@ -752,29 +833,67 @@ ToEffectiveCoupling[exp_, operator:AtomicOp[{{},4},_,{}], OptionsPattern[] ]:=Mo
 (*More helpers*)
 
 
-Options @ SubstituteCoefficients = {EffectiveCouplingSymbol -> "c"};
+(* ::Text:: *)
+(*Introduces effecitve couplings for superleading terms (mass dimension < 4)*)
 
-SubstituteCoefficients[L_, OptionsPattern[]]:=Module[{op3,tempCplPre,newCpls,LOut,res},
+
+Options @ SubstituteSuperleadingCoefficients = {EffectiveCouplingSymbol -> "c"};
+
+SubstituteSuperleadingCoefficients[Lin_, OptionsPattern[]]:=Module[
+	{ res, L = Lin, L3, tempCplPre, newCpls, LHcTerms, LHTerms, LOut, L4 },
+	
+	(* grab all combinations of coeff\[Times]operator that start at superleadig order *)
+	L = TermsToList[InternalCollectOperators[L,InternalOpRepresentation->True],Expand->False];
+	(* now filter these by terms that start with dim 3 or lower *)
+	{L3,L4}= {
+			Select[L,( GetMinOrder[AtomicToNormalForm@#] < 4)&],
+			AtomicToOperatorForm@ Total@ Select[L,( GetMinOrder[AtomicToNormalForm@#] >= 4)&]};
+	
+	L3 = TermsToList[HcSimplifyInternal[Total@ L3, InternalOpRepresentation -> True],Expand->False];
+
+	LHcTerms =  Total @ Cases[L3, _HcTerms] /. HcTerms -> Identity;
+	LHTerms  =  Total[ L3 /. _HcTerms -> 0 ];
+	
+	LHcTerms = LHcTerms /. (x:(_AtomicOp|_CompOp)) * c_ :> x ToEffectiveCoupling[c, x, Superleading -> True,  HermitianTerm -> False , EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol] ];
+	LHTerms  = LHTerms  /. (x:(_AtomicOp|_CompOp)) * c_ :> x ToEffectiveCoupling[c, x, Superleading -> True,  HermitianTerm -> True , EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol]  ];
+	
+	LOut = L4 + Operator[ PlusHc@ AtomicToNormalForm@ LHcTerms + AtomicToNormalForm@ LHTerms ];
+	
+	(* all $TempCouplings that are defined already *)
+	tempCplPre = DeleteCases[$TempCouplings, x_/;FreeQ[L,x,All]];
+	newCpls=TreeReplacement /@ DeleteCases[$TempCouplings, x_/;(FreeQ[LOut,x,All] || MemberQ[tempCplPre,x])];
+	
+	(* introduce effective couplings for the superleading terms *)
+	With[{aux= newCpls[[;;,1]]},
+		LOut = ReplaceInLagrangian[Collect[LOut, aux] , newCpls]
+	];
+	
+	LOut
+]
+
+
+(* old version to be deleted *)
+(*Options @ SubstituteSuperleadingCoefficients = {EffectiveCouplingSymbol -> "c"};
+
+(* this module introduces effective couplings for terms of mass dimension < 4 *)
+SubstituteSuperleadingCoefficients[L_, OptionsPattern[]]:=Module[{op3,tempCplPre,newCpls,LOut,res},
+	EchoFunction["SubstituteSuperleadingCoefficients called on", Iconize][L];
+	
 	(* list of all operators that appear at superleading power *)
 	op3 =  DeleteDuplicates [ SortBy[DeleteDuplicates@Cases[SeriesEFT[L, EFTOrder -> 3],_Operator,Infinity],LeafCount], SameOperatorQ];
 
 	(* replace the coefficients of all operators appearing in the above list by a newly defined effective coupling *)
-	(*tempCplPre = $TempCouplings;*)
 	tempCplPre = DeleteCases[$TempCouplings, x_/;FreeQ[L,x,All]];
 	
-	(*
-	LOut=Collect[L, _Operator]/.{
-		x_Operator*c_ /;(MemberQ[op3, x] && !BarredOpQ[x]) :> Operator@PlusHc@NormalForm[x ToEffectiveCoupling[c, x, EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol]]]-Operator@Bar@NormalForm[x c],
-		x_Operator * c_ /;(MemberQ[op3, x] && BarredOpQ[x]) :> x ToEffectiveCoupling[c, x, EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol]]};
-	*)
 	(* ensure that flavor Deltas are factored out of the operators for proper relabeling of diagonal flavor indices *)
-	LOut=CollectOperators[L, NormalForm->False]/.{
+	LOut= EchoFunction[NiceForm]@CollectOperators[L, NormalForm->False, Simplify->False]/.{
 		x_Operator*c_ /;(MemberQ[op3, x] && !BarredOpQ[x]) :> Operator@PlusHc@OperatorToNormalForm[x ToEffectiveCoupling[c, x, EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol]],Unique->True]-Operator@Bar@OperatorToNormalForm[x c,Unique->True],
 		x_Operator * c_ /;(MemberQ[op3, x] && BarredOpQ[x]) :> x ToEffectiveCoupling[c, x, EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol]]};
 
-	(*newCpls=TreeReplacement /@ DeleteCases[$TempCouplings, x_/;MemberQ[tempCplPre,x]];*)
-	newCpls=TreeReplacement /@ DeleteCases[$TempCouplings, x_/;(FreeQ[LOut,x,All] || MemberQ[tempCplPre,x])];
-
+	newCpls=TreeReplacement /@ Echo@DeleteCases[$TempCouplings, x_/;(FreeQ[LOut,x,All] || MemberQ[tempCplPre,x])];
+	
+	Echo[newCpls, "Newly defined"];
+	
 	(* this can be very slow for very comlex models *)
 	(*LOut /. newCpls*)
 
@@ -782,35 +901,12 @@ SubstituteCoefficients[L_, OptionsPattern[]]:=Module[{op3,tempCplPre,newCpls,LOu
 	With[{aux= newCpls[[;;,1]]},
 		res= Collect[L, aux] /. newCpls
 	];
-
-	res
-]
-
-
-(* ::Text:: *)
-(*Old version (issues with flavor indices & delta functions)*)
+	
+	EchoFunction["Result",Iconize]@res
+]*)
 
 
-(*
-(* derive replacement rules to eliminate tree-level objects from matching coefficients once the above replacements have been made *)
-TreeReplacement[c_] := Module[{finalRep,inds,pinds,fullRHS,treeRHS,deltaRHS, \[Delta]RHS ,variable,rawRule,finalLHS,TP},
-	inds=Table[Unique["i"],{incr, Length@GetCouplings[c][Indices]}];
-	pinds=Pattern[#, _]&/@inds;
-	fullRHS = c[Sequence@@inds]/.$TempCouplingRules;
-	treeRHS = fullRHS /. hbar -> 0;
-	Echo[Format[(c[Sequence@@inds]//RelabelIndices)==(fullRHS//RelabelIndices),NiceForm]];
-	If[treeRHS===0, Return[Nothing]];
-	deltaRHS = fullRHS - treeRHS;
-	variable = First@Cases[treeRHS, _Coupling, All];
-	rawRule = (Last@Quiet@Solve[c[Sequence@@inds] == treeRHS + \[Delta]RHS, variable]/.\[Delta]RHS -> deltaRHS)[[1]];
-	(* hacky way of generating patterns *)
-	finalLHS = (rawRule[[1]] /. Index[f_,g_] :> Index[TP[f,_],g])/.TP -> Pattern;
-	EchoFunction[Format[#,NiceForm]&][With[{theRHS = rawRule[[2]]}, finalLHS :> RelabelIndices[theRHS,Unique->True]]]
-]
-*)
-
-
-TreeReplacement::notree="No tree-level coupling found that could be solved for."
+TreeReplacement::notree="No tree-level coupling found for `1` that could be solved for. Coupling candidates (with wrong properties) found: `2`."
 TreeReplacement::nosolution="Could not solve for the coupling `1` at tree level. Possibly, this coupling appears with different flavor index contractions at tree-level: `2`"
 
 
@@ -846,7 +942,7 @@ TreeReplacement[c_] := Module[{finalRep,inds,pinds,fullRHS,treeRHS,deltaRHS,\[De
 	(* filter for variables with same property as the effective couplings *)
 	variable = First[
 		Select[variable, MatchQ[KeyDrop[GetCouplings[First@#],EFTOrder],KeyDrop[GetCouplings[c],EFTOrder]]&]
-		,Message[TreeReplacement::notree]; Abort[]
+		,Message[TreeReplacement::notree,c,variable[[;;,1]]]; Abort[]
 	];
 	
 	(* check that this variable is not appearing with a different flavor index compination *)
@@ -912,29 +1008,41 @@ PrintEffectiveCouplings[L_, OptionsPattern[]]? OptionsCheck:= Module[{rules={},c
 ]
 
 
-(* replace all effective couplings in the given expression *)
-ReplaceEffectiveCouplings[inputL_]:=Module[{L=HcExpand[inputL],LagTree,LagLoop,TempCouplingRules,TempCouplingRulesTree},
-	(* split Lagrangian and replavement rules into tree- and loop-level part for better performance *)
-	LagTree               = L/.hbar->0;
-	LagLoop               = L-LagTree;
-	TempCouplingRules     = $TempCouplingRules;
-	TempCouplingRulesTree = TempCouplingRules/.Times[hbar,___]->0;
-	
-	(* perform replacements and expand result to drop remaining hbar^2 conributions *)
-	Normal@Series[FastExpand[(LagTree//.TempCouplingRules)],{hbar,0,1}]+FastExpand[(LagLoop//.TempCouplingRulesTree)]
-]
+Options @ ReplaceEffectiveCouplings = {Superleading->False}
 
 
-(* replace only the effective couplings with the labels given in the second argument *)
-ReplaceEffectiveCouplings[inputL_, labels_List]:=Module[{L=HcExpand[inputL],LagTree,LagLoop,TempCouplingRules,TempCouplingRulesTree},
-	(* split Lagrangian and replavement rules into tree- and loop-level part for better performance *)
-	LagTree               = L/.hbar->0;
-	LagLoop               = L-LagTree;
-	TempCouplingRules     = Cases[$TempCouplingRules, HoldPattern[Coupling[x_/;MemberQ[labels,x],__]:>_ ]];
-	TempCouplingRulesTree = TempCouplingRules/.Times[hbar,___]->0;
-	
-	(* perform replacements and expand result to drop remaining hbar^2 conributions *)
-	Normal@Series[FastExpand[(LagTree//.TempCouplingRules)],{hbar,0,1}]+FastExpand[(LagLoop//.TempCouplingRulesTree)]
+ReplaceEffectiveCouplings::badlabels = "If given, the optional second argument must be a list of couplings.";
+
+
+(* Replace all effective couplings in the input Lagrangian. *)
+ReplaceEffectiveCouplings[inputL_, opts : OptionsPattern[]] :=  ReplaceEffectiveCouplings[inputL, All, opts];
+
+
+(* Replace effective couplings with specific labels given as a List in the input Lagrangian.*)
+ReplaceEffectiveCouplings[inputL_, labels_, OptionsPattern[]] := Module[{L = HcExpand[inputL], LagTree, LagLoop, TempCouplingRules, TempCouplingRulesTree },
+  
+  (* Split Lagrangian into tree- and loop-level contributions *)
+  LagTree = L /. hbar -> 0;
+  LagLoop = L - LagTree;
+  
+  TempCouplingRules=$TempCouplingRules;
+  If[!OptionValue@Superleading, TempCouplingRules= DeleteCases[TempCouplingRules , HoldPattern[Coupling[x_ /; MemberQ[$TempSuperLeadingCouplings, x], __] :> _]]];
+  
+  (* Select coupling replacement rules *)
+  TempCouplingRules = Which[labels === All,
+                               TempCouplingRules,
+                           ListQ[labels],
+                               Cases[TempCouplingRules , HoldPattern[Coupling[x_ /; MemberQ[labels, x], __] :> _]],
+                           True,
+                               Message[ReplaceEffectiveCouplings::badlabels]; Abort[];
+                     ];
+  
+  (* Split replacement rules into tree- and loop-level part for better performance *)
+  TempCouplingRulesTree = TempCouplingRules /. Times[hbar, ___] -> 0;
+  
+  (* Perform replacements and expand result to drop remaining hbar^2 conributions *)
+  Normal@Series[FastExpand[LagTree //. TempCouplingRules], {hbar, 0, 1}] + FastExpand[LagLoop //. TempCouplingRulesTree]
+  
 ]
 
 
@@ -978,7 +1086,7 @@ ReplaceEffectiveCouplings[L_, labels_List]:=L //. Cases[$TempCouplingRules, Hold
 
 
 (* ::Subsubsection::Closed:: *)
-(*Setting up effective couplings for loop functions*)
+(*IntroduceDummyCoefficients - Setting up effective couplings for loop functions*)
 
 
 IntroduceDummyCoefficients[L_]:=Module[{tL, L0, tLHcTerms, tLHTerms},
@@ -987,23 +1095,19 @@ IntroduceDummyCoefficients[L_]:=Module[{tL, L0, tLHcTerms, tLHTerms},
 	(*tL = List@@(Nothing + (HcSimplify@Coefficient[L0, hbar]));*)
 	tL = TermsToList[HcSimplify@Coefficient[L0, hbar]];
 
-	(*
-	tLHcTerms = Collect[Operator[(Total@Cases[tL, _HcTerms])/.HcTerms -> Identity],_Operator];
-	tLHTerms = Collect[Operator@Total@(tL /. _HcTerms -> 0),_Operator];
-	*)
 	(* ensure that flavor Deltas are factored out of the operators for proper relabeling of diagonal flavor indices *)
-	tLHcTerms = CollectOperators[(Total@Cases[tL, _HcTerms])/.HcTerms -> Identity, NormalForm->False];
-	tLHTerms =  CollectOperators[ Total@(tL /. _HcTerms -> 0), NormalForm->False];
+	tLHcTerms = InternalCollectOperators[(Total@Cases[tL, _HcTerms])/.HcTerms -> Identity, InternalOpRepresentation->True];
+	tLHTerms =  InternalCollectOperators[ Total@(tL /. _HcTerms -> 0), InternalOpRepresentation->True];
 
-	tLHcTerms = tLHcTerms /. x_Operator * c_ :> x ToEffectiveCoupling[c, x, Superleading -> False];
-	tLHTerms = tLHTerms /. x_Operator * c_ :> x ToEffectiveCoupling[c, x, Superleading -> False];
+	tLHcTerms = tLHcTerms /. (x:(_AtomicOp|_CompOp)) * c_ :> x ToEffectiveCoupling[c, x, Superleading -> False];
+	tLHTerms = tLHTerms /. (x:(_AtomicOp|_CompOp)) * c_ :> x ToEffectiveCoupling[c, x, Superleading -> False];
 	
 	RelabelIndices[hbar(Operator@PlusHc[OperatorToNormalForm[tLHcTerms,Unique->True]]+1/2 Operator@PlusHc[OperatorToNormalForm[tLHTerms,Unique->True]])+Operator@(L0/.hbar->0)]
 ]
 
 
 (* ::Subsubsection::Closed:: *)
-(*Effective couplings for the final Lagrangian*)
+(*IntroduceEffectiveCouplings - Effective couplings for the final Lagrangian*)
 
 
 Options @ IntroduceEffectiveCouplings = {EffectiveCouplingSymbol -> "C", OverrideDuplicateCouplingCheck -> False};
@@ -1043,7 +1147,7 @@ IntroduceEffectiveMasses[L_ , OptionsPattern[]] := Module[{L0, LHcTerms, LHTerms
 	Lmass = IsolateMassTerms[L0, Heavy -> True];
 	L0 = L0 - Lmass;
 
-	Lmass = List @@ (Nothing + HcSimplify @ Lmass);
+	Lmass = TermsToList[HcSimplify @ Lmass];
 	Lmass = Contract/@Lmass;
 
 	LHcTerms = Collect[Operator[(Total @ Cases[Lmass, _HcTerms])/.HcTerms -> Identity], _Operator];
@@ -1139,7 +1243,7 @@ IntroduceEffectiveMasses[L_ , OptionsPattern[]] := Module[{L0, LHcTerms, LHTerms
 		PrintEffectiveCouplings[newMasses];
 	];
 
-	HcTerms[ RelabelIndices @ CollectOperators @ OperatorToNormalForm[ LHcTerms,Unique->True]] +  RelabelIndices @ CollectOperators[ ( PlusHc @ OperatorToNormalForm[ LHTerms,Unique->True]) / 2 ] + L0
+	HcTerms[RelabelIndices@ CollectOperators[OperatorToNormalForm[LHcTerms,Unique->True], Simplify->False]] +  RelabelIndices@CollectOperators[(PlusHc@ OperatorToNormalForm[LHTerms,Unique->True])/2, Simplify->False] + L0
 ]
 
 
@@ -1170,13 +1274,13 @@ ShiftRenCouplings[Lag_,OptionsPattern[]]:=Module[
 	(*dropGaugeCouplings = (Power[Coupling[#,___],n_/;n>1]->0)&/@Table[GetGaugeGroups[group][Coupling],{group,Keys@GetGaugeGroups[]}];*)
 	(* the rule below ensures that all positive powers of gauge couplings are ignored for the redefinition *)
 	dropGaugeCouplings = (Except[Power[Coupling[#,___],n_/;n<0], _[___,Coupling[#,___],___]]->0)&/@Table[GetGaugeGroups[group][Coupling],{group,Keys@GetGaugeGroups[]}];
-	LEFTRen            = CollectOperators[SeriesEFT[Lag/.hbar->0, EFTOrder->4],NormalForm->False]/.dropGaugeCouplings;
+	LEFTRen            = CollectOperators[SeriesEFT[Lag/.hbar->0, EFTOrder->4], NormalForm->False, Simplify->False]/. dropGaugeCouplings;
 	(*TruncateOperator admits also higher-EFT order  corrections to marginal operators*)
-	LEFTCorrections    = CollectOperators[Operator[Lag]/.op_Operator:> TruncateOperator[op,4],NormalForm->False];
+	LEFTCorrections    = CollectOperators[Operator[Lag]/.op_Operator:> TruncateOperator[op,4], NormalForm->False, Simplify->False];
 	
 	(* Renormalizable operators not present in LEFTRen are set to zero *)
 	RenOpList       = Cases[LEFTRen, _Operator,All];
-	LEFTCorrections = CollectOperators[LEFTCorrections /. x_Operator?(!MemberQ[RenOpList,#]&) :> 0];
+	LEFTCorrections = CollectOperators[LEFTCorrections /. x_Operator?(!MemberQ[RenOpList,#]&) :> 0, Simplify->False];
 	
 	(* Define effective couplings that absorb the corrections after the shift *)
 	OldCp           = $TempCouplings;
@@ -1210,12 +1314,95 @@ ShiftRenCouplings[Lag_,OptionsPattern[]]:=Module[
 	LagLoop = SeriesEFT[LagLoop, EFTOrder->MaxOrder];
 	
 	(* the RHS of loop replacements might again contain the params, thus a 2nd tree replacement is required *)
-	CollectOperators[LagTree+LagLoop]
+	CollectOperators[LagTree+LagLoop, Simplify->False] (* Simplify->True can significantly worsen performance *)
 ]
 
 
 (* ::Text:: *)
 (*Old version*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Internal version for MapEffectiveCouplings*)
+
+
+Options[ShiftRenCouplingsInMC] = {EFTOrder->All};
+
+
+ShiftRenCouplings::nonherm= "The provided tagret Lagrangian is not hermitian.";
+
+
+ShiftRenCouplingsInMC[lagTarget_, matchingCond_, OptionsPattern[]]:= Module[
+	{Lag=lagTarget,OldCp,NewCp,LEFTRen,RepRules,RepRulesTree,dropGaugeCouplings,MaxOrder,result,mcTree,mcLoop,RenOpList}
+	,
+	(* only keep renormalizable part of target Lagrangian *)
+	LEFTRen= CollectOperators[SeriesEFT[Lag/.hbar->0, EFTOrder->4], NormalForm->True, Simplify->False]; 
+	(* we need NormalForm->True above, since otherwise the Hermitianization of the Lagrangian below breaks since Bar[Op[...]] does not play nicely with IntroduceEffectiveCouplings *)
+	
+	(* check that the result is hermitian *)
+	If[!CheckLagrangian[LEFTRen],
+		Message[ShiftRenCouplings::nonherm];
+		Abort[]
+	];
+	
+	(* replace matching conditions *)
+	LEFTRen= ReplaceInLagrangian[LEFTRen, matchingCond, Simplify-> False];
+	
+	(* hermitianize the results *)
+	LEFTRen= LagrangianExpand[(LEFTRen+Bar[LEFTRen])/2];
+	(* only after the hermitianization go to operator form *)
+	LEFTRen= CollectOperators[LEFTRen, NormalForm->False, Simplify->False];
+	
+	(* remove (non-kinetic) terms that cannot be shifted without redfining gauge coupings *)
+	(* the rule below ensures that all negative powers of gauge couplings are ignored for the redefinition *)
+	dropGaugeCouplings= (Except[Power[Coupling[#,___],n_/;n<0], _[___,Coupling[#,___],___]]->0)&/@Table[GetGaugeGroups[group][Coupling],{group,Keys@GetGaugeGroups[]}];
+	(* select operator with tree-level contribution that is not proportional to some power of gauge couplings *)
+	RenOpList= Cases[LEFTRen/. hbar->0/. dropGaugeCouplings, _Operator, All];
+	LEFTRen = CollectOperators[LEFTRen/. x_Operator?(!MemberQ[RenOpList,#]&):> 0, Simplify->False];
+	
+	(* Define effective couplings that absorb the corrections after the shift *)
+	OldCp           = $TempCouplings;
+	LEFTCorrections = IntroduceEffectiveCouplings[LEFTRen, EffectiveCouplingSymbol->"c"];
+	NewCp           = Complement[$TempCouplings, OldCp];
+	
+	(* Get rules to substitute original couplings for the new effective couplings [at loop and tree level] *)
+	RepRules     = TreeReplacement/@ NewCp;
+	RepRulesTree = RepRules //. Plus[Times[hbar,___],rest___]:>Plus[rest] //. Times[hbar,___]->0 //. hbar->0;
+	
+	(* * * * * * * * * * * *)
+	(* create patterns for shifted couplings *)
+	With[{patterns = Alternatives@@Cases[RepRules[[;;,1]], Coupling[l_,___]:>Coupling[l,___], All]},
+		(* loop over matching conditions *)
+		result= Table[
+			(* Separate each matching condition into a tree- and a loop-level part *)
+			mcTree = Collect[Last[mc]/.hbar->0, patterns, BetterExpand];
+			mcLoop = Collect[Last[mc]-mcTree, patterns, BetterExpand];
+			
+			(* substitute in replacments *)
+			mcTree = mcTree/. (*Account for inverse gauge couplings: consider implementing manual expansion if performance issues arise*)
+				g:Power[Coupling[_, {}, 0], n_/;n<0]:> Normal@ Series[g/. RepRules, {hbar, 0, 1}]/. RepRules/. RepRulesTree;
+			(* the RHS of loop replacements might again contain the params, thus a 2nd tree replacement is required *)
+			mcLoop = mcLoop/. RepRulesTree;
+			
+			(* expand results *)
+			mcTree = FastExpand[mcTree];
+			mcLoop = FastExpand[mcLoop];
+			
+			(* Determine desired EFT order for truncation *)
+			If[Head@OptionValue[EFTOrder]===Integer, MaxOrder = OptionValue@EFTOrder, MaxOrder=Max[OperatorDimension/@ TermsToList[Last[mc]]]];
+			(* EFT series truncation *)
+			mcTree = SeriesEFT[mcTree, EFTOrder->MaxOrder];
+			mcLoop = SeriesEFT[mcLoop, EFTOrder->MaxOrder];
+			
+			(* combine results *)
+			First[mc] -> RelabelIndices[mcTree + mcLoop]
+			,
+			{mc, matchingCond}
+		];
+	];
+	
+	result
+]
 
 
 (* ::Subsection:: *)
@@ -1306,23 +1493,26 @@ Target Lagrangian: const. = `2`."
 
 
 Options@ MapEffectiveCouplings = {
-		EOMSimplify -> True, 
-		ReductionIdentities -> EvanescenceFree,
-		ShiftRenCouplings -> False, 
-		SortByEFTOrder -> True, 
 		AppendEffectiveCouplingsDefs -> False, 
-		KeepTrivalReplacements -> True, 
-		Verbose -> True
+		EOMSimplify                  -> True, 
+		ReductionIdentities          -> EvanescenceFree,
+		ShiftRenCouplings            -> False, 
+		Simplify                     -> False,
+		SortByEFTOrder               -> True, 
+		Symmetrize                   -> True,
+		KeepTrivalReplacements       -> True, 
+		Verbose                      -> True
 	};
 
 
 MapEffectiveCouplings[inputLag_,targetLag_,opts:OptionsPattern[]]:=Module[
 		{lagInput,lagTarget,constsInput,constsTarget,
-		lagInputTree,lagTargetTree,ruleTree},
+		lagInputTree,lagTargetTree,ruleTree,lagUnshifted,lagShifted,lagTargetForShift,mc},
 	
 	(* drop constant terms and throw a warning *)
 	{constsInput, lagInput}= SeparateOutConstants@ inputLag;
 	{constsTarget, lagTarget}= SeparateOutConstants@ targetLag;
+	lagTargetForShift= lagTarget;
 	
 	If[constsInput =!= 0 || constsTarget =!= 0,
 		Echo@StringForm[MapEffectiveCouplings::const, Format[constsInput,NiceForm], Format[constsTarget,NiceForm]];
@@ -1340,12 +1530,15 @@ MapEffectiveCouplings[inputLag_,targetLag_,opts:OptionsPattern[]]:=Module[
 	
 	(* ensure that all flavor deltas have been extracted from operator *)
 	(*lagInput = CollectOperatorsWithGenricFlavorStructure[lagInput];*)
-
+	
+	(* MOVED TO THE END: this shifts the renormalizable couplings in the Matchete prefered basis, which does not agree with the target basis in general *)
+	(*
 	If[OptionValue@ ShiftRenCouplings,
 		(* target Lagrangian should not be shifted *)
 		lagInput  = OptionalMonitor[OptionValue@ Verbose, 
 			ShiftRenCouplings@ lagInput, "Shifting renomarlizable couplings of the input Lagrangian \[Ellipsis]"];
 	];
+	*)
 	
 	If[OptionValue@ ReductionIdentities === EvanescenceFree,
 		lagInputTree= lagInput/. hbar->0;
@@ -1357,7 +1550,65 @@ MapEffectiveCouplings[inputLag_,targetLag_,opts:OptionsPattern[]]:=Module[
 		lagTarget= lagTargetTree;
 	];
 	
-	MapEffectiveCouplingsInternal[lagInput,lagTarget,opts]
+	(* perform mapping w/o shifting renormalizable couplings *)
+	mc = MapEffectiveCouplingsInternal[lagInput,lagTarget,opts];
+	
+	(*
+	(* matching conditions with shifted renormalizable couplings *)
+	If[OptionValue@ ShiftRenCouplings,
+		(* replace matching conditions into target Lagrangian *)
+		OptionalMonitor[OptionValue@ Verbose,
+			lagUnshifted = ReplaceInLagrangian[lagTargetForShift, mc, Simplify-> False];
+		, "Replacing the matching conditions in the target Lagrangian \[Ellipsis]"];
+		(* shift renormalizable couplings on the level of the target Lagrangian *)
+		OptionalMonitor[OptionValue@ Verbose,
+			lagShifted   = ShiftRenCouplings[lagUnshifted];
+		, "Shifting renomarlizable couplings of the input Lagrangian in the basis of the target Lagrangian \[Ellipsis]"];
+		(* EOM simplify input & target Lagrangian - GreensSimplify does not suffice due to cHBox... *)
+		If[OptionValue@ EOMSimplify,
+			lagTargetForShift = OptionalMonitor[OptionValue@ Verbose, 
+				EOMSimplify[lagTargetForShift,  ReductionIdentities-> OptionValue@ ReductionIdentities]
+			,"Simplifying target Lagrangian \[Ellipsis]"];
+			lagShifted  = OptionalMonitor[OptionValue@ Verbose, 
+				EOMSimplify[lagShifted, ReductionIdentities-> OptionValue@ ReductionIdentities]
+			,"Simplifying shifted input Lagrangian \[Ellipsis]"];
+		];
+		(* map again *)
+		OptionalMonitor[OptionValue@ Verbose, 
+			mc = MapEffectiveCouplingsInternal[lagShifted, lagTargetForShift, opts];
+		,"Mapping the shifted input Lagrangian onto the target Lagrangian \[Ellipsis]"];
+	];
+	*)
+	
+	(* shift renormalizable couplings in matching conditions if requested *)
+	If[OptionValue@ ShiftRenCouplings,
+		OptionalMonitor[OptionValue@ Verbose,
+			mc= ShiftRenCouplingsInMC[targetLag, mc];
+		, "Shifting renomarlizable couplings \[Ellipsis]"];
+	];
+	
+	(* add replacements rules for effective couplings, if requested *)
+	If[OptionValue@AppendEffectiveCouplingsDefs === True,
+		Module[{tmp=mc[[;;,2]]},
+			(* check for remaining temporary couplings that where already present in the input, add their definitions to the output *)
+			While[!FreeQ[tmp,Alternatives@@$TempCouplings,All],
+				mc= Join[
+					mc,
+					tmp=(PrintEffectiveCouplings[tmp, Rules->True]/.(RelabelIndices[arg_,___]:>RelabelIndices[arg])/.RuleDelayed->Rule)/.Rule[a_,b_]:>Rule[a, RelabelIndices@b]
+				];
+				tmp= tmp[[;;,2]];
+			];
+		];
+	];
+	
+	(* simplify the RHS expressions of the matching conditions if requested *)
+	If[OptionValue@Simplify,
+		mc[[;;,2]]= Quiet[
+			Collect[#, {hbar, \[Epsilon], _Log, _LF}, Simplify[#,TimeConstraint->1]&]&/@ mc[[;;,2]]
+		,Simplify::time];
+	];
+	
+	mc
 ]
 
 
@@ -1370,7 +1621,7 @@ Options@ MapEffectiveCouplingsInternal = Options@ MapEffectiveCouplings;
 
 MapEffectiveCouplingsInternal[Lag_,TargetLag_,OptionsPattern[]]:=Module[
 		{oldcp,newcp,lagInput,LDiff,TargetCouplings,terms,sol,output,orderAssociation,
-			mislabeledTerms,indexReplacement, var={}, opt$CollectCoefficients},
+			mislabeledTerms,indexReplacement, var={}, opt$CollectCoefficients, gaugeCouplingsTarget},
 		
 	(* MapEffectiveCouplings is not compatible with flavor indices that are contracted within operators -> turn of this functionality *)
 	opt$CollectCoefficients = Options[CollectCoefficients]; (* possibly add a CheckAbort below to make sure the settings are always reverted *)
@@ -1393,13 +1644,31 @@ MapEffectiveCouplingsInternal[Lag_,TargetLag_,OptionsPattern[]]:=Module[
 	];
 
 	(* compute the difference of the two Lagrangians *)
-	LDiff= OptionalMonitor[OptionValue@Verbose, CollectOperators[lagInput-TargetLag], "Computing difference of both Lagrangians \[Ellipsis]"];
+	LDiff= OptionalMonitor[OptionValue@Verbose, CollectOperators[lagInput-TargetLag, Simplify->False], "Computing difference of both Lagrangians \[Ellipsis]"];
 
 	(* determine appropriate variables, and solve for them *)
 	OptionalMonitor[OptionValue@Verbose,
 		TargetCouplings= DeleteDuplicates@Cases[TargetLag, Coupling[l_,___]:>l,Infinity];
 		terms= CoefficientEqualities@LDiff;
 		
+		(* determine all gauge couplings, necessary to ensure only positive solutions are picked *)
+		gaugeCouplingsTarget = DeleteDuplicates@Flatten@Table[
+			(* get couplings from tree-level gauge kinetic terms *)
+			Cases[
+				SelectOperatorClass[TargetLag/.hbar->0/._LCTensor->0, {F,F}, 0],
+				_Coupling,
+				All
+			]
+			,
+			(* iterate over all vector field labels *)
+			{F, DeleteDuplicates@Cases[TargetLag,FieldStrength[l_,___]:>l,All]}
+		];
+		
+		(* NEW equation solving algorithm *)
+		sol= SolveMatchingConditions[terms, TargetCouplings, gaugeCouplingsTarget];
+		
+		(* OLD equation solving algorithm *)
+(*
 		(* Here goes the annoying process of selecting the right variables for the system to solve *)
 		var=Module[{tmpvar,varSingle={},varMultiple={}},
 			Do[
@@ -1453,7 +1722,19 @@ MapEffectiveCouplingsInternal[Lag_,TargetLag_,OptionsPattern[]]:=Module[
 			]
 			,{coeff,mislabeledTerms}
 		];
-		sol=Quiet@Solve[#==0&/@terms,var]/.HoldPattern[InverseFunction[Bar,1,1]]->Bar;
+	
+		(* only keep positive solutions for the gauge couplings *)
+		sol = Table[
+			(* discard gauge coupling soltions containing a minus sign at tree-level *)
+			If[FreeQ[gaugeCouplingsTarget/.mc/.hbar->0, -1, All],
+				mc,
+				Nothing
+			]
+			,
+			{mc,sol}
+		];
+*)
+
 	,"Solving the matching conditions for the coefficients of the target Lagrangian \[Ellipsis]"];
 	
 	(* replace temporary couplings in solutions and expand the result *)
@@ -1515,6 +1796,8 @@ MapEffectiveCouplingsInternal[Lag_,TargetLag_,OptionsPattern[]]:=Module[
 		]
 	];
 
+(* This must go below ShiftRenCouplingsInMC now *)
+(*
 	(* If set to true, add replacements for effective couplings in Lagrangian *)
 	If[OptionValue@AppendEffectiveCouplingsDefs === True,
 		(* check for remaining temporary couplings that where already present in the input, add their definitions to the output *)
@@ -1525,11 +1808,165 @@ MapEffectiveCouplingsInternal[Lag_,TargetLag_,OptionsPattern[]]:=Module[
 			];
 		];
 	];
+*)
+	
+	(* Symmetrize replacement rules if requested*)
+     If[OptionValue@Symmetrize, output = SymmetrizeCouplingRules[output];];
 		
 	(* go back to original options for CollectCoefficients *)
 	Options[CollectCoefficients] = opt$CollectCoefficients;
 	
 	Return@ output
+]
+
+
+SymmetrizeCouplingRules[rules_]:=Module[{ruleAsso=Association@rules, couplings, coup, indices, sym, hcsym, res, rhs},
+		couplings=Keys@ruleAsso;
+		rhs=(
+		coup=#;
+		indices=Part[coup,2]/. Verbatim[Pattern][i1_,Blank[]]:>i1;
+		sym=GetCouplings[First@coup][Symmetries];
+		hcsym=GetCouplings[First@coup][SelfConjugate];
+		res= 1/Length@sym Total[(sym[#]ruleAsso[coup]/.AssociationThread[indices,indices[[#]]])&/@(Keys@sym)];
+		res=Switch[hcsym, 
+					True, 1/2 (res+Bar@res),
+					_List, 1/2 (res + (Bar[res]/.AssociationThread[indices,indices[[hcsym]]])),
+					_, res
+			];
+		SimplifyCouplings@res
+		)&/@couplings;
+		AssociationThread[couplings->rhs]/.Association->List
+]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Internal function for solving the system of equations*)
+
+
+(* ::Text:: *)
+(*Define Bar to be its own inverse, which simplifies calls of Solve*)
+
+
+Bar/:InverseFunction[Bar]= Bar
+Bar/:InverseFunction[Bar,1,1]= Bar
+
+
+MapEffectiveCouplings::incompletetarget= "The target Lagrangian appears to be incomplete and Matchete cannot determine the matching conditions."
+
+
+SolveMatchingConditions[equationSystem_,targetCouplings_, gaugeCouplingsTarget_]:= Module[
+	{
+		eqSystem=equationSystem,
+		couplingList={},
+		solutions={},
+		RuleDelayedX,
+		RelabelIndicesX,
+		matchingConditions
+	}
+	,
+	(* sort terms by increasing number of target couplings *)
+	eqSystem= SortBy[
+		eqSystem,
+		Length@Cases[#, _Coupling?(MemberQ[targetCouplings,#[[1]]]&), All]&
+	];
+	
+	(* no index (pair) should apprear more than once *)
+	(* relabel dummy indices to unique *)
+	eqSystem= RelabelIndices[#, Unique->True]&/@ eqSystem;
+	(* relabel non-dummy indices to unique *)
+	eqSystem= Table[
+		term/.((#->Index[Unique["x"],Last@#])&/@DeleteDuplicates@Cases[term,_Index,All])
+		,
+		{term, eqSystem}
+	];
+	
+	(* check that all equations contain at least one of the target couplings *)
+	Do[
+		If[FreeQ[eq, _Coupling?(MemberQ[targetCouplings,#[[1]]]&), All],
+			Message[MapEffectiveCouplings::incompletetarget]; Abort[]
+		]
+		,
+		{eq, eqSystem}
+	];
+	
+	(* loop over all equations *)
+	Do[
+		Module[{coups, sol},
+			(* get all target couplings in this term *)
+			coups= DeleteDuplicates@Cases[eqSystem[[i]], _Coupling?(MemberQ[targetCouplings,#[[1]]]&), All];
+			If[Length@coups==0,
+				(* if no tagret couplings have been found in the equation, it has been solved already by one of the previous soultions that has been substituted in *)
+				Continue[]
+			];
+			If[Length@coups==1,
+				(* if there is only one target coupling add it to the list *)
+				AppendTo[couplingList, First@coups]
+				,
+				(* if there are multiple target couplings only take the ones not yet in the list *)
+				coups= Cases[coups, _Coupling?(!MemberQ[couplingList[[;;,1]],#[[1]]]&), All];
+				If[Length@coups==1,
+					(* if there is only one target coupling remaining add it to the list *)
+					AppendTo[couplingList, First@coups]
+					,
+					(* if there are more, take the one appearing the least often in the following terms *)
+					coups= coups[[
+						First@Position[Ordering[
+							Length[Cases[eqSystem[[i+1;;]], First[#], All]]&/@ coups
+						],1]
+					]];
+					AppendTo[couplingList, First@coups]
+				]
+			];
+			
+			(* solve only this single term for the coupling just found *)
+			sol= Solve[
+				eqSystem[[i]]==0,
+				Evaluate[Last@coups],
+				InverseFunctions-> True
+			];
+			(* only keep positive solutions for the gauge couplings *)
+			sol = Last@Table[
+				(* discard gauge coupling soltions containing a minus sign at tree-level *)
+				If[FreeQ[gaugeCouplingsTarget/.mc/.hbar->0, -1, All],
+					mc,
+					Nothing
+				]
+				,
+				{mc,sol}
+			];
+			(* save solution *)
+			AppendTo[solutions, sol];
+			
+			(* create index patterns and ensure unique indices in rule *)
+			sol= sol/.{Rule[a_,b_]:> RuleDelayedX[
+					IndexToPattern[a],
+					RelabelIndicesX[b, Unique->True]
+				]
+			};
+			sol= sol/. RuleDelayedX->RuleDelayed;
+			sol= sol/. RelabelIndicesX->RelabelIndices;
+			(* replace the solution just found into all other terms *)
+			eqSystem[[i+1;;]]= BetterExpand[eqSystem[[i+1;;]]//. sol];
+			eqSystem[[;;i-1]]= BetterExpand[eqSystem[[;;i-1]]//. sol];
+			(* this already ensures that the coupling cannot appear anywhere with different flavr indices! *)
+		];
+		,
+		{i, Length@eqSystem}
+	];
+	
+	(* solve the modified system of equations *)
+	matchingConditions= Solve[(0==#)&/@eqSystem, couplingList, InverseFunctions->True];
+	
+	(* ensure only positive gauge coupling solutions are picked *)
+	matchingConditions = Table[
+		(* discard gauge coupling soltions containing a minus sign at tree-level *)
+		If[FreeQ[gaugeCouplingsTarget/.mc/.hbar->0, -1, All],
+			mc,
+			Nothing
+		]
+		,
+		{mc, matchingConditions}
+	]
 ]
 
 
@@ -1563,13 +2000,18 @@ ReplaceInLagrangian[expr_, rules:{(_Rule|_RuleDelayed)...}, OptionsPattern[]]? O
 	(*newRules= rules/. (Rule|RuleDelayed)[lhs_, rhs_]:> With[{newrhs= RelabelIndices[rhs, Unique-> True]},
 		RuleDelayed[lhs, RelabelIndices[newrhs, Unique-> True]] ];*)
 	(*Damnit! Stupid Mathematica! Insertion directly into a new delayed rule changes the pattern names on LHS for
-	no f***ing reason! Hence, the hack with first a List and a Hold. Let's transition to Symbolica. I've had it!*)
+	no f\[CenterDot] *ing reason! Hence, the hack with first a List and a Hold. Let's transition to Symbolica. I've had it!*)
 	newRules= rules/. (Rule|RuleDelayed)[lhs_, rhs_]:> With[{newrhs= RelabelIndices[rhs, Unique-> True]},
 		RuleDelayed@@ List[lhs, Hold@ RelabelIndices[newrhs, Unique-> True]] ]//ReleaseHold;
 	out= expr/. x:Power[_, _Integer? Positive]:> PseudoTimes@ x/. newRules// ReleasePseudoTimes;
 	
+	(* ensure HcTerms are expanded out *)
+	(*out= HcExpand[out];*)
+	
 	(* hbar expansion to account for possible powers in hbar in the denominator *)
-	out=Normal@Series[out,{hbar,0,1}];
+	(*out= Normal@EchoTiming@Series[out,{hbar,0,1}];*) (* this has a slow performance, see next 2 lines for improved version *)
+	out= LagrangianExpand[out];
+	out= If[FreeQ[Denominator@#,hbar,All], #, Normal@Series[#,{hbar,0,1}]]&/@ out;
 	
 	If[OptionValue@ Simplify, 
 		GreensSimplify@ out
@@ -1577,530 +2019,3 @@ ReplaceInLagrangian[expr_, rules:{(_Rule|_RuleDelayed)...}, OptionsPattern[]]? O
 		out
 	]	
 ]
-
-
-(* ::Section:: *)
-(*SMEFT export*)
-
-
-(* ::Subsection:: *)
-(*Main export function*)
-
-
-(* ::Text:: *)
-(*Function for exporting a dimension-6 SMEFT *)
-
-
-(* ::Text:: *)
-(*Known limitations: *)
-(*	SM fields and gauge groups need to be defined as in the "SM" or "SMEFT" model files. No flavor merging is currently possible.*)
-
-
-(* ::Subsubsection::Closed:: *)
-(*ExportSMEFT*)
-
-
-ExportSMEFT::filename= "The filename must be a valid string.";
-ExportSMEFT::filetype= "The filetype must be \"JSON\".";
-
-
-Options@ ExportSMEFT= {
-	FileType-> "JSON", (*More options could be added in the future*)
-	ParameterNames-> Automatic,
-	Verbose-> True
-};
-
-
-OptionTest[ExportSMEFT, ParameterNames]= 
-	# === Automatic || MatchQ[#, {Rule[_Symbol, _String? PrintableASCIIQ]...}] &;
-
-
-OptionMessage[ExportSMEFT, ParameterNames, val_]:= Message[General::optexpectsval, ParameterNames, ExportSMEFT, val, 
-	"value Automatic or a list of rules from coupling labels to printable ASCII strings."]
-
-
-ExportSMEFT[fileName_, lagEFT_, opts: OptionsPattern[]]:= Module[{coefficientList, newFileName, options},
-	(*Check filename*)
-	If[!MatchQ[fileName, _String],
-		Message[ExportToSmelli::filename]; Abort[]; ];
-
-	coefficientList= MapToWarsaw[lagEFT];
-
-	Switch[OptionValue@ FileType
-	,"JSON",
-		newFileName= StringReplace[fileName<> ".json",
-			RegularExpression["(\\.(?i)json\\.json)"]:> ".json"];
-		options= FilterRules[{opts}, Options@ ExportAsJSON];
-		ExportAsJSON[newFileName, coefficientList, Sequence@@ options];
-	,_,
-		Message[ExportToSmelli::filetype]; Abort[];
-	];
-]
-
-
-(* ::Subsubsection::Closed:: *)
-(*Obtain Warsaw basis coefficients*)
-
-
-(* ::Text:: *)
-(*Maps the EFT Lagrangian to the Warsaw basis provided by the SMEFT.m model file*)
-
-
-MapToWarsaw::warsawReps= "Not recognized input.";
-
-
-MapToWarsaw[lagEFT_]:= Module[{lagWarsaw, warsawCoefReplacements},
-	lagWarsaw= LoadModel["SMEFT"];
-	(*To be removed!*)
-	Echo@ "The Warsaw Lagrangian currently simplifies with 4D IDENTITIES!";
-	lagWarsaw= GreensSimplify[lagWarsaw, ReductionIdentities-> FourDimensional];
-
-	(*Get solutions for the Warsaw basis coefficients*)
-	warsawCoefReplacements= QuietEcho@ MapEffectiveCouplings[lagEFT, lagWarsaw];
-	If[!MatchQ[warsawCoefReplacements, {Rule[_Coupling, _]..}],
-		Message[MapToWarsaw::warsawReps]; Abort[]; ];
-	warsawCoefReplacements[[;;, 2]]= ReplaceEffectiveCouplings/@ warsawCoefReplacements[[;;, 2]];
-	
-	(*We need to express the EFT coefficients in terms of the SMEFT renormalizable parameters rather than 
-	the corresponding UV parameters*)
-	warsawCoefReplacements
-]
-
-
-(* ::Subsubsection::Closed:: *)
-(*JSON export*)
-
-
-(* ::Text:: *)
-(*For creating a jelli compatible json file with the SMEFT matching coefficients as contained in the Warsaw coefficient replacement list.*)
-
-
-Options@ ExportAsJSON= {
-	ParameterNames-> Automatic,
-	Verbose-> True
-};
-
-
-ExportAsJSON::parnames= "Option \"ParameterNames\" must be a list of replacement rules for Symbols to valid python variable name (as Strings).";
-
-
-ExportAsJSON[fileName_, warsawCoefReplacements_, OptionsPattern[]]:= Module[
-		{ReplaceSymb, conjDependence, conjAssociation, coefDict, dim, einsums, flavorIndices, heavyMasses, internalFlavorAlphabet, lagWarsaw, massFunctions, massFunctionIndices, MF, nameReplacements, out, parameters, symb, temp, n},
-	(*Change to first replace the specified symbols according to Option
-		+ identify SM parameters*)
-	If[OptionValue@ ParameterNames === Automatic,
-		nameReplacements= {};
-	,
-		If[!MatchQ[OptionValue@ ParameterNames, {Rule[_Symbol, _String? PrintableASCIIQ]...}],
-			Message[ExportAsJSON::parnames]; Abort[]];
-		nameReplacements= OptionValue@ ParameterNames;
-	];
-	ReplaceSymb@ symb_:= symb/. nameReplacements/. s_Symbol:> SymbolToASCII@ s;
-
-	(*Identify parameters*)
-	parameters= DeleteDuplicates@ Cases[warsawCoefReplacements[[;;, 2]],
-		Coupling[label_, __]-> label, All];
-	parameters= Query[Key/@ parameters,
-		{Key@ Indices, Key@ SelfConjugate}]@ $CouplingAssociation;
-	parameters= KeyValueMap[Function[{key, val}, Module[{name= ReplaceSymb@ key},
-		MapAt[$FlavorIndices[#, IndexDimension]&, If[val@ SelfConjugate === False,
-			{{name, name <> "_conj" },
-				{{name, val@ Indices}, {name <> "_conj", val@ Indices}}},
-			{{}, {{name, val@ Indices}} }
-		], {2, All, 2, All} ] ]
-		], parameters];
-
-	conjDependence= Cases[parameters[[;;, 1]], {_, _}];
-	conjAssociation= Association@@ Rule@@@ conjDependence;
-	parameters= Flatten[parameters[[;;, 2]], 1];
-
-	(*Determine flavor indices*)
-	flavorIndices= {};
-	Do[
-		If[!MatchQ[dim, _Symbol], Continue[];];
-		If[FreeQ[warsawCoefReplacements[[;;, 2]], dim] && FreeQ[parameters, dim],
-			Continue[]; ];
-		AppendTo[flavorIndices, dim];
-	, {dim, Values@ $FlavorIndices}];
-
-	(*Determine heavy masses*)
-	heavyMasses= List@@ Query[Key/@ GetFieldsByProperty[Heavy-> True], Key@ Mass]@ $FieldAssociation;
-
-	(*Repalcement rules to smelli dictionary*)
-	coefDict= {#/. Coupling[c_, __]-> c/. $smelliCoefNames,
-		#/. warsawCoefReplacements// LogsToLF}&/@ $warsawCoefficientsWithSmelliFlavors;
-
-	(*Match Warsaw basis conventions*)
-	(*Flip sign of gauge couplings (from the sing in covariant derivatives)*)
-	coefDict= coefDict/. c:Coupling[lab_, __]/;
-		MemberQ[Values@ Query[All, Key@ Coupling]@ $GaugeGroups, lab]-> -c;
-
-	(*Fix mass functions in coefficients*)
-	OptionalMonitor[OptionValue@ Verbose, 
-		Do[
-			symb= coefDict[[n, 1]];
-			coefDict[[n, 2]]= CanonizeAndCollectCoefficients@ coefDict[[n, 2]];
-		, {n, Length@ coefDict}];
-	, StringForm["Gathering mass functions of `1` (`2`/64)", symb, n] ];
-	
-	(*Determine 'mass_functions'*)
-	OptionalMonitor[OptionValue@ Verbose, 
-		massFunctions= DeleteDuplicates@ Cases[coefDict, _MassFunction, All];
-		massFunctions= MapIndexed[#1-> "mass_function_" <> ToString@@ #2&, massFunctions];
-		coefDict= coefDict/. massFunctions;
-		massFunctions= List@@@ Reverse/@ massFunctions/. MassFunction-> Identity;
-		massFunctions[[;;, 2]]= CollectMassPowers/@ massFunctions[[;;, 2]];
-		
-		(*Setup association with the dummy indices of each mass function*)
-		massFunctionIndices= Association@@ 
-			(#1-> DeleteDuplicates@ Cases[#2, Index[ind_, _]-> ind, All] &)@@@ massFunctions;
-		
-		(*Mass functions to python form*)
-		(*Replace LF to prevent automatic collapsing of powers when indices are removed from mass labels*)
-		massFunctions[[;;, 2]]= massFunctions[[;;, 2]]/. LF-> LFtemp/. 
-			Coupling[lab_, _, _]:> ReplaceSymb@ lab; 
-		massFunctions[[;;, 2]]= StringDelete[#, "\""]&/@ ToString/@ FortranForm/@ (massFunctions[[;;, 2]]/.
-		(head:LFtemp|MassPower)[masses_, powers_]:> StringJoin[
-			Switch[head, LFtemp, "LF", MassPower, "MassPower"], "(", 
-			StringRiffle[masses, {"[", ", ", "]"}], ", ",
-			StringRiffle[powers, {"[", ", ", "]"}], ")"]);
-	, "Collect mass functions"];
-	
-	(*Gather Einsums*)
-	OptionalMonitor[OptionValue@ Verbose, 
-		Do[
-			symb= coefDict[[n, 1]];
-			temp= BetterExpand@ coefDict[[n, 2]]/. CouplingProduct-> Identity;
-			temp= temp/. 
-				Bar@ Coupling[lab_, inds_, _]:> Einsum[{inds[[;;, 1]]}, {Conj@ lab}]/.
-				Coupling[lab_, inds_, _]:> Einsum[{inds[[;;, 1]]}, {lab}]/.
-				mf_String:> Einsum[{massFunctionIndices@ mf}, {mf}]/. 
-				d_Delta:> Einsum[{List@@ d[[;;, 1]]}, {"kroneckerdelta"}]/.
-				_FlavorSum:> 1;
-			temp= temp//. 
-				Einsum[aInds_, aTens_]* Einsum[bInds_, bTens_]:> Einsum[Join[aInds, bInds], Join[aTens, bTens]]/.
-				Power[Einsum[aInds_, aTens_], 2]:> Einsum[{aInds, aInds}, {aTens, aTens}];
-			coefDict[[n, 2]]= Collect[temp/. e_Einsum:> CanonizeEinsum@ e,
-				{_Einsum}, Simplify];
-		, {n, Length@ coefDict}];
-	, StringForm["Gathering Einsums of `1` (`2`/64)", symb, n] ];
-	
-	(*Determine 'einsums'*)
-	OptionalMonitor[OptionValue@ Verbose, 
-		einsums= MapIndexed[#1-> "einsum_" <> ToString@@ #2&, DeleteDuplicates@ Cases[coefDict, _Einsum, All]];
-		coefDict= coefDict/. einsums;
-		einsums= List@@@ Reverse/@ einsums;
-		
-		(*Einsums to python form*)
-		(*specify the external coefficients (which are then not summed)*)
-		einsums[[;;, 2]]= MapAt[Replace[#, s_Symbol:> ReplaceSymb@ s, -1]&,
-			MapAt[(# <> "->" <> StringJoin@@ Sort@ DeleteDuplicates@ StringCases[#, RegularExpression["i|j|k|l"]]&)@* 
-				(StringRiffle[#, ",", ""]&), einsums[[;;, 2]],
-			{All, 1}], {All, 2}]/. Conj@ s_:> conjAssociation@ s;
-		einsums[[;;, 2]]= einsums[[;;, 2]]/. Einsum[inds_, labs_]:> "einsum(\""<> inds<> "\", "<>
-			StringRiffle[labs, ", "]<> ")";
-	, "Collect Einsums"];
-
-	(*Final symbol replacement*)
-	coefDict[[;;, 2]]= Replace[coefDict[[;;, 2]]/. hbar-> 1/(16 \[Pi]^2)/. Bar-> Conj,
-		s_Symbol? (Not@* NumericQ):> ReplaceSymb@ s, -1]/.
-		Conj@ s_:> conjAssociation@ s;
-	(*Python form*)
-	coefDict[[;;, 2]]= StringDelete[ToString@ FortranForm@ #, "\""]&/@ coefDict[[;;, 2]];
-
-	(*Construct JSON output*)
-	out= {
-		{"parameters", Map[If[Head@ # === Symbol, ToString@ #, #]&, parameters, {-1}]},
-		{"conjugate_parameters", conjDependence},
-		{"flavor_indices", ToString/@ flavorIndices},
-		{"masses", ReplaceSymb/@ heavyMasses},
-		{"einsums", einsums},
-		{"mass_functions", massFunctions},
-		{"wilson_coefficients", coefDict}
-		};
-
-	Export[fileName, out, "JSON"];
-]
-
-
-(* ::Subsection:: *)
-(*Utility functions*)
-
-
-(* ::Subsubsection::Closed:: *)
-(*Loop functions instead of logs*)
-
-
-(* ::Text:: *)
-(*Insert loop function in place of the logs*)
-
-
-LogsToLF@ expr_:= expr/. Log[m_^-2* \[Mu]bar2]-> LF[{m}, {1, 0}]/ m^2 - 1;
-
-
-Einsum[{{}}, {lab_}]= lab;
-
-
-internalFlavorAlphabet= CharacterRange["A", "W"];
-CanonizeEinsum@ Einsum[inds_, labs_]:= Module[{indReplacement, out, ord= Ordering@ labs},
-	out= Einsum[indReplacement= inds[[ord]], labs[[ord]]];
-	(*i, j, k, l are always external flavor indices*)
-	indReplacement= DeleteCases[DeleteDuplicates@ Flatten@ indReplacement, i | j | k | l];
-	(*indReplacement= Cases[Tally@ Flatten@ indReplacement, {i_, 2}-> i];*)
-	indReplacement= Thread@ Rule[indReplacement, internalFlavorAlphabet[[;;Length@ indReplacement]]];
-	out/. indReplacement/. ext:Alternatives[i, j, k, l]:> ToString@ ext
-]
-
-
-(* ::Subsubsection::Closed:: *)
-(*Canonize loop functions in coefficients*)
-
-
-(* ::Text:: *)
-(*Collect a coefficient by non-mass couplings, then simplify the mass function  *)
-
-
-CanonizeAndCollectCoefficients@ coef_:= Module[{heavyMasses, out},
-	heavyMasses= List@@ Query[Key/@GetFieldsByProperty[Heavy-> True], Key@ Mass]@ $FieldAssociation;
-	(*Couplings  (not including heavy masses) are gathered in each term*)
-	out= BetterExpand@ coef/. c:Coupling[lab_/; !MemberQ[heavyMasses, lab], __]:> CouplingProduct[c]/.
-		f:(_FlavorSum|_Delta):> CouplingProduct@ f/.
-		Bar@ CouplingProduct@ c_:> CouplingProduct@ Bar@ c/.
-		Power[CouplingProduct@ c_, n_]:> CouplingProduct@ Power[c, n]//.
-		CouplingProduct@ x_ CouplingProduct@ y_:> CouplingProduct[x * y];
-	(*Terms are grouped by what couplings they contain.*)
-	(*The function of the heavy masses appearing with each coupling combination is simplified*)
-	out= Collect[out, {hbar, _CouplingProduct}, 
-		ExtractCommonFactorFromMFs@* DecomposeInMFs@* SimplifyMassFunction];
-	out// Expand 
-]
-
-
-(* ::Text:: *)
-(*Split terms into Mass functions grouped by what masses appear in each term*)
-
-
-DecomposeInMFs@ expr_:= Module[{terms},
-	terms= TermsToList@ expr;
-	terms= GatherBy[terms, Sort@ DeleteDuplicates@ Cases[#, _Coupling, All]&];
-	Plus@@ (MassFunction@* Plus)@@@ terms
-]
-
-
-(* ::Text:: *)
-(*Extract the common factors appearing with the LFs in the mass function*)
-
-
-ExtractCommonFactorFromMFs@ expr_:= expr/. mf_MassFunction:> ExtractCommonFactorFromMFs@ mf;
-
-
-(*Maybe also extract common mass (without indices) in addition to numerical factors*)
-ExtractCommonFactorFromMFs@ MassFunction@ a_?NumberQ:= a;
-ExtractCommonFactorFromMFs@ mf_MassFunction:= Module[{out= Simplify/@ mf},
-	out= out/. MassFunction@ Times[a_?NumberQ, rest__]:> a MassFunction@ Times@ rest//.
-		MassFunction@ Times[a:(Coupling[_, {}, _] | Power[Coupling[_, {}, _], _]), rest__]:> a MassFunction@ Times@ rest;
-	out= out/. MassFunction[a:(Coupling[_, {}, _] | Power[Coupling[_, {}, _], _])]-> a;
-	out/. m_MassFunction:> ExtractCommonRationalFromMF@ m
-];
-
-
-ExtractCommonRationalFromMF@ MassFunction@ expr_:= Module[{out= Expand@ expr, nums},
-	nums= Cases[out, Times[a_?NumberQ, _LF | _Coupling | Power[_Coupling, _], ___]-> a, All];
-	If[Length@ nums === 0, Return@ MassFunction@ expr];
-	nums= GCD@@ nums;
-	out= out/ nums// Expand;
-	(*Obtain a canonical sign*)
-	{nums, out}*= Order[out, -out];
-	
-	nums* MassFunction[out]
-];
-
-
-(* ::Subsubsection::Closed:: *)
-(*Collect mass powers in mass functions*)
-
-
-(* ::Text:: *)
-(*Gather up loose powers of masses MassPower function:*)
-(*MassPower[{m1, m2, ...}, {a, b, ...}] = m1^a * m2^ b *...*)
-
-
-CollectMassPowers@ expr_:= Module[{len, masses, out},
-	masses= Sort@ DeleteDuplicates@ Cases[expr, _Coupling, All];
-	len= Length@ masses;
-	out= ReplaceShieldSubexpressions[expr/. Power[c_Coupling, n_]:> MassPower[n UnitVector[len, First@ FirstPosition[masses, c]]], 
-		c_Coupling:> MassPower[UnitVector[len, First@ FirstPosition[masses, c]]], _LF];
-	out= out//. MassPower[inds1_]* MassPower[inds2_]:> MassPower[inds1+ inds2];
-	out/. MassPower[inds_]:> MassPower[masses, inds]
-];
-
-
-(* ::Subsubsection::Closed:: *)
-(*Symbol to ASCII*)
-
-
-SymbolToASCII@ symb_:= StringReplace[
-	StringReplace[ToString[symb, CharacterEncoding-> "ASCII"], {
-		RegularExpression["\\\\\[(Capital)([[:upper:]])(.*?)\\]"]:>
-			"_" <> ToUpperCase@"$2" <> "$3" <> "_",
-		RegularExpression["\\\\\[([[:upper:]])(.*?)\\]"]:>
-			"_" <> ToLowerCase@"$1" <> "$2" <> "_",
-		RegularExpression["([[:alpha:]])(\\d)"]:>
-			"$1" <> "_" <> "$2" 
-	}],
-	{
-		RegularExpression["^_"]:> "",
-		RegularExpression["_$"]:> "",
-		RegularExpression["_+"]:> "_"
-	}
-]
-(*SymbolToASCII@ symb_:= StringReplace[Echo@ ToString[symb, CharacterEncoding-> "ASCII"], {
-	RegularExpression["(^|.)\\\\\[(Capital)([[:upper:]])(.*?)]($|.)"]:>
-		If["$1" === "", "", "$1_"] <> ToUpperCase@"$3" <> "$4" <> If["$5" === "", "", "_$5"],
-	RegularExpression["(^|.)\\\\\[([[:upper:]])(.*?)]($|.)"]:>
-		If["$1" === "", "", "$1_"] <> ToLowerCase@"$2" <> "$3" <> If["$4" === "", "", "_$4"]
-}]*)
-
-
-(* ::Subsubsection::Closed:: *)
-(*Smelli coefficient information*)
-
-
-(* ::Text:: *)
-(*These lists must correspond to the couplings in "SMEFT.m" in the model files *)
-
-
-$warsawCoefficientsWithSmelliFlavors= {
-	Coupling[cllHH,{Index[i,Flavor],Index[j,Flavor]},0],
-	Coupling[cdB,{Index[i,Flavor],Index[j,Flavor]},0],
-	Coupling[cdd,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cdG,{Index[i,Flavor],Index[j,Flavor]},0],
-	Coupling[cdH,{Index[i,Flavor],Index[j,Flavor]},0],
-	Coupling[cduq,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cduu,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cdW,{Index[i,Flavor],Index[j,Flavor]},0],
-	Coupling[ceB,{Index[i,Flavor],Index[j,Flavor]},0],
-	Coupling[ced,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cee,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[ceH,{Index[i,Flavor],Index[j,Flavor]},0],
-	Coupling[ceu,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[ceW,{Index[i,Flavor],Index[j,Flavor]},0],
-	Coupling[cG,{},0],
-	Coupling[cGt,{},0],
-	Coupling[cH,{},0],
-	Coupling[cHB,{},0],
-	Coupling[cHBox,{},0],
-	Coupling[cHBt,{},0],
-	Coupling[cHd,{Index[i,Flavor],Index[j,Flavor]},0],
-	Coupling[cHD,{},0],
-	Coupling[cHe,{Index[i,Flavor],Index[j,Flavor]},0],
-	Coupling[cHG,{},0],
-	Coupling[cHGt,{},0],
-	Coupling[cHl1,{Index[i,Flavor],Index[j,Flavor]},0],
-	Coupling[cHl3,{Index[i,Flavor],Index[j,Flavor]},0],
-	Coupling[cHq1,{Index[i,Flavor],Index[j,Flavor]},0],
-	Coupling[cHq3,{Index[i,Flavor],Index[j,Flavor]},0],
-	Coupling[cHu,{Index[i,Flavor],Index[j,Flavor]},0],
-	Coupling[cHud,{Index[i,Flavor],Index[j,Flavor]},0],
-	Coupling[cHW,{},0],
-	Coupling[cHWB,{},0],
-	Coupling[cHWt,{},0],
-	Coupling[cHWtB,{},0],
-	Coupling[cld,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cle,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cledq,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[clequ1,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[clequ3,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cll,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[clq1,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[clq3,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[clu,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cqd1,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cqd8,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cqe,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cqq1,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cqq3,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cqqq,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cqqu,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cqu1,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cqu8,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cquqd1,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cquqd8,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cuB,{Index[i,Flavor],Index[j,Flavor]},0],
-	Coupling[cud1,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cud8,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cuG,{Index[i,Flavor],Index[j,Flavor]},0],
-	Coupling[cuH,{Index[i,Flavor],Index[j,Flavor]},0],
-	Coupling[cuu,{Index[i,Flavor],Index[j,Flavor],Index[k,Flavor],Index[l,Flavor]},0],
-	Coupling[cuW,{Index[i,Flavor],Index[j,Flavor]},0],
-	Coupling[cW,{},0],
-	Coupling[cWt,{},0]
-};
-
-
-$smelliCoefNames= {
-	cllHH -> "C_llphiphi",
-	cdB -> "C_dB",
-	cdd -> "C_dd",
-	cdG -> "C_dG",
-	cdH -> "C_dphi",
-	cduq -> "C_duql",
-	cduu -> "C_duue",
-	cdW -> "C_dW",
-	ceB -> "C_eB",
-	ced -> "C_ed",
-	cee -> "C_ee",
-	ceH -> "C_ephi",
-	ceu -> "C_eu",
-	ceW -> "C_eW",
-	cG -> "C_G",
-	cGt -> "C_Gtilde",
-	cH -> "C_phi",
-	cHB -> "C_phiB",
-	cHBox -> "C_phiBox",
-	cHBt -> "C_phiBtilde",
-	cHd -> "C_phid",
-	cHD -> "C_phiD",
-	cHe -> "C_phie",
-	cHG -> "C_phiG",
-	cHGt -> "C_phiGtilde",
-	cHl1 -> "C_phil1",
-	cHl3 -> "C_phil3",
-	cHq1 -> "C_phiq1",
-	cHq3 -> "C_phiq3",
-	cHu -> "C_phiu",
-	cHud -> "C_phiud",
-	cHW -> "C_phiW",
-	cHWB -> "C_phiWB",
-	cHWt -> "C_phiWtild",
-	cHWtB -> "C_phiWtildeB",
-	cld -> "C_ld",
-	cle -> "C_le",
-	cledq -> "C_ledq",
-	clequ1 -> "C_lequ1",
-	clequ3 -> "C_lequ3",
-	cll -> "C_ll",
-	clq1 -> "C_lq1",
-	clq3 -> "C_lq3",
-	clu -> "C_lu",
-	cqd1 -> "C_qd1",
-	cqd8 -> "C_qd8",
-	cqe -> "C_qe",
-	cqq1 -> "C_qq1",
-	cqq3 -> "C_qq3",
-	cqqq -> "C_qqql",
-	cqqu -> "C_qque",
-	cqu1 -> "C_qu1",
-	cqu8 -> "C_qu8",
-	cquqd1 -> "C_quqd1",
-	cquqd8 -> "C_quqd8",
-	cuB -> "C_uB",
-	cud1 -> "C_ud1",
-	cud8 -> "C_ud8",
-	cuG -> "C_uG",
-	cuH -> "C_uphi",
-	cuu -> "C_uu",
-	cuW -> "C_uW",
-	cW -> "C_W",
-	cWt -> "C_Wtilde"
-};

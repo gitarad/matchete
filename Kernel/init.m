@@ -15,6 +15,13 @@ In case you are experiencing problems with Matchete`, please update your Mathema
 ]
 
 
+(*Fix notation input for NCM*)
+(*Notation`AutoLoadNotationPalette= False;
+Needs["Notation`"]*)
+(*InfixNotation[ParsedBoxWrapper["**"], Matchete`NCM];*)
+$PreRead= ReplaceAll[#, "**"-> "\[CenterDot]"]&;
+
+
 (* Load the package *)
 Module[{logoMatchete, packageDirectory},
 	(* Avoid double loading the package *)
@@ -52,8 +59,10 @@ Module[{logoMatchete, packageDirectory},
 
 	Print[
 		"by Javier Fuentes-Mart\[IAcute]n, Matthias K\[ODoubleDot]nig, Julie Pag\[EGrave]s, Anders Eller Thomsen, and Felix Wilsch \n",
-		"Reference: ", Hyperlink["arXiv:2212.04510", "https://arxiv.org/abs/2212.04510"],"\n",
-		"Website: ",Hyperlink["https://gitlab.com/matchete/matchete","https://gitlab.com/matchete/matchete"]
+		"Reference:      ", Hyperlink["arXiv:2212.04510", "https://arxiv.org/abs/2212.04510"],"\n",
+		"Website:        ", Hyperlink["https://matchete.gitlab.io","https://matchete.gitlab.io"],"\n",
+		"Model database: ", Hyperlink["https://gitlab.com/matchete/model-database","https://gitlab.com/matchete/model-database"],"\n",
+		"Repository:     ", Hyperlink["https://gitlab.com/matchete/matchete","https://gitlab.com/matchete/matchete"]
 	];
 ];
 

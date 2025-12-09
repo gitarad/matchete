@@ -25,6 +25,7 @@ Package["Matchete`"]
 
 PackageExport["GreensSimplify"]
 PackageExport["IBPIdentities"]
+PackageExport["PreferInputOperators"]
 
 
 PackageExport["CollectOperators"]
@@ -42,6 +43,9 @@ PackageExport["dDimensional"]
 PackageExport["FourDimensional"]
 PackageExport["EvanescenceFree"]
 PackageExport["Evanescent"]
+
+
+PackageExport["SimplifyCouplings"]
 
 
 (* ::Text:: *)
@@ -72,6 +76,9 @@ PackageScope["AtomicToNormalForm"]
 PackageScope["ReleaseOperators"]
 
 
+PackageScope["NormalForm"]
+
+
 PackageScope["EoM"]
 PackageScope["SeparateOutConstants"]
 
@@ -82,6 +89,7 @@ PackageScope["InequivalentPermutations"]
 PackageScope["ConjugateIndexExchange"]
 PackageScope["Score"]
 PackageScope["LookupOperatorProperties"]
+PackageScope["PromoteOperatorsToBasis"]
 
 
 PackageScope["Conj"]
@@ -96,7 +104,6 @@ PackageScope["$compoundOperators"]
 PackageScope["HcSimplifyInternal"]
 PackageScope["CollectCoefficients"]
 PackageScope["CoefficientSimplify"]
-PackageScope["SimplifyCouplingExpression"]
 
 
 PackageScope["EOMDevs"]
@@ -106,6 +113,9 @@ PackageScope["CanonizeKinetic"]
 
 
 PackageScope["SeparateInteractionTerm"]
+
+
+PackageScope["InternalCollectOperators"]
 
 
 (* ::Text:: *)
@@ -132,6 +142,7 @@ GetOperatorCoefficient::usage= "GetOperatorCoefficient[expr, operator] extracts 
 
 GreensSimplify::usage= "GreensSimplify[expr] simplifies an expression with IBP identities and commutation relations."
 IBPIdentities::usage= "IBPIdentities[fields, devNo] returns a list with all the integration-by-part identities used by GreensSimplify for the class of operators consisting of the exact matter fields (including Bars) and the specified number of derivatives. Field strength tensors count as 2 derivatives."
+PreferInputOperators::usage= "Option for simplification functions to decide if the input operators should be prioritized for the output basis."
 
 
 HcSimplify::usage="HcSimplify[Lagrangian] identifies terms with their hermitian conjugate and retains only one of them under the head HcTerms.";
@@ -214,6 +225,13 @@ Operator[]:= 1;
 
 
 (* ::Text:: *)
+(*Setting fields to 0, sets EoM to zero*)
+
+
+EoM@ 0= 0;
+
+
+(* ::Text:: *)
 (*Behavior of EoM under conjugation*)
 
 
@@ -224,8 +242,8 @@ EoM/: Bar@ EoM@ X_:=EoM@ Bar@X
 (*Structures occurring with Majorana fermions*)
 
 
-EoM[(f:Transp@ Field[_, Fermion, _, {}])** CC]:= -EoM@ f **CC;
-EoM[-CC** (f:Field[_, Fermion, _, {}])]:= CC** EoM@ f ;
+EoM[(f:Transp@ Field[_, Fermion, _, {}])\[CenterDot] CC]:= -EoM@ f \[CenterDot] CC;
+EoM[-CC\[CenterDot] (f:Field[_, Fermion, _, {}])]:= CC\[CenterDot] EoM@ f ;
 
 
 (* ::Text:: *)
@@ -237,23 +255,23 @@ Operator[eom:(Field[_, Scalar, _, {mu_, mu_}]| Bar@ Field[_, Scalar, _, {mu_, mu
 	Operator[eom/. Field[l_, Scalar, i_, {b_, b_}]:> EoM@ Field[l, Scalar, i, {}], rest];
 
 (* Fermions *)
-Operator[X___** DiracProduct[A___, GammaM[mu_]]** Field[f_, Fermion, i_, {mu_}], rest___]:=
-	Operator[X** DiracProduct[A]** EoM[Field[f, Fermion, i, {}]], rest];
-Operator[X___** DiracProduct[A___, GammaM[mu_], Proj@ p_]** Field[f_, Fermion, i_, {mu_}], rest___]:=
-	Operator[X** DiracProduct[A, Proj[-p]]** EoM[Field[f, Fermion, i, {}]], rest];
+Operator[X___\[CenterDot] DiracProduct[A___, GammaM[mu_]]\[CenterDot] Field[f_, Fermion, i_, {mu_}], rest___]:=
+	Operator[X\[CenterDot] DiracProduct[A]\[CenterDot] EoM[Field[f, Fermion, i, {}]], rest];
+Operator[X___\[CenterDot] DiracProduct[A___, GammaM[mu_], Proj@ p_]\[CenterDot] Field[f_, Fermion, i_, {mu_}], rest___]:=
+	Operator[X\[CenterDot] DiracProduct[A, Proj[-p]]\[CenterDot] EoM[Field[f, Fermion, i, {}]], rest];
 (* Bar@ Fermions *)
-Operator[Bar@ Field[f_, Fermion, i_, {mu_}]** DiracProduct[GammaM[mu_], A___]** X___, rest___]:=
-	Operator[EoM[Bar@ Field[f, Fermion, i, {}]]** DiracProduct[A]** X, rest];
-Operator[Bar@ Field[f_, Fermion, i_, {mu_}]** DiracProduct[GammaCC,Transp@GammaM[mu_], A___]** X___, rest___]:=
-	- Operator[EoM[Bar@ Field[f, Fermion, i, {}]]** DiracProduct[GammaCC,A]** X, rest];
+Operator[Bar@ Field[f_, Fermion, i_, {mu_}]\[CenterDot] DiracProduct[GammaM[mu_], A___]\[CenterDot] X___, rest___]:=
+	Operator[EoM[Bar@ Field[f, Fermion, i, {}]]\[CenterDot] DiracProduct[A]\[CenterDot] X, rest];
+Operator[Bar@ Field[f_, Fermion, i_, {mu_}]\[CenterDot] DiracProduct[GammaCC,Transp@GammaM[mu_], A___]\[CenterDot] X___, rest___]:=
+	- Operator[EoM[Bar@ Field[f, Fermion, i, {}]]\[CenterDot] DiracProduct[GammaCC,A]\[CenterDot] X, rest];
 (* Transp@ Fermions *)
-Operator[Transp@ Field[f_, Fermion, i_, {mu_}]** DiracProduct[GammaCC, GammaM[mu_], A___]** X___, rest___]:=
-	- Operator[EoM[Transp@ Field[f, Fermion, i, {}]]** DiracProduct[GammaCC, A]** X, rest];
+Operator[Transp@ Field[f_, Fermion, i_, {mu_}]\[CenterDot] DiracProduct[GammaCC, GammaM[mu_], A___]\[CenterDot] X___, rest___]:=
+	- Operator[EoM[Transp@ Field[f, Fermion, i, {}]]\[CenterDot] DiracProduct[GammaCC, A]\[CenterDot] X, rest];
 (*Transp@ Bar@ Fermions*)
-Operator[X___** DiracProduct[A___, Transp@ GammaM[mu_]]** Transp@ Bar@ Field[f_, Fermion, i_, {mu_}], rest___]:=
-	Operator[X** DiracProduct[A]** EoM[Transp@ Bar@ Field[f, Fermion, i, {}]], rest];
-Operator[X___** DiracProduct[A___, Transp@ GammaM[mu_], Proj@ p_]** Transp@ Bar@ Field[f_, Fermion, i_, {mu_}], rest___]:=
-	Operator[X** DiracProduct[A, Proj[-p]]** EoM[Transp@ Bar@ Field[f, Fermion, i, {}]], rest];
+Operator[X___\[CenterDot] DiracProduct[A___, Transp@ GammaM[mu_]]\[CenterDot] Transp@ Bar@ Field[f_, Fermion, i_, {mu_}], rest___]:=
+	Operator[X\[CenterDot] DiracProduct[A]\[CenterDot] EoM[Transp@ Bar@ Field[f, Fermion, i, {}]], rest];
+Operator[X___\[CenterDot] DiracProduct[A___, Transp@ GammaM[mu_], Proj@ p_]\[CenterDot] Transp@ Bar@ Field[f_, Fermion, i_, {mu_}], rest___]:=
+	Operator[X\[CenterDot] DiracProduct[A, Proj[-p]]\[CenterDot] EoM[Transp@ Bar@ Field[f, Fermion, i, {}]], rest];
 
 (*Vectors*)
 Operator[FieldStrength[V_, linds:{OrderlessPatternSequence[a_, b_]}, ind_, {a_}], rest___]:=
@@ -316,10 +334,10 @@ ReleaseOperators[expr_]:= expr/.
 
 EoMStandardForm[f:Field[_, Scalar, __]]:= Module[{a}, CD[{a, a}, f] ];
 EoMStandardForm[Bar@ f:Field[_, Scalar, __]]:= Bar@ Module[{a}, CD[{a, a}, f] ];
-EoMStandardForm[f: Field[_, Fermion, __]]:= Module[{a}, \[Gamma][a]**CD[a, f]];
-EoMStandardForm[Bar@ f:Field[_, Fermion, __]]:= Bar@ Module[{a}, \[Gamma][a]**CD[a, f]];
-EoMStandardForm[Transp@ f:Field[_, Fermion, __]]:= Transp@ Module[{a}, \[Gamma][a]**CD[a, f]];
-EoMStandardForm[Transp@ Bar@ f:Field[_, Fermion, __]]:= Module[{a}, Transp@ \[Gamma][a]**Transp@ Bar@ CD[a, f]];
+EoMStandardForm[f: Field[_, Fermion, __]]:= Module[{a}, \[Gamma][a]\[CenterDot] CD[a, f]];
+EoMStandardForm[Bar@ f:Field[_, Fermion, __]]:= Bar@ Module[{a}, \[Gamma][a]\[CenterDot] CD[a, f]];
+EoMStandardForm[Transp@ f:Field[_, Fermion, __]]:= Transp@ Module[{a}, \[Gamma][a]\[CenterDot] CD[a, f]];
+EoMStandardForm[Transp@ Bar@ f:Field[_, Fermion, __]]:= Module[{a}, Transp@ \[Gamma][a]\[CenterDot] Transp@ Bar@ CD[a, f]];
 EoMStandardForm[Field[f_, Vector[mu_], ind_, {}]]:=
 	Module[{nu}, FieldStrength[f, {Index[nu, Lorentz], mu}, ind, {Index[nu, Lorentz]}] ];
 
@@ -425,17 +443,6 @@ FirstElementBy[func_]@ list_:= FirstElementBy[list, func];
 
 ConstructDummyIndices@ types_List:= ConstructDummyIndices@ types=
 	MapIndexed[(Index[ToExpression["d$$"<> ToString[First@ #2]], #1]&), types];
-
-
-(*FindPermutationOrder*)
-
-
-(* ::Text:: *)
-(*Returning the ordering list needed to make  permutation[[ordering list]] === target*)
-
-
-FindPermutationOrder[permutation_List, target_List]:=
-	Permute[Range@ Length@ target, FindPermutation[permutation, target]]
 
 
 (*Complex conjugate _Operator *)
@@ -546,7 +553,7 @@ MakeOperatorPattern@ op_Operator:= Module[{antisyms, cgsyms, indices, pattern, l
 	(*Account for the symmetries of the CGs and spin-chain transposition (for identical fermions)*)
 	cgsyms= Times@@ Reap[Sow@ Nothing;
 			pattern= pattern/. cg_CG:> CGPattern@ cg;
-			pattern= pattern/. spinChain_NonCommutativeMultiply:> SpinLinePattern@ spinChain;
+			pattern= pattern/. spinChain_NCM:> SpinLinePattern@ spinChain;
 		][[2, 1]];
 
 	{pattern, lorentzSign* antisyms* cgsyms}
@@ -598,31 +605,45 @@ CGPattern@ CG[cg_, indsPat_]:= Module[{symsPat, inds, syms, x},
 (*Identify (anti-)symmetries from transposition of spin-chains with identical fermions *)
 
 
-SpinLinePattern[spinLine:NonCommutativeMultiply[Transp@ Field[lab_, rest1__],
-	dirac:RepeatedNull[DiracProduct[GammaCC,___], 1], Field[lab_, rest2__]] ]:= Module[{l},
-		(l: spinLine)| NonCommutativeMultiply[Transp@ Field[lab, rest2], TranspDiracPattern[l, dirac], Field[lab, rest1]]
+SpinLinePattern[spinLine:NCM[Transp@ Field[lab_, rest1__],
+	dirac:RepeatedNull[DiracProduct[GammaCC,___], 1], Field[lab_, rest2__]] ]:= 
+	Module[{l},
+		(l: spinLine)| NCM[Transp@ Field[lab, rest2], TranspDiracPattern[l, dirac], Field[lab, rest1]]
 	];
-SpinLinePattern[spinLine:NonCommutativeMultiply[Bar@ Field[lab_, rest1__],
-	dirac:RepeatedNull[DiracProduct[GammaCC,___], 1], Bar@ Transp@ Field[lab_, rest2__]] ]:= Module[{l},
-		(l: spinLine)| NonCommutativeMultiply[Bar@ Field[lab, rest2], TranspDiracPattern[l, dirac], Transp@ Bar@ Field[lab, rest1]]
+SpinLinePattern[spinLine:NCM[Bar@ Field[lab_, rest1__],
+	dirac:RepeatedNull[DiracProduct[GammaCC,___], 1], Bar@ Transp@ Field[lab_, rest2__]] ]:= 
+	Module[{l},
+		(l: spinLine)| NCM[Bar@ Field[lab, rest2], TranspDiracPattern[l, dirac], Transp@ Bar@ Field[lab, rest1]]
 	];
 SpinLinePattern@ else_:= else;
 
 
-TranspDiracPattern[symb_Symbol, DiracProduct[GammaCC, g___GammaM, p___Proj]]:= Module[{sign, gammas},
+(* ::Text:: *)
+(*Creates patterns for the transposed Diarac algebra, and sowing the relative sign (if any)*)
+
+
+TranspDiracPattern[symb_Symbol, DiracProduct[GammaCC, g___GammaM, Proj@ p_]]:= Module[{sign, gammas, proj},
 	gammas= Reverse@ {g};
 	(*Include sign from transposing the antisymmetrized gammas*)
-	sign= Times@@ Cases[gammas, GammaM@ Verbatim[Pattern][_, ind_OrderlessPatternSequence]:> Power[-1, Floor[Length@ ind/2]]];
+	sign= Times@@ Cases[gammas, GammaM@ Verbatim[Pattern][_, ind_]:> 
+		If[Head@ ind === OrderlessPatternSequence, Power[-1, Ceiling[Length@ ind/2]], -1 ]];
 	If[sign === -1, Sow@ Inactive[DidMatchSwitch][1, -1][symb]];
-
-	DiracProduct[GammaCC, Sequence@@ gammas, p]
+	
+	proj= p* Times@@ Cases[gammas, GammaM@ Verbatim[Pattern][_, ind_]:> 
+		If[Head@ ind === OrderlessPatternSequence, Power[-1, Length@ ind], -1]];
+	
+	DiracProduct[GammaCC, Sequence@@ gammas, Proj@ proj]
 ];
-TranspDiracPattern[symb_Symbol, DiracProduct[GammaCC, g:Transp[_GammaM]..., p___Proj]]:= Module[{sign, gammas},
+TranspDiracPattern[symb_Symbol, DiracProduct[GammaCC, g:Transp[_GammaM]..., Proj@ p_]]:= Module[{sign, gammas, proj},
 	gammas= Reverse@ {g};
-	sign= Times@@ Cases[gammas, Transp@ GammaM@ Verbatim[Pattern][_, ind_OrderlessPatternSequence]:> Power[-1, Floor[Length@ ind/2]]];
+	sign= Times@@ Cases[gammas, Transp@ GammaM@ Verbatim[Pattern][_, ind_]:> 
+		 If[Head@ ind === OrderlessPatternSequence, Power[-1, Ceiling[Length@ ind/2]], -1 ]];
 	If[sign === -1, Sow@ Inactive[DidMatchSwitch][1, -1][symb]];
-
-	DiracProduct[GammaCC, Sequence@@ gammas, p]
+	
+	proj= p* Times@@ Cases[gammas, Transp@ GammaM@ Verbatim[Pattern][_, ind_]:> 
+		If[Head@ ind === OrderlessPatternSequence, Power[-1, Length@ ind], -1]];
+	
+	DiracProduct[GammaCC, Sequence@@ gammas, Proj@ proj]
 ];
 
 
@@ -719,6 +740,7 @@ OperatorProperties[opClass_, opID_, op_Operator]:= Module[{count= 1, conjIndExch
 		SelfConjugate-> selfConjugate,
 		SelfconjugateType-> selfconjugateType,
 		Score-> OpScore[op, selfConjugate],
+		Subclass-> OperatorSubclass@ op,
 		Symmetries-> symmetries
 	|>
 ]
@@ -742,22 +764,20 @@ OpConjFlavorPermutation@ op_Operator:= Module[{},
 
 
 KineticOpQ= MatchQ[Alternatives[
-		(*HoldPattern@ Operator[Bar@Field[_, Scalar, _, {\[Mu]_}], Field[_, Scalar, _, {\[Mu]_}]],
-		HoldPattern@ Operator[Field[_, Scalar, _, {\[Mu]_}], Field[_, Scalar, _, {\[Mu]_}]],*)
 		(*Scalars*)
-		HoldPattern@ Operator[Bar@Field[_, Scalar, _, {}], EoM@ Field[_, Scalar, _, {}]],
-		HoldPattern@ Operator[Field[_, Scalar, _, {}], EoM@ Field[_, Scalar, _, {}]],
+		Operator[Bar@Field[_, Scalar, _, {}], EoM@ Field[_, Scalar, _, {}]],
+		Operator[Field[_, Scalar, _, {}], EoM@ Field[_, Scalar, _, {}]],
 		(*Fermions*)
-		HoldPattern@ Operator[Bar@ Field[_, Fermion, _, {}]** EoM@ Field[_, Fermion, _, {}] ],
-		HoldPattern@ Operator[Bar@ Field[_, Fermion, _, {}]** DiracProduct@ _Proj**
+		Operator[Bar@ Field[_, Fermion, _, {}]\[CenterDot] EoM@ Field[_, Fermion, _, {}] ],
+		Operator[Bar@ Field[_, Fermion, _, {}]\[CenterDot] DiracProduct@ _Proj\[CenterDot] 
 			EoM@ Field[_, Fermion, _, {}] ],
-		HoldPattern@ Operator[Transp@ Field[_, Fermion, _, {}]** DiracProduct[GammaCC]** EoM@ Field[_, Fermion, _, {}] ],
-		HoldPattern@ Operator[Transp@ Field[_, Fermion, _, {}]** DiracProduct[GammaCC, _Proj]**
+		Operator[Transp@ Field[_, Fermion, _, {}]\[CenterDot] DiracProduct[GammaCC]\[CenterDot] EoM@ Field[_, Fermion, _, {}] ],
+		Operator[Transp@ Field[_, Fermion, _, {}]\[CenterDot] DiracProduct[GammaCC, _Proj]\[CenterDot] 
 			EoM@ Field[_, Fermion, _, {}] ],
 		(*Vectors*)
-		HoldPattern@ Operator[FieldStrength[_, {\[Mu]_, \[Nu]_}, {a_}, {}],
+		Operator[FieldStrength[_, {\[Mu]_, \[Nu]_}, {a_}, {}],
 			FieldStrength[_, {\[Mu]_, \[Nu]_}, {a_}, {}]],
-		HoldPattern@ Operator[Bar@ FieldStrength[_, {\[Mu]_, \[Nu]_}, {a_}, {}],
+		Operator[Bar@ FieldStrength[_, {\[Mu]_, \[Nu]_}, {a_}, {}],
 			FieldStrength[_, {\[Mu]_, \[Nu]_}, {a_}, {}]]
 		] ];
 
@@ -768,9 +788,9 @@ KineticOpQ= MatchQ[Alternatives[
 
 CanonicalFermionMassOpQ= MatchQ[
 	(*VL fermion*)
-	HoldPattern@ Operator@ NonCommutativeMultiply[Bar@ Field[l1_, Fermion, _, {}], Field[l1_, Fermion, _, {}]] |
+	Operator@ NCM[Bar@ Field[l1_, Fermion, _, {}], Field[l1_, Fermion, _, {}]] |
 	(*Majorana fermion*)
-	HoldPattern@ Operator@ NonCommutativeMultiply[Transp@ Field[l1_, Fermion, _, {}], DiracProduct@ GammaCC, Field[l1_, Fermion, _, {}]]
+	Operator@ NCM[Transp@ Field[l1_, Fermion, _, {}], DiracProduct@ GammaCC, Field[l1_, Fermion, _, {}]]
 ];
 
 
@@ -826,12 +846,41 @@ OperatorFieldsAndFlavors@ op_Operator:= Module[{fields, flavorReps= Keys@ $Flavo
 ]
 
 
+(* ::Text:: *)
+(*Returns the subclass of the operator. This is all the "local" information of the operator, that is, what the unique details that can be determined w/o knowing about dummy-index contractions *)
+
+
+OperatorSubclass@ op_Operator:= Module[{cgs, eoms, fields, fss, temp},
+	cgs= Cases[op, CG[cg_, _]:> cg, All];
+	
+	eoms= Join[Cases[op, (EoM@ Bar@ Field[f_, __] | EoM@ Transp@ Bar@ Field[f_, Fermion, __]):> Conj@ f, All],
+		Cases[op, (EoM@ Field[f_, __] | EoM@ Transp@ Field[f_, Fermion, __]):> f, All]];
+	temp= DeleteCases[op, _EoM, All];
+	
+	(*Fields and their derivatives*)
+	fields= Cases[temp, Bar@ Field[f_, _, _, devs_]:> {Conj@ f, Length@ devs}, All];
+	temp= DeleteCases[temp, Bar@ _Field, All];
+	fields= Join[fields, Cases[temp, Field[f_, _, _, devs_]:> {f, Length@ devs}, All]];
+	
+	(*FieldStrengths  and their derivatives*)
+	fss= Cases[temp, Bar@ FieldStrength[f_, _, _, devs_]:> {Conj@ f, Length@ devs}, All];
+	temp= DeleteCases[temp, Bar@ _FieldStrength, All];
+	fss= Join[fss, Cases[temp, FieldStrength[f_, _, _, devs_]:> {f, Length@ devs}, All]];
+	
+	Sort/@ {cgs, eoms, fields, fss}
+];
+
+
 (* ::Subsubsection::Closed:: *)
 (*Operator ranking*)
 
 
 (* ::Text:: *)
 (*Ranks operators by preference (higher is more preferable)*)
+(*Canonical terms: +10000 (You want these in the basis!)*)
+(*EOMS: +1000 (should always be preferred)*)
+(*Evanescent: +100 (keep if possible, they are also removable) *)
+(*Other adjustments: [-10, +10] (ordering by preference)*)
 
 
 OpScore::unexp= "OpScore received unexpected argument `1`"
@@ -839,11 +888,11 @@ OpScore::unexp= "OpScore received unexpected argument `1`"
 
 OpScore[op_Operator, selfConj_]:= Module[{score= 0, inds},
 	(*Check for canonical terms*)
-	If[KineticOpQ@ op, Return@ 200];
-	If[CanonicalFermionMassOpQ@ op, Return@ 100];
+	If[KineticOpQ@ op, Return@ 20000] (*Should rank higher than just EOM count to ensure canonical kinetic terms*);
+	If[CanonicalFermionMassOpQ@ op, Return@ 10000];
 
 	(*EoMs can be removed by field redefinitions and any EoM should always be included in the basis*)
-	score+= 100 Count[op, _EoM, Infinity];
+	score+= 10000 Count[op, _EoM, Infinity];
 	(*Field strength tensors are preferable to more derivatives*)
 	score+= 1 Count[op, _FieldStrength, Infinity];
 	(*Prefer chiral spin lines*)
@@ -853,6 +902,8 @@ OpScore[op_Operator, selfConj_]:= Module[{score= 0, inds},
 	score+= -.5 Count[op, DiracProduct[___, Transp@ _GammaM, Transp@ _GammaM, ___], Infinity];
 	(*Penalize non-ordered CDs*)
 	score+= -.1 Count[op, Field[__, {___, a_, __, a_, ___}], Infinity];
+	(*Prefer when derivatives and vectors share indices*)
+	score+= .1 Count[op, Field[_, Vector[a_], _, {___, a_, ___}], Infinity];
 	(*Penalize CGs with derivative fields*)
 	score+= -.01 If[(inds=Cases[op,CG[_gen,i_]:>i])=!={},
 					Total[(Length@(Flatten@Join[Cases[op,(Bar@Field[_,_,fb_,gb_]/;MemberQ[fb,#[[2]]]):>gb],
@@ -932,12 +983,12 @@ OperatorFlavorSeparate@ op_Operator:= Module[{flavInds, deltas, out= op},
 
 
 (* ::Text:: *)
-(*For matching patterns in IBP identities*)
+(*For matching patterns in IBP identities (performance optimized)*)
 (*identityTypeResets is a subset of {dDimensional, FourDimensional, Evanescent}*)
 
 
 MatchOperatorPatternsInIdentities[opClass_, identities_List, identityTypeResets_List]:= Module[
-		{len, newOps, ops, out, temp},
+		{len, newOps, ops, out, repl, subclasses, temp},
 	out= Operator@ identities;
 
 	(*Speed up replacements by first substituting in dummy symbols for each unique operator*)
@@ -946,9 +997,16 @@ MatchOperatorPatternsInIdentities[opClass_, identities_List, identityTypeResets_
 	out= out/. ops;
 
 	(*Make replacements of dummies with atomic operators that are already known*)
-	ops= ops[[;;, {2, 1}]]/. OpToAtomicReplacementPattern@ opClass;
 	len= Length@ $operators[opClass];
-
+	
+	ops= GroupBy[ops[[;;, {2, 1}]], OperatorSubclass@* Last];
+	repl= OpToAtomicReplacementPattern@ opClass;
+	subclasses= GroupBy[Range@ len, $operators[opClass, #, Subclass]&];
+	
+	ops= Flatten@ Table[
+		ops@ subclass/. repl[[Lookup[subclasses, Key@ subclass, {}]]]
+	, {subclass, Keys@ ops}];
+	
 	(*Construct new patterns out of any new operators encounterd*)
 	newOps= Cases[ops, _Operator, All];
 	MakeNewOperatorPatterns[opClass, newOps, identityTypeResets];
@@ -1274,8 +1332,7 @@ ConstructCompoundsForOp[opProperties_, flavorSymmetrization_]:= Block[{dummyInds
 	];
 
 	(*Construct complex-conjugated version of the operators in hcCombinations*)
-	conjugated= Bar[AtomicOp[Sequence@@ opProperties@ ID, dummyInds]/. AtomicToOpReplacementPattern@ First@ opProperties@ ID]/.
-		Bar@ op_Operator:> OperatorBar@ op(* /. OpToAtomicReplacementPattern@ First@ opProperties@ ID;*)//ToAtomicForm;
+	conjugated= ConjugateAtomicBySubclass@ AtomicOp[Sequence@@ opProperties@ ID, dummyInds];
 	conjugated= Replace[conjugated, {Times[_, atom_AtomicOp]:> atom, atom_AtomicOp:> atom}];
 	conjIndexRplacement= Thread@ Rule[Last@ conjugated, dummyInds];
 	conjIndexOrder= FindPermutationOrder[Last@ conjugated, dummyInds];
@@ -1286,10 +1343,7 @@ ConstructCompoundsForOp[opProperties_, flavorSymmetrization_]:= Block[{dummyInds
 
 	,
 		(*Construct the conjugated of the operator, with the proper index-permutations*)
-
-		conjugated= Bar[symmetryCombinations/. AtomicToOpReplacementPattern@ First@ opProperties@ ID]/.
-			Bar@ op_Operator:> OperatorBar@ op/. OpToAtomicReplacementPattern@ First@ opProperties@ ID/.
-			conjIndexRplacement;
+		conjugated= ConjugateAtomicBySubclass@ symmetryCombinations/. conjIndexRplacement;
 		symmetryCombinations= Table[
 				CanonizeAtomicOp@ Replace[symmetryCombinations[[n]] + {1, -1}* conjugated[[n]],
 					{___, 0, ___}-> {symmetryCombinations[[n]]}]
@@ -1345,6 +1399,22 @@ MergeSymmetries[sym1_, sym2_]:= Module[{newSym},
 	If[!DuplicateFreeQ[First/@ newSym], Message[MergeSymmetries::incmp]; Abort[]; ];
 	newSym
 ];
+
+
+(* ::Text:: *)
+(*For efficient conjugation of AtomicOps*)
+
+
+ConjugateAtomicBySubclass@ expr:Except[_AtomicOp]:= expr/. op_AtomicOp:> ConjugateAtomicBySubclass@ op;
+ConjugateAtomicBySubclass@ op:AtomicOp[class_, id_, _]:= Module[{out, repl, subclass},
+	out= Bar[op/. $operators[class, id, AtomicOpExpansionPattern]]/. Bar@ o_Operator:> OperatorBar@ o;
+	(*The conjugate might include a sign*)
+	subclass= OperatorSubclass@ FirstCase[{out}, _Operator, Abort[], All];
+	(*All operator matching patterns of the relevant subclass*)
+	repl= List@@ Query[Select[#[Subclass] === subclass &], Key@ OperatorMatchingPattern][
+		$operators@ OpClassConjugate@ class];
+	out/. repl
+]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1425,7 +1495,7 @@ SeparateOutConstants@ expr_:= Module[{consts, remainder},
 Options@ CollectOperators= {NormalForm-> True, Simplify->True};
 
 
-CollectOperators[arg_, OptionsPattern[]]:= Block[{expr=HcExpand@BetterExpand[arg], out, consts},
+CollectOperators[arg_, OptionsPattern[]]? OptionsCheck:= Block[{expr=HcExpand@LagrangianExpand[arg], out, consts},
 	(*subtract off constants*)
 	If[FreeQ[expr, _Field| _FieldStrength, All], Return[expr]];
 	{consts, expr}= SeparateOutConstants@ expr;
@@ -1467,7 +1537,7 @@ InternalCollectOperators[arg_, OptionsPattern[]]:= Block[{out},
 (*Collects all identical operators in an expression to the same form *)
 
 
-CollectOperatorsWithGenricFlavorStructure[arg_]:= Block[{expr=HcExpand@BetterExpand[arg], out, consts},
+CollectOperatorsWithGenricFlavorStructure[arg_]:= Block[{expr=HcExpand@LagrangianExpand[arg], out, consts},
 	(*subtract off constants*)
 	If[FreeQ[expr, _Field| _FieldStrength, All], Return[expr]];
 	{consts, expr}= SeparateOutConstants@ expr;
@@ -1504,7 +1574,7 @@ Options[SelectOperatorClass]={Evanescent->True};
 SelectOperatorClass[expr_ /; MemberQ[expr, _HcTerms],fields_,devs_, opt:OptionsPattern[]] := SelectOperatorClass[ HcExpand @ expr , fields, devs,opt];
 
 
-SelectOperatorClass[arg_, fields_, devs_,OptionsPattern[]]:= Block[{gaugeFields, matterFields, out, opType, conjType, FSCount, FSPower, pw, derivatives, expr=arg, consts, \[Psi]irrelevant, evaExpr },
+SelectOperatorClass[arg_, fields_, devs_:0, OptionsPattern[]]:= Block[{gaugeFields, matterFields, out, opType, conjType, FSCount, FSPower, pw, derivatives, expr=arg, consts, \[Psi]irrelevant, evaExpr },
 	(* First, set all fields not appearing in fields_ to zero, for better performance *)
 	\[Psi]irrelevant= Alternatives@@ Complement[
 		DeleteDuplicates@Cases[expr, (Field[label_,___]|FieldStrength[label_,___]):>label, All],
@@ -1766,7 +1836,7 @@ ConstructOperatorIdentities[opClass_, reduction_,OptionsPattern[]]:= Module[
 		(*If[(a=(Select[(FindOpenIndices@op),Index[_,Lorentz], Infinity]))=!={}, Echo@NiceForm@{a,op}; Message[ConstructOperatorIdentities::indices]; (*Abort[];*)];*)
 		
 		(*Don't produce identities if 4d identities are applied and operator is 4d reducible*)
-		If[fourDIdentities && Reducible4dOpQ@ op, Continue[];];
+		If[fourDIdentities && Reducible4dOpQ@ op, Sow@ {}; Continue[];];
 
 		indPerms= Thread[dummies-> dummies[[#]]]&/@ indPerms;
 
@@ -1791,7 +1861,7 @@ ConstructOperatorIdentities[opClass_, reduction_,OptionsPattern[]]:= Module[
 		opIdentities= MatchOperatorPatternsInIdentities[opClass, opIdentities,
 			Complement[{dDimensional, FourDimensional, Evanescent}, {reduction}]];
 
-		(*Use identiteis with all inequivalent index permutations of the original operator*)
+		(*Use identities with all inequivalent index permutations of the original operator*)
 		Sow@ Flatten@ CanonizeAtomicOp[opIdentities/. indPerms];
 	]][[2, 1]];
 
@@ -1832,6 +1902,10 @@ ConstructOperatorIdentities[opClass_, reduction_,OptionsPattern[]]:= Module[
 	evaOperators= {#, Replace[#, EvaOp[type_, id_, _]:> $EvanescentTerms[type, id, Score]]}&/@ evaOperators;
 
 	operators= operators~ Join~ evaOperators;
+	
+	(*canonical ordering of flavor indices prefered after everything else*)
+	(*operators= {#[[1]], #[[2]]-0.001*PermutationCountToCanonical[Cases[#[[1]] , Index[a_,Global`Flavor]:>a, All]]} &/@ operators;*)
+	
 	If[OptionValue@ShowScores,
 		Echo@NiceForm@(MatrixForm@(operators//AtomicToNormalForm//RelabelIndices));];
 
@@ -1849,7 +1923,7 @@ ConstructOperatorIdentities[opClass_, reduction_,OptionsPattern[]]:= Module[
 
 	(*Identify the operators with basis vectors in a vectorspace*)
 	identities= (identities/. MapIndexed[(#1-> UnitVector[Length@ operators, First@ #2]&), operators]);
-
+	
 	(*Verify that the mapping into vector space was succesfull*)
 	If[!MatchQ[identities, {{(_Integer| _Rational| _Complex)..}..}],
 		Message[ConstructOperatorIdentities::basis];
@@ -1871,6 +1945,12 @@ ConstructOperatorIdentities[opClass_, reduction_,OptionsPattern[]]:= Module[
 	(*Keep only substitutions from AtomicOp*)
 	DeleteCases[identities, Rule[_CompOp| _EvaOp, _]]
 ];
+
+
+PermutationCountToCanonical[list_]:=Module[{perm,cycles},
+									perm=FindPermutation[list,Sort[list]];
+									cycles=PermutationCycles[perm][[1]];
+									Total[Length/@cycles]-Length[cycles]]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1898,7 +1978,7 @@ Reducible4dOpQ@ op_Operator:= Module[{gammaInds, lcInds, spinChains, spinChainIn
 	];
 
 	(*Condition iii) and iv)*)
-	spinChains= Cases[op, NonCommutativeMultiply[_, d_DiracProduct, _]-> d, All];
+	spinChains= Cases[op, NCM[_, d_DiracProduct, _]-> d, All];
 	If[Length@ spinChains < 2, Return@ False; ];
 	spinChainIndices= Join@@ Cases[#, g_GammaM:> List@@ g]&/@ spinChains;
 	spinChainIndices=Length[Intersection@@ spinChainIndices];
@@ -1945,10 +2025,10 @@ IdentitiesIBP@ op_Operator:= Module[{positions, \[Mu]ind},
 EoMSplitter::unexp= "EoMSplitter applied to unexpected expression `1`.";
 EoMSplitter[\[Mu]_, f:Field[_, Scalar, __] ]:= CD[\[Mu], f];
 EoMSplitter[\[Mu]_, f:Bar@ Field[_, Scalar, __] ]:= CD[\[Mu], f];
-EoMSplitter[\[Mu]_, f:Field[_, Fermion, __] ]:= \[Gamma]@ \[Mu]** f;
-EoMSplitter[\[Mu]_, f:Bar@ Field[_, Fermion, __] ]:= f** \[Gamma]@ \[Mu];
-EoMSplitter[\[Mu]_, f:Transp@ Field[_, Fermion, __] ]:= f** Transp@ \[Gamma]@ \[Mu];
-EoMSplitter[\[Mu]_, f:Transp@ Bar@ Field[_, Fermion, __] ]:= Transp@ \[Gamma]@ \[Mu]** f;
+EoMSplitter[\[Mu]_, f:Field[_, Fermion, __] ]:= \[Gamma]@ \[Mu]\[CenterDot] f;
+EoMSplitter[\[Mu]_, f:Bar@ Field[_, Fermion, __] ]:= f\[CenterDot] \[Gamma]@ \[Mu];
+EoMSplitter[\[Mu]_, f:Transp@ Field[_, Fermion, __] ]:= f\[CenterDot] Transp@ \[Gamma]@ \[Mu];
+EoMSplitter[\[Mu]_, f:Transp@ Bar@ Field[_, Fermion, __] ]:= Transp@ \[Gamma]@ \[Mu]\[CenterDot] f;
 EoMSplitter[\[Mu]_, Field[f_, Vector@ \[Nu]_, inds_, {}] ]:= FieldStrength[f, {Index[\[Mu], Lorentz], \[Nu]}, inds, {}];
 EoMSplitter[\[Mu]_, Bar@ Field[f_, Vector@\[Nu]_, inds_, {}] ]:=Bar@ FieldStrength[f, {Index[\[Mu], Lorentz], \[Nu]}, inds, {}];
 EoMSplitter[\[Mu]_, x_]:= (
@@ -2024,8 +2104,8 @@ IdentitiesSpinorLineDerivatives@ op_Operator:=
 
 D2Fermion[f:Field[lab_, Fermion, inds_, {\[Mu]_, \[Mu]_}] ]:= Module[{\[Nu]= Index[Unique[lInd], Lorentz]},
 	- f +
-	\[Gamma]@ \[Nu] ** \[Gamma]@ \[Mu] ** Field[lab, Fermion, inds, {\[Nu], \[Mu]}] +
-	I/2 \[Gamma][\[Mu], \[Nu]] ** GAction[{\[Mu], \[Nu]}, Field[lab, Fermion, inds, {}]]
+	\[Gamma]@ \[Nu] \[CenterDot] \[Gamma]@ \[Mu] \[CenterDot] Field[lab, Fermion, inds, {\[Nu], \[Mu]}] +
+	I/2 \[Gamma][\[Mu], \[Nu]] \[CenterDot] GAction[{\[Mu], \[Nu]}, Field[lab, Fermion, inds, {}]]
 ]
 
 
@@ -2038,8 +2118,8 @@ D2Fermion[f:Field[lab_, Fermion, inds_, {\[Mu]_, \[Mu]_}] ]:= Module[{\[Nu]= Ind
 
 
 IdentitiesSpinorLineTransposition@ op_Operator:= Module[{positions},
-	positions= Position[op, NonCommutativeMultiply[Bar@ Field[lab_, __], _, Transp@ Bar@ Field[lab_, __] ] |
-		NonCommutativeMultiply[Transp@ Field[lab_, __], _, Field[lab_, __] ]];
+	positions= Position[op, NCM[Bar@ Field[lab_, __], _, Transp@ Bar@ Field[lab_, __] ] |
+		NCM[Transp@ Field[lab_, __], _, Field[lab_, __] ]];
 	Table[
 		op- MapAt[Transp, op, lines]
 	, {lines, Subsets@ positions}]
@@ -2055,7 +2135,7 @@ IdentitiesSpinorLineTransposition@ op_Operator:= Module[{positions},
 
 
 IdentitiesDiracCommutation@ op_Operator:=
-	If[Count[op,_NonCommutativeMultiply,Infinity]=!=2,
+	If[Count[op,_NCM,Infinity]=!=2,
 	Join[
 		ReplaceListSubExprs[op, d: DiracProduct[___, GammaM[_, __], ___]:>
 			ASymGammaExpand@ d] -op,
@@ -2095,20 +2175,20 @@ IdentitiesDiracCommutation@ op_Operator:=
 
 IdentitiesChirality@ op_Operator:=
 	ReplaceListSubExprs[op, {
-		NonCommutativeMultiply[f1: Bar@ Field[l1_, Fermion, __]| Transp@ Field[l1_, Fermion, __],
+		NCM[f1: Bar@ Field[l1_, Fermion, __]| Transp@ Field[l1_, Fermion, __],
 			dp:DiracProduct[___, Except[_Proj|Gamma5]],
 			f2: Field[l2_, Fermion, __]| Transp@ Bar@ Field[l2_, Fermion, __]]/;
 			!$FieldAssociation[l1, Chiral] && !$FieldAssociation[l2, Chiral]:>
-				f1** dp** (1- PL- PR)** f2,
-		NonCommutativeMultiply[f1: Bar@ Field[l1_, Fermion, __]| Transp@ Field[l1_, Fermion, __],
+				f1\[CenterDot] dp\[CenterDot] (1- PL- PR)\[CenterDot] f2,
+		NCM[f1: Bar@ Field[l1_, Fermion, __]| Transp@ Field[l1_, Fermion, __],
 			f2: Field[l2_, Fermion, __]| Transp@ Bar@ Field[l2_, Fermion, __]]/;
 			!$FieldAssociation[l1, Chiral] && !$FieldAssociation[l2, Chiral]:>
-				f1** (1- PL- PR)** f2,
-		NonCommutativeMultiply[f1: Bar@ Field[l1_, Fermion, __]| Transp@ Field[l1_, Fermion, __],
+				f1\[CenterDot] (1- PL- PR)\[CenterDot] f2,
+		NCM[f1: Bar@ Field[l1_, Fermion, __]| Transp@ Field[l1_, Fermion, __],
 			DiracProduct[gs___, Gamma5],
 			f2: Field[l2_, Fermion, __]| Transp@ Bar@ Field[l2_, Fermion, __]]/;
 			!$FieldAssociation[l1, Chiral] && !$FieldAssociation[l2, Chiral]:>
-				f1** DiracProduct@ gs** (\[Gamma]@5+ PL- PR)** f2
+				f1\[CenterDot] DiracProduct@ gs\[CenterDot] (\[Gamma]@5+ PL- PR)\[CenterDot] f2
 	}]
 
 
@@ -2197,15 +2277,15 @@ IdentitiesCGs@ op_Operator:= Block[{},
 IdentitiesFierz[ op_Operator, opt:OptionsPattern[]]:=
 	Join[
 		ReplaceList[op, 
-			o: HoldPattern@Operator[SP1_NonCommutativeMultiply,SP2_NonCommutativeMultiply, rest___/;
-				FreeQ[{rest},_NonCommutativeMultiply]]/;
+			o: HoldPattern@Operator[SP1_NCM,SP2_NCM, rest___/;
+				FreeQ[{rest},_NCM]]/;
 				FbasisQ[SP1,SP2]/;
 				OrderedQ@ {SP1, SP2}:>
 			o- Operator[Fierz[OperatorToNormalForm@o, Order->{1,4,3,2},opt]]
 		],
 		ReplaceList[op, 
-			o: HoldPattern@Operator[SP1_NonCommutativeMultiply,SP2_NonCommutativeMultiply, rest___/;
-				FreeQ[{rest},_NonCommutativeMultiply]]/;
+			o: HoldPattern@Operator[SP1_NCM,SP2_NCM, rest___/;
+				FreeQ[{rest},_NCM]]/;
 				FbasisQ[SP1,SP2]/;
 				OrderedQ@ {SP1, SP2}:>
 			o- Operator[Fierz[OperatorToNormalForm@o, Order->{1,3,4,2},opt]]
@@ -2318,7 +2398,7 @@ IdentitiesGroupFierz@ operator_Operator:= Module[
 IdentitiesGroupSchouten@ operator_Operator:= Module[
 		{indPos, indSet, indsToSymmetrize, op, opInds, out, rep, reps},
 	(*For now only look for indices in small representations*)
-	reps= Keys@ Select[$Representations, #[RepDimension] < 5&];
+	reps= Keys@ Select[$Representations, #[Dimension] < 5&];
 	
 	(*Ensure that indices on fields are Bared or not locally*)
 	op= operator/. Bar@ (f:Field|FieldStrength)[lab_, t_, inds_, devs_]:>
@@ -2335,7 +2415,7 @@ IdentitiesGroupSchouten@ operator_Operator:= Module[
 				Sum[
 					Signature@ perm* ReplacePart[op, Thread@ Rule[indPos, perm]]
 				, {perm, Permutations@ indSet}]
-			, {indSet, Subsets[indsToSymmetrize, {$Representations[rep, RepDimension] + 1}]}]
+			, {indSet, Subsets[indsToSymmetrize, {$Representations[rep, Dimension] + 1}]}]
 		, {rep, Keys@ opInds}];	
 	
 	(*Restore ordinary Bar notation for Field and FieldStrength objects in output identities*)
@@ -2468,8 +2548,7 @@ IBPSimplify[expr_, OptionsPattern[]]:= Module[
 			(*Separate physical and evanescent terms*)
 			{physTerms, evTerms}= SelectAndDeleteCases[TermsToList@ out, _? (FreeQ[#, EvaOp]&)];
 			physTerms= Plus@@ physTerms;
-			evTerms= Plus@@ evTerms/. evaop_EvaOp :> ev*  Contract@ RefineDiracProducts@ ExpandEvanescentOperators@ evaop//
-				CollectOperators;
+			evTerms= Plus@@ evTerms/. evaop_EvaOp :> CollectOperators[ev*  Contract@ RefineDiracProducts@ ExpandEvanescentOperators@ evaop, Simplify->False];
 			If[evTerms === 0, (*this may occur e.g. for Cee where the coefficient symmetries kill evanescent contribution*)
 				Throw[physTerms];
 			];
@@ -2533,10 +2612,14 @@ InternalSimplify[expr_, OptionsPattern[]]:= Module[{out},
 (*Output to NormalForm for the operators *)
 
 
-Options[GreensSimplify]={ReductionIdentities->dDimensional};
+Options[GreensSimplify]= {
+		PreferInputOperators-> False,
+		ReductionIdentities-> dDimensional
+	};
 
 
-GreensSimplify[arg_,OptionsPattern[]]? OptionsCheck:= Block[{expr=BetterExpand@HcExpand[arg], consts, redID=OptionValue@ReductionIdentities},
+GreensSimplify[arg_,OptionsPattern[]]? OptionsCheck:= Block[
+		{consts, expr=LagrangianExpand@HcExpand[arg], redID=OptionValue@ReductionIdentities},
 	If[redID === EvanescenceFree,
 		AddToBibliography["EvanescentTreatment", "Simplified expression to evanescent-free scheme (with GreensSimplify)"]
 	];
@@ -2669,6 +2752,47 @@ RealOpQ@ op:AtomicOp[opClass_, id_, _]:= $operators[opClass, id, SelfConjugate] 
 	KineticOpQ@ AtomicToOperatorForm[op];
 RealOpQ@ CompOp[red_, opClass_, id_, _]:=
 	$compoundOperators[red, opClass, id, SelfConjugate] =!= False; (*can also be +/-1*)
+
+
+(* ::Subsection:: *)
+(*Manipulate operator basis (scoring)*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*PromoteOperatorsToBasis*)
+
+
+(* ::Text:: *)
+(*Set operators as preferred*)
+
+
+PromoteOperatorsToBasis[ops_]:= Module[{atomics, class, classes},
+	atomics= DeleteDuplicates@ Cases[MatchOperatorPatterns@ ops, _AtomicOp, All];
+	classes= DeleteDuplicates@ Replace[atomics, AtomicOp[class_, __]-> class, {1}];
+	Do[
+		UnsetHermitianIdentities[class, _];
+	, {class, classes}];
+	PromoteOperatorScore/@ atomics;
+];
+
+
+(* ::Text:: *)
+(*Sets preferential scoring to an atomic operator*)
+
+
+PromoteOperatorScore@ atom:AtomicOp[class_, id_, _]:= Module[{newScore},
+	(*If not self-conjugate sets score for the conjugate operator*)
+	If[!$operators[class, id, SelfConjugate],
+		PromoteIndividualOperatorScore@ ConjugateAtomicOp@ atom;
+	];
+	PromoteIndividualOperatorScore@ atom;
+];
+PromoteIndividualOperatorScore@ atom:AtomicOp[class_, id_, _]:= Module[{newScore},
+	(*Recalculate the OpScore to prevent accidental repeated preferences*)
+	newScore= 30+ OpScore[FirstCase[{atom/. $operators[class, id, AtomicOpExpansionPattern]}, _Operator, 0, All],
+		$operators[class, id, SelfConjugate]];
+	$operators[class, id, Score]= newScore;
+];
 
 
 (* ::Section:: *)
@@ -3177,7 +3301,10 @@ CouplingPattern@ Bar@Delta[indsPat__]:= {Bar@ Delta@ indsPat, 1};
 (*Collect like coupling contractions in a *)
 
 
-SimplifyCouplingExpression@ expr_:= Module[{out= PseudoTimes@ Expand@ expr, couplingContractions, pats= {}},
+SimplifyCouplings@ l_List:=SimplifyCouplings/@l;
+
+
+SimplifyCouplings@ expr_:= Module[{out= PseudoTimes@ Expand@ expr, couplingContractions, pats= {}},
 	(*If only one term, nothing to collect*)
 	If[Head@ out =!= Plus, Return@ ReleasePseudoTimes@ out];
 	(*All non-trivial coupling contractions*)

@@ -792,7 +792,7 @@ DimRep[rep_]:=Block[{},
 		Abort[]
 	];
 
-	If[Head@$Representations[rep]=!=Missing, Return[$Representations[rep][RepDimension]]];
+	If[Head@$Representations[rep]=!=Missing, Return[$Representations[rep][Dimension]]];
 	If[Head@$FlavorIndices[rep]=!=Missing, Return[$FlavorIndices[rep][IndexDimension]]];
 ]
 
