@@ -461,7 +461,7 @@ AllOperatorDimension[expr_List]:= Flatten[AllOperatorDimension/@ expr];
 GetAllOperatorDimensions[term_]:=Module[{tmp=BetterExpand[term]},
 	tmp=AllOperatorDimension[tmp];
 	tmp=DeleteDuplicates@Flatten@{tmp/.AllOperatorDimension->OperatorDimension};
-	tmp/.{0}->{100}
+	tmp/.{0->100}
 ]
 
 
