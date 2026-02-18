@@ -91,8 +91,8 @@ UVDivergentAction[expr_,OptionsPattern[]]:=Module[{powerTraces,logTraces,isOnShe
 	logTraces = OptionalMonitor[TrueQ@ OptionValue@ Verbose,
 					Sum[
 						If[Or[
-							Length@ GetFieldsByProperty[Sequence@@ Normal@ $FieldTypes@ field, Charges-> {__}] > 0,
-							Length@ GetFieldsByProperty[Sequence@@ Normal@ $FieldTypes@ field,
+							Length@ FieldByProperty[Sequence@@ Normal@ $FieldTypes@ field, Charges-> {__}] > 0,
+							Length@ FieldByProperty[Sequence@@ Normal@ $FieldTypes@ field,
 								Indices-> inds_/; IntersectingQ[GroupFromRep/@ inds, Keys@ $GaugeGroups]] > 0
 						],
 							$MonitorString = StringForm["Evaluating log-type supertrace: `1`", field/. fieldFormat];
@@ -236,7 +236,7 @@ GetTreeLevelTerms[lag_]:=Module[{L,Ltree1,Ltree2,Ltree,Lloop},
 	(* get all Lagrangian terms with at most one heavy field *)
 	Ltree1 = Plus@@Cases[
 		L,
-		x_/;Length[Cases[RemovePower[x],f_Field/;GetFields[First@f,Heavy],All]]<=1,
+		x_/;Length[Cases[RemovePower[x],f_Field/;$FieldAssociation[First@f,Heavy],All]]<=1,
 		1
 	];
 	
@@ -246,7 +246,7 @@ GetTreeLevelTerms[lag_]:=Module[{L,Ltree1,Ltree2,Ltree,Lloop},
 		x_/;(
 		(Length[Cases[RemovePower[x],_Field,All]]==2)
 		&&
-		MatchQ[Cases[RemovePower[x],f_Field/;GetFields[First@f,Heavy]:>First[f],All],{y1_,y2_}/;((!FreeQ[Ltree1,y1,All])&&(!FreeQ[Ltree1,y2,All]))]),
+		MatchQ[Cases[RemovePower[x],f_Field/;$FieldAssociation[First@f,Heavy]:>First[f],All],{y1_,y2_}/;((!FreeQ[Ltree1,y1,All])&&(!FreeQ[Ltree1,y2,All]))]),
 		1
 	];
 	
@@ -277,7 +277,7 @@ GetTreeLevelTerms[lag_]:=Module[{L,Ltree1,Ltree2,Ltree,Lloop},
 GaugeCouplingsFromRep::usage= "returns the gauge coupling corresponding to the gauge group of a given representation.";
 
 
-GaugeCouplingsFromRep[rep_]:= GetGaugeGroups[Head[rep],Coupling][]
+GaugeCouplingsFromRep[rep_]:= $GaugeGroups[Head[rep],Coupling][]
 
 
 (* ::Text:: *)
@@ -287,7 +287,7 @@ GaugeCouplingsFromRep[rep_]:= GetGaugeGroups[Head[rep],Coupling][]
 GetFieldGaugeReps::usage= "returns all representations of non-Abelian groups under which a given field transforms together with all its charges under Abelian groups.";
 
 
-GetFieldGaugeReps[\[Psi]_]:= GetFields[\[Psi],Indices]~Join~GetFields[\[Psi],Charges]/.Alternatives@@(Keys@GetGlobalGroups[]~Join~Keys@GetFlavorIndices[])->Nothing
+GetFieldGaugeReps[\[Psi]_]:= $FieldAssociation[\[Psi],Indices]~Join~$FieldAssociation[\[Psi],Charges]/.Alternatives@@(Keys@$GlobalGroups~Join~Keys@$FlavorIndices)->Nothing
 
 
 (* ::Text:: *)
@@ -300,7 +300,7 @@ QuadraticCasimir::noCasimir= "The quadratic Casimir could not be de termined for
 
 QuadraticCasimir[rep_]:=If[MemberQ[Keys@GetGroups[],Head[rep]],
 	(* non-Abelian groups *)
-	Casimir2[Head[rep]/.GetGroups[],GetRepresentations[rep,DynkinCoefficients]]
+	Casimir2[Head[rep]/.$Groups,$Representations[rep,DynkinCoefficients]]
 	,
 	(* Abelian groups *)
 	If[MatchQ[rep,(_[n_]/;NumberQ[n])],
@@ -396,9 +396,9 @@ QuarticScalarShift[\[Phi]1_,\[Phi]2_,\[Phi]3_,\[Phi]4_]:= Module[
 		ind3=Cases[\[Phi]3,Index[Except[c1|c2],_],All];
 		ind4=Cases[\[Phi]4,Index[Except[f1|f2],_],All];
 		(* include proper power of gauge couplings *)
-		GetGaugeGroups[gr1,Coupling][]^2*GetGaugeGroups[gr2,Coupling][]^2*
+		$GaugeGroups[gr1,Coupling][]^2*$GaugeGroups[gr2,Coupling][]^2*
 		(* distinguish Abelian and non-Abelian groups *)
-		Switch[{GetGaugeGroups[gr1,Abelian],GetGaugeGroups[gr2,Abelian]},
+		Switch[{$GaugeGroups[gr1,Abelian],$GaugeGroups[gr2,Abelian]},
 			(* {Abelian, Abelian} *)
 			{True,True},
 				(id13$24*includeDeltas[ind1,ind3]*includeDeltas[ind2,ind4]+id14$23*includeDeltas[ind1,ind4]*includeDeltas[ind2,ind3])(

@@ -177,7 +177,7 @@ Options@ EpsExpand= {Order-> 0, Dimensions -> 4};
 
 EpsExpand[expr_, OptionsPattern[]]:= Module[{term, d=OptionValue@Dimensions},
 	Sum[
-		Normal@ Series[term/. SymGammaFactor:> EvaluateGammaFactor/. \[ScriptD]-> d- 2\[Epsilon], {\[Epsilon], 0, OptionValue@Order}]
+		BetterSeries[term/. SymGammaFactor:> EvaluateGammaFactor/. \[ScriptD]-> d- 2\[Epsilon], {\[Epsilon], 0, OptionValue@Order}]
 	, {term, TermsToList@ expr}]
 ]
 
@@ -332,7 +332,7 @@ ToLoopFunctions[propPowers_Association, \[Alpha]_, OptionsPattern[{Dimensions->4
 ]
 
 
-LFFull2LF[full_, OptionsPattern[{Dimensions->4}]]:= Normal@Series[Expand@full/. {\[ScriptD]->OptionValue@Dimensions-2\[Epsilon], LFFull[args__]:> LF[args] + EvaluateLoopFunctions[LF[args], Pole -> True, Dimensions->OptionValue@Dimensions]},{\[Epsilon],0,0}]
+LFFull2LF[full_, OptionsPattern[{Dimensions->4}]]:= BetterSeries[Expand@full/. {\[ScriptD]->OptionValue@Dimensions-2\[Epsilon], LFFull[args__]:> LF[args] + EvaluateLoopFunctions[LF[args], Pole -> True, Dimensions->OptionValue@Dimensions]},{\[Epsilon],0,0}]
 
 
 EvaluateLoopFunctions[LF[denoms_, powers_], opt:OptionsPattern[{Pole->False, Dimensions->4}]]:= 
@@ -407,11 +407,7 @@ CollectMomenta@ expr_:= Module[{out= BetterExpand@ expr},
 LoopMoms[]:= 1;
 
 
-(* ::Text:: *)
-(*Cartesian Loop Momenta contract to Prop3*)
-
-
-LoopMoms@ inds__:= If[EvenQ@ Length@ {inds}, Power[Prop@ 0, -Length@ Cases[{inds},Index[_,Lorentz]]/ 2] *Power[Prop3@ 0, -Length@ Cases[{inds},Index[_,Cartesian]]/ 2]* Power[Prop0@ 0, -Length@ Cases[{inds},Index[_,Temporal]]/ 2] SymmetricLorentzInds@ inds, 0];
+LoopMoms@ inds__:= If[EvenQ@ Length@ {inds}, Power[Prop@ 0, -Length@ Cases[{inds},Index[_,Lorentz]]/ 2] * SymmetricLorentzInds@ inds, 0];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -435,7 +431,7 @@ SymmetricLorentzInds[a_, a_, rest___]:= SymmetricLorentzInds@ rest;
 (*This method only works for non-repeating indices due to behavior of Permutations*)
 SymmetricLorentzIndsReplacement@ lorentzInds___:= Module[{inds, n, symTensor},
 	inds= List@ lorentzInds;
-	n= Length@ DeleteCases[inds,Index[_,Temporal]]/ 2;
+	n= Length@ inds/ 2;
 	symTensor= If[OddQ@ Length@ inds, 0,
 		Plus@@ Times@@@ Apply[Metric,
 			DeleteDuplicatesBy[Partition[#, 2]&/@ Permutations@ inds, (Sort[Sort/@ #] &)], {2}]];
@@ -446,7 +442,7 @@ SymmetricLorentzIndsReplacement@ lorentzInds___:= Module[{inds, n, symTensor},
 SymGammaFactor@ 0= 1;
 
 
-EvaluateGammaFactor@ n_Integer:= EvaluateGammaFactor@ n= Normal@ Series[Gamma[2- \[Epsilon]]/(2^n Gamma[2- \[Epsilon]+ n]), {\[Epsilon], 0, 1}];
+EvaluateGammaFactor@ n_Integer:= EvaluateGammaFactor@ n= BetterSeries[Gamma[2- \[Epsilon]]/(2^n Gamma[2- \[Epsilon]+ n]), {\[Epsilon], 0, 1}];
 
 
 (* ::Subsection:: *)
@@ -509,7 +505,7 @@ SimpTempLFRules[ expr_, OptionsPattern[{Dimensions->4}]]:= Block[{out, d=OptionV
 ]
 
 
-TempLFFiniteExtraction[expr_, OptionsPattern[{Dimensions->4}]]:= Normal@ Series[
+TempLFFiniteExtraction[expr_, OptionsPattern[{Dimensions->4}]]:= BetterSeries[
 		Expand@ expr/. lf_TempLF:> lf + EvaluateLoopFunctions[LF@@ lf, Pole-> True, Dimensions-> OptionValue@Dimensions]
 	, {\[Epsilon], 0, 0}]/. Power[\[Epsilon], -1]-> 0;
 

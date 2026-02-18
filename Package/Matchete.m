@@ -85,6 +85,9 @@ PackageScope["FastExpand"]
 PackageScope["LayeredExpand"]
 
 
+PackageScope["BetterSeries"]
+
+
 PackageScope["MyPrint"]
 
 
@@ -277,6 +280,7 @@ OptionTest[_, Chiral]                        = MatchQ[False|LeftHanded|RightHand
 OptionTest[_, ClosedSpinChains]              = BooleanQ;
 OptionTest[CollectOperators, NormalForm]     = BooleanQ;
 OptionTest[_, ContractedIndices]             = BooleanQ;
+OptionTest[_, "Database"]                    = BooleanQ;
 OptionTest[_, DetailedOutput]                = BooleanQ;
 OptionTest[_, DummyCoefficients]             = BooleanQ;
 OptionTest[_, EffectiveCouplingSymbol]       = StringQ;
@@ -370,9 +374,8 @@ SetAttributes[RemoveAssociatedDownValues, HoldAllComplete];
 
 
 RemoveAssociatedDownValues[func_[arg___]]:= Module[{values},
-	values= Cases[DownValues@ func, 
-		HoldPattern[Verbatim[HoldPattern][func[p:PatternSequence@ arg]]:> _]:> {p}];
-	func[##]=. & @@@ values;
+	DownValues@ func= DeleteCases[DownValues@ func, 
+		HoldPattern[Verbatim[HoldPattern][func[p:PatternSequence@ arg]]:> _]];
 ];
 
 
@@ -584,6 +587,21 @@ LayeredExpand[arg_,depth_]:=LayeredExpand[
 
 (* stop expansion once level 0 is reached *)
 LayeredExpand[arg_,-1]:=arg
+
+
+(* ::Subsection:: *)
+(*Series expansion*)
+
+
+(* ::Text:: *)
+(*Version of the Series function that fixes a bug since Mathematica 14.3*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*BetterSeries*)
+
+
+BetterSeries[f_, {x_, x0_, nmax_}]:= Normal[ Series[f, {x, x0, nmax}] + O[x]^(nmax+1) ]
 
 
 (* ::Subsection:: *)

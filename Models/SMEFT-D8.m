@@ -8,10 +8,10 @@
 (*D=8 Basis of Murphy http://arxiv.org/abs/2005.00059v6 *)
 
 
-ParentModel["SMEFT"]
+ParentModel["SMEFT_Warsaw"]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Couplings*)
 
 

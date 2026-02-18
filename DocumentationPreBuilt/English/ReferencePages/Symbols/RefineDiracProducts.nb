@@ -1,0 +1,265 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Wolfram 14.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       154,          7]
+NotebookDataLength[      9987,        257]
+NotebookOptionsPosition[      6867,        186]
+NotebookOutlinePosition[      9148,        244]
+CellTagsIndexPosition[      9064,        239]
+WindowTitle->RefineDiracProducts
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[GridBox[{
+   {GridBox[{
+      {
+       ItemBox[Cell[BoxData[
+         RowBox[{
+          TemplateBox[{12},
+           "Spacer1"], Cell["MATCHETE SYMBOL", "PacletNameCell",
+           TextAlignment->Center,ExpressionUUID->
+           "447c7ba9-74ae-4e23-9c22-ea77b32d84b8"], 
+          TemplateBox[{8},
+           "Spacer1"]}]],
+         TextAlignment->Center,ExpressionUUID->
+         "3dfa6584-fbdc-4994-8c6c-28731ac3a280"],
+        Background->RGBColor[0.490196, 0.576471, 0.690196],
+        ItemSize->Full], ""}
+     },
+     GridBoxAlignment->{"Rows" -> {{Center}}},
+     GridBoxItemSize->{"Columns" -> {Full, 
+         Scaled[0.02]}, "Rows" -> {{2.5}}}], Cell[TextData[Cell[BoxData[
+     TagBox[
+      ActionMenuBox[
+       FrameBox[Cell[TextData[{
+         "URL",
+         " ",
+         Cell[BoxData[
+          GraphicsBox[
+           {GrayLevel[0.66667], Thickness[0.13], 
+            LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]},
+           AspectRatio->1,
+           ImageSize->20,
+           PlotRange->{{-3, 4}, {-1, 1}}]],ExpressionUUID->
+          "e5499e6c-11ee-4484-8d3e-3db83a42d757"]
+        }],ExpressionUUID->"c769f6dc-7aca-4e77-8f6a-9c20ef051f1e"],
+        StripOnInput->False],{
+       "\"Matchete/ref/RefineDiracProducts\"" :> None, 
+        "\"Copy Wolfram Documentation Center URL\"" :> 
+        CopyToClipboard["Matchete/ref/RefineDiracProducts"], Delimiter, 
+        "\"Copy web URL\"" :> 
+        Module[{DocumentationSearch`Private`nb$}, 
+          DocumentationSearch`Private`nb$ = 
+           NotebookPut[
+            Notebook[{
+              Cell[BoxData[
+                MakeBoxes[
+                 Hyperlink[
+                  "http://reference.wolfram.com/language/Matchete/ref/\
+RefineDiracProducts.html"], StandardForm]], "Input", TextClipboardType -> 
+                "PlainText"]}, Visible -> False]]; 
+          SelectionMove[DocumentationSearch`Private`nb$, All, Notebook]; 
+          FrontEndTokenExecute[DocumentationSearch`Private`nb$, "Copy"]; 
+          NotebookClose[DocumentationSearch`Private`nb$]; Null], 
+        "\"Go to web URL\"" :> 
+        FrontEndExecute[{
+          NotebookLocate[{
+            URL[If[TrueQ[False], 
+                "http://reference.wolfram.com/system-modeler/", 
+                "http://reference.wolfram.com/language/"] <> 
+              "Matchete/ref/RefineDiracProducts" <> ".html"], None}]}]},
+       Appearance->None,
+       MenuAppearance->Automatic,
+       MenuStyle->"URLMenu"],
+      MouseAppearanceTag["LinkHand"]]],
+     LineSpacing->{1.4, 0},ExpressionUUID->
+     "cb9cf723-8ac2-4f09-91be-5707093622c2"]], "AnchorBar",
+     CacheGraphics->False,ExpressionUUID->
+     "a7ad91cf-72ed-4f40-9127-4681da1f470b"]}
+  }]], "AnchorBarGrid",
+ GridBoxOptions->{GridBoxItemSize->{"Columns" -> {
+     Scaled[0.65], {
+      Scaled[0.34]}}, "ColumnsIndexed" -> {}, "Rows" -> {{1.}}, 
+   "RowsIndexed" -> {}}},
+ CellID->1,ExpressionUUID->"cf8eedc9-132b-4d64-9e6c-ec6e6fec1a17"],
+
+Cell["Matchete`", "ContextNameCell",ExpressionUUID->"a23333ec-40bb-4659-9a0e-ee4977b04aa5"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[GridBox[{
+   {Cell[TextData[{
+     Cell[
+     "RefineDiracProducts", "ObjectName",ExpressionUUID->
+      "d23c2926-4797-4df5-a0d9-723b1d881792"],
+     Cell[BoxData[
+      TemplateBox[{8},
+       "Spacer1"]],ExpressionUUID->"2a54d003-3e3c-402a-8a81-60fae3a283e0"],
+     Cell[BoxData[
+     ""], "ObjectNameTranslation",ExpressionUUID->
+      "e506e1ab-6bc7-4a31-90b3-aeb1ee915cfb"]
+    }],ExpressionUUID->"c9e57af3-03fb-4b20-a420-21e94813bbee"], 
+    "\[SpanFromLeft]"}
+  }]], "ObjectNameGrid",ExpressionUUID->"8b5fec9e-d00b-4036-9836-\
+7aae7ba69055"],
+
+Cell[BoxData[GridBox[{
+   {"", Cell[TextData[{
+     Cell[BoxData[
+      RowBox[{
+       TemplateBox[{
+         Cell[
+          TextData["RefineDiracProducts"]], 
+         "paclet:Matchete/ref/RefineDiracProducts", "Matchete Package Symbol"},
+        "PackageLink",
+        BaseStyle->"InlineFormula"], "[", 
+       StyleBox["expr", "TI"], "]"}]], "InlineFormula",
+      FontFamily->"Source Sans Pro",ExpressionUUID->
+      "dd2f84fa-7b3f-4411-8500-8aa119632b19"],
+     "\[LineSeparator]simplifies all Dirac product and matches it into an \
+expression to the basis of completely anti-symmetrized products."
+    }],ExpressionUUID->"f2c28459-8648-4e19-b8ea-dd68ce500f27"]}
+  }]], "Usage",
+ CellID->917682313,ExpressionUUID->"8c482947-0c4e-45f7-b500-38b9433efc29"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ Cell[BoxData[
+  DynamicBox[ToBoxes[
+    If[
+     MatchQ[
+      CurrentValue[
+       EvaluationNotebook[], {
+       TaggingRules, "Openers", "PrimaryExamplesSection"}, Open], 
+      Alternatives[True, Open]], 
+     Style[
+      Graphics[{
+        Thickness[0.18], 
+        RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+        Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+       PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+      0.68 Inherited], 
+     Rotate[
+      Style[
+       Graphics[{
+         Thickness[0.18], 
+         RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+         Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+        PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+       0.68 Inherited], Rational[1, 2] Pi, {-1.65, -1}]]],
+   ImageSizeCache->{
+    13.600000000000001`, {4.251494140625001, 9.348505859375}}]],
+  ExpressionUUID->"02405e9a-5fdd-4293-8dce-14faa6949792"],
+ Cell[BoxData[
+  TemplateBox[{1},
+   "Spacer1"]],ExpressionUUID->"d66f6fee-6bea-4fef-8b0b-22ac1a4ab14b"],
+ "Examples",
+ "\[NonBreakingSpace]\[NonBreakingSpace]",
+ Cell["(0)", "ExampleCount",ExpressionUUID->
+  "dd29172e-6edf-49fb-beaf-2ad898d517e0"]
+}], "PrimaryExamplesSection",
+ WholeCellGroupOpener->True,
+ CacheGraphics->False,
+ CellTags->"PrimaryExamplesSection",
+ CellID->1194913133,ExpressionUUID->"c72352c2-858c-451f-b996-118955f0812d"],
+
+Cell[BoxData[
+ RowBox[{"Needs", "[", "\"\<Matchete`\>\"", "]"}]], "Input", "ExampleInitialization",
+ CellLabel->"In[1]:=",
+ CellID->1097792489,ExpressionUUID->"4bd32bd4-4001-4f20-92bb-175c8329d60e"]
+}, Dynamic[CurrentValue[
+ EvaluationNotebook[], {TaggingRules, "Openers", "PrimaryExamplesSection"}, 
+  Closed]]]],
+
+Cell[" ", "FooterCell",ExpressionUUID->"38856fc9-aeb1-4988-ac0f-540fdee69e13"]
+},
+Saveable->False,
+ScreenStyleEnvironment->"Working",
+WindowSize->{900, 830},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+WindowTitle->"RefineDiracProducts",
+Visible->False,
+TaggingRules->{
+ "ModificationHighlight" -> False, "ColorType" -> "", "LinkTrails" -> "", 
+  "ExampleCounter" -> 1, 
+  "Openers" -> {
+   "PrimaryExamplesSection" -> Open, "ExampleSection" -> {"0" -> Open}, 
+    "AllOptsTable" -> Closed}, "NewStyles" -> True, 
+  "CitationPopupData" -> $Failed, "ShowCitation" -> False, "HasOptions" -> 
+  True, "RootCaptions" -> "", "HeaderCoreAreaLink" -> {}, 
+  "Metadata" -> {
+   "built" -> "{2026, 2, 18, 13, 0, 37.518065}", 
+    "history" -> {"XX", "", "", ""}, "context" -> "Matchete`", 
+    "keywords" -> {}, "specialkeywords" -> {}, 
+    "tutorialcollectionlinks" -> {}, "index" -> True, "label" -> 
+    "Matchete Symbol", "language" -> "en", "paclet" -> "Matchete", "status" -> 
+    "None", "summary" -> 
+    "RefineDiracProducts[expr] simplifies all Dirac product and matches it \
+into an expression to the basis of completely anti-symmetrized products.", 
+    "synonyms" -> {}, "tabletags" -> {}, "title" -> "RefineDiracProducts", 
+    "titlemodifier" -> "", "metadescription" -> "", "windowtitle" -> 
+    "RefineDiracProducts", "type" -> "Symbol", "uri" -> 
+    "Matchete/ref/RefineDiracProducts"}},
+CellContext->"Global`",
+FrontEndVersion->"14.2 for Mac OS X ARM (64-bit) (March 16, 2025)",
+StyleDefinitions->Notebook[{
+   Cell[
+    StyleData[
+    StyleDefinitions -> FrontEnd`FileName[{"Wolfram"}, "Reference.nb"]]], 
+   Cell[
+    StyleData["Input"], CellContext -> "Global`"], 
+   Cell[
+    StyleData["Output"], CellContext -> "Global`"]}, Visible -> False, 
+  FrontEndVersion -> "14.2 for Mac OS X ARM (64-bit) (March 16, 2025)", 
+  StyleDefinitions -> "PrivateStylesheetFormatting.nb"],
+ExpressionUUID->"26c225a6-fcf9-4507-9267-4caaa10cd80b"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "PrimaryExamplesSection"->{
+  Cell[5028, 136, 1438, 38, 34, "PrimaryExamplesSection",ExpressionUUID->"c72352c2-858c-451f-b996-118955f0812d",
+   CellTags->"PrimaryExamplesSection",
+   CellID->1194913133]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"PrimaryExamplesSection", 8864, 232}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[587, 21, 2960, 71, 50, "AnchorBarGrid",ExpressionUUID->"cf8eedc9-132b-4d64-9e6c-ec6e6fec1a17",
+ CellID->1],
+Cell[3550, 94, 91, 0, 22, "ContextNameCell",ExpressionUUID->"a23333ec-40bb-4659-9a0e-ee4977b04aa5"],
+Cell[CellGroupData[{
+Cell[3666, 98, 562, 14, 57, "ObjectNameGrid",ExpressionUUID->"8b5fec9e-d00b-4036-9836-7aae7ba69055"],
+Cell[4231, 114, 760, 17, 106, "Usage",ExpressionUUID->"8c482947-0c4e-45f7-b500-38b9433efc29",
+ CellID->917682313]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5028, 136, 1438, 38, 34, "PrimaryExamplesSection",ExpressionUUID->"c72352c2-858c-451f-b996-118955f0812d",
+ CellTags->"PrimaryExamplesSection",
+ CellID->1194913133],
+Cell[6469, 176, 198, 3, 29, "Input",ExpressionUUID->"4bd32bd4-4001-4f20-92bb-175c8329d60e",
+ CellID->1097792489]
+}, Dynamic[CurrentValue[EvaluationNotebook[], {TaggingRules, "Openers", "PrimaryExamplesSection"}, Closed]]]],
+Cell[6785, 184, 78, 0, 40, "FooterCell",ExpressionUUID->"38856fc9-aeb1-4988-ac0f-540fdee69e13"]
+}
+]
+*)
+

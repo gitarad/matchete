@@ -37,6 +37,7 @@ PackageExport["MapEffectiveCouplings"]
 PackageExport["SortByEFTOrder"]
 PackageExport["KeepTrivalReplacements"]
 PackageExport["AppendEffectiveCouplingsDefs"]
+PackageExport["FactorOutHbar"]
 
 
 PackageExport["ReplaceInLagrangian"]
@@ -168,12 +169,11 @@ SameRuleQ[r_, q_]:=Module[{rx=r,qx=q,tlbl,rd},
 CouplingNameFromOperator[op:(_AtomicOp|_CompOp), couplingstring_]:=Module[
 	{fieldtally,opdevcount,baseString,incr=1,prettylabel,temp},
 		(* fields appearing - we want FS objects to appear here as well hence convert to Operator *)
-		fieldtally = Tally@Cases[(*Operator@RelabelIndices@AtomicToNormalForm*)AtomicToOperatorForm@op,Field[f_,__]|FieldStrength[f_,__]:> f,Infinity];
+		fieldtally = Tally@Cases[AtomicToOperatorForm@op,Field[f_,__]|FieldStrength[f_,__]:> f,Infinity]/.count_?NumberQ :> 1/Length@TermsToList@AtomicToOperatorForm@op*count;
 		(* number of derivatives minus (twice) number of FS objects *)
 		opdevcount = op[[Switch[Head@ op, AtomicOp, 1, CompOp, 2],2]] - 
-					2*Length@Cases[(*Operator@RelabelIndices@AtomicToNormalForm*)AtomicToOperatorForm@op,_FieldStrength,Infinity] - 
-					2*Length@Cases[(*Operator@RelabelIndices@AtomicToNormalForm*)AtomicToOperatorForm@op,EoM[Field[_,_Vector,___]],Infinity];
-
+					2*(Length@Cases[AtomicToOperatorForm@op,_FieldStrength,Infinity] + Length@Cases[AtomicToOperatorForm@op,EoM[Field[_,_Vector,___]],Infinity])/Length@TermsToList@AtomicToOperatorForm@op;
+					
 		baseString = couplingstring <> StringJoin[ 
 					ToString/@ Flatten[ 
 								If[MatchQ[#,{_,k_/;k>1}], #, {#[[1]]}]& /@ Join[fieldtally, {If[opdevcount>0,{"D",opdevcount},Nothing]}] ] ];
@@ -244,10 +244,6 @@ SymmetrizeOperatorCoefficient[c_, x:_AtomicOp|_CompOp, OptionsPattern[]]:=Module
 
 ToEffectiveCoupling::IndexProblem="The expression `1` contains a mixture of diagonal and non-diagonal indices and cannot be treated.";
 ToEffectiveCoupling::DeprecatedWarning="Calling ToEffectiveCoupling for OperatorForm is using deprecated code and should not occur!";
-
-(* option Superleading specifies if this coupling acts as a replacement of superleading terms or just as an internal coupling
-   option Internal specifies if this coupling is saved to the temporary internal list or the public one *)
-Options @ ToEffectiveCoupling = { Superleading -> True, Internal -> True, EffectiveCouplingSymbol -> "C", HermitianTerm -> False, OverrideDuplicateCouplingCheck -> False };
 
 (* exp is only the coupling, this expression returns only the effective coupling as well, not the product with the operator *)
 ToEffectiveCoupling[exp_, operator_Operator, OptionsPattern[] ] :=Module[
@@ -488,13 +484,18 @@ ToEffectiveCoupling[exp_, operator_Operator, OptionsPattern[] ] :=Module[
 (*ToEffectiveCoupling (for atomics)*)
 
 
+(* option Superleading specifies if this coupling acts as a replacement of superleading terms or just as an internal coupling
+   option Internal specifies if this coupling is saved to the temporary internal list or the public one *)
+Options @ ToEffectiveCoupling = { Superleading -> True, Internal -> True, EffectiveCouplingSymbol -> "C", HermitianTerm -> False, OverrideDuplicateCouplingCheck -> False, FactorOutHbar -> False };
+
+
 (* exp is only the coupling, this expression returns only the effective coupling as well, not the product with the operator *)
 ToEffectiveCoupling[exp_, operator:(_CompOp|_AtomicOp), OptionsPattern[] ] :=Module[
-		{superleading,internal,power,diagIndex,nDiagIndex,index,indexType,\[Lambda]EFT, outCoupling,temp,inds, pinds, ruleLHS,ruleRHS,hermite, derivativePhase = 1, preRHS,
+		{superleading,internal,power,diagIndex,nDiagIndex,index,indexType,\[Lambda]EFT, outCoupling,temp,inds, pinds, ruleLHS, ruleRHS, hermite, antihermite, derivativePhase = 1, preRHS,
 		preExisting, candidates, candidateLabels, hermitianTerm, pOrder, permConversion, permConversionInv, symmetries = {},
 		tbdassociation, couplingsSameProperty, ignoreduplicates, isdiagonal = False, opFlavProp, openIndices,
 		baseString, prettylabel, couplingstring = "C",opdevcount,
-		IndexNotRelabeled, indCounter1=1, preFactor}
+		IndexNotRelabeled, indCounter1=1, preFactor, hbarCoeff}
 	,
 		(* get options *)
 		hermitianTerm = TrueQ @ OptionValue @ HermitianTerm;
@@ -522,7 +523,7 @@ ToEffectiveCoupling[exp_, operator:(_CompOp|_AtomicOp), OptionsPattern[] ] :=Mod
 		isdiagonal = Join[ ConstantArray[False, Length@nDiagIndex] , ConstantArray[True, Length@diagIndex] ];
 
 		(* determine the phase coming from derivatives *)
-		opdevcount = operator[[Switch[Head@ operator, AtomicOp, 1, CompOp, 2],2]] - 2*Length@Cases[(*Operator@RelabelIndices@AtomicToNormalForm*)AtomicToOperatorForm@operator,_FieldStrength,Infinity];
+		opdevcount = operator[[Switch[Head@ operator, AtomicOp, 1, CompOp, 2],2]] - 2*Length@Cases[AtomicToOperatorForm@operator,_FieldStrength,Infinity]/Length@TermsToList@AtomicToOperatorForm@operator;
 		derivativePhase = I^opdevcount;
 
 		(* power-counting of the object depending on context *)
@@ -586,6 +587,13 @@ ToEffectiveCoupling[exp_, operator:(_CompOp|_AtomicOp), OptionsPattern[] ] :=Mod
 				hermite=True
 			];
 		];
+		
+		(* Sometimes apparently Self-conjugated couplings are actually purely imaginary *)
+		If[hermite===True && SimplifyCouplings[exp+Bar@exp]===0,
+			antihermite=I;
+		,
+			antihermite=1;
+		];
 
 		(* read symmetries from the operator and assign them *)
 		If[Length @ openIndices > 0,
@@ -593,34 +601,21 @@ ToEffectiveCoupling[exp_, operator:(_CompOp|_AtomicOp), OptionsPattern[] ] :=Mod
 		,
 			symmetries = <|{}->1|>
 		];
-		
-		(*(* old version - tests the symmetries of the coupling *)
-		symmetries = Association[Range[Length@index]->1];
-		If[Length @ openIndices > 0,
-			Module[{symrules1,symrules2, ineqp, symrulesrhs, replacedexp},
-				(* we begin by finding the symmetries that we know from the operator *)
-				symrules1 = (permConversionInv[[ #[[1]] ]][[ permConversion ]] -> #[[2]])&/@(opFlavProp[Symmetries]);
-				symrulesrhs = (#[[1]])&/@symrules1;
-				(* now we take the inequivalent permutations, delete the ones that are already in the symmetries list *)
-				ineqp = Select[ ( permConversionInv[[ # ]][[ permConversion ]] )&/@ opFlavProp[InequivalentPermutations], !MemberQ[symrulesrhs,#]& ];
-				(* iterate over all of them and check if they are actual symmetries *)
-				symrules2 = Table[
-					replacedexp = exp/.((#[[1]]->#[[2]])&/@DeleteCases[Transpose[{openIndices , openIndices[[cand]]}], {here_, here_} ]);
-					If[RelabelIndices @ Contract[(replacedexp - exp)((*RelabelIndices@*)AtomicToNormalForm@operator)] === 0,cand -> 1,
-						If[RelabelIndices @ Contract[(replacedexp + exp)((*RelabelIndices@*)AtomicToNormalForm@operator)] === 0, cand -> -1, Nothing]],
-				{cand, ineqp}];
-				symmetries = EchoLabel["Symmetries of the coupling"][Association@@Join[symrules1,symrules2]]
-			];
-		];
-*)
 
 		(* indices for the replacement rules *)
 		indCounter1 = 1;
 		inds = Index[Symbol["i" <> ToString[indCounter1++]],#]&/@ (Last/@index);
 		pinds = IndexToPattern[inds];
+		
+		(* if the coupling is proportional to hbar, factor it out *)
+		If[ MatchQ[exp, hbar*x_] && OptionValue@FactorOutHbar==True,  
+			hbarCoeff= hbar
+		,
+			hbarCoeff= 1			
+		];
 
 		(* setting up the rules *)
-		ruleRHS = derivativePhase SymmetrizeOperatorCoefficient[ exp derivativePhase^-1, operator, CoefficientOnly -> True] /. Thread[index->inds];
+		ruleRHS = derivativePhase SymmetrizeOperatorCoefficient[ exp (hbarCoeff antihermite derivativePhase)^-1, operator, CoefficientOnly -> True] /. Thread[index->inds];
 		
 		(* check if there is a tree-level contribution in exp and try to mimic index ordering from there *)
 		
@@ -715,7 +710,7 @@ ToEffectiveCoupling[exp_, operator:(_CompOp|_AtomicOp), OptionsPattern[] ] :=Mod
 		
 		If[superleading, AppendTo[$TempSuperLeadingCouplings,temp];];
 		
-		Return[outCoupling]
+		Return[hbarCoeff antihermite outCoupling]
 	]
 
 
@@ -764,7 +759,7 @@ ToEffectiveCoupling[exp_, operator:AtomicOp[{{},4},_,{}], OptionsPattern[] ]:=Mo
 	,
 		(* match the expression to the form -1/4g^2 F^2 (or -1/2g^2 F.G) *)
 		(* Simplify the Sqrt[c^2] from the series of the gauge couplings *)
-		ceff = Assuming[0 < hbar < 1, Normal@ Series[Sqrt[(-1/4)/exp],{hbar,0,1}]]/. 
+		ceff = Assuming[0 < hbar < 1, BetterSeries[Sqrt[(-1/4)/exp],{hbar,0,1}]]/. 
 			Power[Power[c:Coupling[_, {}, 0], 2], Rational[n_Integer, 2]]:> c^n
 	];
 
@@ -1041,7 +1036,7 @@ ReplaceEffectiveCouplings[inputL_, labels_, OptionsPattern[]] := Module[{L = HcE
   TempCouplingRulesTree = TempCouplingRules /. Times[hbar, ___] -> 0;
   
   (* Perform replacements and expand result to drop remaining hbar^2 conributions *)
-  Normal@Series[FastExpand[LagTree //. TempCouplingRules], {hbar, 0, 1}] + FastExpand[LagLoop //. TempCouplingRulesTree]
+  BetterSeries[FastExpand[LagTree //. TempCouplingRules], {hbar, 0, 1}] + FastExpand[LagLoop //. TempCouplingRulesTree]
   
 ]
 
@@ -1110,7 +1105,7 @@ IntroduceDummyCoefficients[L_]:=Module[{tL, L0, tLHcTerms, tLHTerms},
 (*IntroduceEffectiveCouplings - Effective couplings for the final Lagrangian*)
 
 
-Options @ IntroduceEffectiveCouplings = {EffectiveCouplingSymbol -> "C", OverrideDuplicateCouplingCheck -> False};
+Options @ IntroduceEffectiveCouplings = {EffectiveCouplingSymbol -> "C", OverrideDuplicateCouplingCheck -> False, FactorOutHbar -> True};
 
 
 IntroduceEffectiveCouplings[L_ , OptionsPattern[]] := Module[{L0, LHcTerms, LHTerms, noCouplingTerms},
@@ -1126,8 +1121,8 @@ IntroduceEffectiveCouplings[L_ , OptionsPattern[]] := Module[{L0, LHcTerms, LHTe
 	LHcTerms = Total @ Cases[L0, _HcTerms] /. HcTerms -> Identity;
 	LHTerms  = Total[ L0 /. _HcTerms -> 0 ];
 
-	LHcTerms = LHcTerms /. (x:(_AtomicOp|_CompOp)) * c_ :> x ToEffectiveCoupling[c, x, Superleading -> False, Internal -> False, HermitianTerm -> False , EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol] , OverrideDuplicateCouplingCheck -> OptionValue[OverrideDuplicateCouplingCheck] ];
-	LHTerms  = LHTerms  /. (x:(_AtomicOp|_CompOp)) * c_ :> x ToEffectiveCoupling[c, x, Superleading -> False, Internal -> False, HermitianTerm -> True , EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol] , OverrideDuplicateCouplingCheck -> OptionValue[OverrideDuplicateCouplingCheck] ];
+	LHcTerms = LHcTerms /. (x:(_AtomicOp|_CompOp)) * c_ :> x ToEffectiveCoupling[c, x, Superleading -> False, Internal -> False, HermitianTerm -> False , EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol] , OverrideDuplicateCouplingCheck -> OptionValue[OverrideDuplicateCouplingCheck], FactorOutHbar -> OptionValue@ FactorOutHbar];
+	LHTerms  = LHTerms  /. (x:(_AtomicOp|_CompOp)) * c_ :> x ToEffectiveCoupling[c, x, Superleading -> False, Internal -> False, HermitianTerm -> True , EffectiveCouplingSymbol -> OptionValue[EffectiveCouplingSymbol] , OverrideDuplicateCouplingCheck -> OptionValue[OverrideDuplicateCouplingCheck], FactorOutHbar -> OptionValue@ FactorOutHbar];
 
 	HcTerms[ RelabelIndices@AtomicToNormalForm @ LHcTerms ] + RelabelIndices@AtomicToNormalForm @ LHTerms + noCouplingTerms
 ]
@@ -1171,7 +1166,7 @@ IntroduceEffectiveMasses[L_ , OptionsPattern[]] := Module[{L0, LHcTerms, LHTerms
 			term (*ignore mass mixing terms*)
 			,
 			field = First@ field;
-			prop = GetFields[field];
+			prop = $FieldAssociation[field];
 			(* only chiral fermions have non-hermitian mass terms *)
 			If[prop[Type]===Fermion && (!prop[SelfConjugate]) && MatchQ[prop[Chiral], LeftHanded|RightHanded],
 				If[MatchQ[term,-(1/2)*_Coupling*_Operator],
@@ -1192,7 +1187,7 @@ IntroduceEffectiveMasses[L_ , OptionsPattern[]] := Module[{L0, LHcTerms, LHTerms
 			term (*ignore mass mixing terms*)
 			,
 			field = First@ field;
-			prop = GetFields[field];
+			prop = $FieldAssociation[field];
 			Switch[prop[Type],
 				Scalar,
 					If[prop[SelfConjugate],
@@ -1271,9 +1266,9 @@ ShiftRenCouplings[Lag_,OptionsPattern[]]:=Module[
 		- loop corrections: 
 			only tree-level couplings get shifted;
 	*)
-	(*dropGaugeCouplings = (Power[Coupling[#,___],n_/;n>1]->0)&/@Table[GetGaugeGroups[group][Coupling],{group,Keys@GetGaugeGroups[]}];*)
+	(*dropGaugeCouplings = (Power[Coupling[#,___],n_/;n>1]->0)&/@Table[$GaugeGroups[group][Coupling],{group,Keys@$GaugeGroups}];*)
 	(* the rule below ensures that all positive powers of gauge couplings are ignored for the redefinition *)
-	dropGaugeCouplings = (Except[Power[Coupling[#,___],n_/;n<0], _[___,Coupling[#,___],___]]->0)&/@Table[GetGaugeGroups[group][Coupling],{group,Keys@GetGaugeGroups[]}];
+	dropGaugeCouplings = (Except[Power[Coupling[#,___],n_/;n<0], _[___,Coupling[#,___],___]]->0)&/@Table[$GaugeGroups[group][Coupling],{group,Keys@$GaugeGroups}];
 	LEFTRen            = CollectOperators[SeriesEFT[Lag/.hbar->0, EFTOrder->4], NormalForm->False, Simplify->False]/. dropGaugeCouplings;
 	(*TruncateOperator admits also higher-EFT order  corrections to marginal operators*)
 	LEFTCorrections    = CollectOperators[Operator[Lag]/.op_Operator:> TruncateOperator[op,4], NormalForm->False, Simplify->False];
@@ -1284,7 +1279,7 @@ ShiftRenCouplings[Lag_,OptionsPattern[]]:=Module[
 	
 	(* Define effective couplings that absorb the corrections after the shift *)
 	OldCp           = $TempCouplings;
-	LEFTCorrections = IntroduceEffectiveCouplings[LEFTCorrections(*,OverrideDuplicateCouplingCheck->True*),EffectiveCouplingSymbol->"c"];
+	LEFTCorrections = IntroduceEffectiveCouplings[LEFTCorrections(*,OverrideDuplicateCouplingCheck->True*),EffectiveCouplingSymbol->"c", FactorOutHbar->False];
 	NewCp           = Complement[$TempCouplings,OldCp];	
 	
 	(* Get rules to substitute original couplings for the new effective couplings [at loop and tree level] *)
@@ -1299,7 +1294,7 @@ ShiftRenCouplings[Lag_,OptionsPattern[]]:=Module[
 	
 	(* substitute in replacments *)
 	LagTree = LagTree/. (*Account for inverse gauge couplings: consider implementing manual expansion if performance issues arise*)
-		g:Power[Coupling[_, {}, 0], -2]:> Normal@ Series[g/. RepRules, {hbar, 0, 1}]/. 
+		g:Power[Coupling[_, {}, 0], -2]:> BetterSeries[g/. RepRules, {hbar, 0, 1}]/. 
 		RepRules/.RepRulesTree;
 	LagLoop = LagLoop/.RepRulesTree;
 	
@@ -1355,14 +1350,14 @@ ShiftRenCouplingsInMC[lagTarget_, matchingCond_, OptionsPattern[]]:= Module[
 	
 	(* remove (non-kinetic) terms that cannot be shifted without redfining gauge coupings *)
 	(* the rule below ensures that all negative powers of gauge couplings are ignored for the redefinition *)
-	dropGaugeCouplings= (Except[Power[Coupling[#,___],n_/;n<0], _[___,Coupling[#,___],___]]->0)&/@Table[GetGaugeGroups[group][Coupling],{group,Keys@GetGaugeGroups[]}];
+	dropGaugeCouplings= (Except[Power[Coupling[#,___],n_/;n<0], _[___,Coupling[#,___],___]]->0)&/@Table[$GaugeGroups[group][Coupling],{group,Keys@$GaugeGroups}];
 	(* select operator with tree-level contribution that is not proportional to some power of gauge couplings *)
 	RenOpList= Cases[LEFTRen/. hbar->0/. dropGaugeCouplings, _Operator, All];
 	LEFTRen = CollectOperators[LEFTRen/. x_Operator?(!MemberQ[RenOpList,#]&):> 0, Simplify->False];
 	
 	(* Define effective couplings that absorb the corrections after the shift *)
 	OldCp           = $TempCouplings;
-	LEFTCorrections = IntroduceEffectiveCouplings[LEFTRen, EffectiveCouplingSymbol->"c"];
+	LEFTCorrections = IntroduceEffectiveCouplings[LEFTRen, EffectiveCouplingSymbol->"c", FactorOutHbar->False];
 	NewCp           = Complement[$TempCouplings, OldCp];
 	
 	(* Get rules to substitute original couplings for the new effective couplings [at loop and tree level] *)
@@ -1380,7 +1375,7 @@ ShiftRenCouplingsInMC[lagTarget_, matchingCond_, OptionsPattern[]]:= Module[
 			
 			(* substitute in replacments *)
 			mcTree = mcTree/. (*Account for inverse gauge couplings: consider implementing manual expansion if performance issues arise*)
-				g:Power[Coupling[_, {}, 0], n_/;n<0]:> Normal@ Series[g/. RepRules, {hbar, 0, 1}]/. RepRules/. RepRulesTree;
+				g:Power[Coupling[_, {}, 0], n_/;n<0]:> BetterSeries[g/. RepRules, {hbar, 0, 1}]/. RepRules/. RepRulesTree;
 			(* the RHS of loop replacements might again contain the params, thus a 2nd tree replacement is required *)
 			mcLoop = mcLoop/. RepRulesTree;
 			
@@ -1633,7 +1628,7 @@ MapEffectiveCouplingsInternal[Lag_,TargetLag_,OptionsPattern[]]:=Module[
 
 	(* use dummy coefficients for input Lagrangian *)
 	lagInput = OptionalMonitor[OptionValue@Verbose,
-		IntroduceEffectiveCouplings[Lag,OverrideDuplicateCouplingCheck->True,EffectiveCouplingSymbol->"TEMP"]
+		IntroduceEffectiveCouplings[Lag,OverrideDuplicateCouplingCheck->True,EffectiveCouplingSymbol->"TEMP",FactorOutHbar->False]
 	,"Introducing dummy coefficients to simplify the input Lagrangian \[Ellipsis]"];
 	
 	(* determine newly introduced effective couplings *)
@@ -1825,8 +1820,8 @@ SymmetrizeCouplingRules[rules_]:=Module[{ruleAsso=Association@rules, couplings, 
 		rhs=(
 		coup=#;
 		indices=Part[coup,2]/. Verbatim[Pattern][i1_,Blank[]]:>i1;
-		sym=GetCouplings[First@coup][Symmetries];
-		hcsym=GetCouplings[First@coup][SelfConjugate];
+		sym=$CouplingAssociation[First@coup, Symmetries];
+		hcsym=$CouplingAssociation[First@coup, SelfConjugate];
 		res= 1/Length@sym Total[(sym[#]ruleAsso[coup]/.AssociationThread[indices,indices[[#]]])&/@(Keys@sym)];
 		res=Switch[hcsym, 
 					True, 1/2 (res+Bar@res),
@@ -2009,9 +2004,9 @@ ReplaceInLagrangian[expr_, rules:{(_Rule|_RuleDelayed)...}, OptionsPattern[]]? O
 	(*out= HcExpand[out];*)
 	
 	(* hbar expansion to account for possible powers in hbar in the denominator *)
-	(*out= Normal@EchoTiming@Series[out,{hbar,0,1}];*) (* this has a slow performance, see next 2 lines for improved version *)
+	(*out= EchoTiming@BetterSeries[out,{hbar,0,1}];*) (* this has a slow performance, see next 2 lines for improved version *)
 	out= LagrangianExpand[out];
-	out= If[FreeQ[Denominator@#,hbar,All], #, Normal@Series[#,{hbar,0,1}]]&/@ out;
+	out= If[FreeQ[Denominator@#,hbar,All], #, BetterSeries[#,{hbar,0,1}]]&/@ out;
 	
 	If[OptionValue@ Simplify, 
 		GreensSimplify@ out

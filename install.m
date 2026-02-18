@@ -90,16 +90,41 @@ InstallMatchete[]:=Module[{yn,packageName,packageDir,MinVersion,MatcheteLink,Que
 	LinkDocu[packageDir];
 	
 	(*Remove development folders*)
-	Quiet@ DeleteDirectory[FileNameJoin[{packageDir, "DocumentationSource"}], DeleteContents-> True];
-	Quiet@ DeleteDirectory[FileNameJoin[{packageDir, "Validation"}], DeleteContents-> True];
-	Quiet@ DeleteDirectory[FileNameJoin[{packageDir, "Package", "DevTools"}], DeleteContents-> True];
+	Quiet@ DeleteDirectory[FileNameJoin[{packageDir, "DocumentationSource"}],   DeleteContents-> True];
+	Quiet@ DeleteDirectory[FileNameJoin[{packageDir, "DocumentationPreBuilt"}], DeleteContents-> True];
+	Quiet@ DeleteDirectory[FileNameJoin[{packageDir, "Validation"}],            DeleteContents-> True];
+	Quiet@ DeleteDirectory[FileNameJoin[{packageDir, "Package", "DevTools"}],   DeleteContents-> True];
 	
 	Print["Installation complete!"];
 ];
 
 
-LinkDocu[packageDir_]:=Module[{},	
+InstallMatchete::noDocu= "No pre-built documentation was found.";
+
+
+LinkDocu[packageDir_]:=Module[{},
+	(* check that pre-built documentation is present *)
+	If[!DirectoryQ[FileNameJoin@{packageDir,"DocumentationPreBuilt"}],
+		Message[InstallMatchete::noDocu];
+		Return[]
+	];
+	
+	(* if already present delete current documentation directory *)
+	Quiet[
+		DeleteDirectory[FileNameJoin@{packageDir,"Documentation"}, DeleteContents-> True]
+		,{DeleteDirectory::nodir}
+	];
+	
+	(* copy pre-built documentation *)
+	CopyDirectory[
+		FileNameJoin@{packageDir,"DocumentationPreBuilt"},
+		FileNameJoin@{packageDir,"Documentation"}
+	];
+	
+	(* load matchete *)
 	Get[FileNameJoin[{packageDir,"Kernel","init.m"}]];
+	
+	(* link the new documentation *)
 	Matchete`PackageScope`LinkDocumentation[];
 ]
 

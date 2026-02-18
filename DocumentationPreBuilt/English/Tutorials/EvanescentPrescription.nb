@@ -1,0 +1,246 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Wolfram 14.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       154,          7]
+NotebookDataLength[      9174,        238]
+NotebookOptionsPosition[      6123,        167]
+NotebookOutlinePosition[      8327,        223]
+CellTagsIndexPosition[      8284,        220]
+WindowTitle->EvanescentPrescription
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[GridBox[{
+   {GridBox[{
+      {
+       ItemBox[Cell[BoxData[
+         RowBox[{
+          TemplateBox[{12},
+           "Spacer1"], Cell["MATCHETE TECH NOTE", "PacletNameCell",
+           TextAlignment->Center,ExpressionUUID->
+           "3a6ee45f-7586-4af1-9b31-7c2476c55db4"], 
+          TemplateBox[{8},
+           "Spacer1"]}]],
+         TextAlignment->Center,ExpressionUUID->
+         "3d3014d6-8300-4fc0-9421-bc68ef844ebf"],
+        Background->RGBColor[
+         0.3843137254901961, 0.4627450980392157, 0.7019607843137254],
+        ItemSize->Full], ""}
+     },
+     GridBoxAlignment->{"Rows" -> {{Center}}},
+     GridBoxItemSize->{"Columns" -> {Full, 
+         Scaled[0.02]}, "Rows" -> {{2.5}}}], Cell[TextData[{
+     Cell[BoxData[
+      TagBox[
+       ActionMenuBox[
+        FrameBox[Cell[TextData[{
+          "Related Guides",
+          " ",
+          Cell[BoxData[
+           GraphicsBox[
+            {GrayLevel[0.66667], Thickness[0.13], 
+             LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]},
+            AspectRatio->1,
+            ImageSize->20,
+            PlotRange->{{-3, 4}, {-1, 1}}]],ExpressionUUID->
+           "189ed829-624c-434a-979e-be068abdd662"]
+         }],ExpressionUUID->"4f5291b2-2279-49bd-82c1-998c2328dd68"],
+         StripOnInput->False],{
+        "\"Matchete\"" :> 
+         Documentation`HelpLookup["paclet:Matchete/guide/Matchete"]},
+        Appearance->None,
+        MenuAppearance->Automatic,
+        MenuStyle->"TutorialMoreAboutSection"],
+       MouseAppearanceTag["LinkHand"]]],
+      LineSpacing->{1.4, 0},ExpressionUUID->
+      "fe7acfe4-d51b-44cf-a614-811539260a22"],
+     "\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\
+\[ThickSpace]",
+     Cell[BoxData[
+      TagBox[
+       ActionMenuBox[
+        FrameBox[Cell[TextData[{
+          "URL",
+          " ",
+          Cell[BoxData[
+           GraphicsBox[
+            {GrayLevel[0.66667], Thickness[0.13], 
+             LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]},
+            AspectRatio->1,
+            ImageSize->20,
+            PlotRange->{{-3, 4}, {-1, 1}}]],ExpressionUUID->
+           "be49c15d-5e26-4387-adec-1b29ae1fdd21"]
+         }],ExpressionUUID->"c608cccf-30be-4125-8a84-54a041eae538"],
+         StripOnInput->False],{
+        "\"Matchete/tutorial/EvanescentPrescription\"" :> None, 
+         "\"Copy Wolfram Documentation Center URL\"" :> 
+         CopyToClipboard["Matchete/tutorial/EvanescentPrescription"], 
+         Delimiter, "\"Copy web URL\"" :> 
+         Module[{DocumentationSearch`Private`nb$}, 
+           DocumentationSearch`Private`nb$ = 
+            NotebookPut[
+             Notebook[{
+               Cell[BoxData[
+                 MakeBoxes[
+                  Hyperlink[
+                   "http://reference.wolfram.com/language/Matchete/tutorial/\
+EvanescentPrescription.html"], StandardForm]], "Input", TextClipboardType -> 
+                 "PlainText"]}, Visible -> False]]; 
+           SelectionMove[DocumentationSearch`Private`nb$, All, Notebook]; 
+           FrontEndTokenExecute[DocumentationSearch`Private`nb$, "Copy"]; 
+           NotebookClose[DocumentationSearch`Private`nb$]; Null], 
+         "\"Go to web URL\"" :> 
+         FrontEndExecute[{
+           NotebookLocate[{
+             URL[If[TrueQ[False], 
+                 "http://reference.wolfram.com/system-modeler/", 
+                 "http://reference.wolfram.com/language/"] <> 
+               "Matchete/tutorial/EvanescentPrescription" <> ".html"], 
+              None}]}]},
+        Appearance->None,
+        MenuAppearance->Automatic,
+        MenuStyle->"URLMenu"],
+       MouseAppearanceTag["LinkHand"]]],
+      LineSpacing->{1.4, 0},ExpressionUUID->
+      "bba09023-d84d-4432-b839-c34432107aa3"]
+    }], "AnchorBar",
+     CacheGraphics->False,ExpressionUUID->
+     "4e99ba8d-4f10-48c6-b8a7-1b7ce6be712c"]}
+  }]], "AnchorBarGrid",
+ GridBoxOptions->{GridBoxItemSize->{"Columns" -> {
+     Scaled[0.65], {
+      Scaled[0.34]}}, "ColumnsIndexed" -> {}, "Rows" -> {{1.}}, 
+   "RowsIndexed" -> {}}},
+ CellID->1,ExpressionUUID->"d95317ef-97b4-4a56-a00e-89ede885be7d"],
+
+Cell[CellGroupData[{
+
+Cell["EvanescentPrescription", "TechNoteTitle",
+ CellID->908752986,ExpressionUUID->"36394de8-f91d-4533-a72b-cb8c1f858efa"],
+
+Cell["TBD", "TechNoteText",
+ CellID->507738238,ExpressionUUID->"f0e17e6a-f1f7-4969-9303-08503aea08a9"],
+
+Cell["XXXX.", "TechNoteCaption",
+ CellID->1679822954,ExpressionUUID->"3d93792a-bad7-47a5-89c8-40c1f922c316"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["XXXX"], "Input",
+ CellLabel->"In[1]:=",
+ CellID->1806634381,ExpressionUUID->"07d5b10a-468c-4eb7-a052-0ef1aa48e2eb"],
+
+Cell[BoxData["XXXX"], "Output",
+ CellLabel->"Out[1]=",
+ CellID->832756534,ExpressionUUID->"4b3666ac-0a7d-46a1-86fc-6401b2ccd767"]
+}, Open  ]],
+
+Cell[BoxData[GridBox[{
+   {
+    DynamicBox[FEPrivate`ImportImage[
+      FrontEnd`FileName[{"Documentation", "FooterIcons"}, "RelatedGuide.png"]],
+     ImageSizeCache->{50., {26.47265625, 33.52734375}}], GridBox[{
+      {
+       StyleBox[
+        RowBox[{"Related", " ", "Guides"}], "TutorialMoreAboutSection"]},
+      {
+       RowBox[{
+       "\[FilledVerySmallSquare]", Cell[TextData[ButtonBox["Matchete",
+         BaseStyle->"Link",
+         ButtonData->"paclet:Matchete/guide/Matchete"]], "TutorialMoreAbout",
+         ExpressionUUID->"436e0526-3713-48e0-88eb-578040d4b376"]}]}
+     }]}
+  }]], "TutorialMoreAboutSection",ExpressionUUID->"027b6a58-85c3-4c67-942c-\
+a44a52a5e277"]
+}, Open  ]],
+
+Cell[" ", "FooterCell",ExpressionUUID->"375acfde-c8fe-416e-bc05-b497b58fe7c3"]
+},
+Saveable->False,
+ScreenStyleEnvironment->"Working",
+WindowSize->{900, 830},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+WindowTitle->"EvanescentPrescription",
+Visible->False,
+TaggingRules->{
+ "ModificationHighlight" -> False, "ColorType" -> "", "LinkTrails" -> "", 
+  "ExampleCounter" -> 1, 
+  "Openers" -> {
+   "PrimaryExamplesSection" -> Open, "ExampleSection" -> {"0" -> Open}}, 
+  "NewStyles" -> True, "CitationPopupData" -> {$Failed, ""}, "ShowCitation" -> 
+  False, "RootCaptions" -> "", "HeaderCoreAreaLink" -> {}, 
+  "Metadata" -> {
+   "built" -> "{2026, 2, 18, 13, 0, 57.393771}", 
+    "history" -> {"XX", "", "", ""}, "context" -> "Matchete`", 
+    "keywords" -> {"Evanescent", "Prescription", "Dirac", "Physical "}, 
+    "specialkeywords" -> {}, "tutorialcollectionlinks" -> {}, "index" -> True,
+     "label" -> "Matchete Tech Note", "language" -> "en", "paclet" -> 
+    "Matchete", "status" -> "None", "summary" -> "TBD", "synonyms" -> {}, 
+    "tabletags" -> {}, "title" -> "EvanescentPrescription", "titlemodifier" -> 
+    "", "metadescription" -> "", "windowtitle" -> "EvanescentPrescription", 
+    "type" -> "Tech Note", "uri" -> 
+    "Matchete/tutorial/EvanescentPrescription"}},
+FrontEndVersion->"14.2 for Mac OS X ARM (64-bit) (March 16, 2025)",
+StyleDefinitions->Notebook[{
+   Cell[
+    StyleData[
+    StyleDefinitions -> FrontEnd`FileName[{"Wolfram"}, "Reference.nb"]]], 
+   Cell[
+    StyleData["Input"], CellContext -> Notebook], 
+   Cell[
+    StyleData["Output"], CellContext -> Notebook], 
+   Cell[
+    StyleData["TutorialMoreAboutSection"], 
+    CellGroupingRules -> {"SectionGrouping", 30}], 
+   Cell[
+    StyleData["RelatedTutorialsSection"], 
+    CellGroupingRules -> {"SectionGrouping", 30}], 
+   Cell[
+    StyleData["TutorialRelatedLinksSection"], 
+    CellGroupingRules -> {"SectionGrouping", 30}]}, Visible -> False, 
+  FrontEndVersion -> "14.2 for Mac OS X ARM (64-bit) (March 16, 2025)", 
+  StyleDefinitions -> "PrivateStylesheetFormatting.nb"],
+ExpressionUUID->"b575a86d-ff56-4fcf-b396-f5e6ba6e839e"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[590, 21, 4091, 101, 50, "AnchorBarGrid",ExpressionUUID->"d95317ef-97b4-4a56-a00e-89ede885be7d",
+ CellID->1],
+Cell[CellGroupData[{
+Cell[4706, 126, 122, 1, 67, "TechNoteTitle",ExpressionUUID->"36394de8-f91d-4533-a72b-cb8c1f858efa",
+ CellID->908752986],
+Cell[4831, 129, 102, 1, 34, "TechNoteText",ExpressionUUID->"f0e17e6a-f1f7-4969-9303-08503aea08a9",
+ CellID->507738238],
+Cell[4936, 132, 108, 1, 30, "TechNoteCaption",ExpressionUUID->"3d93792a-bad7-47a5-89c8-40c1f922c316",
+ CellID->1679822954],
+Cell[CellGroupData[{
+Cell[5069, 137, 129, 2, 28, "Input",ExpressionUUID->"07d5b10a-468c-4eb7-a052-0ef1aa48e2eb",
+ CellID->1806634381],
+Cell[5201, 141, 129, 2, 36, "Output",ExpressionUUID->"4b3666ac-0a7d-46a1-86fc-6401b2ccd767",
+ CellID->832756534]
+}, Open  ]],
+Cell[5345, 146, 681, 16, 112, "TutorialMoreAboutSection",ExpressionUUID->"027b6a58-85c3-4c67-942c-a44a52a5e277"]
+}, Open  ]],
+Cell[6041, 165, 78, 0, 40, "FooterCell",ExpressionUUID->"375acfde-c8fe-416e-bc05-b497b58fe7c3"]
+}
+]
+*)
+

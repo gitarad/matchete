@@ -177,12 +177,11 @@ GAction[lInds_List, field:(Field|FieldStrength)[lab_, _, inds_, devs_]]:= Module
 		indc, out, ind, rep, j, A},	
 	
 	(*Abelian FS*)
-	charges= GetFields[lab, Charges];
+	charges= $FieldAssociation[lab, Charges];
 	gaugeCharges= Cases[charges, _? (MemberQ[Keys@$GaugeGroups,Head@ #] &)];
 	out= Sum[
 			{group, charge}= {Head@ charge, First@ charge};
 			charge 
-			(*$GaugeGroups[group, Coupling][] (*added*)*)
 			FieldStrength[$GaugeGroups[group, Field], lInds, {}, {}]
 		, {charge, gaugeCharges}]* field;
 	
@@ -198,7 +197,6 @@ GAction[lInds_List, field:(Field|FieldStrength)[lab_, _, inds_, devs_]]:= Module
 				- CG[gen@ rep, {Index[A, group@ adj], indc, ind}],
 				CG[gen@ rep, {Index[A, group@ adj], ind, indc}] 
 			]]
-		(*$GaugeGroups[group, Coupling][] (*added*)*)
 		FieldStrength[$GaugeGroups[group, Field], lInds, {Index[A, group@ adj]}, {}] 
 		(field/. ind-> Bar@ indc)
 	, {ind, gaugeInds}];

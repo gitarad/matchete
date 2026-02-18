@@ -115,59 +115,6 @@ KineticTermQ[(c_:1)q_Operator]:=Module[{ot1,ot2},
 KineticTerms[L_]:=Operator[L]//.o_Operator /;(!KineticTermQ[o]):>0
 
 
-(* ::Subsection:: *)
-(*Utility functions*)
-
-
-(* ::Subsubsection::Closed:: *)
-(*CoefficientOperator*)
-
-
-CoefficientOperator[0,_] = 0;
-CoefficientOperator[a_Plus,b_]:=(CoefficientOperator[#,b]& /@ a)
-CoefficientOperator[a_ n_^(m_/;m<0),b_]:=(CoefficientOperator[a,b]n^m)
-CoefficientOperator[a_,b_]/;(Head[a]=!= Plus&&(!FreeQ[a, Plus])):=(CoefficientOperator[Expand[a],b])
-
-CoefficientOperator[(cin_:1)oin_Operator, b_]:=Module[{c,o,internalize,bPattern, rule={}, repcounter=0, closedChains},
-
-	c=cin;
-	o=oin;
-
-	If[(LOpenSpinChainQ@ OperatorToNormalForm[o] && LOpenSpinChainQ@ b)||(ROpenSpinChainQ@ OperatorToNormalForm[o] && ROpenSpinChainQ@ b),
-		o = Operator[OperatorToNormalForm[o] //.x_?ClosedSpinChainQ:>(c=c*x;1)]
-	];
-
-	internalize[m_]:=Symbol[SymbolName[m]<>"int"];
-	internalize[Index[m_, t_]]:=Index[internalize[m],t];
-
-	bPattern=b/. Index[mu_, t_]:> Index[Pattern[Evaluate@internalize[mu], _],t];
-
-	AppendTo[rule,RuleDelayed[Condition[bPattern,repcounter++==0],Evaluate[(Times@@Table[Delta[k,internalize[k]],{k,FindOpenIndices[b]}])]]];
-
-	Operator[ ContractDelta[OperatorToNormalForm[If[FreeQ[o,bPattern],0,c*ReplaceAll[o,rule]], Unique -> True]]]
-]
-
-
-(* ::Subsubsection::Closed:: *)
-(*Anomaly Factors*)
-
-
-AnomalyFactor[field_]:=Module[{grAbel,grNAbel,dims,charges,tempInd,tI,tB,tJ,tA,t\[Mu],t\[Nu],t\[Rho],t\[Sigma]},
-	grAbel = Head/@ GetFields[field, Charges];
-	grNAbel = DeleteDuplicates@ DeleteCases[GroupFromRep/@GetFields[field ,Indices],None];
-
-	(* dimensionality of each represenation including a 1 for the abelian *)
-	dims = Join[ConstantArray[1,Length@grAbel],Table[Delta[#,#]&@Index[tempInd,FirstCase[GetFields[field, Indices], _gr]],{gr,grNAbel}]];
-	(* anomaly trace factors for each group *)
-	charges = Join[
-		(GetGaugeGroups[#,Coupling]^2 FS[GetGaugeGroups[#,Field],t\[Mu],t\[Nu]]FS[GetGaugeGroups[#,Field],t\[Rho],t\[Sigma]]FirstCase[GetFields[field,Charges], #[q_]:>q]^2)&/@ grAbel,
-		(GetGaugeGroups[#,Coupling]^2 FS[GetGaugeGroups[#,Field],t\[Mu],t\[Nu],tA]FS[GetGaugeGroups[#,Field],t\[Rho],t\[Sigma],tB]FieldGenerators[field,#,{tA,tI,tJ}]FieldGenerators[field,#,{tB,tJ,tI}])&/@grNAbel
-	];
-
-	Return[-2 I hbar RelabelIndices[Sum[Part[charges,inc]Times@@Drop[dims,{inc}],{inc,Length@dims}],Unique->True]]
-]
-
-
 (* ::Section:: *)
 (*Field redefinitions*)
 
@@ -328,7 +275,7 @@ EOMSimplify[Lagrangian_, OptionsPattern[]] ? OptionsCheck:=Module[
 PerformSystematicFieldRedefs[lag_, maxOrder_, verbose_? BooleanQ] := Module[
 		{devs, gaugeNormalizations, kinMix, eftOrd, out= lag},
 	OptionalMonitor[verbose,
-		out= RenormalizeMatterFields@ lag;
+		out= RenormalizeMatterFields[lag, maxOrder];
 		(*The gauge field normalization is compensated for in future shifts of the gauge fields*)
 		{gaugeNormalizations, kinMix}= GaugeFieldNormalization[out, maxOrder];
 	, "Renormalizing fields \[Ellipsis]"];
@@ -352,7 +299,7 @@ $emptyKinMix= <|FieldMap-> <||>, Fields-> {}, Zinv-> {{}}|>;
 (*Renormalizes the kinetic terms for the matter fields. *)
 
 
-RenormalizeMatterFields[lag_]:= Module[{fields, jacobianShift, out, replacementRules, terms},
+RenormalizeMatterFields[lag_, maxOrder_]:= Module[{fields, jacobianShift, out, replacementRules, terms},
 	terms= SelectOperatorDevsAndDim[lag, _? Positive, 4];
 	(* all fields appearing in the input Lagrangian *)
 	fields= DeleteDuplicates@ Cases[terms, Field[lab_, __]-> lab, Infinity];
@@ -364,7 +311,7 @@ RenormalizeMatterFields[lag_]:= Module[{fields, jacobianShift, out, replacementR
 		Field[lab_, __], _@ Field[lab_, __], _@ _@ Field[lab_, __]]:> lab, All];
 	If[Length@ fields === 0, Return@ lag];
 
-	{replacementRules, jacobianShift}= DetermineShifts[terms, fields, <||>, $emptyKinMix];
+	{replacementRules, jacobianShift}= DetermineShifts[terms, fields, <||>, $emptyKinMix, maxOrder];
 	(*TODO: implement check that the shifts are equal to \[Delta] at leading order (Z= 1 + O(hbar)) *)
 
 	(* insert the field expansion, return to NormalForm since we're inserting fields into EoM objects as well *)
@@ -401,7 +348,7 @@ GaugeFieldNormalization[lag_, ord_]:= Module[
 	If[Length@ fields === 0, Return@ {<||>, $emptyKinMix}; ];
 
 	abelianFields= Intersection[fields,
-		List@@ Query[Key/@ GetGaugeGroupByProperty[Group-> U1], Key@ Field]@ $GaugeGroups];
+		List@@ Query[Key/@ GaugeGroupByProperty[Group-> U1], Key@ Field]@ $GaugeGroups];
 
 	(*Check if there might be kinetic mixing*)
 	kinMix= If[Length@ abelianFields > 1,
@@ -460,7 +407,7 @@ ShiftLagrangian[lag_, gaugeNormalization_, kinMix_, devs_Integer, dim_Integer, m
 		Field[lab_, __], _@ Field[lab_, __], _@ _@ Field[lab_, __]]:> lab, All];
 	If[Length@ fields === 0, Return@ lag];
 
-	{replacementRules, jacobianShift}= DetermineShifts[eomTerms, fields, gaugeNormalization, kinMix];
+	{replacementRules, jacobianShift}= DetermineShifts[eomTerms, fields, gaugeNormalization, kinMix, maxOrder];
 
 	(* Insert the field expansion, return to NormalForm since we're inserting fields into EoM objects as well *)
 	(* Shift all kinetic-mixed fields if at least one appears with an EOM *)
@@ -488,19 +435,19 @@ ShiftLagrangian[lag_, gaugeNormalization_, kinMix_, devs_Integer, dim_Integer, m
 DetermineShifts::notimpl = "Shift has not been implemented for type `1`";
 
 
-DetermineShifts[lagTerms_, fields_, gaugeNormalization_, kinMix_]:= Module[
+DetermineShifts[lagTerms_, fields_, gaugeNormalization_, kinMix_, maxOrder_Integer]:= Module[
 		{jacobianShift= 0, real, replacementRules, type, mixedFields, unmixedFields, temp},
 
 	mixedFields= Intersection[fields, kinMix@ Fields];
 	unmixedFields= Complement[fields, mixedFields];
 
 	replacementRules= Join@@ Table[
-			{real, type}= Lookup[GetFields@ f, {SelfConjugate, Type}];
+			{real, type}= Lookup[$FieldAssociation@ f, {SelfConjugate, Type}];
 			Switch[type
 			,Scalar, ScalarShift[lagTerms, f, real]
 			,Fermion,
 				(*format: {field replacement rule, jacobian shift (from chiral fermions)}*)
-				temp= FermionShift[lagTerms, f, real];
+				temp= FermionShift[lagTerms, f, real, maxOrder];
 				jacobianShift+= Last@ temp;
 				First@ temp
 			,Vector,
@@ -566,22 +513,22 @@ AdjustEOMShifts[shift_, field_Symbol]:= Module[{terms},
 
 
 ScalarShift[lagTerms_, f_Symbol, real_? BooleanQ]:= Module[{chi1, chi2, devPat, fieldPattern, fieldShift, inds, pInds, rules, terms},
-	inds= Symbol["i" <> ToString@ #]&/@ Range@ Length@ GetFields[f, Indices];
+	inds= Symbol["i" <> ToString@ #]&/@ Range@ Length@ $FieldAssociation[f, Indices];
 	pInds= Pattern[#, _]&/@inds;
 
 	(*Keep only relevant terms*)
 	terms= Plus@@ Select[TermsToList@ lagTerms, Not@* FreeQ[f]];
 
 	fieldShift= If[real,
-			RelabelIndices[OperatorToNormalForm[CoefficientOperator[terms,
+			RelabelIndices[OperatorToNormalForm[EOMCoefficient[terms,
 				EoM@ f[Sequence@@ inds]], Unique-> True], Unique->True]
 		,
 			(* factor out the EoM[f] term *)
-			chi1= RelabelIndices[OperatorToNormalForm[CoefficientOperator[terms,
+			chi1= RelabelIndices[OperatorToNormalForm[EOMCoefficient[terms,
 				EoM@ f[Sequence@@ inds]], Unique-> True], Unique-> True];
 
 			(* ...and subtract the terms we found, to now get the EoM[Bar@f] coefficients *)
-			chi2= RelabelIndices[CoefficientOperator[
+			chi2= RelabelIndices[EOMCoefficient[
 				RelabelIndices[terms - Operator[chi1 EoM@f[Sequence@@ inds] ] ],
 				EoM@ Bar@ f[Sequence@@ inds] ], Unique->True];
 			1/2 Bar@ OperatorToNormalForm[(chi1 + Bar@chi2), Unique-> True]
@@ -602,9 +549,9 @@ ScalarShift[lagTerms_, f_Symbol, real_? BooleanQ]:= Module[{chi1, chi2, devPat, 
 (*Fermion shift*)
 
 
-FermionShift[lagTerms_, f_Symbol, real_? BooleanQ]:= Module[
+FermionShift[lagTerms_, f_Symbol, real_? BooleanQ, maxOrder_Integer]:= Module[
 		{chi1, chi2, devPat, eomField, fieldPattern, fieldShift, inds, jacobianShift, pInds, rules, terms},
-	inds= Symbol["i" <> ToString@ #]&/@ Range@ Length@ GetFields[f, Indices];
+	inds= Symbol["i" <> ToString@ #]&/@ Range@ Length@ $FieldAssociation[f, Indices];
 	pInds= Pattern[#, _]&/@inds;
 
 	(*Keep only relevant terms*)
@@ -614,25 +561,25 @@ FermionShift[lagTerms_, f_Symbol, real_? BooleanQ]:= Module[
 
 	fieldShift= If[real,
 			(* factor out the EoM[f] term *)
-			chi1=RelabelIndices[OperatorToNormalForm[CoefficientOperator[terms, eomField],
+			chi1=RelabelIndices[OperatorToNormalForm[EOMCoefficient[terms, eomField],
 				Unique-> True], Unique-> True];
 			(* ...and subtract the terms we found, to now get the EoM[Bar@f] coefficients *)
-			chi2=RelabelIndices[OperatorToNormalForm[CoefficientOperator[RelabelIndices[
+			chi2=RelabelIndices[OperatorToNormalForm[EOMCoefficient[RelabelIndices[
 				terms-Operator[chi1\[CenterDot] eomField]], Transp/@ eomField], Unique->True], Unique->True];
 			RelabelIndices[I*CC\[CenterDot] (Transp@chi1-chi2)]
 		,
 			(* factor out the EoM[f] term *)
-			chi1= RelabelIndices[OperatorToNormalForm[CoefficientOperator[terms, eomField],
+			chi1= RelabelIndices[OperatorToNormalForm[EOMCoefficient[terms, eomField],
 				Unique-> True], Unique-> True];
 			(* ...and subtract the terms we found, to now get the EoM[Bar@f] coefficients *)
-			chi2=RelabelIndices[CoefficientOperator[RelabelIndices[
+			chi2=RelabelIndices[EOMCoefficient[RelabelIndices[
 				terms- Operator[chi1\[CenterDot] eomField]], Bar/@ eomField], Unique-> True];
 			-I/2* Bar@ OperatorToNormalForm[chi1+ Bar@ chi2, Unique-> True]
 		];
 	fieldShift= AdjustEOMShifts[fieldShift, f];
 
-	(*TODO: include chiral Jacobian*)
-	jacobianShift= 0;
+	(*include chiral Jacobian*)
+	jacobianShift=If[GaugeSingletQ@f, 0, ComputeJacobianShift[fieldShift,f, maxOrder]];
 
 	rules= Table[
 		fieldPattern= First@ Cases[{f[Sequence@@ pInds]},
@@ -643,6 +590,75 @@ FermionShift[lagTerms_, f_Symbol, real_? BooleanQ]:= Module[
 	, {n, 0, 1}];
 
 	{rules, jacobianShift}
+]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Jacobian shift*)
+
+
+(* ::Text:: *)
+(*Routines to compute the Jacobian shift (axial anomaly)*)
+
+
+ComputeJacobianShift[fieldShift_, field_, maxOrder_Integer]:=Module[
+		{i,j,iPattern,jPattern,fieldjInds,g5mark,g5coeff,Xg5,Xg5Order,Xg5pow,n,jacobianTerm,res,jacobianShift,\[Mu],\[Nu],\[Rho],\[Sigma]},	
+	(* Patterns corresponding to indices i and j *)	
+	iPattern= Pattern[i, _];
+	jPattern= Pattern[j, _];
+	
+	(* Keep only the tree-level part of the shift. *)
+	(* WARNING: This needs to be revised at 2 loops (when extending, careful with the while loop below) *)
+	g5coeff= fieldShift /. hbar ->0;
+	
+	(* Set input in terms of iInds *)
+	If[Length@ $FieldAssociation[field, Indices]=!=0,
+		g5coeff= g5coeff 
+			/. (#->i& @ Symbol["i" <> ToString@ #]&/@ Range@ Length@ $FieldAssociation[field, Indices])
+	];
+
+	(* Define j type indices for VarD *)
+	fieldjInds=Index[j,#]&/@$FieldAssociation[field, Indices];
+	
+	(* Extract the part of the shift that is \[Gamma]5-dependent and has no OpenCDs *)
+	g5coeff=Coefficient[
+					(* WARNING: Done this way, VarD drops OpenCDs(multiply by FuncNCM[OpenCD[{}]] when needed) *)
+					VarD[g5coeff,Field[field,Fermion,fieldjInds,{}]]
+						/. x:NCM[DiracProduct[Proj[s_]|Gamma5]] :>x g5mark
+				,g5mark];
+	
+	(* Set Xg5[i,j](and its EFTorder), which will go into the trace *)
+	Xg5Order=If[g5coeff=!=0, Max[OperatorDimension/@ TermsToList@ g5coeff], 0];
+	Xg5[iPattern,jPattern]= g5coeff;
+	
+	(* Compute the trace *)																
+	jacobianShift=0;
+	n=1;
+	While[g5coeff=!=0 && maxOrder-n*Xg5Order-4>=0,
+			(* WARNING: This expression assumes that only the gamma5 piece with no OpenCDs is taken *)
+			res= hbar (-1)^n/(2n) Xg5power[Xg5,n,i,j]\[CenterDot]\[Gamma][\[Mu]]\[CenterDot]\[Gamma][\[Nu]]\[CenterDot]\[Gamma][\[Rho]]\[CenterDot]\[Gamma][\[Sigma]] CD[{\[Mu],\[Nu],\[Rho],\[Sigma]}, WilsonTerm[field,{j,i},{}]]//BetterExpand; 
+			res= res//DiracTrace//ContractMetric//WilsonExpand//ExpandGenFSs//RelabelIndices;
+			
+			(* Add barred contribution to account for the shift of the barred fermion *)
+			jacobianShift+= res + Bar@res;
+			n++
+	];
+	
+	jacobianShift
+]
+
+
+Xg5power[Xg5term_,n_Integer,firstIndex_,lastIndex_]:=Module[{indices,prod,g5mark},
+	(*create dummy indices*)
+	indices = Join[{firstIndex},Array[Unique["i"] &, n - 1],{lastIndex}];
+	
+	(*cyclic NCM product:(i,i2),(i2,i3),...,(in-1,j)*)
+	prod=NCM@@Table[Xg5term[indices[[k]],indices[[k+1]]],{k,1,n}];
+	
+	(*select the \[Gamma]5 terms*)
+	Coefficient[
+		prod /. Proj[s_]:> s/2 Gamma5 /. x:NCM[DiracProduct[Gamma5]] :> x g5mark
+	, g5mark]
 ]
 
 
@@ -658,14 +674,14 @@ VectorShift::cmplx= "Complex vectors are not supported currently."
 
 
 VectorShift[lagTerms_, f_Symbol, normalization_, real_? BooleanQ]:= Module[{devPat, fieldPattern, fieldShift, inds, pInds, rules, terms},
-	inds= Symbol["i" <> ToString@ #]&/@ Range[Length@ GetFields[f, Indices]+ 1];
+	inds= Symbol["i" <> ToString@ #]&/@ Range[Length@ $FieldAssociation[f, Indices]+ 1];
 	pInds= Pattern[#, _]&/@inds;
 
 	terms= Plus@@ Select[TermsToList@ lagTerms, Not@* FreeQ[f]];
 
 	fieldShift= If[real,
 			-normalization* RelabelIndices[OperatorToNormalForm[
-				CoefficientOperator[terms, EoM@ f[Sequence@@inds] ],Unique->True, CanonizeKinetic->True]
+				EOMCoefficient[terms, EoM@ f[Sequence@@inds] ],Unique->True, CanonizeKinetic->True]
 				, Unique-> True]
 		,
 			Message[VectorShift::cmplx]; Abort[];
@@ -694,7 +710,7 @@ KinMixingShift[lagTerms_, eomFields_List, kinMix_Association]:= Module[
 	terms= Plus@@ Select[TermsToList@ lagTerms, Not@* FreeQ[Alternatives@@ eomFields]];
 	fieldShifts= Sum[
 			fShift= RelabelIndices[OperatorToNormalForm[
-						CoefficientOperator[terms, EoM@ f[Sequence@@ inds] ],Unique->True, CanonizeKinetic->True]
+						EOMCoefficient[terms, EoM@ f[Sequence@@ inds] ],Unique->True, CanonizeKinetic->True]
 						, Unique-> True];
 			fShift= AdjustEOMShifts[fShift, f];
 			fShift* UnitVector[Length@ kinMix@ Fields, kinMix[FieldMap, f] ]
@@ -709,6 +725,48 @@ KinMixingShift[lagTerms_, eomFields_List, kinMix_Association]:= Module[
 		]
 	, {f, kinMix@ Fields}, {n, 0, 1}]
 ]
+
+
+(* ::Subsubsection::Closed:: *)
+(*EOMCoefficient*)
+
+
+(* ::Text:: *)
+(*Extracts the proportionality factor of an EOM in an expression  *)
+
+
+EOMCoefficient[expr_, eom_]:= expr/. op_Operator:> EOMCoefficientSingleTerm[op, eom];
+
+
+EOMCoefficientSingleTerm[op_Operator, eom_EoM]:= Module[{eomPattern, out, rule, transp= False},
+	eomPattern= eom/. Index[name_, type_]:> Index[Pattern@ Evaluate[InternalizeIndex@ name, _], type];
+	
+	(*Return if operator doesn't contain the EOM*)
+	If[FreeQ[op, eomPattern],
+		If[FreeQ[eom, Fermion], Return@ 0; ]; 
+		(*For fermions also check for a match of the transpose*)
+		eomPattern= Transp/@ eomPattern;
+		If[FreeQ[op, eomPattern], Return@ 0; ];
+		transp= True;
+	];
+	
+	rule= Rule[eomPattern, Product[Delta[k, InternalizeIndex@ k], 
+		{k, Cases[eom, _Index, All]}] ];
+	
+	(*Trigger replacement only once in the term, even if multiple EOMs match.*)
+	out= ReplaceFirst[op, rule]//ContractDelta;
+	
+	If[transp, 
+		(*Transpose the spinor line of the eom, to reflect the expected orientation*)
+		(*N.b. minus sign included to reflect the two Grassmanian fermion fields original present*)
+		out= out/. ncm_NCM/; !ClosedSpinChainQ@ ncm:> - Transp@ ncm;
+	];
+	out
+];
+
+
+InternalizeIndex@ name_Symbol:= Symbol[SymbolName@ name<> "int"];
+InternalizeIndex@ Index[name_, type_]:=Index[InternalizeIndex@ name, type];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -773,7 +831,7 @@ SplitLagByDims[lag_, dim_]:= Block[{},
 
 
 DummyGaugeShift[expr_, gaugeField_Symbol]:= Module[{group, out},
-	group= First@ GetGaugeGroupByProperty[Field-> gaugeField];
+	group= First@ GaugeGroupByProperty[Field-> gaugeField];
 
 	(*If group is Abelian include its own field strength even though it doesn't transform*)
 	out= If[$GaugeGroups[group, Group] === U1,
@@ -802,7 +860,7 @@ ShiftAbelianFS[FieldStrength[fsLab_, {l1_, l2_}, {}, devs_]]:= Block[{},
 ShiftCDnew[fieldOrFS_[fieldLab_, typeOrLors_, inds_, devs:{__}], group_, gaugeField_]:= Module[
 		{charge, next, newAdj, newFieldInds, newInd, origInd},
 	If[$GaugeGroups[group, Abelian],
-		charge= FirstCase[GetFields[fieldLab, Charges], group@ q_-> q];
+		charge= FirstCase[$FieldAssociation[fieldLab, Charges], group@ q_-> q];
 		next= ShiftCDnew[fieldOrFS[fieldLab, typeOrLors, inds, Rest@ devs], group, gaugeField];
 		-I* charge* Field[gaugeField, Vector@ First@ devs, {}, {}]* next + CD[First@ devs, next]
 	,
@@ -829,7 +887,7 @@ ShiftCoreFS[FieldStrength[fsLab_, {l1_, l2_}, grInds_, {}], group_, gaugeField_]
 			fsLab[l1, b]fsLab[l2, c] ]
 	]; ];
 	If[$GaugeGroups[group, Abelian],
-		charge= FirstCase[GetFields[fsLab, Charges], group@ q_-> q];
+		charge= FirstCase[$FieldAssociation[fsLab, Charges], group@ q_-> q];
 		-I* charge* CD[devs, Field[gaugeField, Vector@ l1, {}, {}] Field[fsLab, Vector@ l2, grInds, {}]-
 			Field[gaugeField, Vector@ l2, {}, {}] Field[fsLab, Vector@ l1, grInds, {}]]
 	,

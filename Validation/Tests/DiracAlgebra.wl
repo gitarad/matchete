@@ -188,6 +188,7 @@ VerificationTest[
 VerificationTest[
 	\[Gamma][\[Mu],\[Nu],\[Rho]] \[CenterDot] \[Gamma][\[Mu],\[Nu],\[Rho]]// RefineDiracProducts
 ,
+	(*Verified by hand: AET*)
 	-2 \[ScriptD]+ 3 \[ScriptD]^2- \[ScriptD]^3
 ,
 	TestID-> "RefineDiracProduct \[Gamma][\[Mu],\[Nu],\[Rho]] \[CenterDot] \[Gamma][\[Mu],\[Nu],\[Rho]]"
@@ -199,9 +200,9 @@ VerificationTest[
 
 
 VerificationTest[
-	CollectGammaMatrices[CC\[CenterDot] \[Gamma]@\[Mu]\[CenterDot] PL \[CenterDot] \[Gamma]@\[Nu]\[CenterDot] \[Gamma]@5],
+	CC\[CenterDot] \[Gamma]@\[Mu]\[CenterDot] PL \[CenterDot] \[Gamma]@\[Nu]\[CenterDot] \[Gamma]@5,
 	CC \[CenterDot] \[Gamma]@\[Mu] \[CenterDot] \[Gamma]@\[Nu] \[CenterDot] PR,
-	TestID->"CollectGammaMatrices on the left"
+	TestID->"Automated collection of Dirac matrices."
 ]
 
 
@@ -605,6 +606,10 @@ ResetAll[];
 
 (* ::Subsubsection::Closed:: *)
 (*LC2Gamma5*)
+
+
+(* ::Text:: *)
+(*This identity agrees with Peskin (3.68) with whom our LC tensor convention agrees. *)
 
 
 VerificationTest[

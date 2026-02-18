@@ -1,0 +1,290 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Wolfram 14.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       154,          7]
+NotebookDataLength[     10911,        282]
+NotebookOptionsPosition[      7719,        210]
+NotebookOutlinePosition[     10070,        269]
+CellTagsIndexPosition[      9986,        264]
+WindowTitle->GetGaugeGroups
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[GridBox[{
+   {GridBox[{
+      {
+       ItemBox[Cell[BoxData[
+         RowBox[{
+          TemplateBox[{12},
+           "Spacer1"], Cell["MATCHETE SYMBOL", "PacletNameCell",
+           TextAlignment->Center,ExpressionUUID->
+           "108a535e-e444-4537-8f6a-00a22a375031"], 
+          TemplateBox[{8},
+           "Spacer1"]}]],
+         TextAlignment->Center,ExpressionUUID->
+         "e61adad7-0ea1-427f-8731-864e27b03669"],
+        Background->RGBColor[0.490196, 0.576471, 0.690196],
+        ItemSize->Full], ""}
+     },
+     GridBoxAlignment->{"Rows" -> {{Center}}},
+     GridBoxItemSize->{"Columns" -> {Full, 
+         Scaled[0.02]}, "Rows" -> {{2.5}}}], Cell[TextData[Cell[BoxData[
+     TagBox[
+      ActionMenuBox[
+       FrameBox[Cell[TextData[{
+         "URL",
+         " ",
+         Cell[BoxData[
+          GraphicsBox[
+           {GrayLevel[0.66667], Thickness[0.13], 
+            LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]},
+           AspectRatio->1,
+           ImageSize->20,
+           PlotRange->{{-3, 4}, {-1, 1}}]],ExpressionUUID->
+          "0a569fef-df6a-4849-a6dc-1ece7ff9ae92"]
+        }],ExpressionUUID->"3d560724-d187-4b72-a92f-00170923a6df"],
+        StripOnInput->False],{
+       "\"Matchete/ref/GetGaugeGroups\"" :> None, 
+        "\"Copy Wolfram Documentation Center URL\"" :> 
+        CopyToClipboard["Matchete/ref/GetGaugeGroups"], Delimiter, 
+        "\"Copy web URL\"" :> 
+        Module[{DocumentationSearch`Private`nb$}, 
+          DocumentationSearch`Private`nb$ = 
+           NotebookPut[
+            Notebook[{
+              Cell[BoxData[
+                MakeBoxes[
+                 Hyperlink[
+                  "http://reference.wolfram.com/language/Matchete/ref/\
+GetGaugeGroups.html"], StandardForm]], "Input", TextClipboardType -> 
+                "PlainText"]}, Visible -> False]]; 
+          SelectionMove[DocumentationSearch`Private`nb$, All, Notebook]; 
+          FrontEndTokenExecute[DocumentationSearch`Private`nb$, "Copy"]; 
+          NotebookClose[DocumentationSearch`Private`nb$]; Null], 
+        "\"Go to web URL\"" :> 
+        FrontEndExecute[{
+          NotebookLocate[{
+            URL[If[TrueQ[False], 
+                "http://reference.wolfram.com/system-modeler/", 
+                "http://reference.wolfram.com/language/"] <> 
+              "Matchete/ref/GetGaugeGroups" <> ".html"], None}]}]},
+       Appearance->None,
+       MenuAppearance->Automatic,
+       MenuStyle->"URLMenu"],
+      MouseAppearanceTag["LinkHand"]]],
+     LineSpacing->{1.4, 0},ExpressionUUID->
+     "7518416b-2d5f-4ee6-b594-03f9937e0b4a"]], "AnchorBar",
+     CacheGraphics->False,ExpressionUUID->
+     "0035b37f-a637-4f50-a26f-e8e7d0c83be8"]}
+  }]], "AnchorBarGrid",
+ GridBoxOptions->{GridBoxItemSize->{"Columns" -> {
+     Scaled[0.65], {
+      Scaled[0.34]}}, "ColumnsIndexed" -> {}, "Rows" -> {{1.}}, 
+   "RowsIndexed" -> {}}},
+ CellID->1,ExpressionUUID->"85095185-6313-4136-ad6d-a5dc803bb6ab"],
+
+Cell["Matchete`", "ContextNameCell",ExpressionUUID->"276f164b-6483-4452-b75e-47798d217f5d"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[GridBox[{
+   {Cell[TextData[{
+     Cell[
+     "GetGaugeGroups", "ObjectName",ExpressionUUID->
+      "8b872054-0a9d-4208-a389-41dd755bd854"],
+     Cell[BoxData[
+      TemplateBox[{8},
+       "Spacer1"]],ExpressionUUID->"02bd5d39-a176-4486-b7ab-ed579c0561b3"],
+     Cell[BoxData[
+     ""], "ObjectNameTranslation",ExpressionUUID->
+      "0bdfdf25-e269-443f-b345-03cd7a24784b"]
+    }],ExpressionUUID->"595f3620-45fe-4ee4-ba92-c40da2f86c23"], 
+    "\[SpanFromLeft]"}
+  }]], "ObjectNameGrid",ExpressionUUID->"f67e4fde-47c0-41cd-bb61-\
+d424a4f2f62e"],
+
+Cell[BoxData[GridBox[{
+   {"", Cell[TextData[{
+     Cell[BoxData[
+      RowBox[{
+       TemplateBox[{
+         Cell[
+          TextData["GetGaugeGroups"]], "paclet:Matchete/ref/GetGaugeGroups", 
+         "Matchete Package Symbol"},
+        "PackageLink",
+        BaseStyle->"InlineFormula"], "[", "]"}]], "InlineFormula",
+      FontFamily->"Source Sans Pro",ExpressionUUID->
+      "c619b263-3931-47bf-9a16-b78956392266"],
+     "\[LineSeparator]returns an association of all gauge groups that have \
+been defined by ",
+     Cell[BoxData[
+      TemplateBox[{
+        Cell[
+         TextData["DefineGaugeGroup"]], 
+        "paclet:Matchete/ref/DefineGaugeGroup", "Matchete Package Symbol"},
+       "PackageLink",
+       BaseStyle->"InlineFormula"]], "InlineFormula",
+      FontFamily->"Source Sans Pro",ExpressionUUID->
+      "91614b22-42f1-4d12-bb7f-12f1442079be"],
+     " and their properties. "
+    }],ExpressionUUID->"4b726b31-e7c3-4572-befb-a0a76516584c"]},
+   {"", Cell[TextData[{
+     Cell[BoxData[
+      RowBox[{
+       TemplateBox[{
+         Cell[
+          TextData["GetGaugeGroups"]], "paclet:Matchete/ref/GetGaugeGroups", 
+         "Matchete Package Symbol"},
+        "PackageLink",
+        BaseStyle->"InlineFormula"], "[", "GaugeGroup", "]"}]], 
+      "InlineFormula",
+      FontFamily->"Source Sans Pro",ExpressionUUID->
+      "59d2781a-717e-4a9a-90e7-3c4197a70a86"],
+     "\[LineSeparator]returns an association with all the properties of an \
+already defined gauge group."
+    }],ExpressionUUID->"ef26ddd9-29bc-4375-9da6-6b6e7418d9a3"]}
+  }]], "Usage",
+ CellID->2004818088,ExpressionUUID->"dfb93dee-702e-47ef-8017-060a9250fdec"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ Cell[BoxData[
+  DynamicBox[ToBoxes[
+    If[
+     MatchQ[
+      CurrentValue[
+       EvaluationNotebook[], {
+       TaggingRules, "Openers", "PrimaryExamplesSection"}, Open], 
+      Alternatives[True, Open]], 
+     Style[
+      Graphics[{
+        Thickness[0.18], 
+        RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+        Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+       PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+      0.68 Inherited], 
+     Rotate[
+      Style[
+       Graphics[{
+         Thickness[0.18], 
+         RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+         Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+        PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+       0.68 Inherited], Rational[1, 2] Pi, {-1.65, -1}]]],
+   ImageSizeCache->{
+    13.600000000000001`, {4.251494140625001, 9.348505859375}}]],
+  ExpressionUUID->"9d4509c6-af7b-4ef4-9a66-a650540e9fcb"],
+ Cell[BoxData[
+  TemplateBox[{1},
+   "Spacer1"]],ExpressionUUID->"62cd6ebc-9ae3-4b6e-8662-bb44487af85b"],
+ "Examples",
+ "\[NonBreakingSpace]\[NonBreakingSpace]",
+ Cell["(0)", "ExampleCount",ExpressionUUID->
+  "ceac2cf9-5ac2-46d6-ad1a-070ce58497c0"]
+}], "PrimaryExamplesSection",
+ WholeCellGroupOpener->True,
+ CacheGraphics->False,
+ CellTags->"PrimaryExamplesSection",
+ CellID->1311186880,ExpressionUUID->"76ccf161-3b88-497f-9787-3953df6e4c51"],
+
+Cell[BoxData[
+ RowBox[{"Needs", "[", "\"\<Matchete`\>\"", "]"}]], "Input", "ExampleInitialization",
+ CellLabel->"In[1]:=",
+ CellID->1583227773,ExpressionUUID->"4b9b7af6-6924-4a67-8de7-00227a0a7231"]
+}, Dynamic[CurrentValue[
+ EvaluationNotebook[], {TaggingRules, "Openers", "PrimaryExamplesSection"}, 
+  Closed]]]],
+
+Cell[" ", "FooterCell",ExpressionUUID->"ffa1fe07-1a1f-44e3-bbf4-f754e8ba63e3"]
+},
+Saveable->False,
+ScreenStyleEnvironment->"Working",
+WindowSize->{900, 830},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+WindowTitle->"GetGaugeGroups",
+Visible->False,
+TaggingRules->{
+ "ModificationHighlight" -> False, "ColorType" -> "", "LinkTrails" -> "", 
+  "ExampleCounter" -> 1, 
+  "Openers" -> {
+   "PrimaryExamplesSection" -> Open, "ExampleSection" -> {"0" -> Open}, 
+    "AllOptsTable" -> Closed}, "NewStyles" -> True, 
+  "CitationPopupData" -> $Failed, "ShowCitation" -> False, "HasOptions" -> 
+  True, "RootCaptions" -> "", "HeaderCoreAreaLink" -> {}, 
+  "Metadata" -> {
+   "built" -> "{2026, 2, 18, 13, 0, 18.957922}", 
+    "history" -> {"XX", "", "", ""}, "context" -> "Matchete`", 
+    "keywords" -> {}, "specialkeywords" -> {}, 
+    "tutorialcollectionlinks" -> {}, "index" -> True, "label" -> 
+    "Matchete Symbol", "language" -> "en", "paclet" -> "Matchete", "status" -> 
+    "None", "summary" -> 
+    "GetGaugeGroups[] returns an association of all gauge groups that have \
+been defined by DefineGaugeGroup and their properties. \
+GetGaugeGroups[GaugeGroup] returns an association with all the properties of \
+an already defined gauge group.", "synonyms" -> {}, "tabletags" -> {}, 
+    "title" -> "GetGaugeGroups", "titlemodifier" -> "", "metadescription" -> 
+    "", "windowtitle" -> "GetGaugeGroups", "type" -> "Symbol", "uri" -> 
+    "Matchete/ref/GetGaugeGroups"}},
+CellContext->"Global`",
+FrontEndVersion->"14.2 for Mac OS X ARM (64-bit) (March 16, 2025)",
+StyleDefinitions->Notebook[{
+   Cell[
+    StyleData[
+    StyleDefinitions -> FrontEnd`FileName[{"Wolfram"}, "Reference.nb"]]], 
+   Cell[
+    StyleData["Input"], CellContext -> "Global`"], 
+   Cell[
+    StyleData["Output"], CellContext -> "Global`"]}, Visible -> False, 
+  FrontEndVersion -> "14.2 for Mac OS X ARM (64-bit) (March 16, 2025)", 
+  StyleDefinitions -> "PrivateStylesheetFormatting.nb"],
+ExpressionUUID->"3aab82c6-04d1-4986-8918-05f0ae770474"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "PrimaryExamplesSection"->{
+  Cell[5880, 160, 1438, 38, 34, "PrimaryExamplesSection",ExpressionUUID->"76ccf161-3b88-497f-9787-3953df6e4c51",
+   CellTags->"PrimaryExamplesSection",
+   CellID->1311186880]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"PrimaryExamplesSection", 9786, 257}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[582, 21, 2940, 71, 50, "AnchorBarGrid",ExpressionUUID->"85095185-6313-4136-ad6d-a5dc803bb6ab",
+ CellID->1],
+Cell[3525, 94, 91, 0, 22, "ContextNameCell",ExpressionUUID->"276f164b-6483-4452-b75e-47798d217f5d"],
+Cell[CellGroupData[{
+Cell[3641, 98, 557, 14, 57, "ObjectNameGrid",ExpressionUUID->"f67e4fde-47c0-41cd-bb61-d424a4f2f62e"],
+Cell[4201, 114, 1642, 41, 179, "Usage",ExpressionUUID->"dfb93dee-702e-47ef-8017-060a9250fdec",
+ CellID->2004818088]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5880, 160, 1438, 38, 34, "PrimaryExamplesSection",ExpressionUUID->"76ccf161-3b88-497f-9787-3953df6e4c51",
+ CellTags->"PrimaryExamplesSection",
+ CellID->1311186880],
+Cell[7321, 200, 198, 3, 29, "Input",ExpressionUUID->"4b9b7af6-6924-4a67-8de7-00227a0a7231",
+ CellID->1583227773]
+}, Dynamic[CurrentValue[EvaluationNotebook[], {TaggingRules, "Openers", "PrimaryExamplesSection"}, Closed]]]],
+Cell[7637, 208, 78, 0, 40, "FooterCell",ExpressionUUID->"ffa1fe07-1a1f-44e3-bbf4-f754e8ba63e3"]
+}
+]
+*)
+
