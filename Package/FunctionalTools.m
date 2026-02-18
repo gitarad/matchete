@@ -285,7 +285,7 @@ ExpandVectorFluctuations[x, y]= Module[
 		gaugeGroup,
 		yField = First@Cases[y,Field[___],All],
 		yFieldLabel,
-		arg = Expand[x]
+		arg = LagrangianExpand[x]
 	}
 	,
 	yFieldLabel = First[yField];
@@ -294,7 +294,7 @@ ExpandVectorFluctuations[x, y]= Module[
 	If[GaugeFieldQ@yField,
 
 		(* shift explicit gauge fields *)
-		arg = Expand[arg /. Field[yFieldLabel,type_Vector,rest___]:>(Field[BkgField[yFieldLabel],type,rest]+$\[Epsilon]FD*Field[yFieldLabel,type,rest])];
+		arg = LagrangianExpand[arg /. Field[yFieldLabel,type_Vector,rest___]:>(Field[BkgField[yFieldLabel],type,rest]+$\[Epsilon]FD*Field[yFieldLabel,type,rest])];
 
 		(* remove powers for pattern matching *)
 		arg = RemovePower[arg];
@@ -319,7 +319,7 @@ ExpandVectorFluctuations[x, y]= Module[
 	If[VectorFieldQ@yField && !GaugeFieldQ@yField,
 
 		(* shift explicit vector fields *)
-		arg = Expand[arg /. Field[yFieldLabel,type_Vector,rest___]:>(Field[BkgField[yFieldLabel],type,rest]+$\[Epsilon]FD*Field[yFieldLabel,type,rest])];
+		arg = LagrangianExpand[arg /. Field[yFieldLabel,type_Vector,rest___]:>(Field[BkgField[yFieldLabel],type,rest]+$\[Epsilon]FD*Field[yFieldLabel,type,rest])];
 
 		(* remove powers for pattern matching *)
 		arg = RemovePower[arg];
@@ -332,7 +332,8 @@ ExpandVectorFluctuations[x, y]= Module[
 	arg = arg/. BackgroundCD[ind__,exp_]:>CD[ind,exp] /.BackgroundFS[all___]:>FS[all];
 
 	(* expand to quadratic order in the fluctuation *)
-	arg = Normal@Series[Expand[ReleaseHold@arg],{$\[Epsilon]FD,0,2}];
+	arg = LagrangianExpand[ReleaseHold@arg];
+	arg = BetterSeries[#,{$\[Epsilon]FD,0,2}]&/@arg;
 
 	RelabelIndices[arg]
 ]
@@ -343,7 +344,7 @@ ExpandVectorFluctuations[x, y]= Module[
 
 
 (* returns true if the given gauge group is abelian *)
-AbelianQ[gaugeGroup_] := GetGaugeGroups[gaugeGroup][Abelian];
+AbelianQ[gaugeGroup_] := $GaugeGroups[gaugeGroup, Abelian];
 
 
 (* checks whether the given field transforms under the given gauge group *)
@@ -351,12 +352,12 @@ FieldTransformsUnderGaugeGroupQ[Field[l_,t_,ind_List,deriv_List], gaugeGroup_] :
 	AbelianQ[gaugeGroup],
 	(* for abelian groups *)
 	Return[
-		MemberQ[GetFields[l][Charges][[;;,0]], gaugeGroup]
+		MemberQ[$FieldAssociation[l][Charges][[;;,0]], gaugeGroup]
 	]
 	,
 	(* for non-abelian groups *)
 	Return[
-		MemberQ[Map[GroupFromRep, GetFields[l][Indices]], gaugeGroup]
+		MemberQ[Map[GroupFromRep, $FieldAssociation[l][Indices]], gaugeGroup]
 	]
 ]
 
@@ -369,7 +370,7 @@ FieldTransformsUnderGaugeGroupQ[FieldStrength[l_,lorentz_,ind_List,derive_List],
 		Return[False] (* FS can never be charged under abelian groups *)
 	];
 
-	groups= GetGaugeGroups[];
+	groups= $GaugeGroups;
 	If[MemberQ[groups, KeyValuePattern[Field->l]],
 		If[MatchQ[gaugeGroup, First@ First@ First@ Position[groups, KeyValuePattern[Field->l]]],
 			Return[True] (* If FS belongs go same group as gaugeGroup *)
@@ -423,7 +424,7 @@ ShiftCD[indices_List, group_, field_, globalCounter_:1] := Module[{result,counte
 	(* fluctuations should not be truncated to leading order when multiple derivatives are present *)
 	(*
 	(* truncate at leading order in the fluctuation *)
-	result = Normal@Series[result,{counter,0,1}];
+	result = BetterSeries[result,{counter,0,1}];
 	*)
 	
 	(* remove counting parameter *)
@@ -458,7 +459,7 @@ RecursiveExpandCD[indices_List, group_, initField_, \[Lambda]_:1] := Module[
 			Times[-1,
 				\[Lambda],I,
 				(*$GaugeGroups[group][Coupling][],*)
-				$GaugeGroups[group][Field][\[Mu]1[[1,1]],indexAdj],
+				$GaugeGroups[group, Field][\[Mu]1[[1,1]],indexAdj],
 				FieldGenerators[GetFieldLabel[field], group, {indexAdj, First[generatorIndices], Last[generatorIndices]}],
 				RecursiveExpandCD[more\[Mu],group,field,\[Lambda]]
 			]
@@ -471,7 +472,7 @@ RecursiveExpandCD[indices_List, group_, initField_, \[Lambda]_:1] := Module[
 				Times[-1,
 					\[Lambda],I,
 					(*$GaugeGroups[group][Coupling][],*)
-					$GaugeGroups[group][Field][\[Mu]1[[1,1]],indexAdj],
+					$GaugeGroups[group, Field][\[Mu]1[[1,1]],indexAdj],
 					FieldGenerators[GetFieldLabel[field], group, {indexAdj, First[generatorIndices], Last[generatorIndices]}],
 					field
 				]
@@ -501,8 +502,8 @@ RecursiveExpandAbelianCD[indices_List, group_, initField_, \[Lambda]_:1] := Modu
 		Return@Plus[
 			Times[-1, (*crosschecked*)
 				\[Lambda],I,
-				(*$GaugeGroups[group][Coupling][],*)
-				$GaugeGroups[group][Field][\[Mu]1[[1,1]]],
+				(*$GaugeGroups[group, Coupling][],*)
+				$GaugeGroups[group, Field][\[Mu]1[[1,1]]],
 				FieldGenerators[GetFieldLabel[field], group],
 				RecursiveExpandAbelianCD[more\[Mu],group,field,\[Lambda]]
 			]
@@ -514,8 +515,8 @@ RecursiveExpandAbelianCD[indices_List, group_, initField_, \[Lambda]_:1] := Modu
 			Return@Plus[
 				Times[-1, (*crosschecked*)
 					\[Lambda],I,
-					(*$GaugeGroups[group][Coupling][],*)
-					$GaugeGroups[group][Field][\[Mu]1[[1,1]]],
+					(*$GaugeGroups[group, Coupling][],*)
+					$GaugeGroups[group, Field][\[Mu]1[[1,1]]],
 					FieldGenerators[GetFieldLabel[field], group],
 					field
 				]
@@ -1103,7 +1104,7 @@ VarD[lag_, fs__, opt:OptionsPattern[]]:= Module[{gr, terms, labels},
 	Do[
 		terms= If[MemberQ[$GaugeGroups, KeyValuePattern[Field-> lab]],
 			(* gauge field *)
-			gr= First@ GetGaugeGroupByProperty[Field -> lab];
+			gr= First@ GaugeGroupByProperty[Field -> lab];
 			Select[terms, NotTrivialWRTGaugeFieldQ[gr]]
 		,
 			(* matter field *)

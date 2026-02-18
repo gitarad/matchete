@@ -263,16 +263,13 @@ DefineRepresentation@ ___:= (Message[DefineRepresentation::args]; Abort[];)
 (*Conjugation of CGs *)
 
 
-(*HoldPattern@ Bar@ CG[symb_, inds_]:= CG[Bar@ symb, Bar/@ inds];*)
-
-
 (*This is a tentative function for the action of the Bar on the CG, it needs more extensive checks.*)
 
 
-TensorsOverlap[ten1_,ten2_]:=CGproduct[ten1, ten2]/Sqrt[CGproduct[ten1, ten1] CGproduct[ten2, ten2]];
+TensorsOverlap[ten1_,ten2_]:=CGProduct[ten1, ten2]/Sqrt[CGProduct[ten1, ten1] CGProduct[ten2, ten2]];
 
 
-(*HoldPattern@*) Bar@ CG[symb_, inds_]:= 
+Bar@ CG[symb_, inds_]:= 
 	If[!$CGproperties[symb/.Bar@x_:>x,UniqueConj],
 		Block[{reps, tens, cReps, cTens, p, perms,coeff, pout, coeffout},
 			reps=$CGproperties[symb,Indices];
@@ -327,14 +324,15 @@ CG[_, _, __]:= (Message[CG::args]; Abort[];)
 (*The inner product from fully contracting two CGs of the same type*)
 
 
-CGproduct[cg1_, cg2_]:= Conjugate@ Flatten[cg1/. $CGtensors] . Flatten[cg2/. $CGtensors]// Simplify; 
+CGProduct[cg1_, cg2_]:= Conjugate@ Flatten[cg1/. $CGtensors] . Flatten[cg2/. $CGtensors]// Simplify; 
 
 
-(*This is much slower*)
-(*CGproduct[cg1_, cg2_]:= Block[{tens},
-	tens= {Conjugate@ cg1, cg2}/. $CGtensors;
-	Simplify@ First@ EinSum2[tens, Range/@TensorRank/@ tens] 
-];*)
+(*Floating point sparse arrays*)
+CGNumProduct[cg1_SparseArray, cg2_SparseArray]:= Conjugate@ Flatten[cg1] . Flatten[cg2]; 
+
+
+(*w/o conjugation*)
+SAProduct[cg1_SparseArray, cg2_SparseArray]:= Flatten[cg1] . Flatten[cg2]// Simplify
 
 
 (* ::Text:: *)
@@ -385,16 +383,18 @@ FactorOutSymmetrySubgroup[group_List, subGroup_List]:=
 (*Determine if two tensors are linearly dependent*)
 
 
-LinDepQ[ten1_, ten2_]:= Abs[CGproduct[ten1, ten2]]^2/(CGproduct[ten1, ten1] CGproduct[ten2, ten2]) === 1;
+(*LinDepQ[ten1_, ten2_]:= Abs[CGProduct[ten1, ten2]]^2/(CGProduct[ten1, ten1] CGProduct[ten2, ten2]) === 1;*)
+(*Floating poit evaluation for speed up*)
+LinDepQ[ten1_SparseArray, ten2_SparseArray]:= Abs[CGNumProduct[ten1, ten2]]^2 === CGNumProduct[ten1, ten1] CGNumProduct[ten2, ten2];
 
 
 (* ::Text:: *)
 (*Determines if the conjugate of the CG is linearly independent from itself (with permutation of indices)*)
 
 
-UniqueConjQ[reps_, tens_]:= Block[{cReps, cTens= Conjugate@ tens, p, perms},
+UniqueConjQ[reps_, tens_SparseArray]:= Block[{cReps, cTens= Conjugate@ tens, p, perms},
 	cReps= Bar/@ reps; 
-	If[ Sort@cReps =!= Sort@reps, Return@ True;];
+	If[Sort@cReps =!= Sort@reps, Return@ True;];
 	perms= DegeneratePerms[cReps, reps];
 	Do[
 		If[LinDepQ[tens, PermuteArray[cTens, p]],
@@ -454,7 +454,8 @@ GetByProperty[assoc_Association, props:_List|_Rule]:=
 (*List of explicit CG tensors and their properties properties *)
 
 
-$CGtensors= <||>;
+$CGtensors= <||>; (*CG tensors, symbolic*)
+$CGNumTensors= <||>; (*CG tensors, floats*)
 $CGproperties= <||>;
 
 
@@ -530,19 +531,22 @@ DefineCG[symb: _Symbol | _Symbol[_], indexTypes_List, tensorIn_]:= Module[
 			False
 		];
 	
-	AppendTo[$CGtensors, symb-> tensor];	
-	AppendTo[$CGproperties, symb-> <|
+	$CGtensors@ symb= tensor;
+	$CGNumTensors@ symb= N@ $CGtensors@ symb;
+	$CGproperties@ symb= <|
 			Group-> $Representations[First@ reps, Group], 
 			Indices-> indexTypes, 
 			UniqueConj-> UniqueConjQ[indexTypes, tensor],
-			Symmetries-> FindTensorSymmetries[symb/. $CGtensors, indexTypes],
-			Real-> Element[Normal@tensor, Reals] === True,
+			Symmetries-> FindTensorSymmetries[symb/. $CGNumTensors, indexTypes], 
+			Real-> Element[Normal@ tensor, Reals] === True,
 			InBasis-> inBasis,
 			DeltaDecomposable-> decomposable
-		|>]; 
+		|>; 
+	
 	(*Symbol is complex unless tensor and indices are real*)
 	If[!($CGproperties[symb, Real] && (Bar/@ indexTypes === indexTypes) ), 
 		SetBarable@ symb;
+		$CGtensors@ Bar@ symb= Conjugate@ tensor;
 	];		
 	
 	(*Create CG shorthand*)
@@ -586,11 +590,13 @@ RenameCG[oldName_-> newName_]:= Module[{},
 	];
 	
 	$CGtensors= KeyRename[$CGtensors, oldName-> newName];
+	$CGNumTensors= KeyRename[$CGNumTensors, oldName-> newName];
 	$CGproperties= KeyRename[$CGproperties, oldName-> newName];
 	(*Symbol is complex unless tensor and indices are real*)
-	If[!($CGproperties[newName, Real] && (Bar/@ $CGproperties[newName, Indices] === $CGproperties[newName, Indices]) ), 
+	If[$CGproperties[newName, UniqueConj], 
 		SetBarable@ newName;
-		UnsetBarable@ oldName;
+		(*barred cgs*)
+		$CGtensors= KeyRename[$CGtensors, Bar@ oldName-> Bar@ newName];
 	];
 	
 	ResetCGProjectors[];
@@ -600,6 +606,10 @@ RenameCG[oldName_-> newName_]:= Module[{},
 			HoldPattern@ RuleDelayed[CG[x:(oldName|Bar@ oldName), inds_], rhs_]:> 
 				RuleDelayed[CG[x/. oldName-> newName, inds], rhs];
 		$CGreplacements= KeyRename[$CGreplacements, oldName-> newName];
+	];
+	
+	If[$CGproperties[newName, UniqueConj], 
+		UnsetBarable@ oldName;
 	];
 	
 	(*Fix CG shorthands*)
@@ -716,6 +726,13 @@ RemoveCG[name_]:= Block[{},
 		Abort[];
 	];
 	
+	KeyDropFrom[$CGtensors, name];
+	KeyDropFrom[$CGtensors, Bar@ name];
+	KeyDropFrom[$CGNumTensors, name];
+	KeyDropFrom[$CGproperties, name];
+	KeyDropFrom[$CGreplacements, name];
+	ResetCGProjectors[];
+	
 	(*Remove Shorthand*)
 	Switch[name
 	, _Symbol,
@@ -724,12 +741,7 @@ RemoveCG[name_]:= Block[{},
 		SubValues[Evaluate@ Head@ name]= DeleteCases[SubValues[Evaluate@ Head@ name], 
 			RuleDelayed[HoldPattern[Verbatim[HoldPattern][name[_] ] ], _] ];
 	];
-	
-	KeyDropFrom[$CGtensors, name];
-	KeyDropFrom[$CGproperties, name];
-	KeyDropFrom[$CGreplacements, name];
 	Quiet@ UnsetBarable@ name;
-	ResetCGProjectors[];
 ];
 
 
@@ -745,14 +757,7 @@ RemoveRepresentation[name_]:= Block[{group, cg},
 	];
 	group= $Representations[name, Group];
 	
-	(*Unsetting the associated Bar properties*)
-	If[$Representations[name, Reality]=== 1, 
-		Bar@ ind:Index[_, name]=.;
-		,
-		UnsetBarable@ name;
-	];
-	KeyDropFrom[$Representations, name];
-	
+	(*Removing representations*)
 	Do[
 		If[$CGproperties[cg, Group] =!= group, Continue[] ];
 		If[MemberQ[$CGproperties[cg, Indices]/. {Bar@ x_:> x}, name],
@@ -760,6 +765,14 @@ RemoveRepresentation[name_]:= Block[{group, cg},
 		];
 	, {cg, Keys@ $CGproperties}];
 	KeyDropFrom[$CGproperties, name];
+	
+	(*Unsetting the associated Bar properties*)
+	If[$Representations[name, Reality]=== 1, 
+		Bar@ ind:Index[_, name]=.;
+		,
+		UnsetBarable@ name;
+	];
+	KeyDropFrom[$Representations, name];
 ];
 
 
@@ -889,20 +902,21 @@ TensorBasis[indexTypes_List]:= Module[{compTensors, types, eTensInds, len, cur, 
 	(*For each ECG combination determines the linearly independent permutations*)
 	compTensors= Table[
 		inds= Flatten[tens/. eTensInds];
-		(*Performance could be improved by factoring out the symmetries already inherent the ECGs*)
+		(*DEPRECATED: all (non-unique) permutations*)
 		(*perms= DegeneratePerms[inds, indexTypes];*)
-		
+
+		(*"Unique" permutation group of of the CG tensor product *)		
 		perms= FactorOutSymmetrySubgroup[DegeneratePerms@ inds, SymmetriesOfTensorProduct[tens, eTensInds]];
-		(*toOrigPerm= FindPerm[inds, indexTypes]//Echo;
-		perms= #[[toOrigPerm]]&/@ perms//Echo;*)
 		
+		(*Map unto permutations of the original index set*)
 		fromOrigPerm= FindPerm[indexTypes, inds];
 		perms= InversePerm@ ComposePerm[#, fromOrigPerm]&/@ perms;
 		
-		sa= TensorProduct@@ tens/. $CGtensors;
+		sa= TensorProduct@@ tens/. $CGNumTensors;
 		perms= Reap[
 			While[Length@ perms>= 1,
 				Sow@ perms[[1]];
+				(*Check numerically for for tensor overlap*)
 				t= PermuteArray[sa, perms[[1]] ];
 				perms= DeleteCases[perms[[2;;]], _? (LinDepQ[t, PermuteArray[sa, #]]&)];
 			];
@@ -961,43 +975,41 @@ RemoveDeltaDecomposables@ tensorSets_:= Module[{decomposableCGs, out= tensorSets
 (*Determines the pieces necessary  for projecting tensor to CG basis in the vector space of CGs*)
 
 
-ResetCGProjectors[]:= Block[{},
-Clear@ CGprojector;
-CGprojector[indexTypes_List]:= CGprojector[indexTypes]= Block[
-		{subsets, tensors, sArrays, t1, t2, invmetric, basis, v},
+CGProjector[indexTypes_List]:= CGProjector[indexTypes]= Block[
+		{tensors, m, n, invmetric, sa},
 	tensors= TensorBasis@ indexTypes;
-	If[Length@ tensors < 1, Return[{{}, {}, {{}}, {}}]; ];
-
-	sArrays= Table[PermuteArray[TensorProduct@@ t1[[1]]/. $CGtensors, t1[[2]] ], {t1, tensors}];
-	(*Find overlap matrix*)
-	invmetric= Outer[CGproduct, sArrays, sArrays, 1];
-	(*Find the linearly dependent subsets*)
-	subsets= RedundantSubsets@ invmetric;
+	If[Length@ tensors < 1, Return@ {{}, {{}}}; ];
 	
-	{tensors, sArrays, invmetric, subsets}
-];
+	(*Find overlap matrix. Utilizes hermitianity to save half the computation time*)
+	invmetric= Table[
+			sa= TensProdPermutationToSA[Bar/@ tensors[[m, 1]], tensors[[m, 2]]];
+			Table[
+				If[n >= m, 
+					SAProduct[sa, TensProdPermutationToSA[tensors[[n, 1]], tensors[[n, 2]]] ]
+				,
+					0
+				]
+			, {n, Length@ tensors}]
+		, {m, Length@ tensors}];
+	invmetric+= ConjugateTranspose@ ReplacePart[invmetric, {i_, i_}-> 0];
+	
+	{tensors, invmetric}
 ];
 
 
 (* ::Text:: *)
-(*Initialization*)
+(*Call to remove memoized down-values from CGProjector*)
 
 
-ResetCGProjectors[];
+ResetCGProjectors[]:= RemoveAssociatedDownValues@ CGProjector[{__}];
 
 
 (* ::Text:: *)
-(*Determine redundancies (linear dependent subsets) of tensors set. Returns list of blocks and and the number of redundant tensors in each.*)
+(*Function to convert a symbolic list of CGs with a permutation into a SparseArray, *)
 
 
-RedundantSubsets[innerProducts_]:= Block[{mat, blocks},
-	mat= DeleteCases[RowReduce@ innerProducts, {0..}] (*This seems to take a lot of time*);
-	blocks= (Flatten@ Position[#, Except@ 0, {1}, Heads-> False]&)/@ mat;
-	blocks= {#, 1}&/@ blocks;
-	blocks= blocks//. List@ OrderlessPatternSequence[{a:{OrderlessPatternSequence[x_, ___]}, s_}, 
-		{b:{OrderlessPatternSequence[x_, ___]}, t_}, rest___]:> {{Union[a, b], s+ t}, rest};
-	{#[[1]], Length@ #[[1]]- #[[2]]}&/@ blocks
-];
+TensProdPermutationToSA[cgList_List,perm_List]:=
+	PermuteArray[TensorProduct@@ Replace[cgList, $CGtensors, {1}], perm];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1038,7 +1050,7 @@ MatchToCGs[tensor_SparseArray, inds_, originalTensors_: None]:= Block[{out, indT
 
 
 FindCGMatch[tensor_, inds_]:= Block[{indTypes, indTypesOut, indPerm, tens, indsOut, indices,
-		cgBasis, cgMetric, cgSets, cgTensors, overlaps, basis, composition, n, temp, order},
+		cgBasis, cgMetric, overlaps, basis, compTensor, composition, n, temp, order},
 	(*If input tensor vanishes*)
 	If[SAZeroQ@ tensor, Return@ 0;]; 
 	
@@ -1047,23 +1059,18 @@ FindCGMatch[tensor_, inds_]:= Block[{indTypes, indTypesOut, indPerm, tens, indsO
 	indPerm= FindPerm[indTypes];
 	indsOut= inds[[indPerm]];
 	indTypesOut= indTypes[[indPerm]];
+	(*Conjugate, permuted tensor*)
 	tens= PermuteArray[tensor, indPerm];
 	
 	(*Find basis tensors*)
-	{cgBasis, cgTensors, cgMetric, cgSets}= CGprojector[indTypesOut]; 
+	{cgBasis, cgMetric}= CGProjector[indTypesOut]; 
 	If[Length@ cgBasis< 1,
 		Return@ None;
 	]; 
 	
 	(*Project tensor: The tensors with least overlap in each redundant set are removed 
 		to reduce the relevant CG tensors to a basis for the projection.*)
-	(*overlaps= (CGproduct[#, tens]&/@ cgTensors)// Simplify;
-	basis= Flatten@ Table[
-		order= Ordering[Abs@ overlaps[[set[[1]] ]]/ Sqrt@ Diagonal@ cgMetric[[set[[1]], set[[1]] ]]// N];
-		set[[1, order[[set[[2]]+ 1;;]] ]]  
-	, {set, cgSets}];*)
-	(*We can get rid of the cgSets if this new method works*)
-	overlaps= (CGproduct[#, tens]&/@ cgTensors)// Simplify;
+	overlaps= SAProduct[TensProdPermutationToSA@@ MapAt[Bar, #, {1, All}], tens]&/@ cgBasis;
 	order= Ordering[- Abs@ overlaps/ Sqrt@ Diagonal@ cgMetric// N];	
 	basis= DeleteCases[RowReduce@ cgMetric[[order, order]], {0..}];
 	basis= FirstPosition[#, 1]&/@ basis// Flatten;
@@ -1071,20 +1078,20 @@ FindCGMatch[tensor_, inds_]:= Block[{indTypes, indTypesOut, indPerm, tens, indsO
 	
 	(*Project tensor*)
 	overlaps= overlaps[[basis]]; 
-	cgTensors= cgTensors[[basis]];
 	cgBasis= cgBasis[[basis]];
 	(*Solve g_ij x_j = y_i*)
-	(*cgMetric= Inverse@ cgMetric[[basis, basis]]; 
-	composition= cgMetric . overlaps// Simplify;*)
 	cgMetric= cgMetric[[basis, basis]];
 	composition= RowReduce[Join[cgMetric, List/@ overlaps, 2]][[;;, -1]];
 		
 	(*Test if projection succesfull: otherwise add new CG*)
-	(*temp= SparseArray[tens- composition . cgTensors];
-	If[Length@ ArrayRules@ temp> 1,
-		Return@ None;
-	];*)
-	If[!SAZeroQ[tens- composition . cgTensors],
+	compTensor= Sum[(*Evaluate only the SAs with non-trivial overlap with the CG*)
+			If[composition[[n]] =!= 0,
+				composition[[n]]* TensProdPermutationToSA@@ cgBasis[[n]]
+			,
+				0
+			]
+		, {n, Length@ composition}];
+	If[!SAZeroQ[tens- compTensor],
 		Return@ None;
 	];
 	
@@ -1135,20 +1142,59 @@ IdentifyCG@ CG[Bar@ tens_, inds_]/; DuplicateFreeQ[inds/. Bar@ x_-> x]:=
 ContractCGs::repInds= "Index label \"`1`\" occurs `2` times in the expression.";
 
 
-ContractCGs@ cg_CG:= IdentifyCG@ cg;
+ContractCGs@ expr:(_List|_Plus|_HcTerms):= ContractCGs/@ expr; 
 
 
-ContractCGs@ expr:(_List|_Plus):= ContractCGs/@ expr; 
+ContractCGs@ expr_:= Block[{terms= LagrangianExpand@ expr},
+	If[Head[terms] === Plus,
+		ContractCGsSingleTerm/@ terms
+	,
+		ContractCGsSingleTerm@ terms
+	]
+];
 
 
-ContractCGs@ expr_:= Block[{out, cg, cgs, indRules, repeatedInds, contractedCGs, set},
-	If[Head[out= LagrangianExpand@ expr] === Plus,
-		Return[ContractCGs/@ out];
-	];
+(* ::Text:: *)
+(*Applies contractions to single terms. Both Times and Operator threads over sums that may be generated from contracted CGs. *)
+
+
+ContractCGsSingleTerm@ cg_CG:= IdentifyCG@ cg;
+
+
+ContractCGsSingleTerm[term_Times]:= Block[{out= term},
 	If[FreeQ[out, _CG], Return@ out; ];
-	
+	If[FreeQ[out, _Operator], 
+		Times@@ ContractCGsProduct@@ out
+	,
+		out/. op_Operator:> Operator@@ ContractCGsProduct@@ op
+	]// Expand 
+];
+
+
+ContractCGsSingleTerm[term_Power]:= Block[{out= term},
+	If[FreeQ[out, _CG], Return@ out; ];
+	Times@@ ContractCGsProduct[term]// Expand
+];
+
+
+ContractCGsSingleTerm[term_Operator]:= Block[{out= term},
+	If[FreeQ[out, _CG], Return@ out; ];
+	Operator@@ ContractCGsProduct@@ out// Expand
+];
+
+
+ContractCGsSingleTerm@ other_:= other;
+
+
+(* ::Text:: *)
+(*Contracts all CGs among factors of a product (or equivalent)*)
+
+
+ContractCGsProduct[factors__]:= Block[
+		{cg, cgs, head, indRules, repeatedInds, contractedCGs, set, uncontractedCGs, out= {factors}},
+		
 	(*Extract all CGs*)
-	out= out/. Power[c_CG, 2]:> CGproduct[c[[1]], c[[1]]];
+	out= out/. Power[c_CG, 2]:> CGProduct[c[[1]], c[[1]]];
 	cgs= Cases[out, _CG];
 	out= DeleteCases[out, _CG];
 	
@@ -1169,11 +1215,11 @@ ContractCGs@ expr_:= Block[{out, cg, cgs, indRules, repeatedInds, contractedCGs,
 	contractedCGs= DeleteDuplicates/@ (contractedCGs//. 
 		{OrderlessPatternSequence[{a___, x_, b___}, {c___, x_, d___}, rest___]}-> {{x, a, b, c, d}, rest});
 	
-	(*All the uncontracted CGs are multiplied on the output*)
-	out= out* Times@@ (IdentifyCG/@ cgs[[Complement[Range@ Length@ cgs, Flatten@ contractedCGs] ]]);
-		
+	(*All the uncontracted CGs are identified individually*)
+	uncontractedCGs= IdentifyCG/@ cgs[[Complement[Range@ Length@ cgs, Flatten@ contractedCGs] ]];
+	
 	(*Contract the CGs within the disjoint sets and match to basis*)
-	contractedCGs= Product[
+	contractedCGs= Table[
 			set= cgs[[set]];
 			cg= EinsteinSummation[set[[;;, 1]]/. $CGtensors, set[[;;, 2]], KeepIndices-> True];
 			If[Length@ cg[[2]]=== 0,
@@ -1183,7 +1229,8 @@ ContractCGs@ expr_:= Block[{out, cg, cgs, indRules, repeatedInds, contractedCGs,
 			]
 		, {set, contractedCGs}];
 	
-	out* contractedCGs 
+	(*Returns list of factors*)
+	Join[out, uncontractedCGs, contractedCGs]
 ];
 
 
@@ -1362,9 +1409,11 @@ EinsteinSummationByPairs[tensors_, tinds_]:= Block[{contract, pairs, tens, inds}
 
 EinSum2[tensors_, in_]:= Block[{indices, tensor, contract, traced},
 	indices= Flatten@ in;
-	tensor= TensorProduct@@ tensors;
 	{contract, traced}= IndexContractions@ indices;
-	{SARemove0@ TensorContract[tensor, contract], DeleteCases[indices, Alternatives@@ traced]}
+	(*The Activate@ TensorContract[Inactive[TensorProduct][...], ...] call is not documented but mentioned here: https://mathematica.stackexchange.com/questions/77511/efficient-tensor-product-followed-by-contraction 
+	It seems to behave more as a dot product than a TensorProduct followed by traces, as would be the case w/o the inactivation and which is extremely inefficient.*)
+	tensor= Inactive[TensorProduct]@@ tensors;
+	{SARemove0@ Activate@ TensorContract[tensor, contract], DeleteCases[indices, Alternatives@@ traced]}
 ];
 
 

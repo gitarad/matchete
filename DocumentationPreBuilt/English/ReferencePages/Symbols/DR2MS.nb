@@ -1,0 +1,2092 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Wolfram 14.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       154,          7]
+NotebookDataLength[     66658,       2084]
+NotebookOptionsPosition[     58062,       1914]
+NotebookOutlinePosition[     60560,       1975]
+CellTagsIndexPosition[     60474,       1970]
+WindowTitle->DR2MS
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[GridBox[{
+   {GridBox[{
+      {
+       ItemBox[Cell[BoxData[
+         RowBox[{
+          TemplateBox[{12},
+           "Spacer1"], Cell["MATCHETE SYMBOL", "PacletNameCell",
+           TextAlignment->Center,ExpressionUUID->
+           "bc1c7361-5b60-4a96-81d4-66784b5f78d1"], 
+          TemplateBox[{8},
+           "Spacer1"]}]],
+         TextAlignment->Center,ExpressionUUID->
+         "3f45f678-2651-40cb-b68f-1a5e68ac0a47"],
+        Background->RGBColor[0.490196, 0.576471, 0.690196],
+        ItemSize->Full], ""}
+     },
+     GridBoxAlignment->{"Rows" -> {{Center}}},
+     GridBoxItemSize->{"Columns" -> {Full, 
+         Scaled[0.02]}, "Rows" -> {{2.5}}}], Cell[TextData[Cell[BoxData[
+     TagBox[
+      ActionMenuBox[
+       FrameBox[Cell[TextData[{
+         "URL",
+         " ",
+         Cell[BoxData[
+          GraphicsBox[
+           {GrayLevel[0.66667], Thickness[0.13], 
+            LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]},
+           AspectRatio->1,
+           ImageSize->20,
+           PlotRange->{{-3, 4}, {-1, 1}}]],ExpressionUUID->
+          "368c4593-b398-426f-9e46-1dc1051cdc5d"]
+        }],ExpressionUUID->"7a820aab-a636-499e-999a-a9dc75d071a2"],
+        StripOnInput->False],{
+       "\"Matchete/ref/DR2MS\"" :> None, 
+        "\"Copy Wolfram Documentation Center URL\"" :> 
+        CopyToClipboard["Matchete/ref/DR2MS"], Delimiter, "\"Copy web URL\"" :> 
+        Module[{DocumentationSearch`Private`nb$}, 
+          DocumentationSearch`Private`nb$ = 
+           NotebookPut[
+            Notebook[{
+              Cell[BoxData[
+                MakeBoxes[
+                 Hyperlink[
+                  "http://reference.wolfram.com/language/Matchete/ref/DR2MS.\
+html"], StandardForm]], "Input", TextClipboardType -> "PlainText"]}, Visible -> 
+              False]]; SelectionMove[
+           DocumentationSearch`Private`nb$, All, Notebook]; 
+          FrontEndTokenExecute[DocumentationSearch`Private`nb$, "Copy"]; 
+          NotebookClose[DocumentationSearch`Private`nb$]; Null], 
+        "\"Go to web URL\"" :> 
+        FrontEndExecute[{
+          NotebookLocate[{
+            URL[If[TrueQ[False], 
+                "http://reference.wolfram.com/system-modeler/", 
+                "http://reference.wolfram.com/language/"] <> 
+              "Matchete/ref/DR2MS" <> ".html"], None}]}]},
+       Appearance->None,
+       MenuAppearance->Automatic,
+       MenuStyle->"URLMenu"],
+      MouseAppearanceTag["LinkHand"]]],
+     LineSpacing->{1.4, 0},ExpressionUUID->
+     "ac990913-f706-4b15-a31e-2100e1f582c9"]], "AnchorBar",
+     CacheGraphics->False,ExpressionUUID->
+     "6ebc99cd-94f0-4674-9a86-7c6998b8ab28"]}
+  }]], "AnchorBarGrid",
+ GridBoxOptions->{GridBoxItemSize->{"Columns" -> {
+     Scaled[0.65], {
+      Scaled[0.34]}}, "ColumnsIndexed" -> {}, "Rows" -> {{1.}}, 
+   "RowsIndexed" -> {}}},
+ CellID->1,ExpressionUUID->"4893a4a8-dd07-44ad-8dd1-17e696c0abf4"],
+
+Cell["Matchete`", "ContextNameCell",ExpressionUUID->"cccdbf02-69e4-40ea-8dd8-6195b92f13a9"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[GridBox[{
+   {Cell[TextData[{
+     Cell[
+     "DR2MS", "ObjectName",ExpressionUUID->
+      "8cedfbc3-5609-4b07-939e-3111462af51c"],
+     Cell[BoxData[
+      TemplateBox[{8},
+       "Spacer1"]],ExpressionUUID->"16934031-42c7-4fdb-b7df-80635a5d77bb"],
+     Cell[BoxData[
+     ""], "ObjectNameTranslation",ExpressionUUID->
+      "4111cfc8-acc0-4fdf-9fd6-88a40c3b6e1c"]
+    }],ExpressionUUID->"cd086d7c-fb1f-4e9b-839c-26af2dee62d8"], 
+    "\[SpanFromLeft]"}
+  }]], "ObjectNameGrid",ExpressionUUID->"cfe3d12a-f92c-4f7b-b316-\
+9f0a69461d77"],
+
+Cell[BoxData[GridBox[{
+   {"", Cell[TextData[{
+     Cell[BoxData[
+      RowBox[{
+       TemplateBox[{
+         Cell[
+          TextData["DR2MS"]], "paclet:Matchete/ref/DR2MS", 
+         "Matchete Package Symbol"},
+        "PackageLink",
+        BaseStyle->"InlineFormula"], "[", 
+       StyleBox["lag", "TI"], "]"}]], "InlineFormula",
+      FontFamily->"Source Sans Pro",ExpressionUUID->
+      "ca4b3ebe-0c6d-4cf8-b65a-c20d1ef622a8"],
+     " takes the renormalizable Lagrangian ",
+     Cell[BoxData[
+      StyleBox["lag", "TI"]], "InlineFormula",
+      FontFamily->"Source Sans Pro",ExpressionUUID->
+      "1e699499-da9c-4c2c-8553-1431ee55d615"],
+     " that is renormalized in dimensional reduction using the ",
+     Cell[BoxData[
+      OverscriptBox["DR", "_"]], "InlineFormula",
+      FontFamily->"Source Sans Pro",ExpressionUUID->
+      "09b5e55f-80de-4e83-a419-92ca175e77a1"],
+     "  scheme as input and returns the version of that Lagrangian \
+renormalized using dimensional regularization in the ",
+     Cell[BoxData[
+      OverscriptBox["MS", "_"]], "InlineFormula",
+      FontFamily->"Source Sans Pro",ExpressionUUID->
+      "5c45c22c-1536-4ff1-a07a-9b0931b98b83"],
+     " scheme by incorporating the appropriate finite counterterms required \
+for the scheme change. "
+    }],ExpressionUUID->"15624a12-4710-47a2-9d31-4794bdd51f2c"]}
+  }]], "Usage",
+ CellID->1251207239,ExpressionUUID->"43c1ffe0-c549-40ed-aa8d-3663cbd8ebfa"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[Cell[BoxData[
+ ButtonBox[Cell[TextData[{
+   Cell[BoxData[
+    DynamicBox[ToBoxes[
+      If[
+       MatchQ[
+        CurrentValue[
+         EvaluationNotebook[], {TaggingRules, "Openers", "NotesSection"}, 
+         Closed], 
+        Alternatives[Open, True]], 
+       Style[
+        Graphics[{
+          Thickness[0.18], 
+          RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+          Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+         PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+        0.68 Inherited], 
+       Rotate[
+        Style[
+         Graphics[{
+           Thickness[0.18], 
+           RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+           Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+          PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+         0.68 Inherited], Rational[1, 2] Pi, {-1.65, -1}]]],
+     ImageSizeCache->{
+      13.600000000000001`, {-0.1685058593749993, 13.768505859375}}]],
+    ExpressionUUID->"737710fa-d49e-46e1-9745-3f8c6eb0edac"],
+   Cell[BoxData[
+    TemplateBox[{1},
+     "Spacer1"]],ExpressionUUID->"8eb9b09d-f7a8-4a58-9727-046433bb9c9b"],
+   "Details and Options"
+  }], "NotesFrameText",ExpressionUUID->"926907f9-8e27-47a1-be6a-6cd7a0ae6cc4"],
+  Appearance->{Automatic, None, "Normal", Automatic},
+  BaseStyle->None,
+  ButtonFunction:>(FrontEndExecute[{
+     FrontEnd`SelectionMove[
+      FrontEnd`SelectedNotebook[], All, ButtonCell], 
+     FrontEndToken["OpenCloseGroup"], 
+     FrontEnd`SelectionMove[
+      FrontEnd`SelectedNotebook[], After, CellContents]}]& ),
+  Evaluator->None,
+  Method->
+   "Preemptive"]],ExpressionUUID->"01037708-12b0-488e-8b6f-86755b57452e"]], \
+"NotesSection",
+ WholeCellGroupOpener->True,
+ CellGroupingRules->{"SectionGrouping", 50},
+ CacheGraphics->False,
+ CellID->117208194,ExpressionUUID->"d2e025a2-ad2e-483e-a1c2-dd3e3941fd32"],
+
+Cell[TextData[{
+ "The argument ",
+ Cell[BoxData[
+  StyleBox["lag", "TI"]], "InlineFormula",
+  FontFamily->"Source Sans Pro",ExpressionUUID->
+  "60f7a0ba-4c7f-4c3b-9e5d-8f402648cecb"],
+ " must be a valid Lagrangian containing only renormalizable interactions. \
+Non-renormalizable interactions are currently not supported. In addition, the \
+shift is only performed for Lagrangian terms that can contribute to the \
+tree-level matching of the theory. Finite counterterms for interactions that \
+only contribute at the loop level are not included as these appear only as a \
+two-loop effect in the corresponding EFT."
+}], "Notes",
+ CellID->1869578717,ExpressionUUID->"1c9e66db-b210-4230-b5b4-668458ec43d3"],
+
+Cell[TextData[{
+ "This function then loops over all relevant Lagrangian terms and includes \
+the finite scheme change counterterms following ",
+ Cell[BoxData[
+  TemplateBox[{
+    Cell[
+     TextData["Martin and Vaughn (1993) [hep-ph/9308222]"]], 
+    "https://arxiv.org/abs/hep-ph/9308222"},
+   "WebLink",
+   BaseStyle->{"Notes"}]],ExpressionUUID->
+  "86508115-3381-4332-b86f-e35f63734242"],
+ "."
+}], "Notes",
+ CellID->866870056,ExpressionUUID->"8a2df598-2c53-491c-83f3-a8a446d53d7e"],
+
+Cell["\<\
+The finite counterterms for the gauge couplings are immediately absorbed into \
+a redefinition of these gauge couplings to achieve a canonical normalization \
+of the kinetic terms of the gauge fields.\
+\>", "Notes",
+ CellID->198320321,ExpressionUUID->"60c57069-b879-447c-a9f2-33879d37e3e8"]
+}, Dynamic[CurrentValue[
+ EvaluationNotebook[], {TaggingRules, "Openers", "NotesSection"}, Closed]]]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ Cell[BoxData[
+  DynamicBox[ToBoxes[
+    If[
+     MatchQ[
+      CurrentValue[
+       EvaluationNotebook[], {
+       TaggingRules, "Openers", "PrimaryExamplesSection"}, Open], 
+      Alternatives[True, Open]], 
+     Style[
+      Graphics[{
+        Thickness[0.18], 
+        RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+        Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+       PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+      0.68 Inherited], 
+     Rotate[
+      Style[
+       Graphics[{
+         Thickness[0.18], 
+         RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+         Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+        PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+       0.68 Inherited], Rational[1, 2] Pi, {-1.65, -1}]]],
+   ImageSizeCache->{
+    13.600000000000001`, {4.251494140625001, 9.348505859375}}]],
+  ExpressionUUID->"f3bcbdd4-60d0-4fc9-88bf-1e271847596f"],
+ Cell[BoxData[
+  TemplateBox[{1},
+   "Spacer1"]],ExpressionUUID->"402680c9-355d-4e32-82f6-39662c1b5ec1"],
+ "Examples",
+ "\[NonBreakingSpace]\[NonBreakingSpace]",
+ Cell["(3)", "ExampleCount",ExpressionUUID->
+  "749de464-3c18-471c-845f-947e9ffc9b7b"]
+}], "PrimaryExamplesSection",
+ WholeCellGroupOpener->True,
+ CacheGraphics->False,
+ CellTags->"PrimaryExamplesSection",
+ CellID->675612259,ExpressionUUID->"0ce4ced3-30a6-471d-8e00-37885339f02e"],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ Cell[BoxData[
+  DynamicBox[ToBoxes[
+    If[
+     MatchQ[
+      CurrentValue[
+       EvaluationNotebook[], {TaggingRules, "Openers", "ExampleSection", "0"},
+        Closed], 
+      Alternatives[Open, True]], 
+     Style[
+      Graphics[{
+        Thickness[0.18], 
+        RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+        Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+       PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+      0.68 Inherited], 
+     Rotate[
+      Style[
+       Graphics[{
+         Thickness[0.18], 
+         RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+         Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+        PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+       0.68 Inherited], Rational[1, 2] Pi, {-1.65, -1}]]],
+   ImageSizeCache->{
+    13.600000000000001`, {4.551318359375001, 9.048681640625}}]],
+  ExpressionUUID->"3da34544-935f-4877-80c0-7e53ff207316"],
+ Cell[BoxData[
+  TemplateBox[{1},
+   "Spacer1"]],ExpressionUUID->"6e562b58-51b9-4b69-9fa0-f1d365d05ebb"],
+ "Basic Examples",
+ "\[NonBreakingSpace]\[NonBreakingSpace]",
+ Cell["(1)", "ExampleCount",ExpressionUUID->
+  "c65a5000-9223-4676-b271-08d7def38ba0"]
+}], "ExampleSection", "ExampleSection",
+ WholeCellGroupOpener->True,
+ CacheGraphics->False,
+ CellID->1269195324,ExpressionUUID->"ac9f610d-607b-428f-be1f-1e0810861a7c"],
+
+Cell["Defining a SU(2) gauge group:", "ExampleText",
+ CellID->926387710,ExpressionUUID->"c6a6fc7b-14ca-47ed-bdde-be7a791c6f98"],
+
+Cell[BoxData[
+ RowBox[{"DefineGaugeGroup", "[", 
+  RowBox[{"SU2", ",", 
+   RowBox[{"SU", "@", "2"}], ",", "g", ",", "F", ",", "\[IndentingNewLine]", 
+   RowBox[{"FundAlphabet", "->", 
+    RowBox[{"{", 
+     RowBox[{"\"\<i\>\"", ",", "\"\<j\>\"", ",", "\"\<k\>\"", 
+      ",", "\"\<l\>\""}], "}"}]}], ",", "\[IndentingNewLine]", 
+   RowBox[{"AdjAlphabet", "->", 
+    RowBox[{"{", 
+     RowBox[{"\"\<I\>\"", ",", "\"\<J\>\"", ",", "\"\<K\>\"", 
+      ",", "\"\<L\>\""}], "}"}]}]}], "\[IndentingNewLine]", "]"}]], "Input",
+ CellLabel->"In[1]:=",
+ CellID->494760235,ExpressionUUID->"f670da55-2136-47e6-8a0a-cc72a0cf64c4"],
+
+Cell["\<\
+Defining 3 fields: a fundamental scalar, an adjoint Majorana fermion, and a \
+fundamental Dirac fermion:\
+\>", "ExampleText",
+ CellID->1048845750,ExpressionUUID->"3a3ee3e2-abcb-4740-8fcc-4e098af8f126"],
+
+Cell[BoxData[{
+ RowBox[{"DefineField", "[", 
+  RowBox[{"\[Phi]", ",", "Scalar", ",", "\[IndentingNewLine]", 
+   RowBox[{"Indices", "->", 
+    RowBox[{"{", 
+     RowBox[{"SU2", "@", "fund"}], "}"}]}], ",", " ", "\[IndentingNewLine]", 
+   RowBox[{"Mass", "->", "Light"}]}], "\[IndentingNewLine]", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"DefineField", "[", 
+  RowBox[{"\[Chi]", ",", "Fermion", ",", "\[IndentingNewLine]", 
+   RowBox[{"Indices", "->", 
+    RowBox[{"{", 
+     RowBox[{"SU2", "@", "adj"}], "}"}]}], ",", "\[IndentingNewLine]", 
+   RowBox[{"SelfConjugate", "->", "True"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"Mass", "->", "Light"}]}], "\[IndentingNewLine]", "]"}], "\n", 
+ RowBox[{"DefineField", "[", 
+  RowBox[{"\[Psi]", ",", "Fermion", ",", "\[IndentingNewLine]", 
+   RowBox[{"Indices", "->", 
+    RowBox[{"{", 
+     RowBox[{"SU2", "@", "fund"}], "}"}]}], ",", "\[IndentingNewLine]", 
+   RowBox[{"Mass", "->", "0"}]}], "\[IndentingNewLine]", "]"}]}], "Input",
+ CellLabel->"In[2]:=",
+ CellID->1667446653,ExpressionUUID->"ebcf7a9a-7d19-4b8c-b8aa-e24709a63845"],
+
+Cell["Defining a Yukawa and quartic scalar coupling:", "ExampleText",
+ CellID->1086477139,ExpressionUUID->"6cb467e6-4f72-4821-9159-14ffae26c174"],
+
+Cell[BoxData[{
+ RowBox[{"DefineCoupling", "[", "y", "]"}], "\n", 
+ RowBox[{"DefineCoupling", "[", 
+  RowBox[{"\[Lambda]", ",", 
+   RowBox[{"SelfConjugate", "->", "True"}]}], "]"}]}], "Input",
+ CellLabel->"In[3]:=",
+ CellID->1955526469,ExpressionUUID->"112f3a8e-d406-4750-9755-38b334fcec0e"],
+
+Cell["\<\
+Defining a Lagrangian with a Yukawa interaction and a scalar quartic:\
+\>", "ExampleText",
+ CellID->1948856006,ExpressionUUID->"d5553557-a36e-4ade-868c-2098a233d892"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"\[ScriptCapitalL]int", "=", 
+   RowBox[{
+    RowBox[{"-", 
+     RowBox[{"PlusHc", "[", 
+      RowBox[{
+       RowBox[{"y", "[", "]"}], 
+       RowBox[{
+        RowBox[{"Bar", "@", 
+         RowBox[{"\[Psi]", "[", "i", "]"}]}], "**", 
+        RowBox[{"\[Chi]", "[", "J", "]"}]}], 
+       RowBox[{"\[Phi]", "[", "j", "]"}], 
+       RowBox[{"CG", "[", 
+        RowBox[{
+         RowBox[{"gen", "@", 
+          RowBox[{"SU2", "[", "fund", "]"}]}], ",", 
+         RowBox[{"{", 
+          RowBox[{"J", ",", "i", ",", "j"}], "}"}]}], "]"}]}], "]"}]}], "-", 
+    RowBox[{
+     RowBox[{"\[Lambda]", "[", "]"}], 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"Bar", "@", 
+        RowBox[{"\[Phi]", "[", "i", "]"}]}], 
+       RowBox[{"\[Phi]", "[", "i", "]"}]}], ")"}], 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"Bar", "@", 
+        RowBox[{"\[Phi]", "[", "j", "]"}]}], 
+       RowBox[{"\[Phi]", "[", "j", "]"}]}], ")"}]}]}]}], ";"}], "\n", 
+ RowBox[{"\[ScriptCapitalL]", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"FreeLag", "[", "]"}], "+", "\[ScriptCapitalL]int"}], "//", 
+    "RelabelIndices"}], "//", "NiceForm"}]}]}], "Input",
+ CellLabel->"In[4]:=",
+ CellID->1438085308,ExpressionUUID->"be86513c-dbc5-4ada-a6eb-8a7cb8dc16f5"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{
+   RowBox[{"-", 
+    RowBox[{
+     FractionBox["1", "4"], 
+     FractionBox["1", 
+      SuperscriptBox["g", "2"]], 
+     SuperscriptBox[
+      SuperscriptBox["F", 
+       StyleBox[
+        TemplateBox[{"\[Mu]", "\[Nu]", "I"},
+         "RowDefault"],
+        FontSize->10]], "2"]}]}], "+", 
+   RowBox[{
+    TemplateBox[{
+      SubscriptBox["D", "\[Mu]"], 
+      SubscriptBox[
+       OverscriptBox["\[Phi]", 
+        StyleBox["_", FontWeight -> Bold]], 
+       StyleBox["i", FontSize -> 10]]},
+     "RowDefault"], 
+    TemplateBox[{
+      SubscriptBox["D", "\[Mu]"], 
+      SuperscriptBox["\[Phi]", 
+       StyleBox["i", FontSize -> 10]]},
+     "RowDefault"]}], "-", 
+   RowBox[{
+    SuperscriptBox["m\[Phi]", "2"], 
+    SubscriptBox[
+     OverscriptBox["\[Phi]", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox["i",
+      FontSize->10]], 
+    SuperscriptBox["\[Phi]", 
+     StyleBox["i",
+      FontSize->10]]}], "+", 
+   RowBox[{"\[ImaginaryI]", 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       RowBox[{
+        SubscriptBox[
+         OverscriptBox["\[Psi]", 
+          StyleBox["_",
+           FontWeight->Bold]], 
+         StyleBox["i",
+          FontSize->10]], "\[CenterDot]", 
+        SubscriptBox["\[Gamma]", 
+         StyleBox["\[Mu]",
+          FontSize->10]], "\[CenterDot]", 
+        TemplateBox[{
+          SubscriptBox["D", "\[Mu]"], 
+          SuperscriptBox["\[Psi]", 
+           StyleBox["i", FontSize -> 10]]},
+         "RowDefault"]}], ")"}],
+      SpanSymmetric->False],
+     StandardForm]}], "+", 
+   RowBox[{
+    FractionBox["\[ImaginaryI]", "2"], 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       RowBox[{
+        SuperscriptBox[
+         SuperscriptBox["\[Chi]", 
+          StyleBox["I",
+           FontSize->10]], "T"], "\[CenterDot]", 
+        RowBox[{"C", 
+         SubscriptBox["\[Gamma]", 
+          StyleBox["\[Mu]",
+           FontSize->10]]}], "\[CenterDot]", 
+        TemplateBox[{
+          SubscriptBox["D", "\[Mu]"], 
+          SuperscriptBox["\[Chi]", 
+           StyleBox["I", FontSize -> 10]]},
+         "RowDefault"]}], ")"}],
+      SpanSymmetric->False],
+     StandardForm]}], "-", 
+   RowBox[{
+    FractionBox["1", "2"], "m\[Chi]", 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       SuperscriptBox[
+        SuperscriptBox["\[Chi]", 
+         StyleBox["I",
+          FontSize->10]], "T"], "\[CenterDot]", "C", "\[CenterDot]", 
+       SuperscriptBox["\[Chi]", 
+        StyleBox["I",
+         FontSize->10]], ")"}],
+      SpanSymmetric->False],
+     StandardForm]}], "-", 
+   RowBox[{"\[Lambda]", 
+    SubscriptBox[
+     OverscriptBox["\[Phi]", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox["i",
+      FontSize->10]], 
+    SubscriptBox[
+     OverscriptBox["\[Phi]", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox["j",
+      FontSize->10]], 
+    SuperscriptBox["\[Phi]", 
+     StyleBox["i",
+      FontSize->10]], 
+    SuperscriptBox["\[Phi]", 
+     StyleBox["j",
+      FontSize->10]]}], "-", 
+   RowBox[{"y", 
+    SuperscriptBox["\[Phi]", 
+     StyleBox["j",
+      FontSize->10]], 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       SubscriptBox[
+        OverscriptBox["\[Psi]", 
+         StyleBox["_",
+          FontWeight->Bold]], 
+        StyleBox["i",
+         FontSize->10]], "\[CenterDot]", 
+       SuperscriptBox["\[Chi]", 
+        StyleBox["I",
+         FontSize->10]], ")"}],
+      SpanSymmetric->False],
+     StandardForm], 
+    SubsuperscriptBox["T", 
+     StyleBox["j",
+      FontSize->10], 
+     StyleBox[
+      TemplateBox[{"I", "i"},
+       "RowDefault"],
+      FontSize->10]]}], "-", 
+   RowBox[{
+    OverscriptBox["y", 
+     StyleBox["_",
+      FontWeight->Bold]], 
+    SubscriptBox[
+     OverscriptBox["\[Phi]", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox["i",
+      FontSize->10]], 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       SuperscriptBox[
+        SuperscriptBox["\[Chi]", 
+         StyleBox["I",
+          FontSize->10]], "T"], "\[CenterDot]", "C", "\[CenterDot]", 
+       SuperscriptBox["\[Psi]", 
+        StyleBox["j",
+         FontSize->10]], ")"}],
+      SpanSymmetric->False],
+     StandardForm], 
+    SubsuperscriptBox["T", 
+     StyleBox["j",
+      FontSize->10], 
+     StyleBox[
+      TemplateBox[{"I", "i"},
+       "RowDefault"],
+      FontSize->10]]}]}], "StandardForm"]], "Output",
+ CellLabel->"Out[4]//NiceForm=",
+ CellID->355483107,ExpressionUUID->"d37c9112-926c-401f-b118-68d0dd0a8bbb"]
+}, Open  ]],
+
+Cell[TextData[{
+ "Mapping from the ",
+ Cell[BoxData[
+  OverscriptBox["DR", "_"]], "InlineFormula",
+  FontFamily->"Source Sans Pro",ExpressionUUID->
+  "c0f72ccc-7788-4f92-8284-a46c98b5cc98"],
+ " to the ",
+ Cell[BoxData[
+  OverscriptBox["MS", "_"]], "InlineFormula",
+  FontFamily->"Source Sans Pro",ExpressionUUID->
+  "856022a8-8ff5-4753-8f32-4a25e8435adb"],
+ " scheme:"
+}], "ExampleText",
+ CellID->1384574900,ExpressionUUID->"2daec330-f627-4061-bbeb-13b5a10b3949"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"DR2MS", "[", "\[ScriptCapitalL]", "]"}], "//", 
+  "NiceForm"}]], "Input",
+ CellLabel->"In[5]:=",
+ CellID->897250261,ExpressionUUID->"19face5e-e599-4668-adb2-28b2cdfa17c7"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{
+   RowBox[{"-", 
+    RowBox[{
+     FractionBox["1", "4"], 
+     FractionBox["1", 
+      SuperscriptBox["g", "2"]], 
+     SuperscriptBox[
+      SuperscriptBox["F", 
+       StyleBox[
+        TemplateBox[{"\[Mu]", "\[Nu]", "I"},
+         "RowDefault"],
+        FontSize->10]], "2"]}]}], "+", 
+   RowBox[{
+    TemplateBox[{
+      SubscriptBox["D", "\[Mu]"], 
+      SubscriptBox[
+       OverscriptBox["\[Phi]", 
+        StyleBox["_", FontWeight -> Bold]], 
+       StyleBox["i", FontSize -> 10]]},
+     "RowDefault"], 
+    TemplateBox[{
+      SubscriptBox["D", "\[Mu]"], 
+      SuperscriptBox["\[Phi]", 
+       StyleBox["i", FontSize -> 10]]},
+     "RowDefault"]}], "-", 
+   RowBox[{
+    SuperscriptBox["m\[Phi]", "2"], 
+    SubscriptBox[
+     OverscriptBox["\[Phi]", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox["i",
+      FontSize->10]], 
+    SuperscriptBox["\[Phi]", 
+     StyleBox["i",
+      FontSize->10]]}], "+", 
+   RowBox[{"\[ImaginaryI]", 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       RowBox[{
+        SubscriptBox[
+         OverscriptBox["\[Psi]", 
+          StyleBox["_",
+           FontWeight->Bold]], 
+         StyleBox["i",
+          FontSize->10]], "\[CenterDot]", 
+        SubscriptBox["\[Gamma]", 
+         StyleBox["\[Mu]",
+          FontSize->10]], "\[CenterDot]", 
+        TemplateBox[{
+          SubscriptBox["D", "\[Mu]"], 
+          SuperscriptBox["\[Psi]", 
+           StyleBox["i", FontSize -> 10]]},
+         "RowDefault"]}], ")"}],
+      SpanSymmetric->False],
+     StandardForm]}], "+", 
+   RowBox[{
+    FractionBox["\[ImaginaryI]", "2"], 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       RowBox[{
+        SuperscriptBox[
+         SuperscriptBox["\[Chi]", 
+          StyleBox["I",
+           FontSize->10]], "T"], "\[CenterDot]", 
+        RowBox[{"C", 
+         SubscriptBox["\[Gamma]", 
+          StyleBox["\[Mu]",
+           FontSize->10]]}], "\[CenterDot]", 
+        TemplateBox[{
+          SubscriptBox["D", "\[Mu]"], 
+          SuperscriptBox["\[Chi]", 
+           StyleBox["I", FontSize -> 10]]},
+         "RowDefault"]}], ")"}],
+      SpanSymmetric->False],
+     StandardForm]}], "-", 
+   RowBox[{
+    FractionBox["1", "2"], "m\[Chi]", 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       SuperscriptBox[
+        SuperscriptBox["\[Chi]", 
+         StyleBox["I",
+          FontSize->10]], "T"], "\[CenterDot]", "C", "\[CenterDot]", 
+       SuperscriptBox["\[Chi]", 
+        StyleBox["I",
+         FontSize->10]], ")"}],
+      SpanSymmetric->False],
+     StandardForm]}], "-", 
+   RowBox[{"\[Lambda]", 
+    SubscriptBox[
+     OverscriptBox["\[Phi]", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox["i",
+      FontSize->10]], 
+    SubscriptBox[
+     OverscriptBox["\[Phi]", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox["j",
+      FontSize->10]], 
+    SuperscriptBox["\[Phi]", 
+     StyleBox["i",
+      FontSize->10]], 
+    SuperscriptBox["\[Phi]", 
+     StyleBox["j",
+      FontSize->10]]}], "-", 
+   RowBox[{"y", 
+    SuperscriptBox["\[Phi]", 
+     StyleBox["j",
+      FontSize->10]], 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       SubscriptBox[
+        OverscriptBox["\[Psi]", 
+         StyleBox["_",
+          FontWeight->Bold]], 
+        StyleBox["i",
+         FontSize->10]], "\[CenterDot]", 
+       SuperscriptBox["\[Chi]", 
+        StyleBox["I",
+         FontSize->10]], ")"}],
+      SpanSymmetric->False],
+     StandardForm], 
+    SubsuperscriptBox["T", 
+     StyleBox["j",
+      FontSize->10], 
+     StyleBox[
+      TemplateBox[{"I", "i"},
+       "RowDefault"],
+      FontSize->10]]}], "-", 
+   RowBox[{
+    OverscriptBox["y", 
+     StyleBox["_",
+      FontWeight->Bold]], 
+    SubscriptBox[
+     OverscriptBox["\[Phi]", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox["i",
+      FontSize->10]], 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       SuperscriptBox[
+        SuperscriptBox["\[Chi]", 
+         StyleBox["I",
+          FontSize->10]], "T"], "\[CenterDot]", "C", "\[CenterDot]", 
+       SuperscriptBox["\[Psi]", 
+        StyleBox["j",
+         FontSize->10]], ")"}],
+      SpanSymmetric->False],
+     StandardForm], 
+    SubsuperscriptBox["T", 
+     StyleBox["j",
+      FontSize->10], 
+     StyleBox[
+      TemplateBox[{"I", "i"},
+       "RowDefault"],
+      FontSize->10]]}], "+", 
+   RowBox[{"\[HBar]", " ", 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       RowBox[{"-", 
+        RowBox[{"m\[Chi]", 
+         SuperscriptBox["g", "2"], 
+         FormBox[
+          StyleBox[
+           RowBox[{"(", 
+            SuperscriptBox[
+             SuperscriptBox["\[Chi]", 
+              StyleBox["I",
+               FontSize->10]], "T"], "\[CenterDot]", "C", "\[CenterDot]", 
+            SuperscriptBox["\[Chi]", 
+             StyleBox["I",
+              FontSize->10]], ")"}],
+           SpanSymmetric->False],
+          StandardForm]}], "+", 
+        RowBox[{
+         FractionBox["3", "8"], 
+         SuperscriptBox["g", "4"], 
+         SubscriptBox[
+          OverscriptBox["\[Phi]", 
+           StyleBox["_",
+            FontWeight->Bold]], 
+          StyleBox["i",
+           FontSize->10]], 
+         SubscriptBox[
+          OverscriptBox["\[Phi]", 
+           StyleBox["_",
+            FontWeight->Bold]], 
+          StyleBox["j",
+           FontSize->10]], 
+         SuperscriptBox["\[Phi]", 
+          StyleBox["i",
+           FontSize->10]], 
+         SuperscriptBox["\[Phi]", 
+          StyleBox["j",
+           FontSize->10]]}], "-", 
+        RowBox[{
+         FractionBox["5", "8"], "y", 
+         SuperscriptBox["g", "2"], 
+         SuperscriptBox["\[Phi]", 
+          StyleBox["j",
+           FontSize->10]], 
+         FormBox[
+          StyleBox[
+           RowBox[{"(", 
+            SubscriptBox[
+             OverscriptBox["\[Psi]", 
+              StyleBox["_",
+               FontWeight->Bold]], 
+             StyleBox["i",
+              FontSize->10]], "\[CenterDot]", 
+            SuperscriptBox["\[Chi]", 
+             StyleBox["I",
+              FontSize->10]], ")"}],
+           SpanSymmetric->False],
+          StandardForm], 
+         SubsuperscriptBox["T", 
+          StyleBox["j",
+           FontSize->10], 
+          StyleBox[
+           TemplateBox[{"I", "i"},
+            "RowDefault"],
+           FontSize->10]]}], "-", 
+        RowBox[{
+         FractionBox["5", "8"], 
+         OverscriptBox["y", 
+          StyleBox["_",
+           FontWeight->Bold]], 
+         SuperscriptBox["g", "2"], 
+         SubscriptBox[
+          OverscriptBox["\[Phi]", 
+           StyleBox["_",
+            FontWeight->Bold]], 
+          StyleBox["i",
+           FontSize->10]], 
+         FormBox[
+          StyleBox[
+           RowBox[{"(", 
+            SuperscriptBox[
+             SuperscriptBox["\[Chi]", 
+              StyleBox["I",
+               FontSize->10]], "T"], "\[CenterDot]", "C", "\[CenterDot]", 
+            SuperscriptBox["\[Psi]", 
+             StyleBox["j",
+              FontSize->10]], ")"}],
+           SpanSymmetric->False],
+          StandardForm], 
+         SubsuperscriptBox["T", 
+          StyleBox["j",
+           FontSize->10], 
+          StyleBox[
+           TemplateBox[{"I", "i"},
+            "RowDefault"],
+           FontSize->10]]}]}], ")"}],
+      SpanSymmetric->False],
+     StandardForm]}]}], "StandardForm"]], "Output",
+ CellLabel->"Out[5]//NiceForm=",
+ CellID->1287688042,ExpressionUUID->"5e4526e0-69c7-449b-8f05-46021f293143"]
+}, Open  ]],
+
+Cell["\<\
+A finite scheme-change counterterm is generated for the Majorana mass term, \
+the scalar quartic, and the Yukawa interaction. The finite counterterm for \
+the gauge couplings is immediately absorbed by redefining the gauge coupling \
+to retain a canonical normalization of the kinetic term of the gauge field.\
+\>", "ExampleText",
+ CellID->1251948659,ExpressionUUID->"372c5404-68ec-485c-bb7e-eba5dce982a3"]
+}, Dynamic[CurrentValue[
+ EvaluationNotebook[], {TaggingRules, "Openers", "ExampleSection", "0"}, 
+  Closed]]]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ Cell[BoxData[
+  DynamicBox[ToBoxes[
+    If[
+     MatchQ[
+      CurrentValue[
+       EvaluationNotebook[], {TaggingRules, "Openers", "ExampleSection", "2"},
+        Closed], 
+      Alternatives[Open, True]], 
+     Style[
+      Graphics[{
+        Thickness[0.18], 
+        RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+        Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+       PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+      0.68 Inherited], 
+     Rotate[
+      Style[
+       Graphics[{
+         Thickness[0.18], 
+         RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+         Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+        PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+       0.68 Inherited], Rational[1, 2] Pi, {-1.65, -1}]]],
+   ImageSizeCache->{
+    13.600000000000001`, {0.43114257812500156`, 13.168857421875}}]],
+  ExpressionUUID->"4f342125-518e-4731-9f09-6ca0c3b41f8e"],
+ Cell[BoxData[
+  TemplateBox[{1},
+   "Spacer1"]],ExpressionUUID->"4b99b70d-5144-4158-9640-a3866deee95f"],
+ "Applications",
+ "\[NonBreakingSpace]\[NonBreakingSpace]",
+ Cell["(1)", "ExampleCount",ExpressionUUID->
+  "b817058f-2d24-46dc-912f-1756c120ec8e"]
+}], "ExampleSection", "ExampleSection",
+ WholeCellGroupOpener->True,
+ CacheGraphics->False,
+ CellID->1654465021,ExpressionUUID->"ee2db8bd-129c-4718-b61d-2f6deeabbafe"],
+
+Cell[TextData[{
+ "In the MSSM model file, the ",
+ Cell[BoxData[
+  TemplateBox[{
+    Cell[
+     TextData["DR2MS"]], "paclet:Matchete/ref/DR2MS", 
+    "Matchete Package Symbol"},
+   "PackageLink",
+   BaseStyle->"InlineFormula"]], "InlineFormula",
+  FontFamily->"Source Sans Pro",ExpressionUUID->
+  "08530321-d9fa-42b6-aa23-4604e7e506b1"],
+ " function is called internally such that the Lagrangian is returned in the ",
+ Cell[BoxData[
+  OverscriptBox["MS", "_"]], "InlineFormula",
+  FontFamily->"Source Sans Pro",ExpressionUUID->
+  "a6a250cb-80b2-4dac-ba81-2622933cbfd6"],
+ " scheme but in a SUSY-preserving form:"
+}], "ExampleText",
+ CellID->464906730,ExpressionUUID->"7157a633-8ba4-4814-8967-a909a1dc7d43"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"\[ScriptCapitalL]MSSM", "=", 
+   RowBox[{"LoadModel", "[", "\"\<MSSM\>\"", "]"}]}], ";"}]], "Input",
+ CellLabel->"In[1]:=",
+ CellID->150102946,ExpressionUUID->"4118ef44-93d2-421f-a41b-654b586cbc93"],
+
+Cell[BoxData[
+ InterpretationBox["\<\"Added new CG \\!\\(\\*RowBox[{\\\"cg1\\\"}]\\) with \
+indices \\!\\(\\*RowBox[{\\\"{\\\", RowBox[{RowBox[{\\\"SU2L\\\", \\\"[\\\", \
+\\\"fund\\\", \\\"]\\\"}], \\\",\\\", RowBox[{\\\"SU2L\\\", \\\"[\\\", \
+\\\"adj\\\", \\\"]\\\"}], \\\",\\\", RowBox[{\\\"SU2L\\\", \\\"[\\\", \
+\\\"fund\\\", \\\"]\\\"}]}], \\\"}\\\"}]\\)\"\>",
+  StringForm["Added new CG `1` with indices `2`", $CellContext`cg1, {
+    $CellContext`SU2L[Matchete`fund], 
+    $CellContext`SU2L[Matchete`adj], 
+    $CellContext`SU2L[Matchete`fund]}],
+  Editable->False]], "Echo",
+ CellID->1459791278,ExpressionUUID->"41151a47-5b17-4ad1-9a54-529fc8c382bb"]
+}, Open  ]],
+
+Cell["Selecting only the finite counterterms:", "ExampleText",
+ CellID->1427061786,ExpressionUUID->"a4b4a62e-92f4-41aa-890a-9df5ec136add"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Coefficient", "[", 
+   RowBox[{"\[ScriptCapitalL]MSSM", ",", "hbar", ",", "1"}], "]"}], "//", 
+  "NiceForm"}]], "Input",
+ CellLabel->"In[2]:=",
+ CellID->1844271617,ExpressionUUID->"978ebfde-22cc-4075-b0de-9ed1f42c3a93"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{
+   RowBox[{
+    FractionBox["1", "24"], " ", 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"3", 
+         SuperscriptBox[
+          SubscriptBox["g", "1"], "4"]}], "+", 
+        RowBox[{"6", 
+         SuperscriptBox[
+          SubscriptBox["g", "1"], "2"], 
+         SuperscriptBox[
+          SubscriptBox["g", "2"], "2"]}], "+", 
+        RowBox[{
+         SuperscriptBox[
+          SubscriptBox["g", "2"], "4"], " ", 
+         FormBox[
+          StyleBox[
+           RowBox[{"(", 
+            RowBox[{"9", "-", 
+             RowBox[{"2", 
+              SuperscriptBox[
+               SubscriptBox["c", 
+                RowBox[{"2", "\[Gamma]"}]], "2"]}]}], ")"}],
+           SpanSymmetric->False],
+          StandardForm]}]}], ")"}],
+      SpanSymmetric->False],
+     StandardForm], 
+    SubscriptBox[
+     OverscriptBox["H", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox["i",
+      FontSize->10]], 
+    SubscriptBox[
+     OverscriptBox["H", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox["j",
+      FontSize->10]], 
+    SuperscriptBox["H", 
+     StyleBox["i",
+      FontSize->10]], 
+    SuperscriptBox["H", 
+     StyleBox["j",
+      FontSize->10]]}], "+", 
+   RowBox[{
+    FractionBox["1", "72"], 
+    SubscriptBox["c", "\[Gamma]"], 
+    SuperscriptBox[
+     OverscriptBox[
+      SubscriptBox["y", "d"], 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox[
+      TemplateBox[{"p", "r"},
+       "RowDefault"],
+      FontSize->10]], " ", 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"13", 
+         SuperscriptBox[
+          SubscriptBox["g", "1"], "2"]}], "+", 
+        RowBox[{"27", 
+         SuperscriptBox[
+          SubscriptBox["g", "2"], "2"]}], "-", 
+        RowBox[{"96", 
+         SuperscriptBox[
+          SubscriptBox["g", "3"], "2"]}]}], ")"}],
+      SpanSymmetric->False],
+     StandardForm], 
+    SubscriptBox[
+     OverscriptBox["H", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox["i",
+      FontSize->10]], 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       SubsuperscriptBox[
+        OverscriptBox["d", 
+         StyleBox["_",
+          FontWeight->Bold]], 
+        StyleBox["a",
+         FontSize->10], 
+        StyleBox["r",
+         FontSize->10]], "\[CenterDot]", 
+       SubscriptBox["P", "L"], "\[CenterDot]", 
+       SuperscriptBox["q", 
+        StyleBox[
+         TemplateBox[{"a", "i", "p"},
+          "RowDefault"],
+         FontSize->10]], ")"}],
+      SpanSymmetric->False],
+     StandardForm]}], "+", 
+   RowBox[{
+    FractionBox["3", "8"], 
+    SubscriptBox["c", "\[Gamma]"], 
+    SuperscriptBox[
+     OverscriptBox[
+      SubscriptBox["y", "e"], 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox[
+      TemplateBox[{"p", "r"},
+       "RowDefault"],
+      FontSize->10]], " ", 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       RowBox[{"-", 
+        SuperscriptBox[
+         SubscriptBox["g", "1"], "2"], "+", 
+        SuperscriptBox[
+         SubscriptBox["g", "2"], "2"]}], ")"}],
+      SpanSymmetric->False],
+     StandardForm], 
+    SubscriptBox[
+     OverscriptBox["H", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox["i",
+      FontSize->10]], 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       SuperscriptBox[
+        OverscriptBox["e", 
+         StyleBox["_",
+          FontWeight->Bold]], 
+        StyleBox["r",
+         FontSize->10]], "\[CenterDot]", 
+       SubscriptBox["P", "L"], "\[CenterDot]", 
+       SuperscriptBox["l", 
+        StyleBox[
+         TemplateBox[{"i", "p"},
+          "RowDefault"],
+         FontSize->10]], ")"}],
+      SpanSymmetric->False],
+     StandardForm]}], "+", 
+   RowBox[{
+    FractionBox["3", "8"], 
+    SubscriptBox["c", "\[Gamma]"], 
+    SuperscriptBox[
+     SubscriptBox["y", "e"], 
+     StyleBox[
+      TemplateBox[{"r", "p"},
+       "RowDefault"],
+      FontSize->10]], " ", 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       RowBox[{"-", 
+        SuperscriptBox[
+         SubscriptBox["g", "1"], "2"], "+", 
+        SuperscriptBox[
+         SubscriptBox["g", "2"], "2"]}], ")"}],
+      SpanSymmetric->False],
+     StandardForm], 
+    SuperscriptBox["H", 
+     StyleBox["i",
+      FontSize->10]], 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       SubsuperscriptBox[
+        OverscriptBox["l", 
+         StyleBox["_",
+          FontWeight->Bold]], 
+        StyleBox["i",
+         FontSize->10], 
+        StyleBox["r",
+         FontSize->10]], "\[CenterDot]", 
+       SubscriptBox["P", "R"], "\[CenterDot]", 
+       SuperscriptBox["e", 
+        StyleBox["p",
+         FontSize->10]], ")"}],
+      SpanSymmetric->False],
+     StandardForm]}], "+", 
+   RowBox[{
+    FractionBox["1", "72"], 
+    SubscriptBox["c", "\[Gamma]"], 
+    SuperscriptBox[
+     SubscriptBox["y", "d"], 
+     StyleBox[
+      TemplateBox[{"r", "p"},
+       "RowDefault"],
+      FontSize->10]], " ", 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"13", 
+         SuperscriptBox[
+          SubscriptBox["g", "1"], "2"]}], "+", 
+        RowBox[{"27", 
+         SuperscriptBox[
+          SubscriptBox["g", "2"], "2"]}], "-", 
+        RowBox[{"96", 
+         SuperscriptBox[
+          SubscriptBox["g", "3"], "2"]}]}], ")"}],
+      SpanSymmetric->False],
+     StandardForm], 
+    SuperscriptBox["H", 
+     StyleBox["i",
+      FontSize->10]], 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       SubsuperscriptBox[
+        OverscriptBox["q", 
+         StyleBox["_",
+          FontWeight->Bold]], 
+        StyleBox[
+         TemplateBox[{"a", "i"},
+          "RowDefault"],
+         FontSize->10], 
+        StyleBox["r",
+         FontSize->10]], "\[CenterDot]", 
+       SubscriptBox["P", "R"], "\[CenterDot]", 
+       SuperscriptBox["d", 
+        StyleBox[
+         TemplateBox[{"a", "p"},
+          "RowDefault"],
+         FontSize->10]], ")"}],
+      SpanSymmetric->False],
+     StandardForm]}], "+", 
+   RowBox[{
+    FractionBox["1", "72"], 
+    SubscriptBox["s", "\[Gamma]"], 
+    SuperscriptBox[
+     SubscriptBox["y", "u"], 
+     StyleBox[
+      TemplateBox[{"r", "p"},
+       "RowDefault"],
+      FontSize->10]], " ", 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       RowBox[{
+        SuperscriptBox[
+         SubscriptBox["g", "1"], "2"], "+", 
+        RowBox[{"27", 
+         SuperscriptBox[
+          SubscriptBox["g", "2"], "2"]}], "-", 
+        RowBox[{"96", 
+         SuperscriptBox[
+          SubscriptBox["g", "3"], "2"]}]}], ")"}],
+      SpanSymmetric->False],
+     StandardForm], 
+    SubscriptBox[
+     OverscriptBox["H", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox["i",
+      FontSize->10]], 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       SubsuperscriptBox[
+        OverscriptBox["q", 
+         StyleBox["_",
+          FontWeight->Bold]], 
+        StyleBox[
+         TemplateBox[{"a", "j"},
+          "RowDefault"],
+         FontSize->10], 
+        StyleBox["r",
+         FontSize->10]], "\[CenterDot]", 
+       SubscriptBox["P", "R"], "\[CenterDot]", 
+       SuperscriptBox["u", 
+        StyleBox[
+         TemplateBox[{"a", "p"},
+          "RowDefault"],
+         FontSize->10]], ")"}],
+      SpanSymmetric->False],
+     StandardForm], 
+    SuperscriptBox["\[CurlyEpsilon]", 
+     StyleBox[
+      TemplateBox[{"j", "i"},
+       "RowDefault"],
+      FontSize->10]]}], "+", 
+   RowBox[{
+    FractionBox["1", "72"], 
+    SubscriptBox["s", "\[Gamma]"], 
+    SuperscriptBox[
+     OverscriptBox[
+      SubscriptBox["y", "u"], 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox[
+      TemplateBox[{"p", "r"},
+       "RowDefault"],
+      FontSize->10]], " ", 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       RowBox[{
+        SuperscriptBox[
+         SubscriptBox["g", "1"], "2"], "+", 
+        RowBox[{"27", 
+         SuperscriptBox[
+          SubscriptBox["g", "2"], "2"]}], "-", 
+        RowBox[{"96", 
+         SuperscriptBox[
+          SubscriptBox["g", "3"], "2"]}]}], ")"}],
+      SpanSymmetric->False],
+     StandardForm], 
+    SuperscriptBox["H", 
+     StyleBox["j",
+      FontSize->10]], 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       SubsuperscriptBox[
+        OverscriptBox["u", 
+         StyleBox["_",
+          FontWeight->Bold]], 
+        StyleBox["a",
+         FontSize->10], 
+        StyleBox["r",
+         FontSize->10]], "\[CenterDot]", 
+       SubscriptBox["P", "L"], "\[CenterDot]", 
+       SuperscriptBox["q", 
+        StyleBox[
+         TemplateBox[{"a", "i", "p"},
+          "RowDefault"],
+         FontSize->10]], ")"}],
+      SpanSymmetric->False],
+     StandardForm], 
+    SubscriptBox[
+     OverscriptBox["\[CurlyEpsilon]", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox[
+      TemplateBox[{"i", "j"},
+       "RowDefault"],
+      FontSize->10]]}], "+", 
+   RowBox[{
+    FractionBox["1", "12"], 
+    SubscriptBox["s", 
+     RowBox[{"4", "\[Gamma]"}]], 
+    SuperscriptBox[
+     SubscriptBox["g", "2"], "4"], 
+    SubscriptBox[
+     OverscriptBox["H", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox["i",
+      FontSize->10]], 
+    SuperscriptBox["H", 
+     StyleBox["i",
+      FontSize->10]], 
+    SuperscriptBox["H", 
+     StyleBox["j",
+      FontSize->10]], 
+    SubscriptBox[
+     OverscriptBox["\[CapitalPhi]", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox["j",
+      FontSize->10]]}], "+", 
+   RowBox[{
+    FractionBox["1", "12"], 
+    SubscriptBox["s", 
+     RowBox[{"4", "\[Gamma]"}]], 
+    SuperscriptBox[
+     SubscriptBox["g", "2"], "4"], 
+    SubscriptBox[
+     OverscriptBox["H", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox["i",
+      FontSize->10]], 
+    SubscriptBox[
+     OverscriptBox["H", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox["j",
+      FontSize->10]], 
+    SuperscriptBox["H", 
+     StyleBox["i",
+      FontSize->10]], 
+    SuperscriptBox["\[CapitalPhi]", 
+     StyleBox["j",
+      FontSize->10]]}], "-", 
+   RowBox[{
+    FractionBox["1", "72"], 
+    SubscriptBox["s", "\[Gamma]"], 
+    SuperscriptBox[
+     OverscriptBox[
+      SubscriptBox["y", "d"], 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox[
+      TemplateBox[{"p", "r"},
+       "RowDefault"],
+      FontSize->10]], " ", 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"13", 
+         SuperscriptBox[
+          SubscriptBox["g", "1"], "2"]}], "+", 
+        RowBox[{"27", 
+         SuperscriptBox[
+          SubscriptBox["g", "2"], "2"]}], "-", 
+        RowBox[{"96", 
+         SuperscriptBox[
+          SubscriptBox["g", "3"], "2"]}]}], ")"}],
+      SpanSymmetric->False],
+     StandardForm], 
+    SubscriptBox[
+     OverscriptBox["\[CapitalPhi]", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox["i",
+      FontSize->10]], 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       SubsuperscriptBox[
+        OverscriptBox["d", 
+         StyleBox["_",
+          FontWeight->Bold]], 
+        StyleBox["a",
+         FontSize->10], 
+        StyleBox["r",
+         FontSize->10]], "\[CenterDot]", 
+       SubscriptBox["P", "L"], "\[CenterDot]", 
+       SuperscriptBox["q", 
+        StyleBox[
+         TemplateBox[{"a", "i", "p"},
+          "RowDefault"],
+         FontSize->10]], ")"}],
+      SpanSymmetric->False],
+     StandardForm]}], "+", 
+   RowBox[{
+    FractionBox["3", "8"], 
+    SubscriptBox["s", "\[Gamma]"], 
+    SuperscriptBox[
+     OverscriptBox[
+      SubscriptBox["y", "e"], 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox[
+      TemplateBox[{"p", "r"},
+       "RowDefault"],
+      FontSize->10]], " ", 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       RowBox[{
+        SuperscriptBox[
+         SubscriptBox["g", "1"], "2"], "-", 
+        SuperscriptBox[
+         SubscriptBox["g", "2"], "2"]}], ")"}],
+      SpanSymmetric->False],
+     StandardForm], 
+    SubscriptBox[
+     OverscriptBox["\[CapitalPhi]", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox["i",
+      FontSize->10]], 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       SuperscriptBox[
+        OverscriptBox["e", 
+         StyleBox["_",
+          FontWeight->Bold]], 
+        StyleBox["r",
+         FontSize->10]], "\[CenterDot]", 
+       SubscriptBox["P", "L"], "\[CenterDot]", 
+       SuperscriptBox["l", 
+        StyleBox[
+         TemplateBox[{"i", "p"},
+          "RowDefault"],
+         FontSize->10]], ")"}],
+      SpanSymmetric->False],
+     StandardForm]}], "+", 
+   RowBox[{
+    FractionBox["3", "8"], 
+    SubscriptBox["s", "\[Gamma]"], 
+    SuperscriptBox[
+     SubscriptBox["y", "e"], 
+     StyleBox[
+      TemplateBox[{"r", "p"},
+       "RowDefault"],
+      FontSize->10]], " ", 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       RowBox[{
+        SuperscriptBox[
+         SubscriptBox["g", "1"], "2"], "-", 
+        SuperscriptBox[
+         SubscriptBox["g", "2"], "2"]}], ")"}],
+      SpanSymmetric->False],
+     StandardForm], 
+    SuperscriptBox["\[CapitalPhi]", 
+     StyleBox["i",
+      FontSize->10]], 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       SubsuperscriptBox[
+        OverscriptBox["l", 
+         StyleBox["_",
+          FontWeight->Bold]], 
+        StyleBox["i",
+         FontSize->10], 
+        StyleBox["r",
+         FontSize->10]], "\[CenterDot]", 
+       SubscriptBox["P", "R"], "\[CenterDot]", 
+       SuperscriptBox["e", 
+        StyleBox["p",
+         FontSize->10]], ")"}],
+      SpanSymmetric->False],
+     StandardForm]}], "-", 
+   RowBox[{
+    FractionBox["1", "72"], 
+    SubscriptBox["s", "\[Gamma]"], 
+    SuperscriptBox[
+     SubscriptBox["y", "d"], 
+     StyleBox[
+      TemplateBox[{"r", "p"},
+       "RowDefault"],
+      FontSize->10]], " ", 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"13", 
+         SuperscriptBox[
+          SubscriptBox["g", "1"], "2"]}], "+", 
+        RowBox[{"27", 
+         SuperscriptBox[
+          SubscriptBox["g", "2"], "2"]}], "-", 
+        RowBox[{"96", 
+         SuperscriptBox[
+          SubscriptBox["g", "3"], "2"]}]}], ")"}],
+      SpanSymmetric->False],
+     StandardForm], 
+    SuperscriptBox["\[CapitalPhi]", 
+     StyleBox["i",
+      FontSize->10]], 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       SubsuperscriptBox[
+        OverscriptBox["q", 
+         StyleBox["_",
+          FontWeight->Bold]], 
+        StyleBox[
+         TemplateBox[{"a", "i"},
+          "RowDefault"],
+         FontSize->10], 
+        StyleBox["r",
+         FontSize->10]], "\[CenterDot]", 
+       SubscriptBox["P", "R"], "\[CenterDot]", 
+       SuperscriptBox["d", 
+        StyleBox[
+         TemplateBox[{"a", "p"},
+          "RowDefault"],
+         FontSize->10]], ")"}],
+      SpanSymmetric->False],
+     StandardForm]}], "+", 
+   RowBox[{
+    FractionBox["1", "72"], 
+    SubscriptBox["c", "\[Gamma]"], 
+    SuperscriptBox[
+     SubscriptBox["y", "u"], 
+     StyleBox[
+      TemplateBox[{"r", "p"},
+       "RowDefault"],
+      FontSize->10]], " ", 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       RowBox[{
+        SuperscriptBox[
+         SubscriptBox["g", "1"], "2"], "+", 
+        RowBox[{"27", 
+         SuperscriptBox[
+          SubscriptBox["g", "2"], "2"]}], "-", 
+        RowBox[{"96", 
+         SuperscriptBox[
+          SubscriptBox["g", "3"], "2"]}]}], ")"}],
+      SpanSymmetric->False],
+     StandardForm], 
+    SubscriptBox[
+     OverscriptBox["\[CapitalPhi]", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox["i",
+      FontSize->10]], 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       SubsuperscriptBox[
+        OverscriptBox["q", 
+         StyleBox["_",
+          FontWeight->Bold]], 
+        StyleBox[
+         TemplateBox[{"a", "j"},
+          "RowDefault"],
+         FontSize->10], 
+        StyleBox["r",
+         FontSize->10]], "\[CenterDot]", 
+       SubscriptBox["P", "R"], "\[CenterDot]", 
+       SuperscriptBox["u", 
+        StyleBox[
+         TemplateBox[{"a", "p"},
+          "RowDefault"],
+         FontSize->10]], ")"}],
+      SpanSymmetric->False],
+     StandardForm], 
+    SuperscriptBox["\[CurlyEpsilon]", 
+     StyleBox[
+      TemplateBox[{"j", "i"},
+       "RowDefault"],
+      FontSize->10]]}], "+", 
+   RowBox[{
+    FractionBox["1", "72"], 
+    SubscriptBox["c", "\[Gamma]"], 
+    SuperscriptBox[
+     OverscriptBox[
+      SubscriptBox["y", "u"], 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox[
+      TemplateBox[{"p", "r"},
+       "RowDefault"],
+      FontSize->10]], " ", 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       RowBox[{
+        SuperscriptBox[
+         SubscriptBox["g", "1"], "2"], "+", 
+        RowBox[{"27", 
+         SuperscriptBox[
+          SubscriptBox["g", "2"], "2"]}], "-", 
+        RowBox[{"96", 
+         SuperscriptBox[
+          SubscriptBox["g", "3"], "2"]}]}], ")"}],
+      SpanSymmetric->False],
+     StandardForm], 
+    SuperscriptBox["\[CapitalPhi]", 
+     StyleBox["j",
+      FontSize->10]], 
+    FormBox[
+     StyleBox[
+      RowBox[{"(", 
+       SubsuperscriptBox[
+        OverscriptBox["u", 
+         StyleBox["_",
+          FontWeight->Bold]], 
+        StyleBox["a",
+         FontSize->10], 
+        StyleBox["r",
+         FontSize->10]], "\[CenterDot]", 
+       SubscriptBox["P", "L"], "\[CenterDot]", 
+       SuperscriptBox["q", 
+        StyleBox[
+         TemplateBox[{"a", "i", "p"},
+          "RowDefault"],
+         FontSize->10]], ")"}],
+      SpanSymmetric->False],
+     StandardForm], 
+    SubscriptBox[
+     OverscriptBox["\[CurlyEpsilon]", 
+      StyleBox["_",
+       FontWeight->Bold]], 
+     StyleBox[
+      TemplateBox[{"i", "j"},
+       "RowDefault"],
+      FontSize->10]]}]}], "StandardForm"]], "Output",
+ CellLabel->"Out[2]//NiceForm=",
+ CellID->1665067281,ExpressionUUID->"05fea758-6294-47ff-9e39-c04f29acf03c"]
+}, Open  ]],
+
+Cell[TextData[{
+ "The term containing ",
+ Cell[BoxData[
+  SubscriptBox["c", 
+   RowBox[{"2", "\[Gamma]"}]]], "InlineFormula",
+  FontFamily->"Source Sans Pro",ExpressionUUID->
+  "08dd1f50-1060-4ddc-9435-2bc2fc5a01a8"],
+ " in the correction the the Higgs quartic, is obtained by the shift of the \
+gauge coupling to retain canonical kinetic term of the gauge fields. Only \
+terms relevant for the tree-level matching onto the SMEFT are included. For \
+example, no counterterms for the gaugino masses are added, since these do not \
+contribute to the tree-level matching and hence constitute a two-loop effect \
+in the EFT."
+}], "ExampleText",
+ CellID->636473871,ExpressionUUID->"c64d2d7a-969e-4409-a609-de268e11f27c"]
+}, Dynamic[CurrentValue[
+ EvaluationNotebook[], {TaggingRules, "Openers", "ExampleSection", "2"}, 
+  Closed]]]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ Cell[BoxData[
+  DynamicBox[ToBoxes[
+    If[
+     MatchQ[
+      CurrentValue[
+       EvaluationNotebook[], {TaggingRules, "Openers", "ExampleSection", "3"},
+        Closed], 
+      Alternatives[Open, True]], 
+     Style[
+      Graphics[{
+        Thickness[0.18], 
+        RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+        Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+       PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+      0.68 Inherited], 
+     Rotate[
+      Style[
+       Graphics[{
+         Thickness[0.18], 
+         RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+         Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+        PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+       0.68 Inherited], Rational[1, 2] Pi, {-1.65, -1}]]],
+   ImageSizeCache->{
+    13.600000000000001`, {0.43114257812500156`, 13.168857421875}}]],
+  ExpressionUUID->"f1ddf9dd-0773-4968-ac36-48887da30085"],
+ Cell[BoxData[
+  TemplateBox[{1},
+   "Spacer1"]],ExpressionUUID->"5073d894-4e7f-4a12-bee6-67ca375d8534"],
+ "Possible Issues",
+ "\[NonBreakingSpace]\[NonBreakingSpace]",
+ Cell["(1)", "ExampleCount",ExpressionUUID->
+  "569b3da6-a295-453f-9bda-4516e6da3674"]
+}], "ExampleSection", "ExampleSection",
+ WholeCellGroupOpener->True,
+ CacheGraphics->False,
+ CellID->907477386,ExpressionUUID->"69359b28-f7e0-4ee9-9756-e60407ff5112"],
+
+Cell[TextData[{
+ "The ",
+ Cell[BoxData[
+  TemplateBox[{
+    Cell[
+     TextData["DR2MS"]], "paclet:Matchete/ref/DR2MS", 
+    "Matchete Package Symbol"},
+   "PackageLink",
+   BaseStyle->"InlineFormula"]], "InlineFormula",
+  FontFamily->"Source Sans Pro",ExpressionUUID->
+  "b6ac80af-0012-45f3-8153-3466219f8031"],
+ " function only works for renormalizable interaction terms, since it uses \
+the formulas from https://arxiv.org/abs/hep-ph/9308222 for the computation of \
+the counterterms. Higher-dimensional operators are currently not supported. "
+}], "ExampleText",
+ CellID->46018199,ExpressionUUID->"595ffe9c-e1dd-46c6-a744-50b9387a53c7"],
+
+Cell["Defining a SU(2) gauge group:", "ExampleText",
+ CellID->2061324617,ExpressionUUID->"81b1b166-9641-4a3d-897b-1c61fc037bc4"],
+
+Cell[BoxData[
+ RowBox[{"DefineGaugeGroup", "[", 
+  RowBox[{"SU2", ",", 
+   RowBox[{"SU", "@", "2"}], ",", "g", ",", "F", ",", "\[IndentingNewLine]", 
+   RowBox[{"FundAlphabet", "->", 
+    RowBox[{"{", 
+     RowBox[{"\"\<i\>\"", ",", "\"\<j\>\"", ",", "\"\<k\>\"", 
+      ",", "\"\<l\>\""}], "}"}]}], ",", "\[IndentingNewLine]", 
+   RowBox[{"AdjAlphabet", "->", 
+    RowBox[{"{", 
+     RowBox[{"\"\<I\>\"", ",", "\"\<J\>\"", ",", "\"\<K\>\"", 
+      ",", "\"\<L\>\""}], "}"}]}]}], "\[IndentingNewLine]", "]"}]], "Input",
+ CellLabel->"In[1]:=",
+ CellID->51633318,ExpressionUUID->"09fd66a9-980c-412e-b779-6a025e0b5a71"],
+
+Cell["Defining a fundamental scalar:", "ExampleText",
+ CellID->1158624549,ExpressionUUID->"f1441690-bc69-4abe-8a88-56899b7e13b3"],
+
+Cell[BoxData[
+ RowBox[{"DefineField", "[", 
+  RowBox[{"\[Phi]", ",", "Scalar", ",", "\[IndentingNewLine]", 
+   RowBox[{"Indices", "->", 
+    RowBox[{"{", 
+     RowBox[{"SU2", "@", "fund"}], "}"}]}], ",", " ", "\[IndentingNewLine]", 
+   RowBox[{"Mass", "->", "Light"}]}], "\[IndentingNewLine]", "]"}]], "Input",
+ CellLabel->"In[2]:=",
+ CellID->217782238,ExpressionUUID->"6bbc0ac4-5061-4b2f-b596-15a5c48c1075"],
+
+Cell["Defining a six-scalar interaction term:", "ExampleText",
+ CellID->503928274,ExpressionUUID->"d1688307-e9b6-4bcb-b9b9-ec49d0875452"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[ScriptCapitalL]\[Phi]6", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"Bar", "@", 
+       RowBox[{"\[Phi]", "[", "i", "]"}]}], 
+      RowBox[{"\[Phi]", "[", "i", "]"}]}], ")"}], 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"Bar", "@", 
+       RowBox[{"\[Phi]", "[", "j", "]"}]}], 
+      RowBox[{"\[Phi]", "[", "j", "]"}]}], ")"}], 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"Bar", "@", 
+       RowBox[{"\[Phi]", "[", "k", "]"}]}], 
+      RowBox[{"\[Phi]", "[", "k", "]"}]}], ")"}]}], "//", 
+   "NiceForm"}]}]], "Input",
+ CellLabel->"In[3]:=",
+ CellID->598109275,ExpressionUUID->"7d65c65f-4099-4e35-a304-6c039a910569"],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{
+   SubscriptBox[
+    OverscriptBox["\[Phi]", 
+     StyleBox["_",
+      FontWeight->Bold]], 
+    StyleBox["i",
+     FontSize->10]], 
+   SubscriptBox[
+    OverscriptBox["\[Phi]", 
+     StyleBox["_",
+      FontWeight->Bold]], 
+    StyleBox["j",
+     FontSize->10]], 
+   SubscriptBox[
+    OverscriptBox["\[Phi]", 
+     StyleBox["_",
+      FontWeight->Bold]], 
+    StyleBox["k",
+     FontSize->10]], 
+   SuperscriptBox["\[Phi]", 
+    StyleBox["i",
+     FontSize->10]], 
+   SuperscriptBox["\[Phi]", 
+    StyleBox["j",
+     FontSize->10]], 
+   SuperscriptBox["\[Phi]", 
+    StyleBox["k",
+     FontSize->10]]}], "StandardForm"]], "Output",
+ CellLabel->"Out[3]//NiceForm=",
+ CellID->86794815,ExpressionUUID->"3f59cae5-f43a-46c1-a1e0-9588301f591c"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"DR2MS", "[", "\[ScriptCapitalL]\[Phi]6", "]"}]], "Input",
+ CellLabel->"In[4]:=",
+ CellID->1002303432,ExpressionUUID->"f3f19dc7-88b0-47ac-bdf7-defd18d9e04d"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "DR2MS", "nonren", 
+   "\"The given Lagrangian contains non-renormalizable operators, which are \
+currently not supported by DR2MS.\"", 2, 18, 3, 32030819912325124657, "Local",
+    "Matchete`DR2MS"},
+  "MessageTemplate2"]], "Message", "MSG",
+ CellLabel->"During evaluation of In[4]:=",
+ CellID->328421767,ExpressionUUID->"005cceb7-e4ef-42ed-a7ba-61eb11d55b1b"],
+
+Cell[BoxData["$Aborted"], "Output",
+ CellLabel->"Out[4]=",
+ CellID->751665179,ExpressionUUID->"84b21e35-ba0f-4faf-9b6e-1f73a09b5d11"]
+}, Open  ]]
+}, Dynamic[CurrentValue[
+ EvaluationNotebook[], {TaggingRules, "Openers", "ExampleSection", "3"}, 
+  Closed]]]]
+}, Dynamic[CurrentValue[
+ EvaluationNotebook[], {TaggingRules, "Openers", "PrimaryExamplesSection"}, 
+  Closed]]]],
+
+Cell[BoxData[GridBox[{
+   {
+    TemplateBox[{29},
+     "Spacer1"], GridBox[{
+      {
+       RowBox[{
+        TemplateBox[{17},
+         "Spacer1"], 
+        StyleBox[
+         RowBox[{"Related", " ", "Links"}], "RelatedLinksSection"]}]},
+      {Cell[
+       "https://arxiv.org/abs/hep-ph/9308222", "RelatedLinks",ExpressionUUID->
+        "c33cbaaa-bfb1-4b5d-8919-402e995e7e46"]},
+      {Cell[
+       "https://arxiv.org/abs/2506.05201", "RelatedLinks",ExpressionUUID->
+        "d5e3242e-b21c-4cdf-91fa-0dd179322e1d"]}
+     }]}
+  }]], "RelatedLinksSection",ExpressionUUID->"4b35a901-3226-4552-b88b-\
+7eaf6544d21f"],
+
+Cell[" ", "FooterCell",ExpressionUUID->"722b3364-74ae-463f-822b-2fe54efd3b9f"]
+},
+Saveable->False,
+ScreenStyleEnvironment->"Working",
+WindowSize->{900, 830},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+WindowTitle->"DR2MS",
+Visible->False,
+TaggingRules->{
+ "ModificationHighlight" -> False, "ColorType" -> "", "LinkTrails" -> "", 
+  "ExampleCounter" -> 1, 
+  "Openers" -> {
+   "PrimaryExamplesSection" -> Open, 
+    "ExampleSection" -> {"0" -> Open, "2" -> Closed, "3" -> Closed}, 
+    "AllOptsTable" -> Closed, "NotesSection" -> Closed}, "NewStyles" -> True, 
+  "CitationPopupData" -> $Failed, "ShowCitation" -> False, "HasOptions" -> 
+  True, "RootCaptions" -> "", "HeaderCoreAreaLink" -> {}, 
+  "Metadata" -> {
+   "built" -> "{2026, 2, 18, 13, 0, 2.613371}", 
+    "history" -> {"XX", "", "", ""}, "context" -> "Matchete`", 
+    "keywords" -> {}, "specialkeywords" -> {}, 
+    "tutorialcollectionlinks" -> {}, "index" -> True, "label" -> 
+    "Matchete Symbol", "language" -> "en", "paclet" -> "Matchete", "status" -> 
+    "None", "summary" -> 
+    "DR2MS[lag] takes the renormalizable Lagrangian lag that is renormalized \
+in dimensional reduction using the OverscriptBox[DR, _] scheme as input and \
+returns the version of that Lagrangian renormalized using dimensional \
+regularization in the OverscriptBox[MS, _] scheme by incorporating the \
+appropriate finite counterterms required for the scheme change. ", 
+    "synonyms" -> {}, "tabletags" -> {}, "title" -> "DR2MS", "titlemodifier" -> 
+    "", "metadescription" -> "", "windowtitle" -> "DR2MS", "type" -> "Symbol",
+     "uri" -> "Matchete/ref/DR2MS"}},
+CellContext->"Global`",
+FrontEndVersion->"14.2 for Mac OS X ARM (64-bit) (March 16, 2025)",
+StyleDefinitions->Notebook[{
+   Cell[
+    StyleData[
+    StyleDefinitions -> FrontEnd`FileName[{"Wolfram"}, "Reference.nb"]]], 
+   Cell[
+    StyleData["Input"], CellContext -> "Global`"], 
+   Cell[
+    StyleData["Output"], CellContext -> "Global`"]}, Visible -> False, 
+  FrontEndVersion -> "14.2 for Mac OS X ARM (64-bit) (March 16, 2025)", 
+  StyleDefinitions -> "PrivateStylesheetFormatting.nb"],
+ExpressionUUID->"bb5306ac-80c0-4cd4-84dc-b360b267c131"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "PrimaryExamplesSection"->{
+  Cell[9148, 242, 1437, 38, 34, "PrimaryExamplesSection",ExpressionUUID->"0ce4ced3-30a6-471d-8e00-37885339f02e",
+   CellTags->"PrimaryExamplesSection",
+   CellID->675612259]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"PrimaryExamplesSection", 60275, 1963}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[573, 21, 2894, 70, 50, "AnchorBarGrid",ExpressionUUID->"4893a4a8-dd07-44ad-8dd1-17e696c0abf4",
+ CellID->1],
+Cell[3470, 93, 91, 0, 22, "ContextNameCell",ExpressionUUID->"cccdbf02-69e4-40ea-8dd8-6195b92f13a9"],
+Cell[CellGroupData[{
+Cell[3586, 97, 548, 14, 57, "ObjectNameGrid",ExpressionUUID->"cfe3d12a-f92c-4f7b-b316-9f0a69461d77"],
+Cell[4137, 113, 1434, 33, 127, "Usage",ExpressionUUID->"43c1ffe0-c549-40ed-aa8d-3663cbd8ebfa",
+ CellID->1251207239]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5608, 151, 1916, 48, 34, "NotesSection",ExpressionUUID->"d2e025a2-ad2e-483e-a1c2-dd3e3941fd32",
+ CellGroupingRules->{"SectionGrouping", 50},
+ CellID->117208194],
+Cell[7527, 201, 704, 13, 70, "Notes",ExpressionUUID->"1c9e66db-b210-4230-b5b4-668458ec43d3",
+ CellID->1869578717],
+Cell[8234, 216, 484, 13, 70, "Notes",ExpressionUUID->"8a2df598-2c53-491c-83f3-a8a446d53d7e",
+ CellID->866870056],
+Cell[8721, 231, 300, 5, 70, "Notes",ExpressionUUID->"60c57069-b879-447c-a9f2-33879d37e3e8",
+ CellID->198320321]
+}, Dynamic[CurrentValue[EvaluationNotebook[], {TaggingRules, "Openers", "NotesSection"}, Closed]]]],
+Cell[CellGroupData[{
+Cell[9148, 242, 1437, 38, 34, "PrimaryExamplesSection",ExpressionUUID->"0ce4ced3-30a6-471d-8e00-37885339f02e",
+ CellTags->"PrimaryExamplesSection",
+ CellID->675612259],
+Cell[CellGroupData[{
+Cell[10610, 284, 1416, 37, 29, "ExampleSection",ExpressionUUID->"ac9f610d-607b-428f-be1f-1e0810861a7c",
+ CellID->1269195324],
+Cell[12029, 323, 127, 1, 37, "ExampleText",ExpressionUUID->"c6a6fc7b-14ca-47ed-bdde-be7a791c6f98",
+ CellID->926387710],
+Cell[12159, 326, 617, 13, 81, "Input",ExpressionUUID->"f670da55-2136-47e6-8a0a-cc72a0cf64c4",
+ CellID->494760235],
+Cell[12779, 341, 211, 4, 37, "ExampleText",ExpressionUUID->"3a3ee3e2-abcb-4740-8fcc-4e098af8f126",
+ CellID->1048845750],
+Cell[12993, 347, 1076, 21, 240, "Input",ExpressionUUID->"ebcf7a9a-7d19-4b8c-b8aa-e24709a63845",
+ CellID->1667446653],
+Cell[14072, 370, 145, 1, 37, "ExampleText",ExpressionUUID->"6cb467e6-4f72-4821-9159-14ffae26c174",
+ CellID->1086477139],
+Cell[14220, 373, 290, 6, 45, "Input",ExpressionUUID->"112f3a8e-d406-4750-9755-38b334fcec0e",
+ CellID->1955526469],
+Cell[14513, 381, 176, 3, 37, "ExampleText",ExpressionUUID->"d5553557-a36e-4ade-868c-2098a233d892",
+ CellID->1948856006],
+Cell[CellGroupData[{
+Cell[14714, 388, 1279, 38, 70, "Input",ExpressionUUID->"be86513c-dbc5-4ada-a6eb-8a7cb8dc16f5",
+ CellID->1438085308],
+Cell[15996, 428, 4494, 168, 94, "Output",ExpressionUUID->"d37c9112-926c-401f-b118-68d0dd0a8bbb",
+ CellID->355483107]
+}, Open  ]],
+Cell[20505, 599, 463, 13, 70, "ExampleText",ExpressionUUID->"2daec330-f627-4061-bbeb-13b5a10b3949",
+ CellID->1384574900],
+Cell[CellGroupData[{
+Cell[20993, 616, 206, 5, 70, "Input",ExpressionUUID->"19face5e-e599-4668-adb2-28b2cdfa17c7",
+ CellID->897250261],
+Cell[21202, 623, 7462, 268, 125, "Output",ExpressionUUID->"5e4526e0-69c7-449b-8f05-46021f293143",
+ CellID->1287688042]
+}, Open  ]],
+Cell[28679, 894, 416, 6, 70, "ExampleText",ExpressionUUID->"372c5404-68ec-485c-bb7e-eba5dce982a3",
+ CellID->1251948659]
+}, Dynamic[CurrentValue[EvaluationNotebook[], {TaggingRules, "Openers", "ExampleSection", "0"}, Closed]]]],
+Cell[CellGroupData[{
+Cell[29232, 907, 1418, 37, 70, "ExampleSection",ExpressionUUID->"ee2db8bd-129c-4718-b61d-2f6deeabbafe",
+ CellID->1654465021],
+Cell[30653, 946, 705, 18, 70, "ExampleText",ExpressionUUID->"7157a633-8ba4-4814-8967-a909a1dc7d43",
+ CellID->464906730],
+Cell[CellGroupData[{
+Cell[31383, 968, 233, 5, 70, "Input",ExpressionUUID->"4118ef44-93d2-421f-a41b-654b586cbc93",
+ CellID->150102946],
+Cell[31619, 975, 657, 11, 70, "Echo",ExpressionUUID->"41151a47-5b17-4ad1-9a54-529fc8c382bb",
+ CellID->1459791278]
+}, Open  ]],
+Cell[32291, 989, 138, 1, 70, "ExampleText",ExpressionUUID->"a4b4a62e-92f4-41aa-890a-9df5ec136add",
+ CellID->1427061786],
+Cell[CellGroupData[{
+Cell[32454, 994, 254, 6, 70, "Input",ExpressionUUID->"978ebfde-22cc-4075-b0de-9ed1f42c3a93",
+ CellID->1844271617],
+Cell[32711, 1002, 17821, 689, 241, "Output",ExpressionUUID->"05fea758-6294-47ff-9e39-c04f29acf03c",
+ CellID->1665067281]
+}, Open  ]],
+Cell[50547, 1694, 715, 14, 70, "ExampleText",ExpressionUUID->"c64d2d7a-969e-4409-a609-de268e11f27c",
+ CellID->636473871]
+}, Dynamic[CurrentValue[EvaluationNotebook[], {TaggingRules, "Openers", "ExampleSection", "2"}, Closed]]]],
+Cell[CellGroupData[{
+Cell[51399, 1715, 1420, 37, 70, "ExampleSection",ExpressionUUID->"69359b28-f7e0-4ee9-9756-e60407ff5112",
+ CellID->907477386],
+Cell[52822, 1754, 640, 15, 70, "ExampleText",ExpressionUUID->"595ffe9c-e1dd-46c6-a744-50b9387a53c7",
+ CellID->46018199],
+Cell[53465, 1771, 128, 1, 70, "ExampleText",ExpressionUUID->"81b1b166-9641-4a3d-897b-1c61fc037bc4",
+ CellID->2061324617],
+Cell[53596, 1774, 616, 13, 70, "Input",ExpressionUUID->"09fd66a9-980c-412e-b779-6a025e0b5a71",
+ CellID->51633318],
+Cell[54215, 1789, 129, 1, 70, "ExampleText",ExpressionUUID->"f1441690-bc69-4abe-8a88-56899b7e13b3",
+ CellID->1158624549],
+Cell[54347, 1792, 408, 8, 70, "Input",ExpressionUUID->"6bbc0ac4-5061-4b2f-b596-15a5c48c1075",
+ CellID->217782238],
+Cell[54758, 1802, 137, 1, 70, "ExampleText",ExpressionUUID->"d1688307-e9b6-4bcb-b9b9-ec49d0875452",
+ CellID->503928274],
+Cell[CellGroupData[{
+Cell[54920, 1807, 679, 21, 70, "Input",ExpressionUUID->"7d65c65f-4099-4e35-a304-6c039a910569",
+ CellID->598109275],
+Cell[55602, 1830, 774, 31, 50, "Output",ExpressionUUID->"3f59cae5-f43a-46c1-a1e0-9588301f591c",
+ CellID->86794815]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[56413, 1866, 180, 3, 70, "Input",ExpressionUUID->"f3f19dc7-88b0-47ac-bdf7-defd18d9e04d",
+ CellID->1002303432],
+Cell[56596, 1871, 391, 8, 70, "Message",ExpressionUUID->"005cceb7-e4ef-42ed-a7ba-61eb11d55b1b",
+ CellID->328421767],
+Cell[56990, 1881, 133, 2, 36, "Output",ExpressionUUID->"84b21e35-ba0f-4faf-9b6e-1f73a09b5d11",
+ CellID->751665179]
+}, Open  ]]
+}, Dynamic[CurrentValue[EvaluationNotebook[], {TaggingRules, "Openers", "ExampleSection", "3"}, Closed]]]]
+}, Dynamic[CurrentValue[EvaluationNotebook[], {TaggingRules, "Openers", "PrimaryExamplesSection"}, Closed]]]],
+Cell[57365, 1892, 612, 18, 70, "RelatedLinksSection",ExpressionUUID->"4b35a901-3226-4552-b88b-7eaf6544d21f"],
+Cell[57980, 1912, 78, 0, 70, "FooterCell",ExpressionUUID->"722b3364-74ae-463f-822b-2fe54efd3b9f"]
+}
+]
+*)
+

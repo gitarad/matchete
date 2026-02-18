@@ -11,11 +11,15 @@ Package["Matchete`"]
 (*Contains the necessary information for constructing groups  *)
 
 
-(* ::Section::Closed:: *)
-(*Scoping & usage definitions*)
+(* ::Text:: *)
+(*Largely based on [Cahn]: "Semi-Simple Lie Algebras and Their Representations" by Robert N. Cahn (1984).*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Chapter:: *)
+(*Public:*)
+
+
+(* ::Section:: *)
 (*Scoping*)
 
 
@@ -69,19 +73,16 @@ PackageExport["StructureConstants"]
 (*Scope*)
 
 
-PackageScope["RootLengthSquared"]
-PackageScope["CartanKillingMetric"]
-
-
 PackageScope["TestAlg"]
 PackageScope["RepresentationCheck"]
 
 
-PackageScope["MatCommutator"]
+(* ::Section:: *)
+(*Usage definitions*)
 
 
-(* ::Subsection::Closed:: *)
-(*Definitions*)
+(* ::Subsubsection::Closed:: *)
+(*Export*)
 
 
 CartanMatrix::usage   = "CartanMatrix[alg] returns the Cartan matrix of a Lie algebra.";
@@ -130,19 +131,28 @@ SmallestRepresentation::usage = "SmallestRepresentation[alg] provides the Dynkin
 CSMatrices::usage             = "CSmatrices[alg, DynkinCoef] returns a set of matrices satisfying the Chevalley-Serre relations.";
 
 
-(* ::Section::Closed:: *)
+(* ::Chapter:: *)
+(*Private:*)
+
+
+(* ::Subsection:: *)
 (*Group/Algebra information*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Algebras *)
 
 
 (* ::Text:: *)
-(*Algebras of groups*)
+(*Algebras of the simple Lie groups. The following algebras are isomorphic:*)
+(*	A1 = C1 ~ B1*)
+(*	D2 ~ A1 x A1 (not simple)*)
+(*	B2 ~ C2*)
+(*	D3 ~ A3*)
 
 
-General::unkwnGroup= "`1`[`2`] is not a known simple group.";  
+General::unkwnGroup= "`1`[`2`] is not a known simple group.";
+General::notsimpleSO4= "SO(4) is not a simple group: its algebra is isomorphic to \!\(\*SubscriptBox[\(A\), \(1\)]\)\[Times]\!\(\*SubscriptBox[\(A\), \(1\)]\). Most of our methods fail for non-simple groups and so it is not supported. You can consider SU(2\!\(\*SuperscriptBox[\()\), \(2\)]\) instead.";  
 
 
 SU@ n_Integer/; n>= 2:= Alg["A", n -1];
@@ -152,7 +162,7 @@ SU@ x_:= (Message[General::unkwnGroup, "SU", x]; Abort[]);
 Sp@ n_Integer/; (EvenQ@ n && n>= 2):= 
 	Switch[n
 	,2,
-		Alg["A", 1]
+		Alg["A", 1] (*SU(2) = Sp(2)*)
 	,_, 
 		Alg["C", n/2]
 	]; 
@@ -161,10 +171,9 @@ Sp@ x_:= (Message[General::unkwnGroup, "Sp", x]; Abort[]);
 
 SO@ n_Integer/; (n>= 3):= 
 	Switch[n
-	,3,
-		Alg["A", 1]
 	,4,
-		(Message[General::unkwnGroup, "SO", n]; Abort[]);
+		Message[General::notsimpleSO4];
+		Abort[];
 	,_? OddQ,
 		Alg["B", (n- 1)/ 2]
 	,_, 
@@ -183,8 +192,8 @@ Alg::unkwn= "`1` is not a valid simple Lie algebra.";
 LieAlgQ@ Alg[name_String, n_Integer]:= 
 	Switch[name, 
 		"A", n> 0,
-		"B"|"C", n> 1,
-		"D", n> 2, 
+		"B"|"C", n> 0,
+		"D", n> 1, 
 		"E", MatchQ[n, 6|7|8],
 		"F", n === 4, 
 		"G", n === 2,
@@ -195,11 +204,12 @@ LieAlgQ@ _= False;
 TestAlg@ alg_:= If[!LieAlgQ@ alg, Message[Alg::unkwn, alg]; Abort[];];   
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Determining Cartan matrices *)
 
 
-SparseMatrixBand@ n_:= SparseArray[{Band@ {1, 1}-> 2, Band@ {2, 1}-> -1, Band@ {1, 2}-> -1}, {n, n}];
+(* ::Text:: *)
+(*Returns the Cartan Matrix associated with an algebra*)
 
 
 CartanMatrix::unkwn= "`1` is not a known simple Lie algebra.";
@@ -212,13 +222,21 @@ CartanMatrix[alg: Alg[Name_String, n_Integer]]:= CartanMatrix[alg]= Block[{temp}
 		temp= SparseArray[{1, 1} -> 2, {1, 1}]
 	,Alg["A", m_]/; m> 1,  
 		temp= SparseMatrixBand[n]
-	,Alg["B", m_]/; m> 1,
+	,Alg["B", 1], 
+		temp= CartanMatrix@ Alg["A", 1]
+	,Alg["B", m_]/; m> 1, (*Note that this convention is different from the isomorphic C_2*)
 		temp= SparseMatrixBand[n];
 		temp[[-2, -1]]= -2;
+	,Alg["C", 1],
+		temp= CartanMatrix@ Alg["A", 1]
 	,Alg["C", m_]/; m> 1,   
 		temp= SparseMatrixBand[n];
 		temp[[-1, -2]]= -2;
-	,Alg["D", m_]/; m> 2, 
+	,Alg["D", 2],
+		temp= DiagonalMatrix@ {2, 2};
+	,Alg["D", 3],
+		temp= CartanMatrix@ Alg["A", 3]
+	,Alg["D", m_]/; m> 3, 
 		temp= SparseMatrixBand[n];
 		temp[[-1, -2]]= temp[[-2, -1]]= 0;
 		temp[[-1, -3]]= temp[[-3, -1]]= -1;
@@ -232,13 +250,13 @@ CartanMatrix[alg: Alg[Name_String, n_Integer]]:= CartanMatrix[alg]= Block[{temp}
 	,Alg["G", 2],
 		temp= SparseMatrixBand[2];
 		temp[[1, 2]]= -3;
-(*	,_,
-		Message[CartanMatrix::unkwn, alg];
-		Abort[];*)
 	];
 	Normal@ temp
 ];
 CartanMatrix[x_]:= (Message[CartanMatrix::unkwn, x]; Abort[];)
+
+
+SparseMatrixBand@ n_:= SparseArray[{Band@ {1, 1}-> 2, Band@ {2, 1}-> -1, Band@ {1, 2}-> -1}, {n, n}];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -256,15 +274,15 @@ AlgebraRank@ alg_:= Length@ CartanMatrix@ alg;
 (*Algebra dimension *)
 
 
-GroupDimension[Matchete`U1]:=1;
+GroupDimension[Matchete`U1]:= 1;
 GroupDimension[alg_]:= RepresentationDimension[alg, AdjointRepresentation[alg]];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Roots*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Weights of the roots *)
 
 
@@ -325,12 +343,24 @@ AdjointRepresentation@ ___:= (Message[AdjointRepresentation::arg]; Abort[];)
 (*Fundamental representation*)
 
 
-FundamentalRepresentation@ alg_Alg:= Block[{},
+(* ::Text:: *)
+(*Returns the Dynkin coefficient of the fundamental representation of a given Lie Algebra*)
+
+
+FundamentalRepresentation@ alg: Alg[_, n_Integer]:= Block[{},
 	TestAlg@ alg;
-	Switch[First@ alg
-	,"A"|"B"|"C"|"D",
+	Switch[alg
+	,Alg["B", 1],
+		{2}
+	,Alg["B", 2],
+		{1, 0}
+	,Alg["B", 2],
+		{1, 1}
+	,Alg["D", 3],
+		{0, 1, 0}
+	,Alg["A"|"B"|"C"|"D", _],
 		Join[{1}, ConstantArray[0, AlgebraRank@ alg -1]]
-	,"E"|"F"|"G",
+	,Alg["E"|"F"|"G", _],
 		SmallestRepresentation@ alg
 	]
 ];
@@ -340,16 +370,11 @@ FundamentalRepresentation::arg= "FundamentalRepresentation[alg] takes a Lie alge
 FundamentalRepresentation@ ___:= (Message[FundamentalRepresentation::arg]; Abort[];) 
 
 
-(*FundamentalRepresentation@ alg_Alg/; MemberQ[{"A","B","C","D"}, First@ alg]:= 
-	Join[{1}, ConstantArray[0, AlgebraRank@ alg -1]];
-FundamentalRepresentation@ alg_Alg/; MemberQ[{"E","F","G"}, First@ alg]:= SmallestRepresentation@ alg;*)
-
-
 SmallestRepresentation@ alg_Alg:= 
 	RepresentationsUpToDimension[alg, RepresentationDimension[alg, AdjointRepresentation@ alg]][[2, 2]];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Lengths of the simple roots and metric  *)
 
 
@@ -358,7 +383,7 @@ SmallestRepresentation@ alg_Alg:=
 
 
 (* ::Text:: *)
-(*The Cartan matrix is given by Subscript[A, ij]= 2 <Subscript[\[Alpha], i],Subscript[\[Alpha], j]>/ <Subscript[\[Alpha], j],Subscript[\[Alpha], j]> [Cahn, VII], so when <Subscript[\[Alpha], i],Subscript[\[Alpha], j]> != 0, Subscript[A, ij]/Subscript[A, ji]=<Subscript[\[Alpha], i],Subscript[\[Alpha], i]>/<Subscript[\[Alpha], j], Subscript[\[Alpha], j]>. *)
+(*The Cartan matrix is given by A_ij = 2 <\[Alpha]_ i, \[Alpha]_j>/ <\[Alpha]_ j, \[Alpha]_ j> [Cahn, VII], so when <\[Alpha]_i, \[Alpha]_ j> != 0,  A_ ij/ A_ji = <\[Alpha]_ i, \[Alpha]_i>/ <\[Alpha]_j, \[Alpha], j>. *)
 
 
 (* ::Text:: *)
@@ -368,6 +393,19 @@ SmallestRepresentation@ alg_Alg:=
 
 Options@ RootLengthSquared= {RootSqMax -> 2, RootSqMin -> 0}
 Options@ CartanKillingMetric= {RootSqMax -> 2, RootSqMin -> 0}
+
+
+(*Special caes for the non-simple algebra*)
+RootLengthSquared[Alg["D", 2], opt:OptionsPattern[]]:= RootLengthSquared[Alg["D", 2], opt]= Block[{},
+	If[OptionValue[RootSqMin]=== 0,
+		OptionValue[RootSqMax],
+		OptionValue[RootSqMin]
+	]* IdentityMatrix[2]
+];
+
+
+(* ::Text:: *)
+(*This algorithm only works for simple algebras*)
 
 
 RootLengthSquared[alg_,opt:OptionsPattern[]]:= RootLengthSquared[alg,opt]= Block[{cm, lengthUnkown, lengthsSq, rank, currentRoot, 
@@ -410,21 +448,11 @@ CartanKillingMetric[alg_, opt:OptionsPattern[]]:= CartanKillingMetric[alg,opt]=
 	1/2 Inverse@ CartanMatrix@ alg . DiagonalMatrix@ RootLengthSquared[alg,opt];
 
 
-(* ::Subsection::Closed:: *)
-(*CoRoots*)
-
-
-PositiveCoroots@ alg_:= Block[{roots, dMetric= CartanKillingMetric@ alg},
-	roots= PositiveRoots@ alg;
-	2 #/ (# . dMetric . #)&/@ roots
-]  
-
-
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Representations*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Properties*)
 
 
@@ -439,8 +467,10 @@ CRep@ CRep@rep_:= rep;
 (*Representation check *)
 
 
-General::dynkCoef= "`1` is not a valid Dynkin Coefficient.";
-General::rankLab= "The length of `1` does not match the rank of `2`.";
+(* ::Text:: *)
+(*Conjugate representations*)
+
+
 General::realRep= "`1` is a real representation of `2`. CRep cannot be used here.";
 
 
@@ -453,6 +483,14 @@ RepresentationCheck[alg_, CRep@ \[CapitalLambda]_]:= Block[{},
 ];
 
 
+(* ::Text:: *)
+(*Other representations*)
+
+
+General::dynkCoef= "`1` is not a valid Dynkin Coefficient.";
+General::rankLab= "The length of `1` does not match the rank of `2`.";
+
+
 RepresentationCheck[alg_, \[CapitalLambda]_]:= Block[{},
 	TestAlg@ alg;
 	If[!MatchQ[\[CapitalLambda], {(_Integer? NonNegative)..}],
@@ -463,6 +501,32 @@ RepresentationCheck[alg_, \[CapitalLambda]_]:= Block[{},
 		Message[General::rankLab, \[CapitalLambda], alg];
 		Abort[];
 	];
+	DoubleCoverRepCheck[alg, \[CapitalLambda]];
+];
+
+
+(* ::Text:: *)
+(*Representations for the double-covers*)
+
+
+General::doublecover= "The representation `1` exists only in the double cover (`2`) of `3`.";
+
+
+DoubleCoverRepCheck[alg:Alg["B", 1], rep:{_Integer? OddQ}]:= Block[{},
+	Message[General::doublecover, rep, "Alg[A, 1]", alg];
+	Abort[];
+];
+DoubleCoverRepCheck[alg:Alg["B", 2], rep:{_, _Integer? OddQ}]:= Block[{},
+	Message[General::doublecover, rep, "Alg[C, 2]", alg];
+	Abort[];
+];
+DoubleCoverRepCheck[alg:Alg["D", 2], rep:{a_, b_}]/; OddQ[a+ b]:= Block[{},
+	Message[General::doublecover, rep, "Alg[A, 1] \[Times] Alg[A, 1]", alg];
+	Abort[];
+];
+DoubleCoverRepCheck[alg:Alg["D", 3], rep:{a_, _, b_}]/; OddQ[a+ b]:= Block[{},
+	Message[General::doublecover, rep, "Alg[A, 3]", alg];
+	Abort[];
 ];
 
 
@@ -506,22 +570,28 @@ DynkinIndex@ ___:= (Message[DynkinIndex::arg]; Abort[];)
 (*Returns an association with all the weight and dimensionality of the associated weight spaces of representation with highest weight (\[CapitalLambda])_i.*)
 
 
-Options@ RepresentationWeights= {Levels-> False}
+Options@ RepresentationWeights= {Levels-> False};
+Options@ RepresentationWeightsInternal= {Levels-> False}
 
 
 (* ::Text:: *)
 (*The weights of the conjugate representation (produced by taking \[Phi]^* of weight vector \[Phi]) are minus the weight of the original vector.*)
 
 
-RepresentationWeights[alg_, CRep@ \[CapitalLambda]_List, opt:OptionsPattern[]]? OptionsCheck:= KeyMap[-#&, RepresentationWeights[alg, \[CapitalLambda], opt]];
+RepresentationWeights[alg_, \[CapitalLambda]_, opt:OptionsPattern[] ]? OptionsCheck:= Block[{},
+	RepresentationCheck[alg, \[CapitalLambda]];
+	RepresentationWeightsInternal[alg, \[CapitalLambda], opt]
+];
 
 
-RepresentationWeights[alg_, \[CapitalLambda]_, opt:OptionsPattern[] ]? OptionsCheck:= RepresentationWeights[alg, \[CapitalLambda], opt]=
+RepresentationWeightsInternal[alg_, CRep@ \[CapitalLambda]_List, opt:OptionsPattern[]]:= 
+	KeyMap[-#&, RepresentationWeightsInternal[alg, \[CapitalLambda], opt]];
+
+
+RepresentationWeightsInternal[alg_, \[CapitalLambda]_, opt:OptionsPattern[] ]:= RepresentationWeights[alg, \[CapitalLambda], opt]=
 Block[{rank, weights, prevWeights, m, p, w, pos, i, M,
 	weightDimensions, posRoots, dMetric, level, root, dim, num,
-	cartanMat= CartanMatrix@ alg},
-	RepresentationCheck[alg, \[CapitalLambda]];
-	
+	cartanMat= CartanMatrix@ alg},	
 	rank= Length@ cartanMat; 
 	
 	(*Determine the weights of the representation [Cahn, X]*)
@@ -579,8 +649,13 @@ Block[{rank, weights, prevWeights, m, p, w, pos, i, M,
 (*The dimension of a representation can be determined efficiently with Weyl's dimension formula [Cahn, XIII]*)
 
 
-RepresentationDimension[alg_, \[CapitalLambda]_]:= Block[{roots, dMetric, r, \[Delta], temp},
+RepresentationDimension[alg_, \[CapitalLambda]_]:= Block[{},
 	RepresentationCheck[alg, \[CapitalLambda]];
+	RepresentationDimensionInternal[alg, \[CapitalLambda]]
+] 
+
+
+RepresentationDimensionInternal[alg_, \[CapitalLambda]_]:= Block[{roots, dMetric, r, \[Delta], temp},
 	roots= PositiveRoots@ alg;
 	dMetric= CartanKillingMetric@ alg;
 	\[Delta]= ConstantArray[1, Length@ \[CapitalLambda]]; 
@@ -591,7 +666,7 @@ RepresentationDimension[alg_, \[CapitalLambda]_]:= Block[{roots, dMetric, r, \[D
 ];
 
 
-RepresentationDimension[alg_, CRep@ \[CapitalLambda]_List]:= RepresentationDimension[alg, \[CapitalLambda]];
+RepresentationDimensionInternal[alg_, CRep@ \[CapitalLambda]_List]:= RepresentationDimensionInternal[alg, \[CapitalLambda]];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -612,7 +687,7 @@ RepresentationsUpToDimension[alg_, dimLimit_Integer]:= Block[{carry, dim, i, ran
 		i=1;
 		While[i<= rank,
 			rep[[i]]++;
-			dim= RepresentationDimension[alg, rep];
+			dim= RepresentationDimensionInternal[alg, rep];
 			If[dim> dimLimit,
 				rep[[i++]]= 0;
 				Continue[];
@@ -622,11 +697,18 @@ RepresentationsUpToDimension[alg_, dimLimit_Integer]:= Block[{carry, dim, i, ran
 		];
 	][[2, 1]];
 	
+	representations= Discard[representations, InvalidRep[alg, #[[2]]]&];
+	
 	ReverseSortBy[representations, (-First@# &)]
 ];
 
 
-(* ::Subsection::Closed:: *)
+InvalidRep[Alg["B", 1|2], label_]:= OddQ[label[[-1]]];
+InvalidRep[Alg["D", 2|3], label_]:= OddQ[label[[1]]+ label[[-1]]];
+InvalidRep[__]:= False;
+
+
+(* ::Subsection:: *)
 (*Conjugate (dual) representations*)
 
 
@@ -657,6 +739,12 @@ FSIndicator[alg_, \[CapitalLambda]_]:= FSIndicator[alg, \[CapitalLambda]]= Block
 ];
 
 
+PositiveCoroots@ alg_:= Block[{roots, dMetric= CartanKillingMetric@ alg},
+	roots= PositiveRoots@ alg;
+	2 #/ (# . dMetric . #)&/@ roots
+]  
+
+
 (* ::Subsubsection::Closed:: *)
 (*Determine conjugate representation*)
 
@@ -679,8 +767,12 @@ DualRepresentation[alg_, rep_]:= Block[{weights, invCM},
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Product representations *)
+
+
+(* ::Subsubsection::Closed:: *)
+(*RepresentationProduct*)
 
 
 (* ::Text:: *)
@@ -723,7 +815,7 @@ RepresentationProduct[alg_, reps_]:= Block[{productWeights, invCM, rep, dim},
 ];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Invariants*)
 
 
@@ -731,7 +823,7 @@ RepresentationProduct[alg_, reps_]:= Block[{productWeights, invCM, rep, dim},
 (*The various invariant tensors and generators of representations are all dependent on the particular choice of basis states.*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Representation matrices/generators (Chevalley-Serre)*)
 
 
@@ -749,12 +841,9 @@ CSMatrices[alg_, \[CapitalLambda]_List]/; \[CapitalLambda] === AdjointRepresenta
 		cartanMat= CartanMatrix@ alg,
 		rank= AlgebraRank@ alg
 		},
-			
-	minRep = If[alg=== Alg["E", 8], 
-			{0,0,0,0,0,0,1,0}(*Suitable representation to compute CS matrices*)
-		,
-			SmallestRepresentation[alg]
-		];
+	
+	(*Relies on some other representation than the adjoint*)
+	minRep= SmallNonAdjRepresentation@ alg;
 	
 	{Hi, Ei, Fi}= Transpose@ CSMatrices[alg, minRep];
 	Ei= Association@@ Thread[Rule[cartanMat, Ei]];
@@ -778,6 +867,16 @@ CSMatrices[alg_, \[CapitalLambda]_List]/; \[CapitalLambda] === AdjointRepresenta
 RepAction[L_][A_, B_]:= MatInnerProd[B, MatCommutator[L, A]];
 
 
+SmallNonAdjRepresentation@ alg_:= Switch[alg
+	,Alg["E", 8],
+		{0, 0, 0, 0, 0, 0, 1, 0}(*Suitable representation to compute CS matrices*)
+	,Alg["B", 1],
+		{4}
+	,_,
+		SmallestRepresentation@ alg
+	];
+
+
 (* ::Subsubsection::Closed:: *)
 (*Generic representations*)
 
@@ -786,6 +885,7 @@ RepAction[L_][A_, B_]:= MatInnerProd[B, MatCommutator[L, A]];
 (*Returns a the set of {H_i, E_i, F_i} for the simple  roots, obeying the Chevalley-Serre relations, in the given representation [Fonseca, B1]. The basis of the representation space is always chosen with weight vectors, i.e. the basis states are eigenvectors of the adjoint generators. *)
 
 
+CSMatrices::decomp = "Inconsistent decomposition. CSMatrices failed."
 CSMatrices::singlet = "Cannot be applied on singlet representations."
 
 
@@ -840,7 +940,10 @@ CSMatrices[alg_, \[CapitalLambda]_List]:= CSMatrices[alg, \[CapitalLambda]]= Blo
 		\[CapitalOmega]= CholeskyLikeDecomposition@ X;
 		\[CapitalOmega]= Transpose@ DeleteCases[Transpose@ \[CapitalOmega], {0..}];
 		\[CapitalOmega]= PadRight[\[CapitalOmega], {Length@ \[CapitalOmega], weightDims@ w}];
-		If[Simplify@ X =!= Simplify[\[CapitalOmega] . Transpose@ \[CapitalOmega]], Echo@ {X, \[CapitalOmega]};]; (*Test consistency of solution*)
+		If[Simplify@ X =!= Simplify[\[CapitalOmega] . Transpose@ \[CapitalOmega]], (*Test consistency of solution*)
+			Message[CSMatrices::decomp];
+			Abort[];
+		]; 
 		raisingMatrices@ w= TakeList[\[CapitalOmega], targetDims];
 	,{layer, weights[[2;;]]}, {w, Keys@ layer}];
 	
@@ -877,7 +980,7 @@ CSMatrices[alg_, \[CapitalLambda]_List]:= CSMatrices[alg, \[CapitalLambda]]= Blo
 CSMatrices[alg_, CRep@ \[CapitalLambda]_List]:= -Map[Transpose, CSMatrices[alg, \[CapitalLambda]], {2}];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Generators*)
 
 
@@ -894,7 +997,8 @@ GeneratorBasis[alg_, \[CapitalLambda]_]:=Block[{Hi, Ei, Fi, E\[Alpha], repMatric
 		weightPos= WeightPositions[alg, AdjointRepresentation@alg],
 		cartanMat= CartanMatrix@ alg
 		},
-		
+	RepresentationCheck[alg, \[CapitalLambda]];
+	
 	zeroWeight= ConstantArray[0, rank];
 
 	{Hi, Ei, Fi}= Transpose@ CSMatrices[alg, \[CapitalLambda]];
@@ -906,7 +1010,7 @@ GeneratorBasis[alg_, \[CapitalLambda]_]:=Block[{Hi, Ei, Fi, E\[Alpha], repMatric
 	E\[Alpha]= Join[E\[Alpha], BasisForRoots[Fi, Keys@ weightPos]];
 	
 	(*Matches the ladder and Cartan generators to the adjoint index in the weight basis. *)
-	repMatrices= ConstantArray[SparseArray[{}, {1, 1} RepresentationDimension[alg, \[CapitalLambda]]], GroupDimension[alg]];
+	repMatrices= ConstantArray[SparseArray[{}, {1, 1} RepresentationDimensionInternal[alg, \[CapitalLambda]]], GroupDimension[alg]];
 	Do[
 		repMatrices[[weightPos@ root+ 1]]= E\[Alpha]@ root; 
 	, {root, Keys@ E\[Alpha]}]; 
@@ -955,11 +1059,7 @@ BasisRotation[alg_]:= BasisRotation[alg]= Block[
 	rank = AlgebraRank@alg,
 	roots=Keys@RepresentationWeights[alg,AdjointRepresentation@alg]},
 	
-	minRep = If[alg=== Alg["E", 8], 
-			{0,0,0,0,0,0,1,0}(*Suitable representation to compute CS matrices*)
-		,
-			SmallestRepresentation[alg]
-		];
+	minRep= SmallNonAdjRepresentation@ alg;
 	
 	generatorBasis= GeneratorBasis[alg, minRep];
 	
@@ -1094,19 +1194,19 @@ CheckGeneratorsConditions[alg_,rep_,OptionsPattern[{DisplayGenerators->False}]]:
 		groupdim=Length[generators];
 		Print["Representation ", rep, " of ", alg];
 		
-		BoolCheck=AllTrue[Flatten[Table[generators[[a]]-generators[[a]]\[ConjugateTranspose],{a,1,groupdim}]],# == 0 &];
+		BoolCheck=AllTrue[Flatten[Table[generators[[a]]-generators[[a]]\[ConjugateTranspose],{a,1,groupdim}]],# === 0 &];
 		Print["Hermiticity condition T^a = (T^a)\[ConjugateTranspose] : ", BoolCheck];
 		If[!BoolCheck,Print[{Table[generators[[a]]-generators[[a]]\[ConjugateTranspose],{a,1,groupdim}]}//MatrixForm] ];
 		
-		BoolCheck= (Table[Tr[generators[[a]] . generators[[b]]],{a,1,groupdim},{b,1,groupdim}] == DynkinIndex[alg,rep]IdentityMatrix[groupdim]);
+		BoolCheck= (Table[Tr[generators[[a]] . generators[[b]]],{a,1,groupdim},{b,1,groupdim}] === DynkinIndex[alg,rep]IdentityMatrix[groupdim]);
 		Print["Dynkin Index: Tr[\!\(\*SuperscriptBox[\(T\), \(a\)]\)\!\(\*SuperscriptBox[\(T\), \(b\)]\)] = ",DynkinIndex[alg,rep]," \!\(\*SuperscriptBox[\(\[Delta]\), \(ab\)]\) : ", BoolCheck];
 		If[!BoolCheck,Print[Table[Tr[generators[[a]] . generators[[b]]],{a,1,groupdim},{b,1,groupdim}]]];
 		
-		BoolCheck= (Sum[generators[[a]] . generators[[a]],{a,1,groupdim}] == Casimir2[alg,rep]IdentityMatrix[RepresentationDimension[alg,rep]]);
+		BoolCheck= (Sum[generators[[a]] . generators[[a]],{a,1,groupdim}] === Casimir2[alg,rep]IdentityMatrix[RepresentationDimensionInternal[alg,rep]]);
 		Print["Quadratic Casimir: (\!\(\*SuperscriptBox[\(T\), \(a\)]\)\!\(\*SubscriptBox[\()\), \(ik\)]\)(\!\(\*SuperscriptBox[\(T\), \(a\)]\)\!\(\*SubscriptBox[\()\), \(kj\)]\) = ",Casimir2[alg,rep]," \!\(\*SubscriptBox[\(\[Delta]\), \(ij\)]\) :",BoolCheck];
 		If[!BoolCheck,Print[Sum[generators[[a]] . generators[[a]],{a,1,groupdim}]//MatrixForm] ];
 		
-		BoolCheck = CheckLinearIndependence[List@@generators] && GroupDimension[alg]== groupdim;
+		BoolCheck = CheckLinearIndependence[List@@generators] && GroupDimension[alg]=== groupdim;
 		Print["Generator basis complete and linearly independent = ", BoolCheck];
 		
 		(*BoolCheck= (Count[Normal/@generators, _?DiagonalMatrixQ]==Length@CartanMatrix@alg);
@@ -1125,7 +1225,7 @@ CheckGeneratorsConditions[alg_,rep_,OptionsPattern[{DisplayGenerators->False}]]:
 (*Also a condition on the complex conjugate representation, i.e. T^a(R* ) = - (T^a(R))**)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Invariants *)
 
 
@@ -1166,7 +1266,7 @@ InvariantTensors[alg_, reps_List, OptionsPattern[]]? OptionsCheck:= Block[{canon
 	asyms= Symmetrizations[reps, OptionValue@ AntisymmetricIndices];
 	
 	(*Cannonically sort the representations*)
-	canonicalOrd= OrderingBy[reps, RepresentationDimension[alg, #]& ];
+	canonicalOrd= OrderingBy[reps, RepresentationDimensionInternal[alg, #]& ];
 	inputOrd= Ordering@ canonicalOrd; 
 	
 	(*Determine invariants*)
@@ -1193,9 +1293,9 @@ InvariantTensors[alg_, reps_List, OptionsPattern[]]? OptionsCheck:= Block[{canon
 	If[Length@ invariants=== 0, Return@ {}];
 	
 	(*Orthogonalize invariants*)
-	{ToSingleIndex, ToMultiIndex}= TensorIndexMappings[RepresentationDimension[alg, #]&/@ reps];
+	{ToSingleIndex, ToMultiIndex}= TensorIndexMappings[RepresentationDimensionInternal[alg, #]&/@ reps];
 	
-	repDimensions= RepresentationDimension[alg, #]&/@ reps;
+	repDimensions= RepresentationDimensionInternal[alg, #]&/@ reps;
 	invariants= MapAt[ToSingleIndex, invariants, {All, All, 1}];
 	invariants= SparseArray[#, {Times@@ repDimensions}]&/@ invariants;
 	
@@ -1295,7 +1395,7 @@ ComputeInvariants[alg_, reps_List, opt:OptionsPattern[]]:= ComputeInvariants[alg
 	ET= Table[Sum[temp= identities; temp[[n]]= Transpose@ csMats[[n, i, 2]];
 			TensorProductMatrix@ temp
 		,{n, Length@ reps}] ,{i, rank}];
-		
+	
 	(*Find the null space corresponding to the invariant tensors*)
 	ET= (Join@@ ET)[[;;, nullPositions]];
 	n= DeleteDuplicates@ ArrayRules[ET][[;; -2, 1, 1]];
@@ -1345,7 +1445,7 @@ TensorIndexMappings[dims_List]:= With[{
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Vector-space rotations *)
 
 
@@ -1360,7 +1460,7 @@ RealBasisRotation[alg_, \[CapitalLambda]_]:= RealBasisRotation[alg, \[CapitalLam
 	RepresentationCheck[alg, \[CapitalLambda]];
 	If[FSIndicator[alg, \[CapitalLambda]]< 1, 
 		Message[RealBasisRotation::unrlrep, \[CapitalLambda], alg];
-		Return@ SparseArray[{{i_, i_}-> 1}, RepresentationDimension[alg, \[CapitalLambda]] {1, 1}];
+		Return@ SparseArray[{{i_, i_}-> 1}, RepresentationDimensionInternal[alg, \[CapitalLambda]] {1, 1}];
 	];
 	
 	If[\[CapitalLambda] === AdjointRepresentation@ alg,
@@ -1371,7 +1471,7 @@ RealBasisRotation[alg_, \[CapitalLambda]_]:= RealBasisRotation[alg, \[CapitalLam
  ]; 
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Other functions*)
 
 
@@ -1384,12 +1484,16 @@ WeightPositions[alg_, \[CapitalLambda]_]:= Block[{i= 0},
 ];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Auxiliary function*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Matrix functions*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Matrix commutators and inner product *)
 
 
 MatCommutator[a_,b_]:=a . b-b . a;

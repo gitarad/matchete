@@ -1,4 +1,22 @@
-# Matchete changelog
+# **Matchete changelog**
+
+### v0.4.1 (2026-02-18)
+- `EOMSimplify` now accounts for the axial anomaly contribuions.
+- Expanded the documentation.
+- `IntroduceEffectiveCouplings` now has the option `FactorOutHbar` (default True) to factor out hbar in couplings that are purely one-loop order.
+- Bug fixes:
+	- Fixed bug where `EOMSimplify` would not properly account for charge conjugated fermions.
+	- Fixed bug where `EOMSimplify` would not identify EOMs of fermions multiplied by $\gamma_5$.
+	- Fixed bug in `RenameCG` (it wasn't properly updating all of the global state). 
+	- Fixed a bug in `ExportWCxf`.
+    - Fixed a bug in `IntroduceEffectiveCouplings` where antihermitian couplings were treated as hermitian.
+    - Fixed a bug in `EpsExpand` related to a changed behavior in Series since Mathematica 14.3.    
+- Performance and improvements:
+	- Improved robustness of `GreensSimplify` on operators with factorized `CG` coefficients.	
+	- Massive performance improvements for `ContractCGs` and other `CG` related functions. 
+	- Drastically reduced memory use of `CG` machinery. 
+	- Improved performance for tree-level matching with complicated Lagrangians.
+	- Better handling for group algebras $B_1$, $B_2$, $D_3$ isomorphic to the $A_1$, $C_2$, $A_3$. 
 
 ## v0.4.0 (2025-11-14)
 - Now uses `NCM` instead of `NonCommutativeMultiply`; Use of `\[CenterDot]` (shortcut: `[esc] . [esc]`) is encouraged over `**`.
@@ -8,6 +26,7 @@
 - Introduced `BackgroundField` option for `DefineField`.
 - Removed `RepresentationProperties` in favor of `GetRepresentations`.  
 - Renamed model `SMEFT.m` -> `SMEFT_Warsaw.m`. Sign convention on field strength tensors changed to match https://arxiv.org/pdf/1008.4884.
+- By default `ReplaceEffectiveCouplings` no longer replaces superleading effective couplings to not upset the EFT power counting. Using the option `Superleading->True` this replacement can still be performed.
 - Bug fixes:
 	- Fixed compatibility with `Wolfram 14.3`.
 	- Fixed bug in `Match` from loops involving derivative interactions (Xterms with open derivatives).

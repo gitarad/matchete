@@ -1,0 +1,367 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Wolfram 14.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       154,          7]
+NotebookDataLength[     13776,        359]
+NotebookOptionsPosition[     10530,        287]
+NotebookOutlinePosition[     12827,        345]
+CellTagsIndexPosition[     12742,        340]
+WindowTitle->$PrintIndexLabels
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[GridBox[{
+   {GridBox[{
+      {
+       ItemBox[Cell[BoxData[
+         RowBox[{
+          TemplateBox[{12},
+           "Spacer1"], Cell["MATCHETE SYMBOL", "PacletNameCell",
+           TextAlignment->Center,ExpressionUUID->
+           "07b6af0a-0695-4055-86cc-e5a49589806b"], 
+          TemplateBox[{8},
+           "Spacer1"]}]],
+         TextAlignment->Center,ExpressionUUID->
+         "7cb16e50-90c9-4fe0-b54a-1d2037460e24"],
+        Background->RGBColor[0.490196, 0.576471, 0.690196],
+        ItemSize->Full], ""}
+     },
+     GridBoxAlignment->{"Rows" -> {{Center}}},
+     GridBoxItemSize->{"Columns" -> {Full, 
+         Scaled[0.02]}, "Rows" -> {{2.5}}}], Cell[TextData[{
+     Cell[BoxData[
+      TagBox[
+       ActionMenuBox[
+        FrameBox[Cell[TextData[{
+          "See Also",
+          " ",
+          Cell[BoxData[
+           GraphicsBox[
+            {GrayLevel[0.66667], Thickness[0.13], 
+             LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]},
+            AspectRatio->1,
+            ImageSize->20,
+            PlotRange->{{-3, 4}, {-1, 1}}]],ExpressionUUID->
+           "3c6c102c-84d1-4815-a1ad-2ec949c41622"]
+         }],ExpressionUUID->"40976f18-75c8-4156-9c00-9e8554491cfd"],
+         StripOnInput->False],{
+        StyleBox["\"NiceForm\"", "SeeAlsoRelated", StripOnInput -> False] :> 
+         Documentation`HelpLookup["paclet:Matchete/ref/NiceForm"], 
+         StyleBox[
+          "\"DefineRepresentation\"", "SeeAlsoRelated", StripOnInput -> 
+           False] :> Documentation`HelpLookup[
+          "paclet:Matchete/ref/DefineRepresentation"]},
+        Appearance->None,
+        MenuAppearance->Automatic,
+        MenuStyle->"SeeAlso"],
+       MouseAppearanceTag["LinkHand"]]],
+      LineSpacing->{1.4, 0},ExpressionUUID->
+      "d52c4c0a-ac68-482c-9851-7e21f4cc12f0"],
+     "\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\
+\[ThickSpace]",
+     Cell[BoxData[
+      TagBox[
+       ActionMenuBox[
+        FrameBox[Cell[TextData[{
+          "URL",
+          " ",
+          Cell[BoxData[
+           GraphicsBox[
+            {GrayLevel[0.66667], Thickness[0.13], 
+             LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]},
+            AspectRatio->1,
+            ImageSize->20,
+            PlotRange->{{-3, 4}, {-1, 1}}]],ExpressionUUID->
+           "6ebd61a0-8a0d-4188-9639-33c3dec24193"]
+         }],ExpressionUUID->"3f6a645f-0955-46d0-97c1-fc6d00b7eb6f"],
+         StripOnInput->False],{
+        "\"Matchete/ref/$PrintIndexLabels\"" :> None, 
+         "\"Copy Wolfram Documentation Center URL\"" :> 
+         CopyToClipboard["Matchete/ref/$PrintIndexLabels"], Delimiter, 
+         "\"Copy web URL\"" :> 
+         Module[{DocumentationSearch`Private`nb$}, 
+           DocumentationSearch`Private`nb$ = 
+            NotebookPut[
+             Notebook[{
+               Cell[BoxData[
+                 MakeBoxes[
+                  Hyperlink[
+                   "http://reference.wolfram.com/language/Matchete/ref/$\
+PrintIndexLabels.html"], StandardForm]], "Input", TextClipboardType -> 
+                 "PlainText"]}, Visible -> False]]; 
+           SelectionMove[DocumentationSearch`Private`nb$, All, Notebook]; 
+           FrontEndTokenExecute[DocumentationSearch`Private`nb$, "Copy"]; 
+           NotebookClose[DocumentationSearch`Private`nb$]; Null], 
+         "\"Go to web URL\"" :> 
+         FrontEndExecute[{
+           NotebookLocate[{
+             URL[If[TrueQ[False], 
+                 "http://reference.wolfram.com/system-modeler/", 
+                 "http://reference.wolfram.com/language/"] <> 
+               "Matchete/ref/$PrintIndexLabels" <> ".html"], None}]}]},
+        Appearance->None,
+        MenuAppearance->Automatic,
+        MenuStyle->"URLMenu"],
+       MouseAppearanceTag["LinkHand"]]],
+      LineSpacing->{1.4, 0},ExpressionUUID->
+      "419905c7-ca08-4091-90ce-90c565433b2f"]
+    }], "AnchorBar",
+     CacheGraphics->False,ExpressionUUID->
+     "a23300c5-c1f2-4efd-b71d-8c20f24eb359"]}
+  }]], "AnchorBarGrid",
+ GridBoxOptions->{GridBoxItemSize->{"Columns" -> {
+     Scaled[0.65], {
+      Scaled[0.34]}}, "ColumnsIndexed" -> {}, "Rows" -> {{1.}}, 
+   "RowsIndexed" -> {}}},
+ CellID->1,ExpressionUUID->"bb05095b-eb4b-4a7b-bbb5-872d31dff2ae"],
+
+Cell["Matchete`", "ContextNameCell",ExpressionUUID->"9904d88e-f277-469d-850a-c9c6bfaa6c61"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[GridBox[{
+   {Cell[TextData[{
+     Cell[
+     "$PrintIndexLabels", "ObjectName",ExpressionUUID->
+      "60e19026-5a9b-449b-96bd-b5a1446aea94"],
+     Cell[BoxData[
+      TemplateBox[{8},
+       "Spacer1"]],ExpressionUUID->"10207ad5-7ccf-4140-8965-bec08ad2ff60"],
+     Cell[BoxData[
+     ""], "ObjectNameTranslation",ExpressionUUID->
+      "506eb010-08bb-424d-9100-322341fc0345"]
+    }],ExpressionUUID->"5cbbab55-2274-491c-b35a-d682367f32b5"], 
+    "\[SpanFromLeft]"}
+  }]], "ObjectNameGrid",ExpressionUUID->"e83ab2b4-7600-4676-9292-\
+c73a212439c4"],
+
+Cell[BoxData[GridBox[{
+   {"", Cell[TextData[{
+     Cell[BoxData["$PrintIndexLabels"], "InlineFormula",
+      FontFamily->"Source Sans Pro",ExpressionUUID->
+      "4f7c9508-0afb-43af-9dfe-4f771dd0ff9b"],
+     "\[LineSeparator]can be set to ",
+     Cell[BoxData[
+      TemplateBox[{
+        Cell[
+         TextData["True"]], "paclet:ref/True"},
+       "RefLink",
+       BaseStyle->{"InlineFormula"}]], "InlineFormula",
+      FontFamily->"Source Sans Pro",ExpressionUUID->
+      "37b56d88-476b-4479-86c3-22e5e90e12f5"],
+     " or ",
+     Cell[BoxData[
+      TemplateBox[{
+        Cell[
+         TextData["False"]], "paclet:ref/False"},
+       "RefLink",
+       BaseStyle->{"InlineFormula"}]], "InlineFormula",
+      FontFamily->"Source Sans Pro",ExpressionUUID->
+      "ba4ddd48-29a0-44ec-84d0-ccf788080d18"],
+     " and determines whether ",
+     Cell[BoxData[
+      TemplateBox[{
+        Cell[
+         TextData["NiceForm"]], "paclet:Matchete/ref/NiceForm", 
+        "Matchete Package Symbol"},
+       "PackageLink",
+       BaseStyle->"InlineFormula"]], "InlineFormula",
+      FontFamily->"Source Sans Pro",ExpressionUUID->
+      "8314f33e-e170-4d33-b9df-91b2a054cd8e"],
+     " prints the representation of indices as superscripts or not. By \
+default it is set to ",
+     Cell[BoxData[
+      TemplateBox[{
+        Cell[
+         TextData["False"]], "paclet:ref/False"},
+       "RefLink",
+       BaseStyle->{"InlineFormula"}]], "InlineFormula",
+      FontFamily->"Source Sans Pro",ExpressionUUID->
+      "27835e4e-c36e-432c-9a33-1cac64ad882e"],
+     "."
+    }],ExpressionUUID->"0d87a15d-8466-4e4e-9fd2-9bebd315f6ea"]}
+  }]], "Usage",
+ CellID->1346190292,ExpressionUUID->"29ca4448-b04d-4896-865b-600874439ca1"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ Cell[BoxData[
+  DynamicBox[ToBoxes[
+    If[
+     MatchQ[
+      CurrentValue[
+       EvaluationNotebook[], {
+       TaggingRules, "Openers", "PrimaryExamplesSection"}, Open], 
+      Alternatives[True, Open]], 
+     Style[
+      Graphics[{
+        Thickness[0.18], 
+        RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+        Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+       PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+      0.68 Inherited], 
+     Rotate[
+      Style[
+       Graphics[{
+         Thickness[0.18], 
+         RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+         Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+        PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+       0.68 Inherited], Rational[1, 2] Pi, {-1.65, -1}]]],
+   ImageSizeCache->{
+    13.600000000000001`, {4.251494140625001, 9.348505859375}}]],
+  ExpressionUUID->"84538c87-1f08-4c53-8ed5-d50c43d6a332"],
+ Cell[BoxData[
+  TemplateBox[{1},
+   "Spacer1"]],ExpressionUUID->"24f74e20-1aaf-47d5-a468-bb26012b322d"],
+ "Examples",
+ "\[NonBreakingSpace]\[NonBreakingSpace]",
+ Cell["(0)", "ExampleCount",ExpressionUUID->
+  "bb63807f-4dab-439d-a128-df21cd3c9ac3"]
+}], "PrimaryExamplesSection",
+ WholeCellGroupOpener->True,
+ CacheGraphics->False,
+ CellTags->"PrimaryExamplesSection",
+ CellID->757661789,ExpressionUUID->"8d3d15f8-6f28-4b78-85cc-d97fed0ee9b8"],
+
+Cell[BoxData[
+ RowBox[{"Needs", "[", "\"\<Matchete`\>\"", "]"}]], "Input", "ExampleInitialization",
+ CellLabel->"In[1]:=",
+ CellID->1457455349,ExpressionUUID->"1c18efbe-5e28-48dc-ab4a-9ce05409a4c4"]
+}, Dynamic[CurrentValue[
+ EvaluationNotebook[], {TaggingRules, "Openers", "PrimaryExamplesSection"}, 
+  Closed]]]],
+
+Cell[BoxData[GridBox[{
+   {
+    DynamicBox[FEPrivate`ImportImage[
+      FrontEnd`FileName[{"Documentation", "FooterIcons"}, 
+       "RelatedFunction.png"]],
+     ImageSizeCache->{50., {26.47265625, 33.52734375}}], GridBox[{
+      {
+       StyleBox[
+        RowBox[{"See", " ", "Also"}], "SeeAlsoSection"]},
+      {Cell[TextData[{
+        Cell[BoxData[
+         TemplateBox[{
+           Cell[
+            TextData["NiceForm"]], "paclet:Matchete/ref/NiceForm", 
+           "Matchete Package Symbol"},
+          "PackageLink",
+          BaseStyle->"InlineFormula"]], "InlineFormula",
+         FontFamily->"Source Sans Pro",ExpressionUUID->
+         "54c5ef73-fe27-4f9b-9af3-abfdcc688412"],
+        "\[NonBreakingSpace]",
+        StyleBox[
+        "\[MediumSpace]\[FilledVerySmallSquare]\[MediumSpace]", 
+         "InlineSeparator"],
+        " ",
+        Cell[BoxData[
+         TemplateBox[{
+           Cell[
+            TextData["DefineRepresentation"]], 
+           "paclet:Matchete/ref/DefineRepresentation", 
+           "Matchete Package Symbol"},
+          "PackageLink",
+          BaseStyle->"InlineFormula"]], "InlineFormula",
+         FontFamily->"Source Sans Pro",
+         CellTags->"ca9c1894-6838-4ba9-919c-64d07b491788",ExpressionUUID->
+         "7364e1a9-7058-4dd7-9628-03e3d47ff0c3"]
+       }], "SeeAlso",ExpressionUUID->"7f78f968-0ab9-4e04-bcd9-68ccd499fd29"]}
+     }]}
+  }]], "SeeAlsoSection",ExpressionUUID->"01261cc4-9246-4d22-8523-\
+1d74ff7be4b9"],
+
+Cell[" ", "FooterCell",ExpressionUUID->"fd9ef370-1d5a-437c-824c-8941f94a85d3"]
+},
+Saveable->False,
+ScreenStyleEnvironment->"Working",
+WindowSize->{900, 830},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+WindowTitle->"$PrintIndexLabels",
+Visible->False,
+TaggingRules->{
+ "ModificationHighlight" -> False, "ColorType" -> "", "LinkTrails" -> "", 
+  "ExampleCounter" -> 1, 
+  "Openers" -> {
+   "PrimaryExamplesSection" -> Open, "ExampleSection" -> {"0" -> Open}, 
+    "AllOptsTable" -> Closed}, "NewStyles" -> True, 
+  "CitationPopupData" -> $Failed, "ShowCitation" -> False, "HasOptions" -> 
+  True, "RootCaptions" -> "", "HeaderCoreAreaLink" -> {}, 
+  "Metadata" -> {
+   "built" -> "{2026, 2, 18, 13, 0, 55.852815}", 
+    "history" -> {"XX", "", "", ""}, "context" -> "Matchete`", 
+    "keywords" -> {}, "specialkeywords" -> {}, 
+    "tutorialcollectionlinks" -> {}, "index" -> True, "label" -> 
+    "Matchete Symbol", "language" -> "en", "paclet" -> "Matchete", "status" -> 
+    "None", "summary" -> 
+    "$PrintIndexLabels can be set to True or False and determines whether \
+NiceForm prints the representation of indices as superscripts or not. By \
+default it is set to False.", "synonyms" -> {}, "tabletags" -> {}, "title" -> 
+    "$PrintIndexLabels", "titlemodifier" -> "", "metadescription" -> "", 
+    "windowtitle" -> "$PrintIndexLabels", "type" -> "Symbol", "uri" -> 
+    "Matchete/ref/$PrintIndexLabels"}},
+CellContext->"Global`",
+FrontEndVersion->"14.2 for Mac OS X ARM (64-bit) (March 16, 2025)",
+StyleDefinitions->Notebook[{
+   Cell[
+    StyleData[
+    StyleDefinitions -> FrontEnd`FileName[{"Wolfram"}, "Reference.nb"]]], 
+   Cell[
+    StyleData["Input"], CellContext -> "Global`"], 
+   Cell[
+    StyleData["Output"], CellContext -> "Global`"]}, Visible -> False, 
+  FrontEndVersion -> "14.2 for Mac OS X ARM (64-bit) (March 16, 2025)", 
+  StyleDefinitions -> "PrivateStylesheetFormatting.nb"],
+ExpressionUUID->"c80ce1ac-bb04-476b-b614-51ae3364d88e"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "PrimaryExamplesSection"->{
+  Cell[7227, 197, 1437, 38, 34, "PrimaryExamplesSection",ExpressionUUID->"8d3d15f8-6f28-4b78-85cc-d97fed0ee9b8",
+   CellTags->"PrimaryExamplesSection",
+   CellID->757661789]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"PrimaryExamplesSection", 12543, 333}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[585, 21, 4214, 103, 50, "AnchorBarGrid",ExpressionUUID->"bb05095b-eb4b-4a7b-bbb5-872d31dff2ae",
+ CellID->1],
+Cell[4802, 126, 91, 0, 22, "ContextNameCell",ExpressionUUID->"9904d88e-f277-469d-850a-c9c6bfaa6c61"],
+Cell[CellGroupData[{
+Cell[4918, 130, 560, 14, 57, "ObjectNameGrid",ExpressionUUID->"e83ab2b4-7600-4676-9292-c73a212439c4"],
+Cell[5481, 146, 1709, 46, 127, "Usage",ExpressionUUID->"29ca4448-b04d-4896-865b-600874439ca1",
+ CellID->1346190292]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[7227, 197, 1437, 38, 34, "PrimaryExamplesSection",ExpressionUUID->"8d3d15f8-6f28-4b78-85cc-d97fed0ee9b8",
+ CellTags->"PrimaryExamplesSection",
+ CellID->757661789],
+Cell[8667, 237, 198, 3, 29, "Input",ExpressionUUID->"1c18efbe-5e28-48dc-ab4a-9ce05409a4c4",
+ CellID->1457455349]
+}, Dynamic[CurrentValue[EvaluationNotebook[], {TaggingRules, "Openers", "PrimaryExamplesSection"}, Closed]]]],
+Cell[8983, 245, 1462, 38, 112, "SeeAlsoSection",ExpressionUUID->"01261cc4-9246-4d22-8523-1d74ff7be4b9"],
+Cell[10448, 285, 78, 0, 24, "FooterCell",ExpressionUUID->"fd9ef370-1d5a-437c-824c-8941f94a85d3"]
+}
+]
+*)
+

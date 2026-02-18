@@ -368,7 +368,7 @@ SetSubstitutions[lag_, OptionsPattern[]] := Module[
 			Table[
 				tmp= GetFieldsUpdated[f, Mass];
 				(*give indices to masses if necessary*)
-				If[Length@ GetCouplings[tmp][Indices]=== 1,
+				If[Length@ $Couplings[tmp, Indices]=== 1,
 					Mterm[f,iPattern]->tmp[i]
 				,
 					Mterm[f,___]->tmp[]
@@ -382,7 +382,7 @@ SetSubstitutions[lag_, OptionsPattern[]] := Module[
 
 (* Determine gauge coupling substitutions *)
 	$Gsubs= Table[
-			GaugeCTerm@ f-> Normal@ Series[1/GetFieldsUpdated[f, Coupling], {hbar, 0, 2}]
+			GaugeCTerm@ f-> BetterSeries[1/GetFieldsUpdated[f, Coupling], {hbar, 0, 2}]
 		, {f, Intersection[$XFieldDofs@ lVector, List@@ Query[All, Key@ Field]@ $GaugeGroups]}]; (*NB: Loop over gauge fields*)
 ];
 
@@ -397,7 +397,7 @@ SetSubstitutions[lag_, OptionsPattern[]] := Module[
 
 LagrangianDofs[lag_]:= LagrangianDofs[lag]= Module[{fields},
 	(*Get all fields from Lagrangian*)
-	fields= Complement[OccurringFields@ lag, GetFieldsByProperty[BackgroundField-> True]];
+	fields= Complement[OccurringFields@ lag, FieldByProperty[BackgroundField-> True]];
 	(*Create association by field type*)
 	fields= Association@@
 		KeyValueMap[(#1-> Intersection[GetFieldsUpdatedByProperty[#2], fields]&), $FieldTypes];
@@ -411,7 +411,7 @@ LagrangianDofs[lag_]:= LagrangianDofs[lag]= Module[{fields},
 
 
 LagrangianDofsAux@ fieldList_List:= LagrangianDofsAux/@ fieldList// Flatten;
-LagrangianDofsAux@ field_Symbol:= If[GetFields[field, SelfConjugate], field, {field, Conj@ field}];
+LagrangianDofsAux@ field_Symbol:= If[$FieldAssociation[field, SelfConjugate], field, {field, Conj@ field}];
 
 
 (* ::Text:: *)
@@ -429,8 +429,8 @@ LagrangianDofsAux@ field_Symbol:= If[GetFields[field, SelfConjugate], field, {fi
 FieldDoFs[fields_List]:= (#->FieldDoFs[#])&/@ fields;
 FieldDoFs[Conj@ f_Symbol]:= FieldDoFs[f, True];
 FieldDoFs[f_Symbol]:= FieldDoFs[f, False];
-FieldDoFs[f_Symbol, conj_]:= Block[{props= GetFields[f], inds, i},
-	inds= Sequence@@ ConstantArray[i, Length@ props@ Indices + If[GetFields[f, Type]=== Vector, 1, 0]];
+FieldDoFs[f_Symbol, conj_]:= Block[{props= $FieldAssociation[f], inds, i},
+	inds= Sequence@@ ConstantArray[i, Length@ props@ Indices + If[$FieldAssociation[f, Type]=== Vector, 1, 0]];
 	ReplacePart[Switch[{props@ Type, conj}
 		,{Fermion, False},
 			Function[i, Evaluate@ f@ inds]
@@ -515,7 +515,7 @@ SetCurrentLagrangian[lagrangian_, loopOrder_, eftOrder_, OptionsPattern[]] := Mo
 	
 (* Add gauge-fixing and ghost terms for all gauge vectors *)
 	gVectors= Select[DeleteDuplicates@ Cases[lag, (Field|FieldStrength)[f_, __]:> f, Infinity],GaugeFieldQ];
-	gAbelian= Select[gVectors, GetGaugeGroups[First@GetGaugeGroupByProperty[Field->#]][Abelian]&];
+	gAbelian= Select[gVectors, $GaugeGroups[First@GaugeGroupByProperty[Field->#], Abelian]&];
 
 	(* Assumes ghosts and vectors are quantum (removed in X terms) *)
 	(* WARNING: The GF terms need to be written in this very specific way or it will fail to give right X-terms*)
@@ -533,7 +533,6 @@ SetCurrentLagrangian[lagrangian_, loopOrder_, eftOrder_, OptionsPattern[]] := Mo
 			{gVec,gVectors}
 		];
 	lagFixed= lag + gfTerms;
-
 				
 	If[(newLag = lag =!= $currentLagrangian),
 		If[!CheckLagrangian@ lag, Abort[]; ];
@@ -572,7 +571,7 @@ SetCurrentLagrangian[lagrangian_, loopOrder_, eftOrder_, OptionsPattern[]] := Mo
 
 
 (* ::Text:: *)
-(*Define  the  function  $currentFieldAssociation[]  which  works  similar  to  GetFields[], but  containing  the  definitions  specific  to  the  current  Lagrangian . Furthermore, light  masses  are  treated  as  interactions  and  thus  for  a  light  but  massive  field  \[Phi]  we  have  Mass -> 0  in  $currentFieldAssociation[\[Phi]], contrary  to  GetFields[\[Phi]]*)
+(*Define  the  function  $currentFieldAssociation[]  which  works  similar  to  $FieldAssociation, but  containing  the  definitions  specific  to  the  current  Lagrangian . Furthermore, light  masses  are  treated  as  interactions  and  thus  for  a  light  but  massive  field  \[Phi]  we  have  Mass -> 0  in  $currentFieldAssociation[\[Phi]], contrary  to  $FieldAssociation[\[Phi]]*)
 
 
 Options@ Determine$currentFieldAssociation= {Mode-> Matching};
@@ -592,7 +591,7 @@ Determine$currentFieldAssociation[lagrangian_, OptionsPattern[]]:=Module[
 	allLight= MatchQ[OptionValue@ Mode, Divergence| Evanescent];
 
 	(* determine fields in new Lagrangian *)
-	fieldLabels = Complement[OccurringFields@ lag, GetFieldsByProperty[BackgroundField-> True]];
+	fieldLabels = Complement[OccurringFields@ lag, FieldByProperty[BackgroundField-> True]];
 
 	(* extract all heavy mass terms *)
 	\[ScriptCapitalL]Mass = IsolateMassTerms[lag, Heavy -> True];
@@ -606,7 +605,7 @@ Determine$currentFieldAssociation[lagrangian_, OptionsPattern[]]:=Module[
 	Do[
 		AssociateTo[
 			$currentFieldAssociation,
-			field -> If[MemberQ[Query[All, Key@ Field]@ GetGaugeGroups[], field],
+			field -> If[MemberQ[Query[All, Key@ Field]@ $GaugeGroups, field],
 				DetermineCouplingOfGaugeField[field, \[ScriptCapitalL]Gauge]
 			,
 				DetermineFieldMassProperties[field, \[ScriptCapitalL]Mass/.Except[Field[field,___], _Field]->0, allLight]
@@ -634,7 +633,7 @@ Determine$currentFieldAssociation[lagrangian_, OptionsPattern[]]:=Module[
 
 DetermineFieldMassProperties[l_, massterm_, allLight_:False]:=Module[
 	{
-		defProps = GetFields[l],
+		defProps = $FieldAssociation[l],
 		heavy, mass,
 		massTerm = Contract@ massterm
 	}
@@ -673,10 +672,10 @@ DetermineFieldMassProperties[l_, massterm_, allLight_:False]:=Module[
 
 		mass = Contract@ mass;
 
-		mass = mass /. {Sqrt[x_Coupling^2]:>x /; GetCouplings[First@x][SelfConjugate]}; (* simplify Sqrt[] for real couplings *)
+		mass = mass /. {Sqrt[x_Coupling^2]:>x /; $CouplingAssociation[First@x, SelfConjugate]}; (* simplify Sqrt[] for real couplings *)
 		If[MatchQ[mass, _Coupling],
 			(* extract mass label *)
-			If[GetCouplings[First@ mass][EFTOrder]==0,
+			If[$CouplingAssociation[First@ mass, EFTOrder]==0,
 				mass = First@ mass;
 				heavy = True
 				,
@@ -707,8 +706,8 @@ DetermineFieldMassProperties[l_, massterm_, allLight_:False]:=Module[
 
 
 DetermineCouplingOfGaugeField[fieldLab_, lag_]:= Module[{coupling2, kinOperator, mu1, mu2, A,
-		defProps= GetFields@ fieldLab},
-	kinOperator= -1/4* If[Length@ GetFields[fieldLab, Indices] > 0,
+		defProps= $FieldAssociation@ fieldLab},
+	kinOperator= -1/4* If[Length@ $FieldAssociation[fieldLab, Indices] > 0,
 			FS[fieldLab, mu1, mu2, A]^2
 		,
 			FS[fieldLab, mu1, mu2]^2
@@ -791,6 +790,7 @@ IsolateMassTerms[L_, OptionsPattern[]] := Module[{res},
 
 (* ::Text:: *)
 (*To determine all the kinds of power type tracers labelled by their propagator types*)
+(*Future improvements possible to evanescent and counterterm traces is possible if including momentum order.*)
 
 
 ListPowerTypeTraces[{order_Integer}, opt___]:= ListPowerTypeTraces[order, opt];
@@ -805,17 +805,19 @@ ListPowerTypeTraces[order_Integer, lightOnly_:False]:= Module[{possibilities, se
 			seed= Sow@ {{lScalar}, {lFermion}, {lVector}};
 			While[(Length@ seed> 0),
 				temp= Flatten/@ Tuples[{seed, {lScalar, lFermion, lVector}}];
-				seed= Sow@ Select[temp, Total@ BlockMap[Xords, #, 2, 1] < order&];
+				seed= Sow@ Select[temp, Total@ BlockMap[Xords, #, 2, 1] < order && Length@ # <= order &];
 			];
 		,
 			seed= Sow@ {{hScalar}, {hFermion}, {hVector}, {hGhost}, {hAntiGhost}};
 			While[(Length@ seed> 0),
 				temp= Flatten/@ Tuples[{seed, {hScalar, lScalar, hFermion, lFermion, hVector, lVector, hGhost, lGhost, hAntiGhost, lAntiGhost}}];
-				seed= Sow@ Select[temp, Total@ BlockMap[Xords, #, 2, 1] < order&];
+				seed= Sow@ Select[temp, Total@ BlockMap[Xords, #, 2, 1] < order && Length@ # <= order &];
 			];
 		];
 	], 2];
 
+	(*Eliminate based on no. of X-terms*)
+	possibilities= Select[possibilities, Length@ # <= order &];
 
 	(*Eliminates traces with order > order*)
 	possibilities= DeleteCases[possibilities,
@@ -864,8 +866,8 @@ LoopMatch[opt:OptionsPattern[]]? OptionsCheck:= Module[
 			Sum[
 				(*Check if a field with non zero charges exists*)
 				If[Or[
-					Length@ GetFieldsByProperty[Sequence@@ Normal@ $FieldTypes@ field, Charges-> {__}] > 0,
-					Length@ GetFieldsByProperty[Sequence@@ Normal@ $FieldTypes@ field,
+					Length@ FieldByProperty[Sequence@@ Normal@ $FieldTypes@ field, Charges-> {__}] > 0,
+					Length@ FieldByProperty[Sequence@@ Normal@ $FieldTypes@ field,
 						Indices-> inds_/; IntersectingQ[GroupFromRep/@ inds, Keys@ $GaugeGroups]] > 0
 				],
 					LogTypeSTr[field, OptionValue@ EFTOrder]
@@ -932,7 +934,7 @@ CovariantLoop[lagrangian, fields, opts]= Module[
 		Message[CovariantLoop::ukwnfld, Complement[fields, Join@@ List@@ lagFields]];
 		Abort[];
 	];
-	bkgFields= Intersection[fields, GetFieldsByProperty[BackgroundField-> True]];
+	bkgFields= Intersection[fields, FieldByProperty[BackgroundField-> True]];
 	If[Length@ bkgFields> 0,
 		Message[CovariantLoop::bkgfld, bkgFields];
 		Abort[];
@@ -962,7 +964,7 @@ CovariantLoop[lagrangian, fields, opts]= Module[
 ];
 
 
-FieldType[f_]:= Switch[Lookup[GetFields[f], {Type, Heavy}]
+FieldType[f_]:= Switch[Lookup[$FieldAssociation[f], {Type, Heavy}]
 	,{Scalar, True}, hScalar
 	,{Scalar, False}, lScalar
 	,{Fermion, True}, hFermion
@@ -1031,7 +1033,7 @@ Match[lag, opts] = Module[{
 			(*One-loop Lagrangian*)
 			OptionalMonitor[VerboseOption,
 				traceResults= Reap[
-					LagrangianEFT1 = (*EchoTiming@*)LoopMatch[EFTOrder->eftOrder,Verbose->VerboseOption, WhichTraces->OptionValue[WhichTraces]];
+					LagrangianEFT1 = LoopMatch[EFTOrder->eftOrder,Verbose->VerboseOption, WhichTraces->OptionValue[WhichTraces]];
 				];
 				traceResults=Quiet[traceResults[[2,1]]]; (* this produces an error when the WhichTrace option is used, which however should never be used in validation *)
 				LagrangianEFT1
@@ -1059,7 +1061,7 @@ Match[lag, opts] = Module[{
 
 
 MassiveVectorsInLag@ lag_:= Module[{heavyVectors, lagVectors},
-	heavyVectors= GetFieldsByProperty[Heavy-> True, Type-> Vector];
+	heavyVectors= FieldByProperty[Heavy-> True, Type-> Vector];
 	lagVectors= DeleteDuplicates@ Cases[lag, (Field[lab_, _Vector, __] | FS[lab_, __])-> lab, All];
 	Intersection[heavyVectors, lagVectors]
 ];
@@ -1125,12 +1127,12 @@ CanonizeFermionMassTerms[lagrangian_] := Module[
 	lag = Plus@@Table[
 		Which[
 		(* canonize Dirac masses of vectorlike fermions *)
-		MatchQ[term, aux_ * Bar@Field[l_,Fermion,___]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[l_,Fermion,___] /; (FreeQ[aux, _Field, All] && !(GetFields[l][SelfConjugate]) && GetFields[l][Chiral]===False)]
+		MatchQ[term, aux_ * Bar@Field[l_,Fermion,___]\[CenterDot] DiracProduct[Proj[-1]]\[CenterDot] Field[l_,Fermion,___] /; (FreeQ[aux, _Field, All] && !($FieldAssociation[l][SelfConjugate]) && $FieldAssociation[l][Chiral]===False)]
 		,
 			(term /. {Proj[-1]->1}) - (term /. {Proj[-1]->Proj[+1]})
 		,
 		(* canonize Majorana masses *)
-		MatchQ[term, aux_ * Transp[Field[l_,Fermion,___]]\[CenterDot] DiracProduct[GammaCC,Proj[-1]]\[CenterDot] Field[l_,Fermion,___] /; (FreeQ[aux, _Field, All] && GetFields[l][SelfConjugate] && GetFields[l][Chiral]===False)],
+		MatchQ[term, aux_ * Transp[Field[l_,Fermion,___]]\[CenterDot] DiracProduct[GammaCC,Proj[-1]]\[CenterDot] Field[l_,Fermion,___] /; (FreeQ[aux, _Field, All] && $FieldAssociation[l][SelfConjugate] && $FieldAssociation[l][Chiral]===False)],
 			(term /. {Proj[-1]->1}) - (term /. {Proj[-1]->Proj[+1]})
 		,
 		True

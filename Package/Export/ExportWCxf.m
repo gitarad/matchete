@@ -420,7 +420,7 @@ ExportWCxf[arg_, inputFile_, outputDir_] := Module[
 		(* set MatchingConditions variable as a list  *)
 		MatchingConditions = Normal[arg]; (* transform association to list if required *)
 		(* check if default SMEFT Lagangian is loaded *)
-		If[FreeQ[DownValues[LoadModel], HoldPattern[LoadModel["SMEFT"]]],
+		If[FreeQ[DownValues[LoadModel], HoldPattern[LoadModel["SMEFT_Warsaw"]]],
 			Message[ExportWCxf::defaultSMEFT];
 			Abort[]
 		];
@@ -743,7 +743,7 @@ ExplicitEinsteinSums[term:Except[_Plus]]:=Module[{repeatedInds,flavors=GetFlavor
 		{ind,repeatedInds}
 	];
 	(* perform explicit sums over flavor indices *)
-	If[Length[repeatedInds]>0, Sum[term,Evaluate[Sequence@@repeatedInds]],term]
+	If[Length[repeatedInds]>0, Sum[term,Evaluate[Sequence@@repeatedInds]],term]/.FlavorSum[_?NumericQ]->1
 ]
 
 
@@ -951,7 +951,7 @@ BuildEvaluationFunction[arg_,inputParam_] := Module[
 				With[
 					{
 						lhs = $EvaluateLoopFunctions[lfList[[i]] /. massesToNumPattern] /; Evaluate@And[mDegenerate,mNonDegenerate],
-						rhs = Normal@Series[EvaluateLoopFunctions[lfList[[i]]],Sequence@@Table[{degeneracyLimits[[i,j,k]]}~Join~{degeneracyLimits[[i,j,-1]]}~Join~{taylorOrder},{k,Length[degeneracyLimits[[i,j]]]-1}]]
+						rhs = BetterSeries[EvaluateLoopFunctions[lfList[[i]]],Sequence@@Table[{degeneracyLimits[[i,j,k]]}~Join~{degeneracyLimits[[i,j,-1]]}~Join~{taylorOrder},{k,Length[degeneracyLimits[[i,j]]]-1}]]
 					}
 					,
 					lhs := rhs

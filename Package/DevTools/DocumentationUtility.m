@@ -31,6 +31,9 @@ PackageScope["CreateTemplateDocumentation"]
 PackageScope["LinkDocumentation"]
 
 
+PackageScope["UpdatePreBuiltDocumentation"]
+
+
 (* ::Section:: *)
 (*Usage messages*)
 
@@ -50,6 +53,9 @@ CreateTemplateDocumentation::usage= "CreateTemplateDocumentation[func] generates
 
 
 LinkDocumentation::usage="LinkDocumentation[] links the documentation of Matchete from its build.";
+
+
+UpdatePreBuiltDocumentation::usage="UpdatePreBuiltDocumentation[] builds the documentation from source and copies the result to the DocumentationPreBuilt directory for distribution.";
 
 
 (* ::Chapter:: *)
@@ -259,4 +265,44 @@ LinkDocumentation[]:=Module[{},
 	(* link documentation *)
 	PacletManager`Package`createPacletsFromParentDirs[$pacletPath, 1];
 	(*PacletDataRebuild[];*) (* this links again the documentation of all paclets that can be found by Matchete *)
+]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Create pre-build documentation*)
+
+
+Options[UpdatePreBuiltDocumentation] = {"HTML" -> False, "Rebuilt" -> True};
+
+
+UpdatePreBuiltDocumentation::noDocu= "No built documentation found: please use the Option \"Rebuilt\"\[Rule]True!";
+UpdatePreBuiltDocumentation::noHTML= "Building HTML documentation requires a rebuilding of the documentation. To do so, please set the Option \"Rebuilt\"\[Rule]True.";
+
+
+UpdatePreBuiltDocumentation[OptionsPattern[]]:= Module[{},
+	(* rebuilt documentation if required *)
+	If[OptionValue["Rebuilt"],
+		BuildDocumentation["HTML" -> OptionValue["HTML"]]
+		,
+		If[!DirectoryQ[FileNameJoin@{$MatchetePath,"Documentation"}],
+			Message[UpdatePreBuiltDocumentation::noDocu];
+			Abort[]
+			,
+			If[OptionValue["HTML"],
+				Message[UpdatePreBuiltDocumentation::noHTML]
+			]
+		];
+	];
+	
+	(* delete pre-built documentation *)
+	Quiet[
+		DeleteDirectory[FileNameJoin@{$MatchetePath,"DocumentationPreBuilt"}, DeleteContents-> True]
+		,{DeleteDirectory::nodir}
+	];
+	
+	(* copy new documentation *)
+	CopyDirectory[
+		FileNameJoin@{$MatchetePath,"Documentation"},
+		FileNameJoin@{$MatchetePath,"DocumentationPreBuilt"}
+	]
 ]

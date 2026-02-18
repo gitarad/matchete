@@ -152,13 +152,15 @@ SimplifyLogs[0]=0
 (*If "manifest" -> True return 2 booleans for the Lagrangian being Hermitian, and it being manifestly Hermitian.*)
 
 
-HermitianQ[expr_,OptionsPattern[{"manifest"->False}]]:= If[OptionValue["manifest"],
-	Module[{tmp=GreensSimplify[expr - Bar[expr]]},
-		{SimplifyLogs[tmp/.lf_LF:>EvaluateLoopFunctions[lf]] === 0 , tmp === 0}
+HermitianQ[arg_,OptionsPattern[{"manifest"->False}]]:= Module[{expr=AtomicToNormalForm[arg]},
+	If[OptionValue["manifest"],
+		Module[{tmp=GreensSimplify[expr - Bar[expr]]},
+			{SimplifyLogs[tmp/.lf_LF:>EvaluateLoopFunctions[lf]] === 0 , tmp === 0}
+		]
+		,
+		SimplifyLogs[GreensSimplify[expr - Bar[expr]]/.lf_LF:>EvaluateLoopFunctions[lf]] === 0
 	]
-	,
-	SimplifyLogs[GreensSimplify[expr - Bar[expr]]/.lf_LF:>EvaluateLoopFunctions[lf]] === 0
-];
+]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -211,7 +213,7 @@ InconsistentSpinChains@ expr_:= Cases[{expr},
 
 
 KineticCanonicalQ[L_]:=Module[{bkgFields, fields, LShouldBe,LIs},
-	bkgFields= GetFieldsByProperty[BackgroundField-> True];
+	bkgFields= FieldByProperty[BackgroundField-> True];
 	fields= Complement[OccurringFields@ L, bkgFields];
 	LShouldBe= KineticTerms@ Sum[FreeLag@ f, {f, fields}];
 	LIs= KineticTerms@ L/. Field[lab_, __]/; MemberQ[bkgFields, lab]-> 0;
@@ -263,7 +265,7 @@ HeavyMassBasisQ[Lag_]:=Module[{terms,coupling,fields,indicestypes},
 
 (*(*terms with exactly two fields, no derivatives and at least one heavy field count as heavy mass terms*)
 HeavyMassTermQ[(c_:1)q_Operator]:=
-		MatchQ[OperatorType[q,CountEoMDerivatives->True], {{Field[f1_,_,__],Field[f2_,_,__]},0}/; (GetFields[f1][Heavy]||GetFields[f2][Heavy])]*)
+		MatchQ[OperatorType[q,CountEoMDerivatives->True], {{Field[f1_,_,__],Field[f2_,_,__]},0}/; ($FieldAssociation[f1][Heavy]||$FieldAssociation[f2][Heavy])]*)
 
 
 (* ::Subsubsection::Closed:: *)
@@ -271,7 +273,7 @@ HeavyMassTermQ[(c_:1)q_Operator]:=
 
 
 (*HeavyMassBasisQ::masscoupling    = "There should only be one coupling in the heavy mass terms."
-HeavyMassBasisQ::masslabel       = "The coupling label `1` and the mass label of the heavy field `2` should be the same. To find the defined mass label, use GetFields[`2`]."*)
+HeavyMassBasisQ::masslabel       = "The coupling label `1` and the mass label of the heavy field `2` should be the same. To find the defined mass label, use $FieldAssociation[`2`]."*)
 
 
 (*(*check if heavy mass is diagonal in the input*)
@@ -284,11 +286,11 @@ HeavyMassBasisQ[Lag_]:=Module[{terms,coupling,fields,indicestypes},
 	(fields = Cases[#,_Field,Infinity];
 	(*...check if it is twice the same field*)
 	If[!MatchQ[fields, {Field[f_,__],Field[f_,__]}],Message[HeavyMassBasisQ::mixedfields];Throw[False]];
-	coupling=Abs[#/.{_Operator:>If[GetFields[fields[[1,1]]][SelfConjugate]===True || GetFields[fields[[1,1]]][Chiral]=!=False,2,1]}]//.{Abs[x_]:>x,Power[m_,_]:>m};
+	coupling=Abs[#/.{_Operator:>If[$FieldAssociation[fields[[1,1]]][SelfConjugate]===True || $FieldAssociation[fields[[1,1]]][Chiral]=!=False,2,1]}]//.{Abs[x_]:>x,Power[m_,_]:>m};
 	(*...check if there is only one coupling*)
 	If[Head[Echo@coupling]=!=Coupling, Message[HeavyMassBasisQ::masscoupling];Throw[False]];
 	(*...check if the coupling has the same label as the field mass*)
-	If[GetFields[First@First@fields][Mass]=!=First@coupling,Message[HeavyMassBasisQ::masslabel,First@coupling, First@First@fields];Throw[False]];
+	If[$FieldAssociation[First@First@fields][Mass]=!=First@coupling,Message[HeavyMassBasisQ::masslabel,First@coupling, First@First@fields];Throw[False]];
 	) & /@ terms;
 	Throw[True]]
 ];*)
@@ -326,7 +328,7 @@ GetCharge::Symbols = "The term `1` is not invariant under `2` gauge group."
 (*GetCharge*)
 
 
-GetCharge[field_Symbol,Agroup_]:=Cases[GetFields[field][Charges],_Agroup]/.{Agroup[x_]}:>x/.{}->0;
+GetCharge[field_Symbol,Agroup_]:=Cases[$FieldAssociation[field][Charges],_Agroup]/.{Agroup[x_]}:>x/.{}->0;
 GetCharge[Field[f_,___],Agroup_]:=GetCharge[f,Agroup]
 GetCharge[Bar@Field[f_,___],Agroup_]:=-GetCharge[f,Agroup]
 GetCharge[list_List,Agroup_]:=GetCharge[#,Agroup]& /@list
@@ -439,7 +441,7 @@ GaugeAnomalyContribution[field_Symbol]:=Module[
 
 
 GaugeAnomaliesQ[lagrangian_]:= Total@ Values@ GaugeAnomalyContribution@ 
-	Complement[OccurringFields@ lagrangian, GetFieldsByProperty[BackgroundField-> True]] === 0;
+	Complement[OccurringFields@ lagrangian, FieldByProperty[BackgroundField-> True]] === 0;
 
 
 (* ::Section:: *)

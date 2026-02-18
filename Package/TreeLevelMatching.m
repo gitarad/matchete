@@ -310,7 +310,8 @@ SolveOneEOMfixedOrder[eom_, f:(Field[l_,_,_,{}] | Bar@Field[l_,_,_,{}]), n_?Inte
 		right,
 		relabelInd,
 		ruleDelayed,
-		cdDelayed
+		cdDelayed,
+		equation, const, constRule={}
 	}
 	,
 	(* if the given field order appears more than once throw an error *)
@@ -329,12 +330,20 @@ SolveOneEOMfixedOrder[eom_, f:(Field[l_,_,_,{}] | Bar@Field[l_,_,_,{}]), n_?Inte
 		field=Bar[field]
 	];
 	
-	(* solve the eom for the given field *)
-	solution = Flatten@Solve[
-		(* remove the NCM head for fermions *)
-		((eom/.NCM[x_] :> x /; !FreeQ[x, First@field, All]) /. NCM[DiracProduct[_Proj],First@field] /; (GetFields[First@First@field][Chiral]=!=False) -> First@field ) == 0,
-		First@field
-	];
+	(* remove the NCM head for fermions in the eom *)
+	equation= ((eom/.NCM[x_] :> x /; !FreeQ[x, First@field, All]) /. NCM[DiracProduct[_Proj],First@field] /; ($FieldAssociation[First@First@field][Chiral]=!=False) -> First@field );
+	
+	(* Solve and Reduce are not able of solving the equation m*x+y1+y2+...+yn==0 for x, where all yi are independent of x, if n is in the few hundrets. *)
+	(* Thus we first define const=y1+y2+...+yn, then solve the equation m*x+const==0, before replacing back const->y1+y2+...+yn. *)
+	(* For complicated EOM systems this gives SEVERAL orders of magnitude improvement for the computation time! *)
+	
+	(* replace all terms independent of First@field by const and create the rule constRule which allows to replace them back *)
+	equation= equation/.Plus[a_,b___]/;(FreeQ[{b},First@field,All]&&!FreeQ[{a},First@field,All]):>(constRule=(const->Plus[b]); a+const);
+	
+	(* solve the eom for the given field and replace back the constants *)
+	solution= Flatten@Solve[equation==0, First@field]/. constRule;
+	(* expand the solutions *)
+	solution= MapAt[LagrangianExpand, solution, {All,2}];
 	
 	(* throw error if there is not exactly one solution *)
 	If[Length[solution]!=1,
@@ -455,7 +464,7 @@ FullEomSolution[uvEOMs_List, uvFields_List, OptionsPattern[]] := Module[
 		AppendTo[solutionOrders, SolveAllEOMfixedOrder[eom, uvFields, i]];
 		(* plug in solutions of order i into the eom *)
 		eom = RemovePower[eom] /. Last[solutionOrders];
-		eom = Expand@ReleaseHold[eom];
+		eom = LagrangianExpand@ReleaseHold[eom];
 		,
 		{i, 1, order-1}
 	];
