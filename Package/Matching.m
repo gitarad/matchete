@@ -34,7 +34,7 @@ PackageExport["CovariantLoop"]
 PackageExport["LoopOrder"]
 PackageExport["Matching"]
 PackageExport["Divergence"]
-
+PackageExport["$dontCheckLagrangian"]
 
 (* ::Subsubsection::Closed:: *)
 (*Internal*)
@@ -503,7 +503,7 @@ Options@ SetCurrentLagrangian= {Verbose-> True, Mode-> Matching};
 
 
 SetCurrentLagrangian::Xdims= "The \"`1`\" X-term was found to have EFT-order 0. This is not gonna turn out well!"
-
+$dontCheckLagrangian = False
 
 SetCurrentLagrangian[lagrangian_, loopOrder_, eftOrder_, OptionsPattern[]] := Module[
 	{eftOrd, newLag, lag = HcExpand@ lagrangian, lagFixed, gfTerms, tmp, gVectors, gAbelian}
@@ -540,7 +540,7 @@ SetCurrentLagrangian[lagrangian_, loopOrder_, eftOrder_, OptionsPattern[]] := Mo
 
 				
 	If[(newLag = lag =!= $currentLagrangian),
-		If[!CheckLagrangian@ lag, Abort[]; ];
+		If[!$dontCheckLagrangian && !CheckLagrangian@ lag, Abort[]; ];
 		(* set the new Lagrangian *)
 		$currentLagrangian= lag;
 		$currentMode= OptionValue@ Mode;
