@@ -601,7 +601,10 @@ LayeredExpand[arg_,-1]:=arg
 (*BetterSeries*)
 
 
-BetterSeries[f_, {x_, x0_, nmax_}]:= Normal[ Series[f, {x, x0, nmax}] + O[x]^(nmax+1) ]
+BetterSeries[f_, {x_, x0_, nmax_}]:= Normal[ Series[f, {x, x0, nmax}] + O[x, x0]^(nmax+1) ]
+
+
+BetterSeries[f_, {x_, x0_, nmax_}, multiExp:{_,_,_}..]:= Normal[ Series[f, {x, x0, nmax}, multiExp] + O[x, x0]^(nmax+1) + Plus@@(O[#[[1]],#[[2]]]^(#[[3]]+1)&/@{multiExp})]
 
 
 (* ::Subsection:: *)

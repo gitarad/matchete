@@ -105,12 +105,12 @@ Module[{p,r,s,t,i,j,k,m,n,o,J,K,L,\[Alpha],\[Beta],\[Delta],A,C,D,\[Nu],\[Rho],\
 
 	Lagd5 = cllHH[p,r] Bar@eps[SU2L][i,j]Bar@eps[SU2L][k,m] H[i] H[k] Bar@CConj@l[j,p]**l[m,r];
 
-	Lagd60F = - cG[] fStruct[SU3c][A,C,D] FS[G, \[Nu], \[Rho], A] FS[G, \[Rho], \[Theta], C] FS[G, \[Theta], \[Nu], D]/gs[]^3 - 1/2 cGt[] LCTensor[\[Nu],\[Rho],\[Eta],\[Kappa]]fStruct[SU3c][A,C,D] FS[G, \[Eta], \[Kappa], A] FS[G, \[Rho], \[Theta], C] FS[G, \[Theta], \[Nu], D]/gs[]^3
-		    - cW[] fStruct[SU2L][J,K,L] FS[W, \[Nu], \[Rho], J] FS[W, \[Rho], \[Theta], K] FS[W, \[Theta], \[Nu], L]/gL[]^3 - 1/2 cWt[] LCTensor[\[Nu],\[Rho],\[Eta],\[Kappa]]fStruct[SU2L][J,K,L] FS[W, \[Eta], \[Kappa], J] FS[W, \[Rho], \[Theta], K] FS[W, \[Theta], \[Nu], L]/gL[]^3
-	        + cHG[] Bar@H[i] H[i] FS[G, \[Nu], \[Rho], A] FS[G, \[Nu], \[Rho], A]/gs[]^2 + 1/2 cHGt[] Bar@H[i] H[i] LCTensor[\[Nu],\[Rho],\[Eta],\[Kappa]] FS[G, \[Eta], \[Kappa], A] FS[G, \[Nu], \[Rho], A]/gs[]^2
-	        + cHW[] Bar@H[i] H[i] FS[W, \[Nu], \[Rho], J] FS[W, \[Nu], \[Rho], J]/gL[]^2 + 1/2 cHWt[] Bar@H[i] H[i] LCTensor[\[Nu],\[Rho],\[Eta],\[Kappa]] FS[W, \[Eta], \[Kappa], J] FS[W, \[Nu], \[Rho], J]/gL[]^2
-	        + cHB[] Bar@H[i] H[i] FS[B, \[Nu], \[Rho]] FS[B, \[Nu], \[Rho]]/gY[]^2 + 1/2 cHBt[] Bar@H[i] H[i] LCTensor[\[Nu],\[Rho],\[Eta],\[Kappa]] FS[B, \[Eta], \[Kappa]] FS[B, \[Nu], \[Rho]]/gY[]^2
-	        + cHWB[] Bar@H[i] \[Tau]SU2L[J,i,j] H[j] FS[W, \[Nu], \[Rho], J] FS[B, \[Nu], \[Rho]]/(gL[]gY[]) + 1/2 cHWtB[] Bar@H[i] \[Tau]SU2L[J,i,j] H[j] LCTensor[\[Nu],\[Rho],\[Eta],\[Kappa]] FS[W, \[Eta], \[Kappa], J] FS[B, \[Nu], \[Rho]]/(gL[]gY[])
+	Lagd60F = - cG[] fStruct[SU3c][A,C,D] FS[G, \[Nu], \[Rho], A] FS[G, \[Rho], \[Theta], C] FS[G, \[Theta], \[Nu], D]/gs[]^3 + 1/2 cGt[] LCTensor[\[Nu],\[Rho],\[Eta],\[Kappa]]fStruct[SU3c][A,C,D] FS[G, \[Eta], \[Kappa], A] FS[G, \[Rho], \[Theta], C] FS[G, \[Theta], \[Nu], D]/gs[]^3
+		    - cW[] fStruct[SU2L][J,K,L] FS[W, \[Nu], \[Rho], J] FS[W, \[Rho], \[Theta], K] FS[W, \[Theta], \[Nu], L]/gL[]^3 + 1/2 cWt[] LCTensor[\[Nu],\[Rho],\[Eta],\[Kappa]]fStruct[SU2L][J,K,L] FS[W, \[Eta], \[Kappa], J] FS[W, \[Rho], \[Theta], K] FS[W, \[Theta], \[Nu], L]/gL[]^3
+	        + cHG[] Bar@H[i] H[i] FS[G, \[Nu], \[Rho], A] FS[G, \[Nu], \[Rho], A]/gs[]^2 - 1/2 cHGt[] Bar@H[i] H[i] LCTensor[\[Nu],\[Rho],\[Eta],\[Kappa]] FS[G, \[Eta], \[Kappa], A] FS[G, \[Nu], \[Rho], A]/gs[]^2
+	        + cHW[] Bar@H[i] H[i] FS[W, \[Nu], \[Rho], J] FS[W, \[Nu], \[Rho], J]/gL[]^2 - 1/2 cHWt[] Bar@H[i] H[i] LCTensor[\[Nu],\[Rho],\[Eta],\[Kappa]] FS[W, \[Eta], \[Kappa], J] FS[W, \[Nu], \[Rho], J]/gL[]^2
+	        + cHB[] Bar@H[i] H[i] FS[B, \[Nu], \[Rho]] FS[B, \[Nu], \[Rho]]/gY[]^2 - 1/2 cHBt[] Bar@H[i] H[i] LCTensor[\[Nu],\[Rho],\[Eta],\[Kappa]] FS[B, \[Eta], \[Kappa]] FS[B, \[Nu], \[Rho]]/gY[]^2
+	        + cHWB[] Bar@H[i] \[Tau]SU2L[J,i,j] H[j] FS[W, \[Nu], \[Rho], J] FS[B, \[Nu], \[Rho]]/(gL[]gY[]) - 1/2 cHWtB[] Bar@H[i] \[Tau]SU2L[J,i,j] H[j] LCTensor[\[Nu],\[Rho],\[Eta],\[Kappa]] FS[W, \[Eta], \[Kappa], J] FS[B, \[Nu], \[Rho]]/(gL[]gY[])
 	        + cH[] Bar@H[i] H[i] Bar@H[j] H[j] Bar@H[k] H[k]
 	        + cHBox[] Bar@H[i] H[i] CD[{\[Nu],\[Nu]},Bar@H[j] H[j]]
 	        + cHD[] H[i] CD[\[Nu], Bar@H[i]] Bar@H[j] CD[\[Nu],H[j]];
