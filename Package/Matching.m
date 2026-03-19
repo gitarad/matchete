@@ -368,7 +368,7 @@ SetSubstitutions[lag_, OptionsPattern[]] := Module[
 			Table[
 				tmp= GetFieldsUpdated[f, Mass];
 				(*give indices to masses if necessary*)
-				If[Length@ $Couplings[tmp, Indices]=== 1,
+				If[Length@ $CouplingAssociation[tmp, Indices]=== 1,
 					Mterm[f,iPattern]->tmp[i]
 				,
 					Mterm[f,___]->tmp[]

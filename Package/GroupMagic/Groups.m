@@ -697,7 +697,7 @@ RepresentationsUpToDimension[alg_, dimLimit_Integer]:= Block[{carry, dim, i, ran
 		];
 	][[2, 1]];
 	
-	representations= Discard[representations, InvalidRep[alg, #[[2]]]&];
+	representations= Select[representations, !InvalidRep[alg, #[[2]]]&];
 	
 	ReverseSortBy[representations, (-First@# &)]
 ];

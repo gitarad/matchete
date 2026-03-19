@@ -1,5 +1,13 @@
 # **Matchete changelog**
 
+### v0.4.2 (2026-03-18)
+- Changed signs on CP-odd bosonic operators in `SMEFT_Warsaw.m` to reflect the sign convention of the Levi-Civita tensor in https://arxiv.org/pdf/1008.4884. 
+- Bug fixes:
+	- Fixed a bug in `ExportWCxf`.
+	- Fixed a bug (introduced in `v0.4.1`) when integrating out heavy flavored particles.
+	- Fixed a compatibility issue with `Mathematica 14.2` and earlier versions.
+
+
 ### v0.4.1 (2026-02-18)
 - `EOMSimplify` now accounts for the axial anomaly contribuions.
 - Expanded the documentation.
@@ -20,7 +28,7 @@
 
 ## v0.4.0 (2025-11-14)
 - Now uses `NCM` instead of `NonCommutativeMultiply`; Use of `\[CenterDot]` (shortcut: `[esc] . [esc]`) is encouraged over `**`.
-- Included `ExportWCxf` function for exporting WCxf files.
+- Included `ExportWCxf` function for exporting WCxf files. (This function is unfortunately broken in this initial release. Please use Matchete v0.4.2 or later for exporting WCxf files.)
 - Included `DR2MS` function that allows to transform.renormalizable Lagrangian in the $\overline{\mathrm{DR}}$ scheme to the $\overline{\mathrm{MS}}$ scheme.
 - Introduced `Simplify` option for `MapEffectiveCouplings`, which allows to simplify the right-hand side of all matching conditions.
 - Introduced `BackgroundField` option for `DefineField`.

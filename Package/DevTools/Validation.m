@@ -71,10 +71,11 @@ ActivateValidationMode[str_String, reset_:False]:=Module[{},
 
 
 Options@ ValidateCurrentVersion= {
-		"Tests"   -> All,
-		"Details" -> False,
-		"Models"  -> {"VLF_toy_model", "Singlet_Scalar_Extension", "E_VLL", "S1S3LQs"},
-		"Evanescent" -> True
+		"Tests"      -> All,
+		"Details"    -> False,
+		"Models"     -> {"VLF_toy_model", "Singlet_Scalar_Extension", "E_VLL", "S1S3LQs"},
+		"Evanescent" -> True,
+		"WCxf"       -> True
 	};
 
 
@@ -86,6 +87,7 @@ ValidateCurrentVersion[opt:OptionsPattern[]]:= Module[{},
 	(* choose models to validate *)
 	BranchValidation`$UVmodels= OptionValue["Models"];
 	BranchValidation`$EvanescentTests= OptionValue["Evanescent"];
+	BranchValidation`$WCxfTests= OptionValue["WCxf"];
 	Get@ FileNameJoin[{$MatchetePath, "Validation", "Validation.m"}];
 ]
 
