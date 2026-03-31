@@ -1404,12 +1404,13 @@ MergeSymmetries[sym1_, sym2_]:= Module[{newSym},
 (* ::Text:: *)
 (*For efficient conjugation of AtomicOps*)
 
-
+(*TODO: add better message, I just added this message so that there will be a message at all*)
+ConjugateAtomicBySubclass::aborting="Aborting ConjugateAtomicBySubclass"
 ConjugateAtomicBySubclass@ expr:Except[_AtomicOp]:= expr/. op_AtomicOp:> ConjugateAtomicBySubclass@ op;
 ConjugateAtomicBySubclass@ op:AtomicOp[class_, id_, _]:= Module[{out, repl, subclass},
 	out= Bar[op/. $operators[class, id, AtomicOpExpansionPattern]]/. Bar@ o_Operator:> OperatorBar@ o;
 	(*The conjugate might include a sign*)
-	subclass= OperatorSubclass@ FirstCase[{out}, _Operator, Abort[], All];
+	subclass= OperatorSubclass@ FirstCase[{out}, _Operator, Message[ConjugateAtomicBySubclass::aborting]; Abort[], All];
 	(*All operator matching patterns of the relevant subclass*)
 	repl= List@@ Query[Select[#[Subclass] === subclass &], Key@ OperatorMatchingPattern][
 		$operators@ OpClassConjugate@ class];

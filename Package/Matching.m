@@ -35,6 +35,7 @@ PackageExport["LoopOrder"]
 PackageExport["Matching"]
 PackageExport["Divergence"]
 PackageExport["$dontCheckLagrangian"]
+PackageExport["$printProgress"]
 
 (* ::Subsubsection::Closed:: *)
 (*Internal*)
@@ -843,7 +844,7 @@ Options[LoopMatch]= {
 	Verbose -> True,
 	WhichTraces -> All
 	};
-
+$printProgress=False
 
 LoopMatch[opt:OptionsPattern[]]? OptionsCheck:= Module[
 		{field, fields, out, logTraces, powerTraces, i=0, myTraces},
@@ -882,6 +883,7 @@ LoopMatch[opt:OptionsPattern[]]? OptionsCheck:= Module[
 	out+= OptionalMonitor[OptionValue@ Verbose,
 			Sum[i++;
 				Sow@ StringReplace[ToString@fields,{", " -> "-", "{" -> "", "}" -> "", "Matchete`PackageScope`" -> ""}];
+                If[$printProgress,Print["Evaluating power-type supertrace: "<>ToString[fields/. fieldFormat]<>" \t ("<>ToString[i]<>" / "<>ToString[Length@ powerTraces]<>")"]];
 				Sow@ PowerTypeSTr[fields, OptionValue@ EFTOrder,
 					Sequence@@ FilterRules[{opt}, Options@ PowerTypeSTr] ]
 			, {fields, powerTraces}]
