@@ -40,7 +40,7 @@ Module[{logoMatchete, packageDirectory},
 	(*The whole package contents are loaded here*)
 	Check[
 		(*Ensure Bar updates as first thing*)
-		Get[FileNameJoin[{packageDirectory, "NCM.m"}]];
+		Quiet[Get[FileNameJoin[{packageDirectory, "NCM.m"}]],{FrontEndObject::notavail}];
 		,
 		Print[Style["Loading failed!",RGBColor[.6,.0706,0.1373]]];
 		Abort[]
