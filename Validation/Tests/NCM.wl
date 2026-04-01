@@ -465,16 +465,3 @@ VerificationTest[
 
 
 ResetAll[]
-
-
-(* ::Section:: *)
-(*Loading the package*)
-
-
-(* ::Text:: *)
-(*Un-comment and run first to see the tests directly in this file. *)
-(*Comment when finished and add file name to the list testfiles in  the script "RunTests.wls" .*)
-
-
-(*	PrependTo[$Path, ParentDirectory[NotebookDirectory[]]];
-	<< Matchete`*)

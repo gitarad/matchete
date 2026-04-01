@@ -170,6 +170,9 @@ LorentzSchouten::usage= "Denotes that an evanescent operator originates from app
 RemoveLCTensor::usage            = "Get rid of Levi-Civita tensors either by combining with a Lorentz sigma to give a \!\(\*SubscriptBox[\(\[Gamma]\), \(5\)]\) or by expanding the product of two Levi-Civita tensor to give the fully antisymmetric product of metrics."
 
 
+SimplifyCouplings::usage= "SimplifyCouplings[expr] simplify coupling contractions with dummy indices.";
+
+
 (* ::Subsubsection::Closed:: *)
 (*Scoped*)
 
@@ -259,19 +262,23 @@ Operator[X___\[CenterDot] DiracProduct[A___, GammaM[mu_]]\[CenterDot] Field[f_, 
 	Operator[X\[CenterDot] DiracProduct[A]\[CenterDot] EoM[Field[f, Fermion, i, {}]], rest];
 Operator[X___\[CenterDot] DiracProduct[A___, GammaM[mu_], Proj@ p_]\[CenterDot] Field[f_, Fermion, i_, {mu_}], rest___]:=
 	Operator[X\[CenterDot] DiracProduct[A, Proj[-p]]\[CenterDot] EoM[Field[f, Fermion, i, {}]], rest];
+Operator[X___\[CenterDot] DiracProduct[A___, GammaM[mu_], Gamma5]\[CenterDot] Field[f_, Fermion, i_, {mu_}], rest___]:=
+	-Operator[X\[CenterDot] DiracProduct[A, Gamma5]\[CenterDot] EoM[Field[f, Fermion, i, {}]], rest];
 (* Bar@ Fermions *)
 Operator[Bar@ Field[f_, Fermion, i_, {mu_}]\[CenterDot] DiracProduct[GammaM[mu_], A___]\[CenterDot] X___, rest___]:=
 	Operator[EoM[Bar@ Field[f, Fermion, i, {}]]\[CenterDot] DiracProduct[A]\[CenterDot] X, rest];
 Operator[Bar@ Field[f_, Fermion, i_, {mu_}]\[CenterDot] DiracProduct[GammaCC,Transp@GammaM[mu_], A___]\[CenterDot] X___, rest___]:=
-	- Operator[EoM[Bar@ Field[f, Fermion, i, {}]]\[CenterDot] DiracProduct[GammaCC,A]\[CenterDot] X, rest];
+	-Operator[EoM[Bar@ Field[f, Fermion, i, {}]]\[CenterDot] DiracProduct[GammaCC,A]\[CenterDot] X, rest];
 (* Transp@ Fermions *)
 Operator[Transp@ Field[f_, Fermion, i_, {mu_}]\[CenterDot] DiracProduct[GammaCC, GammaM[mu_], A___]\[CenterDot] X___, rest___]:=
-	- Operator[EoM[Transp@ Field[f, Fermion, i, {}]]\[CenterDot] DiracProduct[GammaCC, A]\[CenterDot] X, rest];
+	-Operator[EoM[Transp@ Field[f, Fermion, i, {}]]\[CenterDot] DiracProduct[GammaCC, A]\[CenterDot] X, rest];
 (*Transp@ Bar@ Fermions*)
 Operator[X___\[CenterDot] DiracProduct[A___, Transp@ GammaM[mu_]]\[CenterDot] Transp@ Bar@ Field[f_, Fermion, i_, {mu_}], rest___]:=
 	Operator[X\[CenterDot] DiracProduct[A]\[CenterDot] EoM[Transp@ Bar@ Field[f, Fermion, i, {}]], rest];
 Operator[X___\[CenterDot] DiracProduct[A___, Transp@ GammaM[mu_], Proj@ p_]\[CenterDot] Transp@ Bar@ Field[f_, Fermion, i_, {mu_}], rest___]:=
 	Operator[X\[CenterDot] DiracProduct[A, Proj[-p]]\[CenterDot] EoM[Transp@ Bar@ Field[f, Fermion, i, {}]], rest];
+Operator[X___\[CenterDot] DiracProduct[A___, Transp@ GammaM[mu_], Gamma5]\[CenterDot] Transp@ Bar@ Field[f_, Fermion, i_, {mu_}], rest___]:=
+	-Operator[X\[CenterDot] DiracProduct[A, Gamma5]\[CenterDot] EoM[Transp@ Bar@ Field[f, Fermion, i, {}]], rest];
 
 (*Vectors*)
 Operator[FieldStrength[V_, linds:{OrderlessPatternSequence[a_, b_]}, ind_, {a_}], rest___]:=
@@ -485,6 +492,9 @@ SelfConjugateClassQ@ fieldTypes_List:= SelfConjugateClassQ@ {fieldTypes, 0};
 
 (* ::Subsubsection::Closed:: *)
 (*Construct op ID matching patterns from an operator *)
+
+
+SetBarable[AtomicOp]
 
 
 (* ::Text:: *)
@@ -747,7 +757,7 @@ OperatorProperties[opClass_, opID_, op_Operator]:= Module[{count= 1, conjIndExch
 
 
 (* ::Text:: *)
-(*Gives the conjugate index permutation of an operator (may be inferrable from the properties in $operators now)*)
+(*Gives the conjugate index permutation of an operator (may be inferable from the properties in $operators now)*)
 
 
 OpConjFlavorPermutation@ op_Operator:= Module[{},
@@ -886,7 +896,7 @@ OperatorSubclass@ op_Operator:= Module[{cgs, eoms, fields, fss, temp},
 OpScore::unexp= "OpScore received unexpected argument `1`"
 
 
-OpScore[op_Operator, selfConj_]:= Module[{score= 0, inds},
+OpScore[op_Operator, selfConj_]:= Module[{cgs, cgInds, score= 0, composedCGs= Keys@ $CGreplacements},
 	(*Check for canonical terms*)
 	If[KineticOpQ@ op, Return@ 20000] (*Should rank higher than just EOM count to ensure canonical kinetic terms*);
 	If[CanonicalFermionMassOpQ@ op, Return@ 10000];
@@ -904,14 +914,29 @@ OpScore[op_Operator, selfConj_]:= Module[{score= 0, inds},
 	score+= -.1 Count[op, Field[__, {___, a_, __, a_, ___}], Infinity];
 	(*Prefer when derivatives and vectors share indices*)
 	score+= .1 Count[op, Field[_, Vector[a_], _, {___, a_, ___}], Infinity];
+	
+	(*Penalize CGs, to prefer simpler cgs and deltas, i.e., no cgs above all*)
+	cgs= Cases[op, _CG]; 
+	If[cgs =!= {}, 
+		score+= -.01 Length@ cgs;
+		{cgs, cgInds}= Transpose[List@@@ cgs/. Bar->Identity];
+		
+		score+= -.1 Count[cgs, _eps];
+		score+= -.1 Count[cgs, name_/; MemberQ[composedCGs, name]];
+		
+		(*Penalize CGs with derivative fields*)
+		cgInds= Flatten@ cgInds;
+		score+= -.03 Total@ Cases[op, Field[_, _, grInds_, devInds_]/; IntersectingQ[grInds/. Bar->Identity, cgInds]:>
+			Length@ devInds, Infinity];
+	];
+	
 	(*Penalize CGs with derivative fields*)
-	score+= -.01 If[(inds=Cases[op,CG[_gen,i_]:>i])=!={},
+	(*score+= -.01 If[(cgInds=Cases[op,CG[_gen,i_]:>i])=!={},
 					Total[(Length@(Flatten@Join[Cases[op,(Bar@Field[_,_,fb_,gb_]/;MemberQ[fb,#[[2]]]):>gb],
 												Cases[op,(Field[_,_,f_,g_]/;MemberQ[f,Bar@#[[3]]]):>g]]))
-								 &/@inds],
-					0];
-	(*Penalize CGs*)
-	score+= -.1 Count[op, CG[_eps|Bar@_eps, _], Infinity];
+								 &/@cgInds],
+					0];*)
+	
 	(*Preferance of self-conjugate operators*)
 	If[selfConj, score+= .05];
 	(*Score for different combinations of fermions bilinears*)
@@ -1493,7 +1518,7 @@ SeparateOutConstants@ expr_:= Module[{consts, remainder},
 (*Collects all identical operators in an expression to the same form *)
 
 
-Options@ CollectOperators= {NormalForm-> True, Simplify->True};
+Options@ CollectOperators= {NormalForm-> True, Simplify-> True};
 
 
 CollectOperators[arg_, OptionsPattern[]]? OptionsCheck:= Block[{expr=HcExpand@LagrangianExpand[arg], out, consts},
@@ -1505,11 +1530,12 @@ CollectOperators[arg_, OptionsPattern[]]? OptionsCheck:= Block[{expr=HcExpand@La
 
 	out= MatchOperatorPatterns@ expr;
 
-	out= CollectCoefficients[ ExprFlavorCanonize@ out, Simplify->OptionValue@Simplify];
+	out= CollectCoefficients[ExprFlavorCanonize@ out, Simplify-> OptionValue@ Simplify];
 
-	out=out/. AtomicToOpReplacementPattern[];
+	out= out/. AtomicToOpReplacementPattern[];
 
-	If[OptionValue@ NormalForm, out=OperatorToNormalForm[out,CanonizeKinetic->True],out] + consts
+	If[OptionValue@ NormalForm, 
+		OperatorToNormalForm[out, CanonizeKinetic-> True], out] + consts
 ];
 
 
@@ -1851,7 +1877,7 @@ ConstructOperatorIdentities[opClass_, reduction_,OptionsPattern[]]:= Module[
 				,IdentitiesDiracCommutation
 				,IdentitiesChirality
 				,IdentitiesSymmetry
-				,IdentitiesCGs
+				,IdentitiesGroupEpsilons
 				,IdentitiesGroupFierz
 				,IdentitiesGroupSchouten
 				,If[fourDIdentities, IdentitiesFierz[#, Evanescent-> evaopt]&, Nothing]
@@ -2250,7 +2276,7 @@ AntiPattern@ Inactive[FieldStrength][lab_, lor_, gr_, devs_]:= With[{lorSiwtch= 
 
 
 (* ::Subsubsection::Closed:: *)
-(*IdentitiesCGs*)
+(*IdentitiesGroupEpsilons*)
 
 
 (* ::Text:: *)
@@ -2258,13 +2284,21 @@ AntiPattern@ Inactive[FieldStrength][lab_, lor_, gr_, devs_]:= With[{lorSiwtch= 
 (*\[Epsilon][i1, i2,...] \[Epsilon][j1, j2,...] = \[CapitalSigma] \[Sigma](perm) \[Delta][i1, j1] \[Delta][i2, j2] ...*)
 
 
-IdentitiesCGs@ op_Operator:= Block[{},
-	ReplaceList[op,
+IdentitiesGroupEpsilons@ op_Operator:= Module[{cgs, newop= op},
+	(*Screen if we should attempt CG replacements*)
+	cgs= Select[Cases[newop, CG[name_, __]:> $CGproperties[name/. Bar-> Identity, Group]],
+			MatchQ[$Groups@ #, Alg["A", _]]&];
+	If[DuplicateFreeQ@ cgs, 
+		Return@ {}
+	];
+	
+	(*Perform epsilon replacements*)
+	ReplaceList[ReplaceCGs@ newop,
 		o: HoldPattern@ Operator[CG[ep_eps, inds1_], CG[Bar@ ep_eps, inds2_], rest__]:>
-		o- Contract[(Signature@ inds2 Plus@@ (Signature@ # Times@@ Thread@ Delta[inds1, #]&/@ Permutations@ inds2) *
-			Operator@ rest)]
-	]
-]
+		o- Signature@ inds2 Plus@@ (Signature@ # Times@@ Thread@ Delta[inds1, #]&/@ Permutations@ inds2) *
+			Times@ rest
+	]// ContractGroupIndices
+];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2303,7 +2337,7 @@ IdentitiesFierz[ op_Operator, opt:OptionsPattern[]]:=
 
 
 IdentitiesLorentzSchouten[op_Operator, evanecentOp_]:= Module[
-		{ind, indices, positions, rel, relations, subset},
+		{ind, indices, perm, positions, rel, relations, subset},
 	indices= DeleteDuplicates@ Cases[op, Index[_, Lorentz], All];
 	If[Length@ indices < 5, Return@ {};];
 
@@ -2351,7 +2385,7 @@ IdentitiesGroupFierz@ operator_Operator:= Module[
 	su2Groups= Keys@ Select[$Groups, # === Alg["A", 1]&];
 	(*Ensure that indices on fields are Bared or not locally*)
 	op= operator/. Bar@ (f:Field|FieldStrength)[lab_, t_, inds_, devs_]:>
-		f[Conj@ lab, t, Bar/@ inds, devs];
+		f[Conj@ lab, t, Bar/@ inds, devs]// ReplaceCGs;
 
 	out= Flatten@ Table[Catch[
 		(*Determine positions of prospective SU(2) generators*)
@@ -2384,7 +2418,7 @@ IdentitiesGroupFierz@ operator_Operator:= Module[
 	out= out/. (f:Field|FieldStrength)[Conj@ lab_, t_, inds_, devs_]:>
 		Bar@ f[lab, t, Bar/@ inds, devs];
 
-	out// OperatorToNormalForm// ContractCGs// Operator
+	ContractGroupIndices@ out 
 ]
 
 
@@ -2421,7 +2455,8 @@ IdentitiesGroupSchouten@ operator_Operator:= Module[
 	
 	(*Restore ordinary Bar notation for Field and FieldStrength objects in output identities*)
 	out= out/. (f:Field|FieldStrength)[Conj@ lab_, t_, inds_, devs_]:>
-		Bar@ f[lab, t, Bar/@ inds, devs]
+		Bar@ f[lab, t, Bar/@ inds, devs];
+	ContractGroupIndices@ out
 ];
 
 
@@ -2549,7 +2584,7 @@ IBPSimplify[expr_, OptionsPattern[]]:= Module[
 			(*Separate physical and evanescent terms*)
 			{physTerms, evTerms}= SelectAndDeleteCases[TermsToList@ out, _? (FreeQ[#, EvaOp]&)];
 			physTerms= Plus@@ physTerms;
-			evTerms= Plus@@ evTerms/. evaop_EvaOp :> CollectOperators[ev*  Contract@ RefineDiracProducts@ ExpandEvanescentOperators@ evaop, Simplify->False];
+			evTerms= Plus@@ evTerms/. evaop_EvaOp :> CollectOperators[ev*  RefineDiracProducts@ ExpandEvanescentOperators@ evaop, Simplify->False];
 			If[evTerms === 0, (*this may occur e.g. for Cee where the coefficient symmetries kill evanescent contribution*)
 				Throw[physTerms];
 			];

@@ -31,7 +31,7 @@ PackageExport["ExportWCxf"]
 
 
 ExportWCxf::usage = "ExportWCxf[arg, input, output] generates WCxf files for the specified BSM parameter points.
-- arg: either a SMEFT Lagrangian obtained, e.g., by the Match function, or directly a list of matching conditions obtained by MapEffectiveCouplings[\[ScriptCapitalL]EFT, LoadModel[\"SMEFT\"], ShiftRenCouplings->True]. Notice that only BSM models matching directly onto the default SMEFT Lagrangian used by Matchete are currently supported and the option ShiftRenCouplings hast to be set to True for the matching;
+- arg: either a SMEFT Lagrangian obtained, e.g., by the Match function, or directly a list of matching conditions obtained by MapEffectiveCouplings[\[ScriptCapitalL]EFT, LoadModel[\"SMEFT_Warsaw\"], ShiftRenCouplings->True]. Notice that only BSM models matching directly onto the default SMEFT Warsaw basis Lagrangian used by Matchete are currently supported and the option ShiftRenCouplings hast to be set to True for the matching;
 - input: path to a JSON input file containing the following Keys:
 	- \"matching scale\" : matching scale in GeV;
 	- \"parameters\" : list of all parameter names for which numerical input is provided;
@@ -360,7 +360,7 @@ NumericReplacementsBSM[params_, numerics_, dict_] := Module[{repl},
 ExportWCxf::blviolation = "WARNING: WCxf export is currently not supported for Baryon and/or Lepton number violating operators. Non-vanishing matching condition for the Wilson coefficient `1` detected, but ignored for WCxf export."
 
 
-ExportWCxf::defaultSMEFT = "ExportWCxf currently only supports the default SMEFT Lagrangian and parameter name changes are allowed. Please load and use the default SMEFT definitions with LoadModel[\"SMEFT\"]."
+ExportWCxf::defaultSMEFT = "ExportWCxf currently only supports the default SMEFT Lagrangian and parameter name changes are allowed. Please load and use the default SMEFT definitions with LoadModel[\"SMEFT_Warsaw\"]."
 
 
 ExportWCxf::renCouplings = "ExportWCxf currently only supports matching conditions determined with MapEffectiveCouplings with the Option ShiftRenCouplings set to True."
@@ -420,7 +420,7 @@ ExportWCxf[arg_, inputFile_, outputDir_] := Module[
 		(* set MatchingConditions variable as a list  *)
 		MatchingConditions = Normal[arg]; (* transform association to list if required *)
 		(* check if default SMEFT Lagangian is loaded *)
-		If[FreeQ[DownValues[LoadModel], HoldPattern[LoadModel["SMEFT"]]],
+		If[FreeQ[DownValues[LoadModel], HoldPattern[LoadModel["SMEFT_Warsaw"]]],
 			Message[ExportWCxf::defaultSMEFT];
 			Abort[]
 		];
@@ -649,15 +649,18 @@ ReadInputJSON[path_] := Module[
 (*Determine matching conditions*)
 
 
-GetMatchingConditionsForWCxf[arg_] := Module[
+Options@GetMatchingConditionsForWCxf= {ReductionIdentities-> EvanescenceFree}
+
+
+GetMatchingConditionsForWCxf[arg_, OptionsPattern[]] := Module[
 	{
-		\[ScriptCapitalL]Warsaw = LoadModel["SMEFT"],
+		\[ScriptCapitalL]Warsaw = LoadModel["SMEFT_Warsaw"],
 		matchingConditions
 	},
 	
 	matchingConditions = MapEffectiveCouplings[arg, \[ScriptCapitalL]Warsaw
 		,EOMSimplify                  -> True
-		,ReductionIdentities          -> EvanescenceFree
+		,ReductionIdentities          -> OptionValue[ReductionIdentities]
 		,ShiftRenCouplings            -> True
 		,AppendEffectiveCouplingsDefs -> True
 	]/.\[Epsilon]^-1->0; (* renormalize *)
@@ -743,7 +746,7 @@ ExplicitEinsteinSums[term:Except[_Plus]]:=Module[{repeatedInds,flavors=GetFlavor
 		{ind,repeatedInds}
 	];
 	(* perform explicit sums over flavor indices *)
-	If[Length[repeatedInds]>0, Sum[term,Evaluate[Sequence@@repeatedInds]],term]
+	If[Length[repeatedInds]>0, Sum[term,Evaluate[Sequence@@repeatedInds]],term]/.FlavorSum[_?NumericQ]->1
 ]
 
 
@@ -951,7 +954,7 @@ BuildEvaluationFunction[arg_,inputParam_] := Module[
 				With[
 					{
 						lhs = $EvaluateLoopFunctions[lfList[[i]] /. massesToNumPattern] /; Evaluate@And[mDegenerate,mNonDegenerate],
-						rhs = Normal@Series[EvaluateLoopFunctions[lfList[[i]]],Sequence@@Table[{degeneracyLimits[[i,j,k]]}~Join~{degeneracyLimits[[i,j,-1]]}~Join~{taylorOrder},{k,Length[degeneracyLimits[[i,j]]]-1}]]
+						rhs = BetterSeries[EvaluateLoopFunctions[lfList[[i]]],Sequence@@Table[{degeneracyLimits[[i,j,k]]}~Join~{degeneracyLimits[[i,j,-1]]}~Join~{taylorOrder},{k,Length[degeneracyLimits[[i,j]]]-1}]]
 					}
 					,
 					lhs := rhs

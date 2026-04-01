@@ -50,6 +50,8 @@ PackageScope["GaugeCop"]
 PackageScope["GaugeCTerm"]
 PackageScope["WilsonLine"]
 PackageScope["WilsonTerm"]
+PackageScope["WilsonExpand"]
+PackageScope["ExpandGenFSs"]
 PackageScope["PropGravitonExpand"]
 PackageScope["PropBosonExpand"]
 
@@ -669,8 +671,8 @@ DetermineLogInsertions[propType_, propFields_]:= Module[
 
 	(*Filter out uncharged fields*)
 	chargedFields= Union[
-		GetFieldsByProperty[Sequence@@ Normal@ $FieldTypes@ propType, Charges-> {__}],
-		GetFieldsByProperty[Sequence@@ Normal@ $FieldTypes@ propType, Indices-> inds_/;
+		FieldByProperty[Sequence@@ Normal@ $FieldTypes@ propType, Charges-> {__}],
+		FieldByProperty[Sequence@@ Normal@ $FieldTypes@ propType, Indices-> inds_/;
 			IntersectingQ[GroupFromRep/@ inds, Keys@ $GaugeGroups]]
 		];
 	fields= Cases[lagFields, f_/; MemberQ[chargedFields, f/. Conj-> Identity]];
@@ -829,7 +831,7 @@ EvaluateSTr[expr_, {factor_, replacement_}, propTypes_, mode_]:= Module[{out,pro
 		out= Expand[out /. Prop[x_] :> propcount Prop[x]];
 		out= Expand[I/\[Epsilon] Coefficient[out, propcount^2]/. _Prop ->1]
 	];
-	out= out// RelabelIndices// ExpandGenFSs// ContractDelta// ContractCGs// ContractDelta// RefineDiracProducts// ContractMetric;
+	out= out// RelabelIndices// ExpandGenFSs// ContractDelta// ContractCGs// ContractDelta// RefineDiracProducts;
 	If[mode === Divergence,
 		EpsExpand[out, Order-> -1]
 	,
@@ -922,7 +924,7 @@ WilsonTermExpand[field_, {ind1_, ind2_}, devInds_List]:= Module[
 	If[$FieldAssociation[fieldLabel, Type] === Graviton, Metric[ind1, ind2],
 	1]]; 
 	indices= If[conj, Bar, Identity]@ Map[{Index[ind1, #1], Bar@ Index[ind2, #1]} &,
-		GetFields[fieldLabel, Indices]];
+		$FieldAssociation[fieldLabel, Indices]];
 
 	(*Returns the trivial line*)
 	If[Length@ devInds === 0,
@@ -932,7 +934,7 @@ WilsonTermExpand[field_, {ind1_, ind2_}, devInds_List]:= Module[
 	(*Determines gauge and flavor indices*)
 	gaugeIndices= Cases[indices, _? (MemberQ[Keys@ $GaugeGroups, GroupFromInd@ First@ #] &)];
 	flavorIndices= Complement[indices, gaugeIndices];
-	fieldCharges= If[conj, MapAt[Minus, #, {All, 1}]&, Identity]@ GetFields[fieldLabel, Charges];
+	fieldCharges= If[conj, MapAt[Minus, #, {All, 1}]&, Identity]@ $FieldAssociation[fieldLabel, Charges];
 
 	flavorDeltas= Times@@ Delta@@@ flavorIndices;
 

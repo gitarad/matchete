@@ -1,0 +1,357 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Wolfram 14.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       154,          7]
+NotebookDataLength[     13426,        349]
+NotebookOptionsPosition[     11067,        299]
+NotebookOutlinePosition[     12682,        340]
+CellTagsIndexPosition[     12639,        337]
+WindowTitle->FourDimensional
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[GridBox[{
+   {GridBox[{
+      {
+       ItemBox[Cell[BoxData[
+         RowBox[{
+          TemplateBox[{12},
+           "Spacer1"], Cell["MATCHETE SYMBOL", "PacletNameCell",
+           TextAlignment->Center,ExpressionUUID->
+           "4b83fc66-64a5-4804-9bb2-8fbfb789ac12"], 
+          TemplateBox[{8},
+           "Spacer1"]}]],
+         TextAlignment->Center,ExpressionUUID->
+         "4473fdd0-6932-4125-abf1-38491a50a63c"],
+        Background->RGBColor[0.490196, 0.576471, 0.690196],
+        ItemSize->Full], ""}
+     },
+     GridBoxAlignment->{"Rows" -> {{Center}}},
+     GridBoxItemSize->{"Columns" -> {Full, 
+         Scaled[0.02]}, "Rows" -> {{2.5}}}], Cell[TextData[{
+     Cell[BoxData[
+      TagBox[
+       ActionMenuBox[
+        FrameBox[Cell[TextData[{
+          "See Also",
+          " ",
+          Cell[BoxData[
+           GraphicsBox[
+            {GrayLevel[0.66667], Thickness[0.13], 
+             LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]},
+            AspectRatio->1,
+            ImageSize->20,
+            PlotRange->{{-3, 4}, {-1, 1}}]],ExpressionUUID->
+           "a9c2b69e-8774-44e1-b5b5-6ededee9c551"]
+         }],ExpressionUUID->"ba016461-1bd4-4dc5-b1fa-47aa6e148856"],
+         StripOnInput->False],{
+        StyleBox[
+          "\"GreensSimplify\"", "SeeAlsoRelated", StripOnInput -> False] :> 
+         Documentation`HelpLookup["paclet:Matchete/ref/GreensSimplify"], 
+         StyleBox["\"EOMSimplify\"", "SeeAlsoRelated", StripOnInput -> False] :> 
+         Documentation`HelpLookup["paclet:Matchete/ref/EOMSimplify"]},
+        Appearance->None,
+        MenuAppearance->Automatic,
+        MenuStyle->"SeeAlso"],
+       MouseAppearanceTag["LinkHand"]]],
+      LineSpacing->{1.4, 0},ExpressionUUID->
+      "0be608d7-5348-4c06-b8e8-7341779ae2c3"],
+     "\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\
+\[ThickSpace]",
+     Cell[BoxData[
+      TagBox[
+       ActionMenuBox[
+        FrameBox[Cell[TextData[{
+          "Related Guides",
+          " ",
+          Cell[BoxData[
+           GraphicsBox[
+            {GrayLevel[0.66667], Thickness[0.13], 
+             LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]},
+            AspectRatio->1,
+            ImageSize->20,
+            PlotRange->{{-3, 4}, {-1, 1}}]],ExpressionUUID->
+           "3019369c-896f-40df-9eb2-b3ecbbf2f0d9"]
+         }],ExpressionUUID->"bd5bcdf3-50fe-45a9-9798-5bf38f18b9ea"],
+         StripOnInput->False],{
+        "\"Matchete\"" :> 
+         Documentation`HelpLookup["paclet:Matchete/guide/Matchete"]},
+        Appearance->None,
+        MenuAppearance->Automatic,
+        MenuStyle->"MoreAbout"],
+       MouseAppearanceTag["LinkHand"]]],
+      LineSpacing->{1.4, 0},ExpressionUUID->
+      "6f1904bc-9474-4898-9bfd-415c2dfd9887"],
+     "\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\
+\[ThickSpace]",
+     Cell[BoxData[
+      TagBox[
+       ActionMenuBox[
+        FrameBox[Cell[TextData[{
+          "Tech Notes",
+          " ",
+          Cell[BoxData[
+           GraphicsBox[
+            {GrayLevel[0.66667], Thickness[0.13], 
+             LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]},
+            AspectRatio->1,
+            ImageSize->20,
+            PlotRange->{{-3, 4}, {-1, 1}}]],ExpressionUUID->
+           "0136917b-41c2-4d67-bed0-8d0ebd71ca72"]
+         }],ExpressionUUID->"16bdd829-8669-48ef-b7b8-882502f9a4f3"],
+         StripOnInput->False],{
+        "\"Evanescent Prescription\"" :> 
+         Documentation`HelpLookup[
+          "paclet:Matchete/tutorial/EvanescentPrescription"]},
+        Appearance->None,
+        MenuAppearance->Automatic,
+        MenuStyle->"Tutorials"],
+       MouseAppearanceTag["LinkHand"]]],
+      LineSpacing->{1.4, 0},ExpressionUUID->
+      "862ad711-d6bc-424c-959c-b05f769faf6b"],
+     "\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\
+\[ThickSpace]",
+     Cell[BoxData[
+      TagBox[
+       ActionMenuBox[
+        FrameBox[Cell[TextData[{
+          "URL",
+          " ",
+          Cell[BoxData[
+           GraphicsBox[
+            {GrayLevel[0.66667], Thickness[0.13], 
+             LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]},
+            AspectRatio->1,
+            ImageSize->20,
+            PlotRange->{{-3, 4}, {-1, 1}}]],ExpressionUUID->
+           "44073c8b-7975-4235-b929-16fe61d1fdda"]
+         }],ExpressionUUID->"c6a0b8a8-08fc-411a-bd39-122b4f77240a"],
+         StripOnInput->False],{
+        "\"Matchete/ref/FourDimensional\"" :> None, 
+         "\"Copy Wolfram Documentation Center URL\"" :> 
+         CopyToClipboard["Matchete/ref/FourDimensional"], Delimiter, 
+         "\"Copy web URL\"" :> 
+         Module[{DocumentationSearch`Private`nb$}, 
+           DocumentationSearch`Private`nb$ = 
+            NotebookPut[
+             Notebook[{
+               Cell[BoxData[
+                 MakeBoxes[
+                  Hyperlink[
+                   "http://reference.wolfram.com/language/Matchete/ref/\
+FourDimensional.html"], StandardForm]], "Input", TextClipboardType -> 
+                 "PlainText"]}, Visible -> False]]; 
+           SelectionMove[DocumentationSearch`Private`nb$, All, Notebook]; 
+           FrontEndTokenExecute[DocumentationSearch`Private`nb$, "Copy"]; 
+           NotebookClose[DocumentationSearch`Private`nb$]; Null], 
+         "\"Go to web URL\"" :> 
+         FrontEndExecute[{
+           NotebookLocate[{
+             URL[If[TrueQ[False], 
+                 "http://reference.wolfram.com/system-modeler/", 
+                 "http://reference.wolfram.com/language/"] <> 
+               "Matchete/ref/FourDimensional" <> ".html"], None}]}]},
+        Appearance->None,
+        MenuAppearance->Automatic,
+        MenuStyle->"URLMenu"],
+       MouseAppearanceTag["LinkHand"]]],
+      LineSpacing->{1.4, 0},ExpressionUUID->
+      "36201658-6008-489c-a1aa-2996b1bc9ee6"]
+    }], "AnchorBar",
+     CacheGraphics->False,ExpressionUUID->
+     "f6739c1b-4c3e-4833-8866-ddca5c1bc0c2"]}
+  }]], "AnchorBarGrid",
+ CellID->1,ExpressionUUID->"242c3bd8-315b-42fd-aad5-5557c962e21f"],
+
+Cell["Matchete`", "ContextNameCell",ExpressionUUID->"167728a9-41b7-4ad6-8973-9ef0b4dd74cb"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[GridBox[{
+   {Cell[TextData[{
+     Cell[
+     "FourDimensional", "ObjectName",ExpressionUUID->
+      "9e079f85-6164-4eba-826a-5fa18faedce0"],
+     Cell[BoxData[
+      TemplateBox[{8},
+       "Spacer1"]],ExpressionUUID->"c422937e-378f-4244-8636-bfdcfb20ac9c"],
+     Cell[BoxData[
+     ""], "ObjectNameTranslation",ExpressionUUID->
+      "868fac00-f134-46b9-9a7b-b28dc22602ab"]
+    }],ExpressionUUID->"b08e47cb-d576-4f50-94bd-ce972caf8686"], 
+    "\[SpanFromLeft]"}
+  }]], "ObjectNameGrid",ExpressionUUID->"fb8b864d-e961-4cba-bf0e-\
+3bf56ca98f5b"],
+
+Cell[BoxData[GridBox[{
+   {"", Cell[TextData[{
+     Cell[BoxData[
+      TemplateBox[{
+        Cell[
+         TextData["FourDimensional"]], "paclet:Matchete/ref/FourDimensional", 
+        "Matchete Package Symbol"},
+       "PackageLink",
+       BaseStyle->"InlineFormula"]], "InlineFormula",
+      FontFamily->"Source Sans Pro",ExpressionUUID->
+      "e0b1a184-679b-4568-b3eb-75a80c76fda9"],
+     "\[LineSeparator]is a value given to the option ",
+     Cell[BoxData[
+      TemplateBox[{
+        Cell[
+         TextData["ReductionIdentities"]], 
+        "paclet:Matchete/ref/ReductionIdentities", "Matchete Package Symbol"},
+       
+       "PackageLink",
+       BaseStyle->"InlineFormula"]], "InlineFormula",
+      FontFamily->"Source Sans Pro",ExpressionUUID->
+      "8272a1a1-f2d4-4bd0-afbb-7c7d09b7a583"],
+     "."
+    }],ExpressionUUID->"119672b9-a8d0-4986-927e-917da3939a62"]}
+  }]], "Usage",
+ CellID->7049041,ExpressionUUID->"6bcd0331-6791-4172-b3fa-2c6f8a7817f6"]
+}, Open  ]],
+
+Cell[BoxData[GridBox[{
+   {
+    DynamicBox[FEPrivate`ImportImage[
+      FrontEnd`FileName[{"Documentation", "FooterIcons"}, 
+       "RelatedFunction.png"]],
+     ImageSizeCache->{50., {26.47265625, 33.52734375}}], GridBox[{
+      {
+       StyleBox[
+        RowBox[{"See", " ", "Also"}], "SeeAlsoSection"]},
+      {Cell[TextData[Cell[BoxData[
+        RowBox[{
+         TemplateBox[{
+           Cell[
+            TextData["GreensSimplify"]], "paclet:Matchete/ref/GreensSimplify",
+            "Matchete Package Symbol"},
+          "PackageLink",
+          BaseStyle->"InlineFormula"], 
+         StyleBox[" ", "InlineSeparator"], 
+         StyleBox["\[FilledVerySmallSquare]", "InlineSeparator"], 
+         StyleBox[" ", "InlineSeparator"], 
+         TemplateBox[{
+           Cell[
+            TextData["EOMSimplify"]], "paclet:Matchete/ref/EOMSimplify", 
+           "Matchete Package Symbol"},
+          "PackageLink",
+          BaseStyle->"InlineFormula"]}]], "InlineFormula",
+        FontFamily->"Source Sans Pro",ExpressionUUID->
+        "dc439147-62d5-430a-a062-22429985fa13"]], "SeeAlso",ExpressionUUID->
+        "aa8fc57e-0913-4f86-a77a-b83493cb2c62"]}
+     }]}
+  }]], "SeeAlsoSection",ExpressionUUID->"b4b99229-8a5b-4595-9b5f-\
+67b8ae97774c"],
+
+Cell[BoxData[GridBox[{
+   {
+    DynamicBox[FEPrivate`ImportImage[
+      FrontEnd`FileName[{"Documentation", "FooterIcons"}, 
+       "RelatedTechNote.png"]],
+     ImageSizeCache->{50., {26.47265625, 33.52734375}}], GridBox[{
+      {
+       StyleBox[
+        RowBox[{"Tech", " ", "Notes"}], "TechNotesSection"]},
+      {
+       RowBox[{"\[FilledVerySmallSquare]", Cell[BoxData[
+         TemplateBox[{
+           Cell[
+            TextData["Evanescent Prescription"]], 
+           "paclet:Matchete/tutorial/EvanescentPrescription"},
+          "RefLinkPlain",
+          BaseStyle->{"Tutorials"}]], "Tutorials",ExpressionUUID->
+         "29c546bb-fbfa-4f44-b933-2021cdecfd18"]}]}
+     }]}
+  }]], "TechNotesSection",ExpressionUUID->"4ed4d068-85af-479e-9285-\
+7f9fada36873"],
+
+Cell[BoxData[GridBox[{
+   {
+    DynamicBox[FEPrivate`ImportImage[
+      FrontEnd`FileName[{"Documentation", "FooterIcons"}, "RelatedGuide.png"]],
+     ImageSizeCache->{50., {26.47265625, 33.52734375}}], GridBox[{
+      {
+       StyleBox[
+        RowBox[{"Related", " ", "Guides"}], "MoreAboutSection"]},
+      {
+       RowBox[{"\[FilledVerySmallSquare]", Cell[BoxData[
+         TemplateBox[{
+           Cell[
+            TextData["Matchete"]], "paclet:Matchete/guide/Matchete"},
+          "RefLinkPlain",
+          BaseStyle->{"MoreAbout"}]], "MoreAbout",ExpressionUUID->
+         "1f257630-c2e2-457c-a9ae-d70ba6332e4e"]}]}
+     }]}
+  }]], "MoreAboutSection",ExpressionUUID->"7dcd69e0-fb1b-477f-a841-\
+0c06ca633a5c"],
+
+Cell[" ", "FooterCell",ExpressionUUID->"efe29107-5703-4d57-8926-44f0b9cee306"]
+},
+Saveable->False,
+ScreenStyleEnvironment->"Working",
+WindowSize->{900, 830},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+WindowTitle->"FourDimensional",
+Visible->False,
+TaggingRules->{
+ "ModificationHighlight" -> False, "ColorType" -> "", "LinkTrails" -> "", 
+  "ExampleCounter" -> 1, 
+  "Openers" -> {
+   "PrimaryExamplesSection" -> Open, "ExampleSection" -> {"0" -> Open}, 
+    "AllOptsTable" -> Closed}, "NewStyles" -> True, 
+  "CitationPopupData" -> $Failed, "ShowCitation" -> False, "HasOptions" -> 
+  True, "RootCaptions" -> "", "HeaderCoreAreaLink" -> {}, 
+  "Metadata" -> {
+   "built" -> "{2026, 2, 18, 13, 0, 11.198956}", 
+    "history" -> {"XX", "", "", ""}, "context" -> "Matchete`", 
+    "keywords" -> {}, "specialkeywords" -> {}, 
+    "tutorialcollectionlinks" -> {}, "index" -> True, "label" -> 
+    "Matchete Symbol", "language" -> "en", "paclet" -> "Matchete", "status" -> 
+    "None", "summary" -> 
+    "FourDimensional is a value given to the option ReductionIdentities.", 
+    "synonyms" -> {}, "tabletags" -> {}, "title" -> "FourDimensional", 
+    "titlemodifier" -> "", "metadescription" -> "", "windowtitle" -> 
+    "FourDimensional", "type" -> "Symbol", "uri" -> 
+    "Matchete/ref/FourDimensional"}},
+FrontEndVersion->"14.2 for Mac OS X ARM (64-bit) (March 16, 2025)",
+StyleDefinitions->FrontEnd`FileName[{"Wolfram"}, "Reference.nb", 
+  CharacterEncoding -> "UTF-8"],
+ExpressionUUID->"d3f5e92b-381c-42b8-a86a-934ceb1f6f26"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[583, 21, 6001, 151, 50, "AnchorBarGrid",ExpressionUUID->"242c3bd8-315b-42fd-aad5-5557c962e21f",
+ CellID->1],
+Cell[6587, 174, 91, 0, 22, "ContextNameCell",ExpressionUUID->"167728a9-41b7-4ad6-8973-9ef0b4dd74cb"],
+Cell[CellGroupData[{
+Cell[6703, 178, 558, 14, 57, "ObjectNameGrid",ExpressionUUID->"fb8b864d-e961-4cba-bf0e-3bf56ca98f5b"],
+Cell[7264, 194, 968, 25, 106, "Usage",ExpressionUUID->"6bcd0331-6791-4172-b3fa-2c6f8a7817f6",
+ CellID->7049041]
+}, Open  ]],
+Cell[8247, 222, 1246, 31, 112, "SeeAlsoSection",ExpressionUUID->"b4b99229-8a5b-4595-9b5f-67b8ae97774c"],
+Cell[9496, 255, 767, 20, 112, "TechNotesSection",ExpressionUUID->"4ed4d068-85af-479e-9285-7f9fada36873"],
+Cell[10266, 277, 716, 18, 112, "MoreAboutSection",ExpressionUUID->"7dcd69e0-fb1b-477f-a841-0c06ca633a5c"],
+Cell[10985, 297, 78, 0, 24, "FooterCell",ExpressionUUID->"efe29107-5703-4d57-8926-44f0b9cee306"]
+}
+]
+*)
+

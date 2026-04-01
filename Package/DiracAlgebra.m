@@ -309,7 +309,8 @@ DiracProduct[a___, gL: Transp@ GammaM@ LoopMom, gn: Transp@ GammaM@ \[Nu]_Index,
 (* ::Text:: *)
 (*Contract Levi-Civita tensor into the Dirac algebra to obtain a \[Gamma]5:*)
 (*	\[CurlyEpsilon]^{\[Mu]\[Nu]\[Rho]\[Sigma]} \[Gamma]_\[Sigma] = -i \[CapitalGamma]^{\[Mu]\[Nu]\[Rho]} \[Gamma]5*)
-(*which implies that (note anti symmetrization of the \[Alpha]i indices enclosed by [...])*)
+(*This agrees with the conventions in Peskin (3.68). *)
+(*The identity generalizes to anti-symmetrized gammas by (note anti symmetrization of the \[Alpha]i indices enclosed by [...])*)
 (*	\[CurlyEpsilon]_{\[Mu]\[Nu]\[Rho]\[Sigma]} \[CapitalGamma]^{\[Sigma] \[Alpha]1... \[Alpha]n} = -i/(n+1) \[Sum]_{k=0}^{n} (-1)^k \[CapitalGamma]^{ [\[Alpha]1... \[Alpha]k } \[CapitalGamma]_{\[Mu]\[Nu]\[Rho]} \[Gamma]5 \[CapitalGamma]^{ \[Alpha](k+1)...\[Alpha]n] }*)
 
 
@@ -368,7 +369,10 @@ Gamma52LC[exp_]:=exp/.DiracProduct[dp___,Gamma5]:> -I/4! LCTensor[\[Alpha],\[Bet
 (*Expand product of two Levi-Civita tensors into antisymmetric product of metric*)
 
 
-LC2Delta[exp_]:=exp/.{LCTensor[a:Sequence[_Index..]] * LCTensor[b:Sequence[_Index..]] :> - Det[Outer[Metric,List@a,List@b]]};
+LC2Delta[exp_]:= exp/.{
+		LCTensor[a:Sequence[_Index..]] * LCTensor[b:Sequence[_Index..]] :> - Det[Outer[Metric,List@a,List@b]],
+		_LCTensor^2-> - 24
+	};
 
 
 (* ::Text:: *)
@@ -538,56 +542,53 @@ DiracTraceEvaluate@ prod:DiracProduct[_GammaM..., Gamma5]:= Module[{aSym, indPos
 
 
 (* ::Subsection:: *)
-(*Expand to basis*)
+(*Put Dirac Products to basis*)
 
 
 (* ::Subsubsection::Closed:: *)
-(*General Properties*)
-
-
-RefineDiracProducts@ expr_:= expr/. x_DiracProduct:> RefineDiracProducts@ x// Expand;
+(*RefineDiracProducts*)
 
 
 (* ::Text:: *)
-(*Move contracted \[Gamma]-matrices together*)
+(*Anti-symmetrize all the DiracProducts inside DiracTraces*)
 
 
-RefineDiracProducts[DiracProduct[a___, gm: GammaM@ \[Mu]_Index, gn: GammaM@\[Nu]_Index, b___, GammaM@ \[Mu]_Index, c___]/; FreeQ[List[b, c], \[Nu]]]:=
-	ContractMetric@ RefineDiracProducts[2 Metric[\[Mu], \[Nu]] DiracProduct[a, b, gm, c]- DiracProduct[a, gn, gm, b, gm, c]];
-
-
-RefineDiracProducts[DiracProduct[a___, gm: Transp@GammaM@ \[Mu]_Index, gn: Transp@GammaM@\[Nu]_Index, b___, Transp@GammaM@ \[Mu]_Index, c___]; FreeQ[List[b, c], \[Nu]]]:=
-	ContractMetric@RefineDiracProducts[2 Metric[\[Mu], \[Nu]] DiracProduct[a, b, gm, c]- DiracProduct[a, gn, gm, b, gm, c]];
-
-
-(* ::Subsubsection::Closed:: *)
-(*SNDR specific properties*)
+RefineDiracProducts@ expr_:= expr/. x_DiracProduct:> RefineDiracProductsInternal@ x// ContractMetric;
 
 
 (* ::Text:: *)
-(*Anti-symmetrize all the DiracProducts inside DiracTraces. Performance for repeated indices may be improvable with the techniques from [1905.00429, Sec 2.9.2].*)
+(*Cannot simplify Dirac products with a single factor*)
 
 
-RefineDiracProducts@ d:DiracProduct[_]:= d;
+RefineDiracProductsInternal@ d:DiracProduct[_]:= d;
 
 
 (* ::Text:: *)
 (*Charge conjugation matrices, chiral projectors, and Subscript[\[Gamma], 5] are left  alone  *)
 
 
-RefineDiracProducts@ DiracProduct[GammaCC, x__]:=
-	DiracProduct@ GammaCC\[CenterDot] RefineDiracProducts@ DiracProduct@x;
+RefineDiracProductsInternal@ DiracProduct[GammaCC, x__]:=
+	DiracProduct@ GammaCC\[CenterDot] RefineDiracProductsInternal@ DiracProduct@x;
 
 
-RefineDiracProducts@ DiracProduct[x__, chiral: (Gamma5| _Proj)]:=
-	RefineDiracProducts@ DiracProduct@ x \[CenterDot] DiracProduct@ chiral;
+RefineDiracProductsInternal@ DiracProduct[x__, chiral: (Gamma5| _Proj)]:=
+	RefineDiracProductsInternal@ DiracProduct@ x \[CenterDot] DiracProduct@ chiral;
+
+
+(* ::Text:: *)
+(*Expedite evaluation when multiple Lorentz indices are contracted (performance might be improved by including the more advanced methods of [1905.00429]. *)
+
+
+RefineDiracProductsInternal[DiracProduct[a___, gm: GammaM@ \[Mu]_Index, gn: GammaM@\[Nu]_Index, b___, GammaM@ \[Mu]_Index, c___]/; FreeQ[List[b, c], \[Nu]]]:=
+	RefineDiracProducts[2 Metric[\[Mu], \[Nu]] DiracProduct[a, b, gm, c]- DiracProduct[a, gn, gm, b, gm, c]];
 
 
 (* ::Text:: *)
 (*Expansion of Dirac product unto basis of anti-symmetric gamma matrices with the techniques of [1905.00429, Sec 2.9.2].*)
 
 
-RefineDiracProducts[prod:DiracProduct[_GammaM, _GammaM..]]:= Module[{aSym, indPos, pairCombs},
+RefineDiracProductsInternal[product:DiracProduct[_GammaM, _GammaM..]]:= Module[
+		{aSym, indPos, pairCombs, prod= product},
 	(* indPos is ordered by construction: its signature is +1 *)
 	indPos= Flatten[Table[{m, n}, {m, Length@ prod}, {n, Length@ prod[[m]]}], 1];
 	Sum[
@@ -596,8 +597,8 @@ RefineDiracProducts[prod:DiracProduct[_GammaM, _GammaM..]]:= Module[{aSym, indPo
 		pairCombs= DeleteCases[NonOverlappingPairs@ set,
 			List@ OrderlessPatternSequence[{{a_, _}, {a_, _}}, ___]];
 		Sum[
-			Signature@ Join[Sequence@@ pairs, aSym]* Product[Metric@@ Extract[p]@ prod, {p, pairs}]*
-			DiracProduct[GammaM@@ Extract[aSym]@ prod]
+			Signature@ Join[Sequence@@ pairs, aSym]* Product[Metric@@ Extract[prod, p], {p, pairs}]*
+			DiracProduct[GammaM@@ Extract[prod, aSym]]
 		, {pairs, pairCombs}]
 	, {k, 0, Length@ indPos, 2}, {set, Subsets[indPos, {k}]}]
 ];
@@ -608,13 +609,13 @@ RefineDiracProducts[prod:DiracProduct[_GammaM, _GammaM..]]:= Module[{aSym, indPo
 
 
 RefineDiracProducts::transp= "Some, but not all, matrices in `1` was transp. Could not match to basis";
-RefineDiracProducts@ x:DiracProduct[_Transp, ___]:= Module[{},
+RefineDiracProductsInternal@ x:DiracProduct[_Transp, ___]:= Module[{},
 	If[!MatchQ[x, DiracProduct[_Transp..]],
 		Message[RefineDiracProducts::transp, x];
 		Return@ x;
 	];
 
-	RefineDiracProducts@ Reverse[x][[;;, 1]]/. d_DiracProduct:> Transp@ d
+	RefineDiracProductsInternal@ Reverse[x][[;;, 1]]/. d_DiracProduct:> Transp@ d
 ];
 
 
@@ -947,8 +948,8 @@ FierzScore[(SP1 : NCM[field1_, G12___, field2_] ),(SP2 : NCM[field3_, G34___, fi
     		];
 
   	(*same group in only two fields favored, starting from biggest group*)
-  	GaugeGroups = Reverse@SortBy[Keys@GetGaugeGroups[], GroupDimension@* GetGaugeGroups[#][Group] &];
-  	gind = Reverse[SortBy[Select[FieldIndices@#, (MemberQ[GaugeGroups, GroupFromRep@ #[[2]]] &)], GroupDimension@* GetGaugeGroups[#[[2]]][Group] & ]] & /@ fields;
+  	GaugeGroups = Reverse@SortBy[Keys@$GaugeGroups, GroupDimension@* $GaugeGroups[#, Group] &];
+  	gind = Reverse[SortBy[Select[FieldIndices@#, (MemberQ[GaugeGroups, GroupFromRep@ #[[2]]] &)], GroupDimension@* $GaugeGroups[#[[2]], Group] & ]] & /@ fields;
       pos = Position[gind /. Index[_, g_] :> GroupFromRep@g, #] & /@ GaugeGroups /. {} -> Nothing;
     	If[pos =!= {} && pos =!= Nothing,
     		posmax = First@Transpose@First@pos;
@@ -986,7 +987,7 @@ Module[
 
 	rest=expr/._NCM->1;
 
-	iniOperator=rest *SP1*SP2//RefineDiracProducts//Contract//RelabelIndices;
+	iniOperator=rest *SP1*SP2//RefineDiracProducts//RelabelIndices;
 
 	If[Head@iniOperator===Plus, Fierz[#,opt]&/@iniOperator,
 	result=Fierz4D[SP1,SP2,Order->OptionValue@Order];

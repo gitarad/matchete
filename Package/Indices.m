@@ -48,6 +48,7 @@ PackageExport["FlavorSum"]
 
 PackageScope["ContractMetric"]
 PackageScope["ContractDelta"]
+PackageScope["ContractGroupIndices"]
 
 
 PackageScope["ContractDeltaSingleTerm"]
@@ -459,7 +460,7 @@ RelabelNonFlavorIndicesInTerm[expr_,unique_:False]:=Block[
 		dummyIndices,
 		openInds,
 		rule,
-		dropFlavorInds= Index[_,Alternatives@@Keys[GetFlavorIndices[]]] -> Nothing
+		dropFlavorInds= Index[_,Alternatives@@Keys[$FlavorIndices]] -> Nothing
 	},
 
 	(* Unique | canonical dummy index labels*)
@@ -558,11 +559,25 @@ RelabelNonFlavorIndices[expression:Except[_Plus], OptionsPattern[]]:=Block[
 (*Contract fully contracts delta functions and metrics within an expression, and relabels the indices in each term.*)
 
 
+Contract@ l_List:= Contract/@ l;
+
+
 Contract@ expr_:= Module[{terms= TermsToList@LagrangianExpand[expr] (* if LagrangianExpand is removed, the Expand option below should be set to False *) },
 	Plus@@ Table[
 		ContractDeltaSingleTerm[ContractMetricSingleTerm@ term(*, Expand->False*)]// RelabelIndicesInTerm
 	, {term, terms}]
 ]
+
+
+(* ::Text:: *)
+(*Contracts all group indices and CGs. This ensures that all deltas are properly contracted in the end.*)
+(*	Speed could be improved by only expanding once and then performing multiple contractions on each term w/o re-expanding*)
+
+
+ContractGroupIndices@ l_List:= ContractGroupIndices/@ l;
+
+
+ContractGroupIndices@ expr_:= ContractDelta@ ContractCGs@ ContractDelta@ expr;
 
 
 (* ::Subsection:: *)
@@ -696,7 +711,7 @@ Options[ContractDelta] = {Expand->True};
 
 
 (* Performance improvements for long expressions *)
-ContractDelta[expr_Plus, OptionsPattern[]] := ContractDelta[#, Expand->OptionValue[Expand]]&/@expr
+ContractDelta[expr:_Plus|_List, opts:OptionsPattern[]] := ContractDelta[#, opts]&/@expr
 
 (* Contract *)
 ContractDelta[arg:Except[_Plus], OptionsPattern[]] :=
@@ -849,6 +864,9 @@ Metric[a_,a_] := \[ScriptD]
 
 (* ::Subsubsection::Closed:: *)
 (*Contractions*)
+
+
+ContractMetric@ l_List:= ContractMetric/@ l;
 
 
 ContractMetric@ expr_:= Plus@@ ContractMetricSingleTerm/@ TermsToList@ expr;

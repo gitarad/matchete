@@ -145,10 +145,11 @@ PackageScope["CouplingsFromGroup"]
 
 
 PackageScope["$FieldAssociation"]
+PackageScope["FieldByProperty"]
 PackageScope["$CouplingAssociation"]
 PackageScope["$FlavorIndices"]
 PackageScope["$GaugeGroups"]
-PackageScope["GetGaugeGroupByProperty"]
+PackageScope["GaugeGroupByProperty"]
 PackageScope["$GlobalGroups"]
 
 
@@ -230,7 +231,7 @@ ClebschGordanIndices::usage      = "ClebschGordanIndices[CGname] return the repr
 
 
 U1::usage      = "Standard name for Abelian U(1) group.";
-fund::usage    = "Fundamental representations of groups are refered to by group@ fund."
+fund::usage    = "Fundamental representations of groups are referred to by group@ fund."
 tFundf::usage  = "Standard head for the Clebsch-Gordan coefficient, CG[tFundf@ group, {i, j, A, B}] associated with the commonly occuring combination \!\(\*SubscriptBox[SuperscriptBox[\(T\), \(Ci\)], \(j\)]\)\!\(\*SuperscriptBox[\(f\), \(CAB\)]\), where T is the generator of the fundamental representation of the group.";
 adj::usage     = "Adjoint representations of groups are refered to by group@ adj."
 gen::usage     = "Standard head for generator Clebsch-Gordan coefficients. E.g., CG[gen@ rep, {A, i, j}] for \!\(\*SubscriptBox[SuperscriptBox[\(T\), \(Ai\)], \(j\)]\), where A is an adjoint index and i an index of the representation rep.";
@@ -308,17 +309,24 @@ AntiGhost::usage =    "Field[c,AntiGhost,{indices},{CDerivs}] denotes an antigho
 
 
 $FieldAssociation=<||>;
-GetFields[FieldName___]:=Return@$FieldAssociation[FieldName];
+
+
+FieldByProperty[]:= $FieldAssociation
+FieldByProperty[propsSeq__]:= FieldByProperty[List[propsSeq]]
+FieldByProperty[props_Association]:= FieldByProperty@ Normal@ props;
+FieldByProperty[props:_List|_Rule]:=
+	Keys@ Select[$FieldAssociation, MatchQ[#, KeyValuePattern[props]]&]
+
+
+GetFields[FieldName___]:= 
+KeyDrop[$FieldAssociation,FieldByProperty[Type->Ghost|AntiGhost]][FieldName]
 
 
 GetFieldsByProperty[]:=GetFields[]
-
 GetFieldsByProperty[propsSeq__]:=GetFieldsByProperty[List[propsSeq]]
-
-GetFieldsByProperty[props_Association]:= GetFieldsByProperty@ Normal@ props;
-
+GetFieldsByProperty[props_Association]:= GetFieldsByProperty@ Normal@ props
 GetFieldsByProperty[props:_List|_Rule]:=
-	Keys@ Select[$FieldAssociation, MatchQ[#, KeyValuePattern[props]]&];
+	Keys@ Select[GetFields[], MatchQ[#, KeyValuePattern[props]]&]
 
 
 (* ::Subsection:: *)
@@ -378,14 +386,14 @@ OptionTest[DefineField, NiceForm]= MatchQ[_String | Default | {_String | Default
 
 
 OptionTest[DefineField, Mass]= MatchQ[Heavy| Light| 0| {Light, 0}| {Heavy| Light, _}|
-	{Heavy|Light, _, _? (SubsetQ[Keys@ GetFlavorIndices[], #]&)}];
+	{Heavy|Light, _, _? (SubsetQ[Keys@ $FlavorIndices[], #]&)}];
 
 
 fieldIndQ= MemberQ[Keys@ $FlavorIndices, #] || MemberQ[
 	Join[Keys@ $GlobalGroups, Keys@ $GaugeGroups], GroupFromRep@ #]&
 
 
-ChargeQ@ symb_Symbol[_Integer | _Rational | _Symbol]:= MemberQ[GetGaugeGroupByProperty[Group-> U1], symb];
+ChargeQ@ symb_Symbol[_Integer | _Rational | _Symbol]:= MemberQ[GaugeGroupByProperty[Group-> U1], symb];
 ChargeQ@ symb_Symbol[a_Times | a_Plus]:= And@@(ChargeQ@symb[#]&/@(List@@a));
 ChargeQ@ _= False;
 
@@ -684,7 +692,7 @@ RemoveField[alias_,OptionsPattern[{"gauge"->False}]]:= Module[{m=$FieldAssociati
 							];
 							$currentEOMs=DeleteCases[$currentEOMs,KeyValuePattern[Field[alias|{alias,_},___]:>_],All];
 							Quiet[Conj@ alias=.];
-							If[m=!=0 && !MemberQ[Lookup[Mass]@Values@GetFields[],m],RemoveCoupling[m]];
+							If[m=!=0 && !MemberQ[Lookup[Mass]@Values@$FieldAssociation,m],RemoveCoupling[m]];
 							(* ClearAllValues[alias] is rather slow here, instead clear specific places *)
 							ClearAllValues[alias, {
 								"DefineField",
@@ -700,7 +708,7 @@ RemoveField[alias_,OptionsPattern[{"gauge"->False}]]:= Module[{m=$FieldAssociati
 					  ];
 
 
-ResetFields[]:=(RemoveField/@Complement[Keys@GetFields[],If[GetGaugeGroups[]===<||>,{},Values@Transpose[GetGaugeGroups[]][Field]]];);
+ResetFields[]:=(RemoveField/@Complement[Keys@$FieldAssociation,If[$GaugeGroups===<||>,{},Values@Transpose[$GaugeGroups][Field]]];);
 
 
 GaugeFieldLabelQ[alias_]:=If[MemberQ[$GaugeGroups, KeyValuePattern[Field->alias]],
@@ -765,9 +773,9 @@ RemoveCoupling[alias_,OptionsPattern[{"gauge"->False}]]:= (
 
 
 ResetCouplings[]:=Module[{mList1,mList2,cList},
-					mList1=GetFields[#][Mass]&/@(Keys@GetFields[]);
-					mList2=If[GetGaugeGroups[]===<||>,{},Values@Transpose[GetGaugeGroups[]][Coupling]];
-					cList=Keys@GetCouplings[];
+					mList1=$FieldAssociation[#][Mass]&/@(Keys@$FieldAssociation);
+					mList2=If[$GaugeGroups===<||>,{},Values@Transpose[$GaugeGroups][Coupling]];
+					cList=Keys@$CouplingAssociation;
 					RemoveCoupling/@Complement[cList,Join[mList1,mList2]];
 				  ];
 
@@ -997,14 +1005,14 @@ CouplingSymmetries[ _ , SymmetryOverride[x_]]:=Module[{out},
 
 UpdateDropDiagonalCouplings[]:= Block[{},
 	$DropDiagonalCouplings= Join[{_FlavorSum->1}, Table[
-			With[{tmp= Position[GetCouplings[x][DiagonalCoupling],True], lab= x},
+			With[{tmp= Position[$CouplingAssociation[x][DiagonalCoupling],True], lab= x},
 				If[tmp==={},
 					Nothing,
 					Coupling[x,ind_List,ord_]:> Coupling[lab, ReplacePart[ind,tmp:>Unique[]],ord] (* Unique ensures that 1/(m[p]-m[r]) yields 1/(m[]-m[])=ComplexInfinity *)
 				]
 			]
 			,
-			{x,Keys@GetCouplings[]}
+			{x,Keys@$CouplingAssociation}
 		]
 	];
 ];
@@ -1247,7 +1255,7 @@ FieldGenerators[field_,GroupName_,indices_]:= Module[{rep,generators},
 		Abort[]
 	];
 
-	rep=First@Select[GetFields[field][Indices],GroupFromRep[#]===GroupName &];
+	rep=First@Select[$FieldAssociation[field][Indices],GroupFromRep[#]===GroupName &];
 	If[Head@rep===Bar,
 		Bar@CG[gen[rep[[1]]],indices]
 	,
@@ -1300,7 +1308,11 @@ FieldGenerators[field_,GroupName_]:= Module[{generators},
 
 
 (* ::Subsubsection::Closed:: *)
-(*Field-strength properties*)
+(*Field-strength and structure constant properties*)
+
+
+(* ::Text:: *)
+(*Field strength*)
 
 
 FieldStrength[0, __]:= 0;
@@ -1313,6 +1325,14 @@ FieldStrength[_, _, {Bar@ a_, a_}, __]:= 0;
 (* Order the Lorentz indices canonically *)
 FieldStrength[label_, {\[Mu]_,\[Nu]_}, rest___] := -FieldStrength[label, {\[Nu],\[Mu]}, rest] /; !OrderedQ[{\[Mu],\[Nu]}]
 Graviton[\[Mu]_,\[Nu]_] := Graviton[\[Nu],\[Mu]] /; !OrderedQ[{\[Mu],\[Nu]}]
+
+
+(* ::Text:: *)
+(*Order indices of structure constants*)
+
+
+CG[fStruct[group_], indices_List]/; !OrderedQ[indices]:=
+	Signature[indices]CG[fStruct[group], Sort@ indices]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1334,17 +1354,11 @@ GetGaugeGroups[GaugeGroupName___]:=Module[{$tmpGauge},
 ];
 
 
-GetGaugeGroupByProperty[]:= Keys@ $GaugeGroups;
-
-GetGaugeGroupByProperty[propsSeq__]:= GetGaugeGroupByProperty@ List@ propsSeq;
-
-GetGaugeGroupByProperty[props_Association]:= GetGaugeGroupByProperty@ Normal@ props;
-
-GetGaugeGroupByProperty[props: _List| _Rule]:=
+GaugeGroupByProperty[]:= Keys@ $GaugeGroups;
+GaugeGroupByProperty[propsSeq__]:= GaugeGroupByProperty@ List@ propsSeq;
+GaugeGroupByProperty[props_Association]:= GaugeGroupByProperty@ Normal@ props;
+GaugeGroupByProperty[props: _List| _Rule]:=
 	Keys@ Select[$GaugeGroups, MatchQ[#, KeyValuePattern[props]]&];
-(* GetGaugeGroupByProperty[props: (_List| _Rule)]:= Module[{gg= $GaugeGroups},
-	Table[If[MatchQ[gg[k], KeyValuePattern[props]], k, Nothing], {k, Keys[gg]}]
-] *)
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1379,7 +1393,6 @@ ResetGaugeGroups[]:=(RemoveGaugeGroup/@ Keys[$GaugeGroups[]];);
 DefineGaugeGroup::CouplingLabel   = "The coupling '`1`' is not a Symbol, it is already used in some loaded context or already has some definitions. Please use another symbol for the gauge coupling.";
 DefineGaugeGroup::GroupName       = "The group name '`1`' is not a Symbol, it is already used in some loaded context or already has some definitions. Please use another group name.";
 DefineGaugeGroup::GaugeFieldLabel = "The gauge field name '`1`' is not a Symbol, it is already used in some loaded context or already has some definitions. Please use another symbol for the gauge field.";
-DefineGaugeGroup::LieGroup        = "'`1`' is not a known simple group.";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1399,7 +1412,7 @@ OptionTest[DefineGaugeGroup, NiceForm]= MatchQ[Default | {_String | Default, _St
 OptionMessage[NiceForm, DefineGaugeGroup, val_]:= Message[General::optexpectsval, NiceForm, DefineGaugeGroup, val, "value Default or a list with two elements each of which is either Default or a string"];
 
 
-DefineGaugeGroup[grName_,lieGroup_, coupling_, gaugeField_,opts:OptionsPattern[]]? OptionsCheck:=
+DefineGaugeGroup[grName_,lieGroup_, coupling_, gaugeField_, opts:OptionsPattern[]]? OptionsCheck:=
 DefineGaugeGroup[grName,lieGroup, coupling, gaugeField,opts]= Module[{fundRep, adjRep, rank, nfCoupling, nfField},
 	(*Check that the symbol 'coupling' is not yet in use.*)
 	If[Defined[coupling] && !KeyExistsQ[$GaugeGroups,coupling],
@@ -1415,16 +1428,13 @@ DefineGaugeGroup[grName,lieGroup, coupling, gaugeField,opts]= Module[{fundRep, a
 
 	(*Check that the symbol 'gaugeField' is not yet in use.*)
 	If[Defined[gaugeField],
-		Message[DefineGaugeGroup::GaugeFieldLabel,gaugeField];
+		Message[DefineGaugeGroup::GaugeFieldLabel, gaugeField];
 		Abort[]
 	];
 
 	(*Check that the symbol 'lieGroup' is a valid simple Lie group.*)
-	If[!MatchQ[lieGroup, U1|Alg["A",n_?Positive]|Alg["B",n_?(#>1&)]|Alg["C",n_?(#>1&)]|Alg["D",n_?(#>2&)]|Alg["E",n_?(MatchQ[#,6|7|8]&)]|Alg["F",4]|Alg["G",2]],
-		Message[DefineGaugeGroup::LieGroup,lieGroup];
-		Abort[]
-	];
-
+	If[!MatchQ[lieGroup, U1], TestAlg@ lieGroup];
+	
 	(*Update list of gauge groups*)
 	AppendTo[$GaugeGroups, grName-> <|
 			Group-> lieGroup,
@@ -1436,56 +1446,16 @@ DefineGaugeGroup[grName,lieGroup, coupling, gaugeField,opts]= Module[{fundRep, a
 	(*Define usage message*)
 	grName::usage=ToString[grName]<>" is the label of a gauge group with gauge field "<>ToString[gaugeField]<> " and gauge coupling "<>ToString[coupling]<>".";
 
-	(*Set up Lie group for non-Ablelian gauge groups*)
+	(*Set up Lie group and CG definitions for non-Ablelian gauge groups*)
 	If[lieGroup=!= U1,
-		(*Add group*)
-		DefineCGGroup[grName, lieGroup];
-		adjRep= AdjointRepresentation@ lieGroup;
-		fundRep= FundamentalRepresentation@ lieGroup;
-		rank= Last@ lieGroup;
-
-		(*Add common representations*)
-		DefineRepresentation[grName@ adj, grName, adjRep, IndexAlphabet-> OptionValue@AdjAlphabet];
-		If[lieGroup=!=Alg["E",8], (*For E_8, the fundamental conincide with the Adjoint*)
-			DefineRepresentation[grName@ fund, grName, fundRep,
-				IndexAlphabet -> OptionValue@ FundAlphabet];
-		];
-
-		(*Structure constatns and identification with adj generators*)
-		DefineCG[fStruct@grName,{grName@adj,grName@adj,grName@adj},StructureConstants@lieGroup];
-		CG[gen[grName[adj]], indices_]:=-I CG[fStruct@ grName, indices];
-
-		(*Define the commonly occuring t^ai_j f^{abc}*)
-		DefineCompositeCG[tFundf@ grName, {gen@ grName@ fund, fStruct@ grName}, {{$a, $i, $j}, {$a, $b, $c}}];
-
-		(*Add common CGs for SU(N) algebras (limited to N\[LessEqual]5 for performance reasons)*)
-		If[MatchQ[lieGroup, Alg["A", _?(#>0 && #<5 &)]],
-			DefineCG[eps@grName, ConstantArray[grName@fund, rank+ 1],
-				First@InvariantTensors[lieGroup, Table[fundRep,rank+ 1],
-					AntisymmetricIndices-> Range[rank+ 1],
-					Normalization-> (rank+ 1)!]];
-		];
-
-		If[MatchQ[lieGroup, Alg["A", _?(#>1 &)]],
-			DefineCG[dSym@grName,{grName@adj, grName@adj, grName@adj},
-				First@ InvariantTensors[lieGroup, {adjRep, adjRep, adjRep},
-					SymmetricIndices-> {1, 2, 3},
-					Normalization-> ((rank+1)^2-1)((rank+1)^2-4)/(rank+1)]];
-		];
-
-		(*Add two-index invariant CGs for Sp(N) algebras*)
-		If[MatchQ[lieGroup, Alg["C", _]],
-			DefineCG[eps@ grName, Table[grName@ fund, 2],
-				First@ InvariantTensors[lieGroup, Table[FundamentalRepresentation@lieGroup, 2],
-					AntisymmetricIndices-> {1, 2}, Normalization-> 2* lieGroup[[2]]]];
-		];
+		AddNonAbelianGroupDefinitions[grName, lieGroup, Sequence@@ FilterRules[{opts}, Options@ AddNonAbelianGroupDefinitions]];
 	];
-
-	nfCoupling=First[OptionValue[NiceForm],Default];
-	nfField=Last[OptionValue[NiceForm],Default];
+	
+	nfCoupling= First[OptionValue[NiceForm], Default];
+	nfField= Last[OptionValue[NiceForm], Default];
 
 	(*Add gauge coupling*)
-	DefineCoupling[coupling, SelfConjugate -> True, NiceForm->nfCoupling];
+	DefineCoupling[coupling, SelfConjugate -> True, NiceForm-> nfCoupling];
 
 	(*Add gauge field*)
 	DefineField[gaugeField, Vector, Indices-> If[lieGroup=!= U1,{grName@ adj},{}], Mass-> 0, SelfConjugate-> True, NiceForm->nfField];
@@ -1501,10 +1471,56 @@ DefineGaugeGroup[grName,lieGroup, coupling, gaugeField,opts]= Module[{fundRep, a
 
 
 (* ::Text:: *)
-(*Order indices of structure constants*)
+(*Makes all the standard CG definitions for non-Abelian groups*)
 
 
-CG[fStruct[group_], indices_List]/;(!OrderedQ[indices]):=Signature[indices]CG[fStruct[group],Sort@indices]
+Options@ AddNonAbelianGroupDefinitions= {AdjAlphabet-> None, FundAlphabet -> None}; 
+
+
+AddNonAbelianGroupDefinitions[grName_, lieGroup_, OptionsPattern[]]:= Module[{adjRep, fundRep, rank, $a, $i, $j, $b, $c},
+	(*Add group*)
+	DefineCGGroup[grName, lieGroup];
+	adjRep= AdjointRepresentation@ lieGroup;
+	fundRep= FundamentalRepresentation@ lieGroup;
+	rank= AlgebraRank@ lieGroup;
+	
+	(*Add adjoint representation*)
+	DefineRepresentation[grName@ adj, grName, adjRep, IndexAlphabet-> OptionValue@ AdjAlphabet];
+	(*Structure constants and identification with adj generators*)
+	DefineCG[fStruct@ grName, {grName@ adj, grName@ adj, grName@ adj}, StructureConstants@ lieGroup];
+	CG[gen[grName[adj]], indices_]:= -I CG[fStruct@ grName, indices];
+	
+	(*Add fundamental representaion*)
+	If[!MatchQ[lieGroup, Alg["E", 8]|Alg["B", 1]], (*For B1 and E8, the fundamental conincide with the Adjoint*)
+		DefineRepresentation[grName@ fund, grName, fundRep,
+			IndexAlphabet -> OptionValue@ FundAlphabet];
+		(*Define the commonly occuring t^ai_j f^{abc}*)
+		DefineCompositeCG[tFundf@ grName, {gen@ grName@ fund, fStruct@ grName}, {{$a, $i, $j}, {$a, $b, $c}}];
+	];
+
+	(*Add LC CGs for SU(N) algebras (limited to N\[LessEqual]5 for performance reasons)*)
+	If[MatchQ[lieGroup, Alg["A", _?(# > 0 && # < 5 &)]],
+		DefineCG[eps@grName, ConstantArray[grName@ fund, rank+ 1],
+			First@InvariantTensors[lieGroup, Table[fundRep, rank+ 1],
+				AntisymmetricIndices-> Range[rank+ 1],
+				Normalization-> (rank+ 1)!]];
+	];
+	(*Add symmetric 3-index adjoint tensor for SU(N>2)*)
+	If[MatchQ[lieGroup, Alg["A", _?(# > 1 &)]],
+		DefineCG[dSym@ grName, {grName@ adj, grName@ adj, grName@ adj},
+			First@ InvariantTensors[lieGroup, {adjRep, adjRep, adjRep},
+				SymmetricIndices-> {1, 2, 3},
+				Normalization-> ((rank+1)^2-1)((rank+1)^2-4)/(rank+1)]];
+	];
+
+	(*Add two-index invariant CGs for Sp(N) algebras*)
+	If[MatchQ[lieGroup, Alg["C", _]],
+		DefineCG[eps@ grName, Table[grName@ fund, 2],
+			First@ InvariantTensors[lieGroup, Table[fundRep, 2],
+				AntisymmetricIndices-> {1, 2}, Normalization-> 2* lieGroup[[2]]]];
+	];
+
+]
 
 
 (* ::Section:: *)
@@ -1562,7 +1578,6 @@ ResetGlobalGroups[]:=(RemoveGlobalGroup/@Keys[$GlobalGroups[]];);
 
 
 DefineGlobalGroup::GroupName = "The group name '`1`' is not a Symbol, it is already used in some loaded context or already has some definitions. Please use another group name.";
-DefineGlobalGroup::LieGroup  = "'`1`' is not a known simple group.";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1590,10 +1605,7 @@ DefineGlobalGroup[grName,lieGroup,opts]=Module[{},
 	];
 
 	(*Check that the symbol 'lieGroup' is a valid simple Lie group.*)
-	If[!MatchQ[lieGroup, U1|Alg["A",n_?Positive]|Alg["B",n_?(#>1&)]|Alg["C",n_?(#>1&)]|Alg["D",n_?(#>2&)]|Alg["E",n_?(MatchQ[#,6|7|8]&)]|Alg["F",4]|Alg["G",2]],
-		Message[DefineGlobalGroup::LieGroup,lieGroup];
-		Abort[]
-	];
+	If[!MatchQ[lieGroup, U1], TestAlg@ lieGroup];
 
 	(*Update list of global groups*)
 	AppendTo[$GlobalGroups, grName-> <|
@@ -1604,38 +1616,9 @@ DefineGlobalGroup[grName,lieGroup,opts]=Module[{},
 	(*Define a usage message*)
 	grName::usage=ToString[grName]<> " is the label of a global symmetry.";
 
-	(*Set up Lie group for non-Ablelian gauge groups*)
+	(*Set up Lie group and CG definitions for non-Ablelian gauge groups*)
 	If[lieGroup=!= U1,
-		(*Add group*)
-		DefineCGGroup[grName, lieGroup];
-
-		(*Add common representations*)
-		If[lieGroup===Alg["E",8],
-			DefineRepresentation[grName@adj, grName, AdjointRepresentation@lieGroup,IndexAlphabet -> OptionValue@AdjAlphabet];
-		,
-			(*It's important to add adj before fund*)
-			DefineRepresentation[grName@ adj, grName, AdjointRepresentation@lieGroup,IndexAlphabet -> OptionValue@AdjAlphabet];
-			DefineRepresentation[grName@ fund, grName, FundamentalRepresentation@lieGroup,IndexAlphabet -> OptionValue@FundAlphabet];
-		];
-
-		(*Add structure constants and identification with adj generators*)
-		DefineCG[fStruct@grName, {grName@ adj, grName@ adj, grName@ adj}, StructureConstants@ lieGroup];
-		CG[gen@ grName@ adj, indices_]:= -I CG[fStruct@ grName, indices];
-
-		(*Add common CGs for SU(N) algebras (limited to N\[LessEqual]5 for performance reasons)*)
-		If[MatchQ[lieGroup, Alg["A",n_?(#>0 && #<5 &)]],
-			DefineCG[eps@grName,Table[grName@fund,lieGroup[[2]]+1],First@InvariantTensors[lieGroup, Table[FundamentalRepresentation@lieGroup,lieGroup[[2]]+1],AntisymmetricIndices->Range[lieGroup[[2]]+1],Normalization->(lieGroup[[2]]+1)!]];
-		];
-		If[MatchQ[lieGroup, Alg["A",n_?(#>1 && #<5 &)]],
-			DefineCG[dSym@grName,{grName@adj,grName@adj,grName@adj},First@InvariantTensors[lieGroup, {AdjointRepresentation@lieGroup, AdjointRepresentation@lieGroup, AdjointRepresentation@lieGroup},SymmetricIndices->{1,2,3},Normalization->((lieGroup[[2]]+1)^2-1)((lieGroup[[2]]+1)^2-4)/(lieGroup[[2]]+1)]];
-		];
-
-		(*Add two-index invariant CGs for Sp(N) algebras*)
-		If[MatchQ[lieGroup, Alg["C", _]],
-			DefineCG[eps@ grName, Table[grName@ fund, 2],
-				First@ InvariantTensors[lieGroup, Table[FundamentalRepresentation@lieGroup, 2],
-					AntisymmetricIndices-> {1, 2}, Normalization-> 2* lieGroup[[2]]]];
-		];
+		AddNonAbelianGroupDefinitions[grName, lieGroup, Sequence@@ FilterRules[{opts}, Options@ AddNonAbelianGroupDefinitions]];
 	];
 ];
 
@@ -1788,7 +1771,7 @@ FreeLag[field_Symbol]:= Module[
 	If[!KeyExistsQ[$FieldAssociation, field], Message[FreeLag::UndefinedField, field]; Abort[]];
 	If[$FieldAssociation[field, BackgroundField], Message[FreeLag::bkgfield, field]; Abort[]];
 
-	isChiralFermion= GetFields[field, Chiral] =!= False;
+	isChiralFermion= $FieldAssociation[field, Chiral] =!= False;
 
 	massInd= GetCouplings[$FieldAssociation[field, Mass]][Indices]// DeleteDuplicates;
 	fieldInd= $FieldAssociation[field, Indices];
@@ -1796,13 +1779,13 @@ FreeLag[field_Symbol]:= Module[
 
 	indK = ConstantArray[a, Length@ fieldInd]/. List-> Sequence;
 
-	If[GetFields[field, Mass] =!= 0,
+	If[$FieldAssociation[field, Mass] =!= 0,
 		ind1= Sequence@@ ConstantArray[i, Length@ fieldInd];
 		ind2= Sequence@@ ConstantArray[j, Length@ fieldInd];
 		m= $FieldAssociation[field, Mass]@@ Join[ConstantArray[i, Length@ massInd],
-			If[GetFields[field, Heavy], {}, ConstantArray[j, Length@ massInd]] ];
+			If[$FieldAssociation[field, Heavy], {}, ConstantArray[j, Length@ massInd]] ];
 		(*Currently light boson masses with indices are not supported, so we may square the mass*)
-		If[GetFields[field, Type] =!= Fermion, m= m^2];
+		If[$FieldAssociation[field, Type] =!= Fermion, m= m^2];
 		(*Insert the group structure to make the mass term invariant*)
 		m*= Times@@ Table[
 				If[!isChiralFermion || MemberQ[Keys@ $FlavorIndices, indType] ||
@@ -1812,7 +1795,7 @@ FreeLag[field_Symbol]:= Module[
 				,
 					If[Head@ indType === Bar, Identity, Bar]@ CG[eps@ GroupFromRep@ indType, {i, j}]
 				]
-			, {indType, Complement[fieldInd, If[GetFields[field, Heavy], {}, massInd]]}]
+			, {indType, Complement[fieldInd, If[$FieldAssociation[field, Heavy], {}, massInd]]}]
 	,
 		ind1= indK;
 		ind2= indK;
@@ -1842,7 +1825,7 @@ FreeLag[field_Symbol]:= Module[
 
 
 FreeLag[field_, fields__]:= Plus@@ FreeLag/@ List[field, fields];
-FreeLag[]:= Sum[FreeLag@ f, {f, GetFieldsByProperty[BackgroundField-> False]}];
+FreeLag[]:= Sum[FreeLag@ f, {f, FieldByProperty[BackgroundField-> False]}];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1859,8 +1842,8 @@ KinOpLagrangian[field_, fields__]:= Plus@@ KinOpLagrangian/@ {field, fields};
 KinOpLagrangian[]= 0;
 KinOpLagrangian[field_Symbol]:=Module[
 		{FieldType, MassInd, FieldInd, indK, ind1, ind2, indM, m, i, j, a, \[Mu], \[Nu],  \[Alpha], fluctuation},
-	FieldInd= GetFields[field, Indices];
-	FieldType= GetFields[field, Type];
+	FieldInd= $FieldAssociation[field, Indices];
+	FieldType= $FieldAssociation[field, Type];
 
 	indK= Sequence@@ Table[a, {n, Length@ FieldInd}];
 
@@ -1875,11 +1858,11 @@ KinOpLagrangian[field_Symbol]:=Module[
 		m= 0;
 	];
 
-	If[GetFields[field, SelfConjugate], 1/2, 1]Switch[FieldType
+	If[$FieldAssociation[field, SelfConjugate], 1/2, 1]Switch[FieldType
 		,Scalar,
 			Bar[BackgroundCD[\[Mu],field[indK]]] BackgroundCD[\[Mu],field[indK]] - m^2 Bar[field[ind1]] field[ind2]
 		,Fermion,
-			If[GetFields[field][Chiral]===False,
+			If[$FieldAssociation[field][Chiral]===False,
 				I Bar[field[indK]]\[CenterDot] \[Gamma][\[Mu]]\[CenterDot] BackgroundCD[\[Mu],field[indK]] - m Bar[field[ind1]]\[CenterDot] field[ind2]
 			,
 				I Bar[field[indK]]\[CenterDot] \[Gamma][\[Mu]]\[CenterDot] BackgroundCD[\[Mu],field[indK]] - m/2 (Bar[CConj[field[ind1]]]\[CenterDot] field[ind2]+ Bar[field[ind1]]\[CenterDot] CConj[field[ind2]])
@@ -1953,7 +1936,7 @@ LoadModel::multfiles= "Multiple files `1` matches the model name \"`2`\". Please
 DetermineModelPath[fileName_String, verbose_]:= Block[
 		{dir, extension, matches, models, modName, modPossibilities},
 	{dir, modName}= Through@ {DirectoryName, FileNameTake}@ fileName;
-
+	
 	modName= StringReplace[modName, RegularExpression["\\.$"]-> ""];
 	modPossibilities= Switch[extension= FileExtension@ modName
 		,"",
@@ -1966,7 +1949,7 @@ DetermineModelPath[fileName_String, verbose_]:= Block[
 	];
 
 	(*If directory is specified*)
-	If[dir =!= "",
+	If[dir =!= "" && !StringStartsQ[dir, "https"],
 		matches= FileNames[modPossibilities, dir];
 		Switch[Length@ matches
 		,0,
@@ -1993,8 +1976,16 @@ DetermineModelPath[fileName_String, verbose_]:= Block[
 		{Extract[models, {First@ #, 1}&/@ matches], Extract[models, matches]};
 	Switch[Length@ matches
 	,0,
-		Message[LoadModel::nofiles, fileName];
-		Abort[];
+		If[CheckGitLabAccess[],
+			(* if model database is available *)
+			DetermineModelPathOnline[fileName, modPossibilities, verbose]
+			,
+			(* if model database is not available *)
+			Message[GetModels::GitLab]; 
+			Message[LoadModel::nofiles, fileName];
+			Abort[];
+		]
+		
 	,1,
 		If[verbose, Print["Loading model ", First@ matches]];
 		First@ matches
@@ -2003,6 +1994,36 @@ DetermineModelPath[fileName_String, verbose_]:= Block[
 		Abort[];
 	]
 
+]
+
+
+DetermineModelPathOnline[fileName_,modPossibilities_,verbose_]:= Module[
+	{models,matches}
+	,
+	models= Normal@ GetModels[Path-> True, "Database"->True];
+	matches= Position[models, Alternatives@@ modPossibilities];
+
+	If[Length@ matches === 0,
+		(*Partial match*)
+		matches= Position[models, mod_String/; StringContainsQ[mod, fileName]];
+	];
+
+	matches=  FileNameJoin/@ Transpose@
+		{Extract[models, {First@ #, 1}&/@ matches], Extract[models, matches]};
+		
+	matches= StringReplace[matches,"https:/gitlab"->"https://gitlab"]; (* due to black magic aforwards slash is disappears in the code block above *)
+		
+	Switch[Length@ matches
+	,0,
+		Message[LoadModel::nofiles, fileName];
+		Abort[];
+	,1,
+		Print["Loading model from database:\n \[Rule] ",First@ matches];
+		First@ matches
+	,_,
+		Message[LoadModel::multfiles, matches, fileName];
+		Abort[];
+	]
 ]
 
 
@@ -2021,20 +2042,79 @@ GetDirectories[]:= Block[{notebookDir},
 ];
 
 
-Options@ GetModels= {Path-> False};
+Options@ GetModels= {Path-> False, "Database"-> False, Verbose->True};
 
 
 GetModels[OptionsPattern[]]? OptionsCheck:= Block[{models, dirs},
-	dirs= GetDirectories[];
-	models= DeleteCases[(FileNameTake/@ FileNames[{"*.m", "*.wl"}, #]&)/@ dirs, {}];
+	If[OptionValue["Database"],
+		(* online *)
+		OptionalMonitor[OptionValue@Verbose,
+			models= GetModelDatabase[];
+			dirs= (#->("https://gitlab.com/matchete/model-database/-/raw/master/"<>#))&/@Keys[models],
+		"Searching the model database at https://gitlab.com/matchete/model-database."]
+		,
+		(* offline *)
+		dirs= GetDirectories[];
+		models= DeleteCases[(FileNameTake/@ FileNames[{"*.m", "*.wl"}, #]&)/@ dirs, {}];
+	];
 	If[OptionValue@ Path,
 		models= KeyMap[#/. dirs&, models];
 	];
 	models
-];
+]
 
 
 Quiet[NotebookDirectory[],{NotebookDirectory::nosv}]
+
+
+(* ::Text:: *)
+(*Get models from database*)
+
+
+(* cach results since api access is rather slow *)
+GetModelDatabase[]:= GetModelDatabase[]= Module[
+	{
+		repoURL= "https://gitlab.com/matchete/model-database",
+		encodedPath, projectInfo, projectID, ListFiles
+	}
+	,
+	(* check internet and GitLab access  *)
+	If[!CheckGitLabAccess[],
+		Message[GetModels::GitLab]; Abort[]
+	];
+	
+	(* Convert repository path to the form expected by the GitLab API *)
+	encodedPath= URLEncode@StringDrop[repoURL, StringLength["https://gitlab.com/"]];
+	
+	(* --- GET PROJECT ID --- *)
+	projectInfo= Import["https://gitlab.com/api/v4/projects/" <> encodedPath, "RawJSON"];
+	projectID= projectInfo["id"];
+	
+	(* --- FUNCTION TO RECURSE THROUGH REPO TREE --- *)
+	ListFiles[path_]:= Module[
+		{tree,subdirs,files},
+		tree=    Import["https://gitlab.com/api/v4/projects/"<>ToString[projectID]<>"/repository/tree?path="<>URLEncode[path]<>"&per_page=100","RawJSON"];
+		subdirs= Select[tree,#["type"]==="tree"&];
+		files=   Select[tree,#["type"]==="blob"&];
+		Flatten@Join[
+			{
+				(*recurse into subdirectories*)
+				ListFiles[FileNameJoin[{path,#["name"]}/.""->Nothing]]&/@subdirs,
+				(*return matching .m or.wl files*)
+				path-> (FileNameJoin[{#["name"]}]&/@Select[files,StringMatchQ[#["name"],___~~(".m"|".wl")]&])
+			}/.{}->Nothing/.(_->Nothing)->Nothing
+		]
+	];
+	
+	Association@@ListFiles[""]
+]
+
+
+(* Returns True if GitLab is accessible and false otherwise *)
+CheckGitLabAccess[]:= Quiet@Check[URLRead["https://gitlab.com/matchete/model-database"],$Failed]=!=$Failed
+
+
+GetModels::GitLab= "Could not connect to https://gitlab.com/matchete/model-database.";
 
 
 (* ::Subsubsection::Closed:: *)
@@ -2275,7 +2355,7 @@ ReadParentModels[modelDef_List, modelDir_String]:= Module[
 	];
 
 	(*Recursively check for parents*)
-	parentDef= ReadParentModels@ parentDef;
+	parentDef= ReadParentModels[ parentDef, parentPath];
 
 	Append[parentDef, childDef]
 ]

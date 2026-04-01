@@ -22,6 +22,8 @@ DefineCoupling[cS, SelfConjugate-> True, Indices-> {Flavor, Flavor}, Symmetries-
 DefineCoupling[M, SelfConjugate-> True, Indices-> Flavor, DiagonalCoupling-> True]
 DefineCoupling[m, SelfConjugate-> True]
 DefineField[#, Scalar, Indices-> SU2L@ fund]&/@ {H1, H2, H3, H4};
+DefineField[#, Scalar, Indices-> SU2L@ adj, SelfConjugate-> True]&/@ {\[CurlyPhi]1, \[CurlyPhi]2};
+DefineCompositeCG[t2\[CurlyEpsilon], {gen@ SU2L@ fund, eps@ SU2L}, {{a, i, j}, {j, k}}];
 DefineGlobalGroup[SU2g, SU@2];
 DefineField[l2, Fermion, Indices-> SU2g@ fund, Chiral-> LeftHanded, Mass-> 0];
 DefineField[e2, Fermion, Chiral-> RightHanded, Mass-> 0];
@@ -136,6 +138,21 @@ VerificationTest[Module[{i, j, k, l},
 ],
 	0
 , TestID-> "IdentitiesGroupSchouten"]
+
+
+(* ::Text:: *)
+(*Group relations on pieces of composite CGs*)
+
+
+VerificationTest[Module[{a, b, c, i, j, k, l},
+	GreensSimplify[Bar@ H1[i]Bar@ H2[j] H3[k] H4[l]\[CurlyPhi]1[a] \[CurlyPhi]2[b]*
+	(t2\[CurlyEpsilon][a, i, j] Bar@ t2\[CurlyEpsilon][b, k, l] -1/4 del[SU2L@ fund][i, l]del[SU2L@ fund][j, k] del[SU2L@adj][a, b]-
+		I/2 fStruct[SU2L][a, b, c] gen[SU2L@ fund][c, i, l]del[SU2L@ fund][j, k] +
+		gen[SU2L@ fund][a, i, k] gen[SU2L@ fund][b, j, l]
+		)]
+],
+	0
+, TestID-> "IdentitiesGroup with composite CGs"]
 
 
 (* ::Text:: *)

@@ -1,0 +1,256 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Wolfram 14.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       154,          7]
+NotebookDataLength[      9480,        248]
+NotebookOptionsPosition[      6488,        179]
+NotebookOutlinePosition[      8642,        235]
+CellTagsIndexPosition[      8558,        230]
+WindowTitle->Fermion
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[GridBox[{
+   {GridBox[{
+      {
+       ItemBox[Cell[BoxData[
+         RowBox[{
+          TemplateBox[{12},
+           "Spacer1"], Cell["MATCHETE SYMBOL", "PacletNameCell",
+           TextAlignment->Center,ExpressionUUID->
+           "e209ce09-cf61-4143-ba7f-a7ac94692260"], 
+          TemplateBox[{8},
+           "Spacer1"]}]],
+         TextAlignment->Center,ExpressionUUID->
+         "1db89a7f-697b-4a65-a88a-72a09034d0a4"],
+        Background->RGBColor[0.490196, 0.576471, 0.690196],
+        ItemSize->Full], ""}
+     },
+     GridBoxAlignment->{"Rows" -> {{Center}}},
+     GridBoxItemSize->{"Columns" -> {Full, 
+         Scaled[0.02]}, "Rows" -> {{2.5}}}], Cell[TextData[Cell[BoxData[
+     TagBox[
+      ActionMenuBox[
+       FrameBox[Cell[TextData[{
+         "URL",
+         " ",
+         Cell[BoxData[
+          GraphicsBox[
+           {GrayLevel[0.66667], Thickness[0.13], 
+            LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]},
+           AspectRatio->1,
+           ImageSize->20,
+           PlotRange->{{-3, 4}, {-1, 1}}]],ExpressionUUID->
+          "731286c2-c503-41c7-8a92-47604c5cd1ff"]
+        }],ExpressionUUID->"cb23034d-7270-4644-a10b-cb1416c814e0"],
+        StripOnInput->False],{
+       "\"Matchete/ref/Fermion\"" :> None, 
+        "\"Copy Wolfram Documentation Center URL\"" :> 
+        CopyToClipboard["Matchete/ref/Fermion"], Delimiter, 
+        "\"Copy web URL\"" :> 
+        Module[{DocumentationSearch`Private`nb$}, 
+          DocumentationSearch`Private`nb$ = 
+           NotebookPut[
+            Notebook[{
+              Cell[BoxData[
+                MakeBoxes[
+                 Hyperlink[
+                  "http://reference.wolfram.com/language/Matchete/ref/Fermion.\
+html"], StandardForm]], "Input", TextClipboardType -> "PlainText"]}, Visible -> 
+              False]]; SelectionMove[
+           DocumentationSearch`Private`nb$, All, Notebook]; 
+          FrontEndTokenExecute[DocumentationSearch`Private`nb$, "Copy"]; 
+          NotebookClose[DocumentationSearch`Private`nb$]; Null], 
+        "\"Go to web URL\"" :> 
+        FrontEndExecute[{
+          NotebookLocate[{
+            URL[If[TrueQ[False], 
+                "http://reference.wolfram.com/system-modeler/", 
+                "http://reference.wolfram.com/language/"] <> 
+              "Matchete/ref/Fermion" <> ".html"], None}]}]},
+       Appearance->None,
+       MenuAppearance->Automatic,
+       MenuStyle->"URLMenu"],
+      MouseAppearanceTag["LinkHand"]]],
+     LineSpacing->{1.4, 0},ExpressionUUID->
+     "d389c09d-41ad-4609-a44f-8cc7ee27aa26"]], "AnchorBar",
+     CacheGraphics->False,ExpressionUUID->
+     "16a6b8cf-1c6d-4c25-bc69-bbc38fa3f087"]}
+  }]], "AnchorBarGrid",
+ GridBoxOptions->{GridBoxItemSize->{"Columns" -> {
+     Scaled[0.65], {
+      Scaled[0.34]}}, "ColumnsIndexed" -> {}, "Rows" -> {{1.}}, 
+   "RowsIndexed" -> {}}},
+ CellID->1,ExpressionUUID->"3358eafd-e194-4553-8246-12ca6add8b04"],
+
+Cell["Matchete`", "ContextNameCell",ExpressionUUID->"b6afaa68-b01f-4572-b743-669a35293998"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[GridBox[{
+   {Cell[TextData[{
+     Cell[
+     "Fermion", "ObjectName",ExpressionUUID->
+      "27999b21-e960-4288-ada7-219d0c14d49e"],
+     Cell[BoxData[
+      TemplateBox[{8},
+       "Spacer1"]],ExpressionUUID->"faeb15bd-4a27-45a2-8bea-636836dffb64"],
+     Cell[BoxData[
+     ""], "ObjectNameTranslation",ExpressionUUID->
+      "d7bf522d-a8db-4648-b0ed-c16d60bcb150"]
+    }],ExpressionUUID->"f81db8a1-fe4e-4908-a525-cdad0984bf34"], 
+    "\[SpanFromLeft]"}
+  }]], "ObjectNameGrid",ExpressionUUID->"d418e3b3-9199-44f8-b7a6-\
+00602df332c2"],
+
+Cell[BoxData[GridBox[{
+   {"", Cell[TextData[{
+     "Field[\[Psi],Fermion,{indices},{CDerivs}] denotes a fermion field ",
+     Cell[BoxData[
+      StyleBox["\[Psi]", "TI"]], "InlineFormula",
+      FontFamily->"Source Sans Pro",ExpressionUUID->
+      "802cab9e-4360-4943-9b43-696b495e2b10"],
+     "."
+    }],ExpressionUUID->"72bd2dff-a76b-446d-a96a-2d7df4453ec4"]}
+  }]], "Usage",
+ CellID->1150667589,ExpressionUUID->"147188a2-7941-4f5f-b0dc-a235bb6d0a59"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ Cell[BoxData[
+  DynamicBox[ToBoxes[
+    If[
+     MatchQ[
+      CurrentValue[
+       EvaluationNotebook[], {
+       TaggingRules, "Openers", "PrimaryExamplesSection"}, Open], 
+      Alternatives[True, Open]], 
+     Style[
+      Graphics[{
+        Thickness[0.18], 
+        RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+        Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+       PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+      0.68 Inherited], 
+     Rotate[
+      Style[
+       Graphics[{
+         Thickness[0.18], 
+         RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+         Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+        PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+       0.68 Inherited], Rational[1, 2] Pi, {-1.65, -1}]]],
+   ImageSizeCache->{
+    13.600000000000001`, {4.251494140625001, 9.348505859375}}]],
+  ExpressionUUID->"0e87cfd9-e041-457e-b002-d28eb636c8f6"],
+ Cell[BoxData[
+  TemplateBox[{1},
+   "Spacer1"]],ExpressionUUID->"18c53771-f3a9-4346-bd25-f88d44bab342"],
+ "Examples",
+ "\[NonBreakingSpace]\[NonBreakingSpace]",
+ Cell["(0)", "ExampleCount",ExpressionUUID->
+  "37e09658-0dec-4988-acc7-6ca41fda11c8"]
+}], "PrimaryExamplesSection",
+ WholeCellGroupOpener->True,
+ CacheGraphics->False,
+ CellTags->"PrimaryExamplesSection",
+ CellID->728611332,ExpressionUUID->"ac5d099c-62bc-4880-b253-4296f79698fd"],
+
+Cell[BoxData[
+ RowBox[{"Needs", "[", "\"\<Matchete`\>\"", "]"}]], "Input", "ExampleInitialization",
+ CellLabel->"In[1]:=",
+ CellID->1893538890,ExpressionUUID->"e587931c-fc7d-4a9c-8daa-966125d78a01"]
+}, Dynamic[CurrentValue[
+ EvaluationNotebook[], {TaggingRules, "Openers", "PrimaryExamplesSection"}, 
+  Closed]]]],
+
+Cell[" ", "FooterCell",ExpressionUUID->"e51f1b50-f73c-4451-a27c-eb8f3e1e8eff"]
+},
+Saveable->False,
+ScreenStyleEnvironment->"Working",
+WindowSize->{900, 830},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+WindowTitle->"Fermion",
+Visible->False,
+TaggingRules->{
+ "ModificationHighlight" -> False, "ColorType" -> "", "LinkTrails" -> "", 
+  "ExampleCounter" -> 1, 
+  "Openers" -> {
+   "PrimaryExamplesSection" -> Open, "ExampleSection" -> {"0" -> Open}, 
+    "AllOptsTable" -> Closed}, "NewStyles" -> True, 
+  "CitationPopupData" -> $Failed, "ShowCitation" -> False, "HasOptions" -> 
+  True, "RootCaptions" -> "", "HeaderCoreAreaLink" -> {}, 
+  "Metadata" -> {
+   "built" -> "{2026, 2, 18, 13, 0, 9.230597}", 
+    "history" -> {"XX", "", "", ""}, "context" -> "Matchete`", 
+    "keywords" -> {}, "specialkeywords" -> {}, 
+    "tutorialcollectionlinks" -> {}, "index" -> True, "label" -> 
+    "Matchete Symbol", "language" -> "en", "paclet" -> "Matchete", "status" -> 
+    "None", "summary" -> 
+    "Field[\\[Psi],Fermion,{indices},{CDerivs}] denotes a fermion field \
+\\[Psi].", "synonyms" -> {}, "tabletags" -> {}, "title" -> "Fermion", 
+    "titlemodifier" -> "", "metadescription" -> "", "windowtitle" -> 
+    "Fermion", "type" -> "Symbol", "uri" -> "Matchete/ref/Fermion"}},
+CellContext->"Global`",
+FrontEndVersion->"14.2 for Mac OS X ARM (64-bit) (March 16, 2025)",
+StyleDefinitions->Notebook[{
+   Cell[
+    StyleData[
+    StyleDefinitions -> FrontEnd`FileName[{"Wolfram"}, "Reference.nb"]]], 
+   Cell[
+    StyleData["Input"], CellContext -> "Global`"], 
+   Cell[
+    StyleData["Output"], CellContext -> "Global`"]}, Visible -> False, 
+  FrontEndVersion -> "14.2 for Mac OS X ARM (64-bit) (March 16, 2025)", 
+  StyleDefinitions -> "PrivateStylesheetFormatting.nb"],
+ExpressionUUID->"31a6757e-d822-4ce2-aba1-a95610c1c829"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "PrimaryExamplesSection"->{
+  Cell[4650, 129, 1437, 38, 34, "PrimaryExamplesSection",ExpressionUUID->"ac5d099c-62bc-4880-b253-4296f79698fd",
+   CellTags->"PrimaryExamplesSection",
+   CellID->728611332]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"PrimaryExamplesSection", 8359, 223}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[575, 21, 2911, 71, 50, "AnchorBarGrid",ExpressionUUID->"3358eafd-e194-4553-8246-12ca6add8b04",
+ CellID->1],
+Cell[3489, 94, 91, 0, 22, "ContextNameCell",ExpressionUUID->"b6afaa68-b01f-4572-b743-669a35293998"],
+Cell[CellGroupData[{
+Cell[3605, 98, 550, 14, 57, "ObjectNameGrid",ExpressionUUID->"d418e3b3-9199-44f8-b7a6-00602df332c2"],
+Cell[4158, 114, 455, 10, 86, "Usage",ExpressionUUID->"147188a2-7941-4f5f-b0dc-a235bb6d0a59",
+ CellID->1150667589]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4650, 129, 1437, 38, 34, "PrimaryExamplesSection",ExpressionUUID->"ac5d099c-62bc-4880-b253-4296f79698fd",
+ CellTags->"PrimaryExamplesSection",
+ CellID->728611332],
+Cell[6090, 169, 198, 3, 29, "Input",ExpressionUUID->"e587931c-fc7d-4a9c-8daa-966125d78a01",
+ CellID->1893538890]
+}, Dynamic[CurrentValue[EvaluationNotebook[], {TaggingRules, "Openers", "PrimaryExamplesSection"}, Closed]]]],
+Cell[6406, 177, 78, 0, 40, "FooterCell",ExpressionUUID->"e51f1b50-f73c-4451-a27c-eb8f3e1e8eff"]
+}
+]
+*)
+

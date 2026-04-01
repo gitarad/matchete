@@ -1,0 +1,329 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Wolfram 14.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       154,          7]
+NotebookDataLength[     12496,        321]
+NotebookOptionsPosition[      8894,        242]
+NotebookOutlinePosition[     11257,        301]
+CellTagsIndexPosition[     11172,        296]
+WindowTitle->RemoveLCTensor
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[GridBox[{
+   {GridBox[{
+      {
+       ItemBox[Cell[BoxData[
+         RowBox[{
+          TemplateBox[{12},
+           "Spacer1"], Cell["MATCHETE SYMBOL", "PacletNameCell",
+           TextAlignment->Center,ExpressionUUID->
+           "df65c1fc-ed01-4d73-9f41-8b52cf572713"], 
+          TemplateBox[{8},
+           "Spacer1"]}]],
+         TextAlignment->Center,ExpressionUUID->
+         "f06cb902-8563-4b21-a7ad-928999802a54"],
+        Background->RGBColor[0.490196, 0.576471, 0.690196],
+        ItemSize->Full], ""}
+     },
+     GridBoxAlignment->{"Rows" -> {{Center}}},
+     GridBoxItemSize->{"Columns" -> {Full, 
+         Scaled[0.02]}, "Rows" -> {{2.5}}}], Cell[TextData[Cell[BoxData[
+     TagBox[
+      ActionMenuBox[
+       FrameBox[Cell[TextData[{
+         "URL",
+         " ",
+         Cell[BoxData[
+          GraphicsBox[
+           {GrayLevel[0.66667], Thickness[0.13], 
+            LineBox[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]},
+           AspectRatio->1,
+           ImageSize->20,
+           PlotRange->{{-3, 4}, {-1, 1}}]],ExpressionUUID->
+          "31fa6b1f-c1bb-4315-b373-44bb762ad690"]
+        }],ExpressionUUID->"9038209d-9bca-437b-b94e-4bcf0eced7ce"],
+        StripOnInput->False],{
+       "\"Matchete/ref/RemoveLCTensor\"" :> None, 
+        "\"Copy Wolfram Documentation Center URL\"" :> 
+        CopyToClipboard["Matchete/ref/RemoveLCTensor"], Delimiter, 
+        "\"Copy web URL\"" :> 
+        Module[{DocumentationSearch`Private`nb$}, 
+          DocumentationSearch`Private`nb$ = 
+           NotebookPut[
+            Notebook[{
+              Cell[BoxData[
+                MakeBoxes[
+                 Hyperlink[
+                  "http://reference.wolfram.com/language/Matchete/ref/\
+RemoveLCTensor.html"], StandardForm]], "Input", TextClipboardType -> 
+                "PlainText"]}, Visible -> False]]; 
+          SelectionMove[DocumentationSearch`Private`nb$, All, Notebook]; 
+          FrontEndTokenExecute[DocumentationSearch`Private`nb$, "Copy"]; 
+          NotebookClose[DocumentationSearch`Private`nb$]; Null], 
+        "\"Go to web URL\"" :> 
+        FrontEndExecute[{
+          NotebookLocate[{
+            URL[If[TrueQ[False], 
+                "http://reference.wolfram.com/system-modeler/", 
+                "http://reference.wolfram.com/language/"] <> 
+              "Matchete/ref/RemoveLCTensor" <> ".html"], None}]}]},
+       Appearance->None,
+       MenuAppearance->Automatic,
+       MenuStyle->"URLMenu"],
+      MouseAppearanceTag["LinkHand"]]],
+     LineSpacing->{1.4, 0},ExpressionUUID->
+     "f8854836-2bb7-4c6c-b00e-3c16fb1d3a68"]], "AnchorBar",
+     CacheGraphics->False,ExpressionUUID->
+     "df7e4ef5-6c91-4436-9a3c-bba3395c83e6"]}
+  }]], "AnchorBarGrid",
+ GridBoxOptions->{GridBoxItemSize->{"Columns" -> {
+     Scaled[0.65], {
+      Scaled[0.34]}}, "ColumnsIndexed" -> {}, "Rows" -> {{1.}}, 
+   "RowsIndexed" -> {}}},
+ CellID->1,ExpressionUUID->"e6ce9092-3a8a-45f6-8536-a552a4d665af"],
+
+Cell["Matchete`", "ContextNameCell",ExpressionUUID->"234a7a93-9720-4804-8b50-0d7f151b835f"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[GridBox[{
+   {Cell[TextData[{
+     Cell[
+     "RemoveLCTensor", "ObjectName",ExpressionUUID->
+      "504f963f-91c0-43c2-9a72-bc536b7a9459"],
+     Cell[BoxData[
+      TemplateBox[{8},
+       "Spacer1"]],ExpressionUUID->"273db516-1ad2-4a95-88a4-684a2a83a668"],
+     Cell[BoxData[
+     ""], "ObjectNameTranslation",ExpressionUUID->
+      "7711ca27-a9c8-4cf0-b7f1-e084b8b7ee15"]
+    }],ExpressionUUID->"abda6767-eef5-4598-8ada-c3494bd2ec05"], 
+    "\[SpanFromLeft]"}
+  }]], "ObjectNameGrid",ExpressionUUID->"42380265-8d42-4771-a562-\
+6933708214fd"],
+
+Cell[BoxData[GridBox[{
+   {"", Cell["\<\
+Get rid of Levi-Civita tensors either by combining with a Lorentz sigma to \
+give a \!\(\*SubscriptBox[\(\[Gamma]\), \(5\)]\) or by expanding the product \
+of two Levi-Civita tensor to give the fully antisymmetric product of metrics.\
+\
+\>",ExpressionUUID->"b86c92ec-f854-4329-be14-6afd75eb445d"]}
+  }]], "Usage",
+ CellID->38518012,ExpressionUUID->"4c638604-e995-4da7-bcf7-3fee10dd42aa"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[Cell[BoxData[
+ ButtonBox[Cell[TextData[{
+   Cell[BoxData[
+    DynamicBox[ToBoxes[
+      If[
+       MatchQ[
+        CurrentValue[
+         EvaluationNotebook[], {TaggingRules, "Openers", "NotesSection"}, 
+         Closed], 
+        Alternatives[Open, True]], 
+       Style[
+        Graphics[{
+          Thickness[0.18], 
+          RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+          Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+         PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+        0.68 Inherited], 
+       Rotate[
+        Style[
+         Graphics[{
+           Thickness[0.18], 
+           RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+           Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+          PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+         0.68 Inherited], Rational[1, 2] Pi, {-1.65, -1}]]],
+     ImageSizeCache->{
+      13.600000000000001`, {-0.1685058593749993, 13.768505859375}}]],
+    ExpressionUUID->"ae722077-50fd-4b2c-97e9-12596ff85221"],
+   Cell[BoxData[
+    TemplateBox[{1},
+     "Spacer1"]],ExpressionUUID->"0dd275b9-6793-4994-b456-06cd46401b17"],
+   "Details and Options"
+  }], "NotesFrameText",ExpressionUUID->"0c17d422-eba4-4f27-b01a-d0f18107b965"],
+  Appearance->{Automatic, None, "Normal", Automatic},
+  BaseStyle->None,
+  ButtonFunction:>(FrontEndExecute[{
+     FrontEnd`SelectionMove[
+      FrontEnd`SelectedNotebook[], All, ButtonCell], 
+     FrontEndToken["OpenCloseGroup"], 
+     FrontEnd`SelectionMove[
+      FrontEnd`SelectedNotebook[], After, CellContents]}]& ),
+  Evaluator->None,
+  Method->
+   "Preemptive"]],ExpressionUUID->"0c377206-43c6-4c17-8f82-5883e1ee363c"]], \
+"NotesSection",
+ WholeCellGroupOpener->True,
+ CellGroupingRules->{"SectionGrouping", 50},
+ CacheGraphics->False,
+ CellID->1237667553,ExpressionUUID->"2febff0a-fd42-466d-bb5a-2a6b1abac0ec"],
+
+Cell[TextData[Cell[BoxData[
+ TemplateBox[{
+   Cell[
+    TextData["Nothing"]], "paclet:ref/Nothing"},
+  "RefLink",
+  BaseStyle->{"InlineFormula"}]], "InlineFormula",
+ FontFamily->
+  "Source Sans Pro",ExpressionUUID->"635f1d8c-5152-4709-bd40-602488540059"]], \
+"Input",
+ CellID->2090980320,ExpressionUUID->"abab0701-6aab-45b2-b7ba-75c27f425daf"]
+}, Dynamic[CurrentValue[
+ EvaluationNotebook[], {TaggingRules, "Openers", "NotesSection"}, Closed]]]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ Cell[BoxData[
+  DynamicBox[ToBoxes[
+    If[
+     MatchQ[
+      CurrentValue[
+       EvaluationNotebook[], {
+       TaggingRules, "Openers", "PrimaryExamplesSection"}, Open], 
+      Alternatives[True, Open]], 
+     Style[
+      Graphics[{
+        Thickness[0.18], 
+        RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+        Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+       PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+      0.68 Inherited], 
+     Rotate[
+      Style[
+       Graphics[{
+         Thickness[0.18], 
+         RGBColor[0.8509803921568627, 0.396078431372549, 0], 
+         Line[{{-1.8, 0.5}, {0, 0}, {1.8, 0.5}}]}, AspectRatio -> 1, 
+        PlotRange -> {{-3, 4}, {-1, 1}}, ImageSize -> 20], Magnification -> 
+       0.68 Inherited], Rational[1, 2] Pi, {-1.65, -1}]]],
+   ImageSizeCache->{
+    13.600000000000001`, {4.251494140625001, 9.348505859375}}]],
+  ExpressionUUID->"c77f3c30-86f4-4182-bec0-f2083c18be0b"],
+ Cell[BoxData[
+  TemplateBox[{1},
+   "Spacer1"]],ExpressionUUID->"6110e244-4532-4c5f-ada6-ae1ab1df884b"],
+ "Examples",
+ "\[NonBreakingSpace]\[NonBreakingSpace]",
+ Cell["(0)", "ExampleCount",ExpressionUUID->
+  "906cc332-992c-4ce9-82c5-a6d15827025b"]
+}], "PrimaryExamplesSection",
+ WholeCellGroupOpener->True,
+ CacheGraphics->False,
+ CellTags->"PrimaryExamplesSection",
+ CellID->951958429,ExpressionUUID->"2263424a-f17f-404a-a920-664deb87e07d"],
+
+Cell[BoxData[
+ RowBox[{"Needs", "[", "\"\<Matchete`\>\"", "]"}]], "Input", "ExampleInitialization",
+ CellLabel->"In[1]:=",
+ CellID->1337408441,ExpressionUUID->"59ba00a2-99d0-4650-8b69-38df50e3d0fa"]
+}, Dynamic[CurrentValue[
+ EvaluationNotebook[], {TaggingRules, "Openers", "PrimaryExamplesSection"}, 
+  Closed]]]],
+
+Cell[" ", "FooterCell",ExpressionUUID->"868d3e1f-6265-433f-9e61-6e49b71f3e3d"]
+},
+Saveable->False,
+ScreenStyleEnvironment->"Working",
+WindowSize->{900, 830},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+WindowTitle->"RemoveLCTensor",
+Visible->False,
+TaggingRules->{
+ "ModificationHighlight" -> False, "ColorType" -> "", "LinkTrails" -> "", 
+  "ExampleCounter" -> 1, 
+  "Openers" -> {
+   "PrimaryExamplesSection" -> Open, "ExampleSection" -> {"0" -> Open}, 
+    "AllOptsTable" -> Closed, "NotesSection" -> Closed}, "NewStyles" -> True, 
+  "CitationPopupData" -> $Failed, "ShowCitation" -> False, "HasOptions" -> 
+  True, "RootCaptions" -> "", "HeaderCoreAreaLink" -> {}, 
+  "Metadata" -> {
+   "built" -> "{2026, 2, 18, 13, 0, 40.930749}", 
+    "history" -> {"XX", "", "", ""}, "context" -> "Matchete`", 
+    "keywords" -> {}, "specialkeywords" -> {}, 
+    "tutorialcollectionlinks" -> {}, "index" -> True, "label" -> 
+    "Matchete Symbol", "language" -> "en", "paclet" -> "Matchete", "status" -> 
+    "None", "summary" -> 
+    "Get rid of Levi-Civita tensors either by combining with a Lorentz sigma \
+to give a SubscriptBox[\\[Gamma],\\ 5] or by expanding the product of two \
+Levi-Civita tensor to give the fully antisymmetric product of metrics.", 
+    "synonyms" -> {}, "tabletags" -> {}, "title" -> "RemoveLCTensor", 
+    "titlemodifier" -> "", "metadescription" -> "", "windowtitle" -> 
+    "RemoveLCTensor", "type" -> "Symbol", "uri" -> 
+    "Matchete/ref/RemoveLCTensor"}},
+CellContext->"Global`",
+FrontEndVersion->"14.2 for Mac OS X ARM (64-bit) (March 16, 2025)",
+StyleDefinitions->Notebook[{
+   Cell[
+    StyleData[
+    StyleDefinitions -> FrontEnd`FileName[{"Wolfram"}, "Reference.nb"]]], 
+   Cell[
+    StyleData["Input"], CellContext -> "Global`"], 
+   Cell[
+    StyleData["Output"], CellContext -> "Global`"]}, Visible -> False, 
+  FrontEndVersion -> "14.2 for Mac OS X ARM (64-bit) (March 16, 2025)", 
+  StyleDefinitions -> "PrivateStylesheetFormatting.nb"],
+ExpressionUUID->"6db95d5e-b6fa-4174-bf01-8097b897e684"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "PrimaryExamplesSection"->{
+  Cell[7056, 192, 1437, 38, 34, "PrimaryExamplesSection",ExpressionUUID->"2263424a-f17f-404a-a920-664deb87e07d",
+   CellTags->"PrimaryExamplesSection",
+   CellID->951958429]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"PrimaryExamplesSection", 10973, 289}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[582, 21, 2940, 71, 50, "AnchorBarGrid",ExpressionUUID->"e6ce9092-3a8a-45f6-8536-a552a4d665af",
+ CellID->1],
+Cell[3525, 94, 91, 0, 22, "ContextNameCell",ExpressionUUID->"234a7a93-9720-4804-8b50-0d7f151b835f"],
+Cell[CellGroupData[{
+Cell[3641, 98, 557, 14, 57, "ObjectNameGrid",ExpressionUUID->"42380265-8d42-4771-a562-6933708214fd"],
+Cell[4201, 114, 428, 8, 106, "Usage",ExpressionUUID->"4c638604-e995-4da7-bcf7-3fee10dd42aa",
+ CellID->38518012]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4666, 127, 1917, 48, 34, "NotesSection",ExpressionUUID->"2febff0a-fd42-466d-bb5a-2a6b1abac0ec",
+ CellGroupingRules->{"SectionGrouping", 50},
+ CellID->1237667553],
+Cell[6586, 177, 343, 9, 70, "Input",ExpressionUUID->"abab0701-6aab-45b2-b7ba-75c27f425daf",
+ CellID->2090980320]
+}, Dynamic[CurrentValue[EvaluationNotebook[], {TaggingRules, "Openers", "NotesSection"}, Closed]]]],
+Cell[CellGroupData[{
+Cell[7056, 192, 1437, 38, 34, "PrimaryExamplesSection",ExpressionUUID->"2263424a-f17f-404a-a920-664deb87e07d",
+ CellTags->"PrimaryExamplesSection",
+ CellID->951958429],
+Cell[8496, 232, 198, 3, 29, "Input",ExpressionUUID->"59ba00a2-99d0-4650-8b69-38df50e3d0fa",
+ CellID->1337408441]
+}, Dynamic[CurrentValue[EvaluationNotebook[], {TaggingRules, "Openers", "PrimaryExamplesSection"}, Closed]]]],
+Cell[8812, 240, 78, 0, 40, "FooterCell",ExpressionUUID->"868d3e1f-6265-433f-9e61-6e49b71f3e3d"]
+}
+]
+*)
+
