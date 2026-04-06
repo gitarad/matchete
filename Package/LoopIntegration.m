@@ -55,6 +55,7 @@ PackageScope["SimplifyMassFunction"]
 PackageScope["GatherLoopMomenta"]
 PackageScope["SymmetricLorentzInds"]
 PackageScope["EvaluateSymmetricLorentzInds"]
+PackageScope["AllUnorderedPairs"]
 
 
 PackageScope["ev"]
@@ -427,14 +428,21 @@ SetAttributes[SymmetricLorentzInds, Orderless]
 
 SymmetricLorentzInds[a_, a_, rest___]:= SymmetricLorentzInds@ rest;
 
-
+AllUnorderedPairs[chosenPairs_, remainingItems_] := 
+ If[Length[remainingItems] == 0, {chosenPairs},
+  Flatten[
+   Table[AllUnorderedPairs[
+     Append[chosenPairs, {remainingItems[[1]], 
+       remainingItems[[chosenItem]]}], 
+     Delete[remainingItems, {{1}, {chosenItem}}]],
+   {chosenItem, 2, Length[remainingItems]}], 1]]
+     
 (*This method only works for non-repeating indices due to behavior of Permutations*)
 SymmetricLorentzIndsReplacement@ lorentzInds___:= Module[{inds, n, symTensor},
 	inds= List@ lorentzInds;
 	n= Length@ inds/ 2;
 	symTensor= If[OddQ@ Length@ inds, 0,
-		Plus@@ Times@@@ Apply[Metric,
-			DeleteDuplicatesBy[Partition[#, 2]&/@ Permutations@ inds, (Sort[Sort/@ #] &)], {2}]];
+		Plus@@ Times@@@ Apply[Metric, AllUnorderedPairs[{},inds], {2}]];
 	symTensor SymGammaFactor@ n
 ];
 
