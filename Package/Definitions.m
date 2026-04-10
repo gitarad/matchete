@@ -1814,8 +1814,10 @@ FreeLag[field_Symbol]:= Module[
 		Vector,
 			(*Gauge fields are normalized with their couplings*)
 			normalization= First[Query[Select[#@ Field === field&], Key@ Coupling]@ $GaugeGroups, 1&][]^-2;
+			(-1/2 normalization* Bar[FS[field,\[Mu],\[Nu],indK]]FS[field,\[Mu],\[Nu],indK] + m Bar[field[\[Mu],ind1]] field[\[Mu],ind2])
 		,Ghost|AntiGhost,
-			0,		Graviton,
+			0,
+        Graviton,
 			(CD[\[Mu], field[\[Alpha], \[Nu] ,indK]] \[CenterDot] CD[\[Mu], field[\[Alpha], \[Nu] ,indK]]- CD[\[Alpha], field[\[Mu], \[Mu], indK]] \[CenterDot] CD[\[Alpha], field[\[Nu], \[Nu], indK]]
 			+2CD[\[Nu], field[\[Mu], \[Mu], indK]] \[CenterDot] CD[\[Alpha], field[\[Nu], \[Alpha], indK]] - 2CD[\[Alpha], field[\[Mu], \[Nu], indK]] \[CenterDot] CD[\[Nu], field[\[Mu], \[Alpha], indK]]
 			+ m*field[\[Mu], \[Mu], ind1] \[CenterDot] field[\[Nu], \[Nu], ind2]
