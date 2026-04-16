@@ -54,6 +54,7 @@ PackageScope["WilsonExpand"]
 PackageScope["ExpandGenFSs"]
 PackageScope["PropGravitonExpand"]
 PackageScope["PropBosonExpand"]
+PackageScope["EnumerateInsertionOrders"]
 
 
 (* ::Section:: *)
@@ -344,6 +345,17 @@ PropFermionExpandHelper[mass_, ord_]:= Module[{indices, m, set, singleCDs,  pair
 (* ::Subsubsection::Closed:: *)
 (*Determine matching insertions*)
 
+(* Helper function to enumerate insertion orders *)
+EnumerateInsertionOrders[xsamples_, order_, previousChoices_] := 
+ If[Length[xsamples] > order, {},
+  If[Length[xsamples] == 0, {previousChoices},
+   Flatten[
+    Table[
+     EnumerateInsertionOrders[xsamples[[2 ;;]], order - choice[[1]], 
+      Append[previousChoices, choice]], {choice, xsamples[[1]]}]
+    , 1]
+   ]
+  ]
 
 (* ::Text:: *)
 (*Determine all insertions (with total EFT order <= order) for Xop, Mop, and Wilson line.	 For equivalent insertions only return one of them and the count.*)
@@ -385,7 +397,7 @@ DeterminePowerInsertions[propTypes_List, order_, propFields_]:= Module[
 	If[Length@ XSamples === 0, Return@ {};];
 
 	(*List all concrete combinations Xterms+order not greater than "order"*)
-	insertionOrders= Select[Tuples[#/. $XOrders], Function[x, (Total@ x[[;;, 1]] <= order)]]&/@ XSamples;
+	insertionOrders= EnumerateInsertionOrders[#/. $XOrders,order,{}]&/@ XSamples;
 	XSamples= Flatten[MapThread[Function[{x, y}, Transpose/@ Thread[{x, y}, List, {2}]],
 		{XSamples, insertionOrders}], 1];
 
