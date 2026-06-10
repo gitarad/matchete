@@ -947,7 +947,10 @@ WilsonTermExpand[field_, {ind1_, ind2_}, devInds_List]:= Module[
 	gaugeIndices= Cases[indices, _? (MemberQ[Keys@ $GaugeGroups, GroupFromInd@ First@ #] &)];
 	flavorIndices= Complement[indices, gaugeIndices];
 	fieldCharges= If[conj, MapAt[Minus, #, {All, 1}]&, Identity]@ $FieldAssociation[fieldLabel, Charges];
-
+    
+    (*Avoid combinatorial explosion of an expression if it's all zeroed by DevTermOnWilson*)
+    If[Length[fieldCharges]===0 && Length[gaugeIndices] === 0, Return[0]];
+    
 	flavorDeltas= Times@@ Delta@@@ flavorIndices;
 
 	(*Determines the sum over various field strength tensors*)
